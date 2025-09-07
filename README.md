@@ -1,43 +1,39 @@
 # Nuestro Pulso Test
 
-This is a starter project using **Vite + React + Firebase**.
+## Cloud Setup & Quick Start
 
-## Features
+**No computer needed! Run these commands in GitHub Codespaces, Replit, or any online shell.**
 
-- ⚡ Fast Vite bundler
-- ⚛️ React 18
-- 🔥 Firebase authentication and ready for more Firebase services
-- 📦 Minimal, extendable setup
+### 1. Install everything (Node, Firebase CLI, dependencies)
 
-## Getting Started
-
-1. **Install dependencies**  
-npm install
-
-2. **Run the development server**  
-npm run dev
-
-3. **Build for production**  
-npm run build
-
-## Firebase
-
-This project is pre-configured for Firebase Authentication.
-Update `src/firebase.js` with your own Firebase project config for production use.
-
-## File Structure
-
+```bash
+bash setup.sh
 ```
-├── index.html
-├── package.json
-├── src/
-│   ├── App.jsx
-│   ├── firebase.js
-│   └── main.jsx
-├── .gitignore
-└── README.md
+
+### 2. Start the development server
+
+```bash
+bash dev.sh
 ```
+
+### 3. Firebase Setup
+
+Edit `src/firebase.js` and add your Firebase config.
+
+```js
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  appId: "YOUR_APP_ID"
+};
+```
+
+## Troubleshooting
+
+- If you see errors about missing Node/npm/Firebase, rerun `setup.sh`.
+- If you need to deploy to Firebase Hosting, request a `deploy.sh` script.
 
 ---
 
-Made with ❤️ by Colombia-cyber
+**Full collaboration and automation enabled. If you need more scripts (deployment, database setup, etc.), just ask!**
