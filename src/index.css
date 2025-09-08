@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles for poll components */
+.poll-card {
+  @apply bg-white rounded-lg shadow-md p-6 mb-4;
+}
+
+.poll-option {
+  @apply w-full text-left p-3 mb-2 rounded-md transition-colors;
+}
+
+.poll-option:hover {
+  @apply bg-gray-50;
+}
+
+.poll-option.selected {
+  @apply bg-primary-100 border-primary-500;
+}
+
+.chart-container {
+  @apply relative h-64 w-full;
+}
