@@ -16,24 +16,29 @@ function App() {
     // Initialize database
     initializeDatabase();
 
-    // Set up auth listener
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-      
-      // For demo purposes, make any user an admin
-      // In a real app, you'd check user roles from your database
-      if (user) {
-        setIsAdmin(true);
-      }
-    });
+    // For demo purposes, set admin state directly
+    setUser({ id: 'demo-user', email: 'demo@example.com' });
+    setIsAdmin(true);
+    setLoading(false);
 
-    // Sign in anonymously for demo purposes
-    if (!user) {
-      signInAnonymously(auth);
-    }
+    // Set up auth listener (disabled for demo due to network restrictions)
+    // const unsubscribe = onAuthStateChanged(auth, (user) => {
+    //   setUser(user);
+    //   setLoading(false);
+    //   
+    //   // For demo purposes, make any user an admin
+    //   // In a real app, you'd check user roles from your database
+    //   if (user) {
+    //     setIsAdmin(true);
+    //   }
+    // });
 
-    return () => unsubscribe();
+    // Sign in anonymously for demo purposes (disabled due to network restrictions)
+    // if (!user) {
+    //   signInAnonymously(auth);
+    // }
+
+    // return () => unsubscribe();
   }, []);
 
   if (loading) {
