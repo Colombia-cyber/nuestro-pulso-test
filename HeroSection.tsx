@@ -2,7 +2,15 @@ import React from 'react';
 
 const HeroSection: React.FC = () => {
   return (
-    <div className="relative bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 h-screen flex items-center justify-center">
+    <div 
+      className="relative h-screen flex items-center justify-center"
+      style={{
+        backgroundImage: 'url(/assets/futuro-banner.jpg), linear-gradient(135deg, #1e40af 0%, #dc2626 50%, #fbbf24 100%)',
+        backgroundSize: 'cover, cover',
+        backgroundPosition: 'center, center',
+        backgroundRepeat: 'no-repeat, no-repeat'
+      }}
+    >
       <div className="absolute inset-0 bg-white bg-opacity-30 backdrop-blur-lg rounded-lg p-8 flex flex-col items-center justify-center">
         <h1 className="text-4xl font-bold text-gray-900">
           Nuestro Pulso: Colombia's Civic Pulse
