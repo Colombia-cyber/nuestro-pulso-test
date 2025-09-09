@@ -1,4 +1,5 @@
 import React from 'react';
+import AuthButton from './components/AuthButton';
 
 const HeroSection: React.FC = () => {
   return (
@@ -10,16 +11,19 @@ const HeroSection: React.FC = () => {
         <p className="mt-4 text-gray-700">
           Join civic discussions, debates, and surveys to shape the future of Colombia.
         </p>
-        <div className="mt-6 flex justify-center gap-4">
-          <button className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700">
-            Join Chat
-          </button>
-          <button className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-lg hover:bg-green-700">
-            Debate
-          </button>
-          <button className="px-6 py-3 bg-yellow-600 text-white rounded-lg shadow-lg hover:bg-yellow-700">
-            Take Survey
-          </button>
+        <div className="mt-6 flex flex-col items-center gap-6">
+          <AuthButton />
+          <div className="flex justify-center gap-4">
+            <button className="px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700">
+              Join Chat
+            </button>
+            <button className="px-6 py-3 bg-green-600 text-white rounded-lg shadow-lg hover:bg-green-700">
+              Debate
+            </button>
+            <button className="px-6 py-3 bg-yellow-600 text-white rounded-lg shadow-lg hover:bg-yellow-700">
+              Take Survey
+            </button>
+          </div>
         </div>
       </div>
     </div>
