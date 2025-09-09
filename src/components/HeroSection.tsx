@@ -1,0 +1,1 @@
+Add HeroSection component for Colombian glass-morphism homepage banner in Nuestro Pulso Civic Network
