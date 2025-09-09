@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 
+// Your Firebase project configuration
 const firebaseConfig = {
   apiKey: "AIzaSyBV4g50dUdMJ6-a2R6MFqzL1JElgG51d8g",
   authDomain: "nuestro-pulso-chat.firebaseapp.com",
@@ -12,6 +13,7 @@ const firebaseConfig = {
   measurementId: "G-74ZBHG8TF4"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const analytics = getAnalytics(app);
 const auth = getAuth(app);
