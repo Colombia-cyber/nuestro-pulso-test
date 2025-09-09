@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import HeroSection from '../HeroSection';
 import Navigation from '../src/components/Navigation';
+import { AuthProvider } from '../src/components/AuthContext';
 import LiveChat from '../src/components/LiveChat';
 import Debate from '../src/components/Debate';
 import Survey from '../src/components/Survey';
@@ -38,12 +39,14 @@ const Home = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navigation activeModule={activeModule} setActiveModule={setActiveModule} />
-      <main className="pt-16">
-        {renderActiveModule()}
-      </main>
-    </div>
+    <AuthProvider>
+      <div className="min-h-screen bg-gray-50">
+        <Navigation activeModule={activeModule} setActiveModule={setActiveModule} />
+        <main className="pt-16">
+          {renderActiveModule()}
+        </main>
+      </div>
+    </AuthProvider>
   );
 };
 

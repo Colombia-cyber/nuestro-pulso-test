@@ -1,0 +1,49 @@
+{
+  "name": "Nuestro Pulso - Red Cívica de Colombia",
+  "short_name": "Nuestro Pulso",
+  "description": "La plataforma líder de participación cívica en Colombia",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3B82F6",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["government", "social", "news", "education"],
+  "lang": "es-CO",
+  "scope": "/",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Chat en Vivo",
+      "short_name": "Chat",
+      "description": "Únete a conversaciones cívicas en tiempo real",
+      "url": "/?module=chat",
+      "icons": [{ "src": "/chat-icon.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Debates",
+      "short_name": "Debates",
+      "description": "Participa en debates estructurados",
+      "url": "/?module=debate",
+      "icons": [{ "src": "/debate-icon.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Congreso",
+      "short_name": "Congreso",
+      "description": "Sigue la actividad legislativa",
+      "url": "/?module=congress",
+      "icons": [{ "src": "/congress-icon.png", "sizes": "96x96" }]
+    }
+  ]
+}
