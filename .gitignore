@@ -4,6 +4,10 @@ dist/
 .env
 .DS_Store
 
+# Next.js
+.next/
+out/
+
 # Vite
 .vite/
 
