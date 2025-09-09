@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 
 // Your Firebase project configuration
@@ -15,7 +15,13 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
+// Comment out analytics for now to avoid SSR issues
+// let analytics;
+// if (typeof window !== 'undefined') {
+//   analytics = getAnalytics(app);
+// }
+
 const auth = getAuth(app);
 
-export { app, analytics, auth };
+export { app, auth };
