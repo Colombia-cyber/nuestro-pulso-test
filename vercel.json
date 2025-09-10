@@ -1,1 +1,15 @@
-{ "framework": "nextjs", "buildCommand": "npm run build", "outputDirectory": ".next", "installCommand": "npm install" }
+{
+  "name": "nuestro-pulso-test",
+  "version": "1.0.0",
+  "description": "Next.js project for Vercel deployment using npm.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "next": "^13.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  }
+}
