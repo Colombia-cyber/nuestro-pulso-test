@@ -1,14 +1,10 @@
 import React from "react";
-import NavBar from "../components/NavBar";
 import HeroSection from "../components/HeroSection";
 
 export default function Home() {
   return (
-    <div>
-      <NavBar />
-      <div className="pt-20">
-        <HeroSection />
-      </div>
+    <div className="min-h-screen bg-gray-50">
+      <HeroSection />
     </div>
   );
 }

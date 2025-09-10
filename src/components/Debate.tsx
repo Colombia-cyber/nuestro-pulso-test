@@ -1,6 +1,33 @@
 import React from 'react';
 
-const Debate = ({ debates = [] }) => {
+interface DebateArgument {
+  side: 'favor' | 'contra';
+  author: string;
+  credential: string;
+  time: string;
+  votes: number;
+  text: string;
+}
+
+interface DebateSides {
+  favor?: { percentage: number };
+  contra?: { percentage: number };
+}
+
+interface DebateData {
+  title: string;
+  status: string;
+  participants: number;
+  timeLeft: string;
+  sides?: DebateSides;
+  arguments?: DebateArgument[];
+}
+
+interface DebateProps {
+  debates?: DebateData[];
+}
+
+const Debate: React.FC<DebateProps> = ({ debates = [] }) => {
   // Ensure debates array exists and has at least one item
   const hasActiveDebate = debates && debates.length > 0;
   
@@ -18,18 +45,29 @@ const Debate = ({ debates = [] }) => {
           </div>
         </div>
 
+        {/* Default content when no active debates */}
+        {!hasActiveDebate && (
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-6 text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">No hay debates activos en este momento</h2>
+            <p className="text-gray-600 mb-6">Los debates están programados regularmente. ¡Mantente atento!</p>
+            <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold">
+              Ver Horario de Debates
+            </button>
+          </div>
+        )}
+
         {/* Active Debate */}
         {hasActiveDebate && (
           <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">{debates[0]?.title}</h2>
+                <h2 className="text-2xl font-bold text-gray-900">{debates[0].title}</h2>
                 <div className="flex items-center space-x-4 mt-2">
                   <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
-                    🔴 {debates[0]?.status}
+                    🔴 {debates[0].status}
                   </span>
-                  <span className="text-gray-600">👥 {debates[0]?.participants} participantes</span>
-                  <span className="text-gray-600">⏰ Termina en {debates[0]?.timeLeft}</span>
+                  <span className="text-gray-600">👥 {debates[0].participants} participantes</span>
+                  <span className="text-gray-600">⏰ Termina en {debates[0].timeLeft}</span>
                 </div>
               </div>
               <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold">
@@ -38,60 +76,64 @@ const Debate = ({ debates = [] }) => {
             </div>
 
             {/* Voting Results */}
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-              <h3 className="font-semibold mb-3">Posición de los participantes:</h3>
-              <div className="space-y-3">
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-green-700 font-medium">✅ A favor de la reforma</span>
-                    <span>{debates?.[0]?.sides?.favor?.percentage ?? "N/A"}%</span>
+            {debates[0].sides && (
+              <div className="mb-6 p-4 bg-gray-50 rounded-lg">
+                <h3 className="font-semibold mb-3">Posición de los participantes:</h3>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-green-700 font-medium">✅ A favor de la reforma</span>
+                      <span>{debates[0].sides.favor?.percentage ?? "0"}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-green-500 h-2 rounded-full" 
+                        style={{ width: `${debates[0].sides.favor?.percentage ?? 0}%` }}
+                      ></div>
+                    </div>
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-green-500 h-2 rounded-full" 
-                      style={{ width: `${debates?.[0]?.sides?.favor?.percentage ?? 0}%` }}
-                    ></div>
-                  </div>
-                </div>
-                <div>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="text-red-700 font-medium">❌ En contra de la reforma</span>
-                    <span>{debates?.[0]?.sides?.contra?.percentage ?? "N/A"}%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div 
-                      className="bg-red-500 h-2 rounded-full" 
-                      style={{ width: `${debates?.[0]?.sides?.contra?.percentage ?? 0}%` }}
-                    ></div>
+                  <div>
+                    <div className="flex justify-between text-sm mb-1">
+                      <span className="text-red-700 font-medium">❌ En contra de la reforma</span>
+                      <span>{debates[0].sides.contra?.percentage ?? "0"}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div 
+                        className="bg-red-500 h-2 rounded-full" 
+                        style={{ width: `${debates[0].sides.contra?.percentage ?? 0}%` }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Arguments */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">Argumentos Principales</h3>
-              {debates[0]?.arguments?.map((argument, index) => (
-                <div key={index} className={`p-4 rounded-lg border-l-4 ${
-                  argument.side === 'favor' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'
-                }`}>
-                  <div className="flex items-center justify-between mb-2">
-                    <div>
-                      <span className="font-semibold text-gray-900">{argument.author}</span>
-                      <span className="text-sm text-gray-600 ml-2">({argument.credential})</span>
+            {debates[0].arguments && debates[0].arguments.length > 0 && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold text-gray-900">Argumentos Principales</h3>
+                {debates[0].arguments.map((argument, index) => (
+                  <div key={index} className={`p-4 rounded-lg border-l-4 ${
+                    argument.side === 'favor' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'
+                  }`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <div>
+                        <span className="font-semibold text-gray-900">{argument.author}</span>
+                        <span className="text-sm text-gray-600 ml-2">({argument.credential})</span>
+                      </div>
+                      <div className="flex items-center space-x-2 text-sm text-gray-500">
+                        <span>{argument.time}</span>
+                        <button className="flex items-center space-x-1 hover:text-blue-600">
+                          <span>👍</span>
+                          <span>{argument.votes}</span>
+                        </button>
+                      </div>
                     </div>
-                    <div className="flex items-center space-x-2 text-sm text-gray-500">
-                      <span>{argument.time}</span>
-                      <button className="flex items-center space-x-1 hover:text-blue-600">
-                        <span>👍</span>
-                        <span>{argument.votes}</span>
-                      </button>
-                    </div>
+                    <p className="text-gray-700">{argument.text}</p>
                   </div>
-                  <p className="text-gray-700">{argument.text}</p>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
