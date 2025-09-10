@@ -53,7 +53,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeModule, setActiveModule }
           </div>
 
           {/* Premium Tabbed Navigation - Desktop */}
-          <div className="hidden lg:flex items-center space-x-1 bg-white/10 backdrop-blur-lg rounded-2xl p-2 border border-white/20 shadow-xl">
+          <div className="hidden xl:flex items-center space-x-1 bg-white/10 backdrop-blur-lg rounded-2xl p-2 border border-white/20 shadow-xl">
             {modules.slice(0, 6).map((module) => (
               <button
                 key={module.id}
@@ -112,7 +112,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeModule, setActiveModule }
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="lg:hidden">
+          <div className="xl:hidden">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="p-3 rounded-xl bg-white/10 backdrop-blur-lg border border-white/20 text-white hover:bg-white/20 transition-all duration-300"
@@ -125,7 +125,7 @@ const Navigation: React.FC<NavigationProps> = ({ activeModule, setActiveModule }
           </div>
 
           {/* User Actions */}
-          <div className="hidden lg:flex items-center space-x-3">
+          <div className="hidden xl:flex items-center space-x-3">
             {user ? (
               <div className="flex items-center space-x-3 bg-white/10 backdrop-blur-lg rounded-2xl px-4 py-2 border border-white/20">
                 <div className="flex flex-col">
@@ -164,10 +164,10 @@ const Navigation: React.FC<NavigationProps> = ({ activeModule, setActiveModule }
       {mobileMenuOpen && (
         <>
           {/* Backdrop */}
-          <div className="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setMobileMenuOpen(false)} />
+          <div className="xl:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-40" onClick={() => setMobileMenuOpen(false)} />
           
           {/* Mobile Menu Content */}
-          <div className="lg:hidden absolute top-full left-0 right-0 bg-white/5 backdrop-blur-xl border-t border-white/10 z-50">
+          <div className="xl:hidden absolute top-full left-0 right-0 bg-white/5 backdrop-blur-xl border-t border-white/10 z-50">
             <div className="px-4 py-6 space-y-2 max-h-96 overflow-y-auto">
               {modules.map((module) => (
                 <button
