@@ -1,8 +1,63 @@
 import React from 'react';
 
-const Debate = ({ debates = [] }) => {
-  // Ensure debates array exists and has at least one item
-  const hasActiveDebate = debates && debates.length > 0;
+interface DebateItem {
+  title: string;
+  status: string;
+  participants: number;
+  timeLeft: string;
+  sides?: {
+    favor?: { percentage: number };
+    against?: { percentage: number };
+  };
+  arguments?: Array<{
+    side: 'favor' | 'against';
+    author: string;
+    credential: string;
+    content: string;
+    votes: number;
+    time: string;
+  }>;
+}
+
+interface DebateProps {
+  debates?: DebateItem[];
+}
+
+const Debate: React.FC<DebateProps> = ({ debates = [] }) => {
+  // Default mock data for when no debates are provided
+  const defaultDebates: DebateItem[] = [
+    {
+      title: "¿Debe Colombia implementar una renta básica universal?",
+      status: "En vivo",
+      participants: 1247,
+      timeLeft: "45 minutos",
+      sides: {
+        favor: { percentage: 67 },
+        against: { percentage: 33 }
+      },
+      arguments: [
+        {
+          side: 'favor',
+          author: 'Dr. María González',
+          credential: 'Economista Universidad Nacional',
+          content: 'La renta básica universal reduciría la pobreza extrema y estimularía la economía local.',
+          votes: 234,
+          time: 'hace 15 min'
+        },
+        {
+          side: 'against',
+          author: 'Ing. Carlos Rodríguez',
+          credential: 'Analista Fiscal',
+          content: 'El costo fiscal sería insostenible y podría generar inflación descontrolada.',
+          votes: 156,
+          time: 'hace 8 min'
+        }
+      ]
+    }
+  ];
+  
+  const activeDebates = debates.length > 0 ? debates : defaultDebates;
+  const hasActiveDebate = activeDebates && activeDebates.length > 0;
   
   return (
     <div className="min-h-screen bg-gray-100">
@@ -23,13 +78,13 @@ const Debate = ({ debates = [] }) => {
           <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">{debates[0]?.title}</h2>
+                <h2 className="text-2xl font-bold text-gray-900">{activeDebates[0]?.title}</h2>
                 <div className="flex items-center space-x-4 mt-2">
                   <span className="bg-red-100 text-red-800 px-3 py-1 rounded-full text-sm font-medium">
-                    🔴 {debates[0]?.status}
+                    🔴 {activeDebates[0]?.status}
                   </span>
-                  <span className="text-gray-600">👥 {debates[0]?.participants} participantes</span>
-                  <span className="text-gray-600">⏰ Termina en {debates[0]?.timeLeft}</span>
+                  <span className="text-gray-600">👥 {activeDebates[0]?.participants} participantes</span>
+                  <span className="text-gray-600">⏰ Termina en {activeDebates[0]?.timeLeft}</span>
                 </div>
               </div>
               <button className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold">
@@ -44,24 +99,24 @@ const Debate = ({ debates = [] }) => {
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-green-700 font-medium">✅ A favor de la reforma</span>
-                    <span>{debates?.[0]?.sides?.favor?.percentage ?? "N/A"}%</span>
+                    <span>{activeDebates?.[0]?.sides?.favor?.percentage ?? 0}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
                       className="bg-green-500 h-2 rounded-full" 
-                      style={{ width: `${debates?.[0]?.sides?.favor?.percentage ?? 0}%` }}
+                      style={{ width: `${activeDebates?.[0]?.sides?.favor?.percentage ?? 0}%` }}
                     ></div>
                   </div>
                 </div>
                 <div>
                   <div className="flex justify-between text-sm mb-1">
                     <span className="text-red-700 font-medium">❌ En contra de la reforma</span>
-                    <span>{debates?.[0]?.sides?.contra?.percentage ?? "N/A"}%</span>
+                    <span>{activeDebates?.[0]?.sides?.against?.percentage ?? 0}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2">
                     <div 
                       className="bg-red-500 h-2 rounded-full" 
-                      style={{ width: `${debates?.[0]?.sides?.contra?.percentage ?? 0}%` }}
+                      style={{ width: `${activeDebates?.[0]?.sides?.against?.percentage ?? 0}%` }}
                     ></div>
                   </div>
                 </div>
@@ -71,7 +126,7 @@ const Debate = ({ debates = [] }) => {
             {/* Arguments */}
             <div className="space-y-4">
               <h3 className="text-lg font-semibold text-gray-900">Argumentos Principales</h3>
-              {debates[0]?.arguments?.map((argument, index) => (
+              {activeDebates[0]?.arguments?.map((argument, index) => (
                 <div key={index} className={`p-4 rounded-lg border-l-4 ${
                   argument.side === 'favor' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'
                 }`}>
@@ -88,7 +143,7 @@ const Debate = ({ debates = [] }) => {
                       </button>
                     </div>
                   </div>
-                  <p className="text-gray-700">{argument.text}</p>
+                  <p className="text-gray-700">{argument.content}</p>
                 </div>
               ))}
             </div>
