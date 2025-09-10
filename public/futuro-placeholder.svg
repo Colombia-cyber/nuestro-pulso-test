@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Colombian Flag Background -->
+  <rect width="400" height="75" fill="#FDE047"/>
+  <rect y="75" width="400" height="75" fill="#3B82F6"/>
+  <rect y="150" width="400" height="150" fill="#EF4444"/>
+  
+  <!-- Unity Symbol -->
+  <circle cx="200" cy="150" r="60" fill="rgba(255,255,255,0.9)" stroke="rgba(0,0,0,0.1)" stroke-width="2"/>
+  
+  <!-- Hope Star -->
+  <g transform="translate(200,150)">
+    <polygon points="0,-25 7,-8 25,-8 12,2 18,19 0,9 -18,19 -12,2 -25,-8 -7,-8" fill="#FFD700" stroke="#FFA500" stroke-width="1"/>
+  </g>
+  
+  <!-- FUTURO Text -->
+  <text x="200" y="220" font-family="Inter, sans-serif" font-size="24" font-weight="bold" text-anchor="middle" fill="white" stroke="rgba(0,0,0,0.3)" stroke-width="1">FUTURO</text>
+  
+  <!-- Unity Hands -->
+  <g transform="translate(140,130)" fill="rgba(255,255,255,0.8)">
+    <path d="M10 20 L15 15 L20 20 L25 15 L30 20 L35 15 L40 20" stroke="white" stroke-width="3" fill="none"/>
+  </g>
+  
+  <g transform="translate(220,130)" fill="rgba(255,255,255,0.8)">
+    <path d="M10 20 L15 15 L20 20 L25 15 L30 20 L35 15 L40 20" stroke="white" stroke-width="3" fill="none"/>
+  </g>
+</svg>

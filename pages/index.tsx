@@ -6,9 +6,10 @@ const Home = () => {
   return (
     <>
       <Head>
-        <title>Nuestro Pulso - Colombia's Civic Pulse</title>
-        <meta name="description" content="Join civic discussions, debates, and surveys to shape the future of Colombia" />
+        <title>Nuestro Pulso - Construyendo el Futuro de Colombia</title>
+        <meta name="description" content="Join civic discussions, debates, and surveys to shape Colombia's future. Unidos por el mañana - United for tomorrow." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="keywords" content="Colombia, civic engagement, futuro, unity, national pride, democracy" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
