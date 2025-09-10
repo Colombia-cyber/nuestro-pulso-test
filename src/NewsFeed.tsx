@@ -8,7 +8,7 @@ type Article = {
   url: string;
 };
 
-const NEWS_API_KEY = '27aa99ad66064f04b9ef515c312a78eb';
+const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY || '27aa99ad66064f04b9ef515c312a78eb';
 
 const fetchNews = async (params: string) => {
   const res = await fetch(
