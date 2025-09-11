@@ -1,4 +1,5 @@
 import React from 'react';
+import InstantUniversalSearchBar from './InstantUniversalSearchBar';
 
 const HeroSection: React.FC = () => {
   return (
@@ -30,6 +31,13 @@ const HeroSection: React.FC = () => {
             Únete a la conversación nacional. Participa en debates, encuestas y chat en vivo 
             para construir el futuro de Colombia juntos.
           </p>
+          
+          {/* Instant Universal Search Bar */}
+          <div className="mb-8">
+            <InstantUniversalSearchBar 
+              onSearch={(query) => console.log('Buscando:', query)} 
+            />
+          </div>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button className="px-8 py-4 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 font-semibold">
