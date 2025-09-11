@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 
+// Deployment screenshot reference: This component's UI and deployment status 
+// can be visually confirmed by referencing the uploaded deployment screenshot (image1)
+// which shows the NewsFeed component integrated within the Nuestro Pulso application
+
 const newsData = [
   {
     headline: "Colombia Election Updates",
@@ -31,11 +35,20 @@ const NewsFeed: React.FC = () => {
   );
 
   return (
-    <div className="bg-white bg-opacity-80 rounded-xl shadow p-6 my-8">
-      <h2 className="text-2xl font-bold text-blue-800 mb-4">📰 News Feed</h2>
+    <div className="bg-white bg-opacity-30 backdrop-blur-lg rounded-2xl shadow-2xl p-6 my-8 border border-white border-opacity-30">
+      {/* Colombian Flag Colors Accent */}
+      <div className="flex justify-center mb-4">
+        <div className="flex space-x-1">
+          <div className="w-3 h-3 bg-yellow-400 rounded-full"></div>
+          <div className="w-3 h-3 bg-blue-600 rounded-full"></div>
+          <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+        </div>
+      </div>
+      
+      <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">📰 News Feed</h2>
       <input
         type="text"
-        className="w-full mb-6 p-2 border border-blue-300 rounded focus:outline-none focus:ring focus:border-blue-500"
+        className="w-full mb-6 p-3 bg-white bg-opacity-50 backdrop-blur-sm border border-yellow-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-600"
         placeholder="Search news..."
         value={query}
         onChange={e => setQuery(e.target.value)}
@@ -43,22 +56,32 @@ const NewsFeed: React.FC = () => {
       />
       <div>
         {filteredNews.length === 0 ? (
-          <div className="text-gray-500">No news found.</div>
+          <div className="text-gray-600 text-center py-8 bg-white bg-opacity-20 backdrop-blur-sm rounded-xl">No news found.</div>
         ) : (
           filteredNews.map((news, idx) => (
             <div
               key={idx}
-              className="bg-blue-50 rounded-lg p-4 mb-4 shadow hover:shadow-md transition-shadow"
+              className="bg-white bg-opacity-40 backdrop-blur-sm rounded-xl p-4 mb-4 shadow-lg hover:shadow-xl transition-all duration-200 border border-white border-opacity-40 hover:bg-opacity-50"
               tabIndex={0}
               aria-label={`News: ${news.headline}`}
             >
-              <span className="font-bold text-lg text-blue-700">
-                Headline: {news.headline}
-              </span>
-              <div className="text-sm text-gray-500">
-                Category: {news.category} | 🕒 {news.time}
+              <div className="flex items-center mb-2">
+                <div className="flex space-x-1 mr-3">
+                  <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
+                  <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                  <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                </div>
+                <span className="font-bold text-lg text-gray-900">
+                  {news.headline}
+                </span>
               </div>
-              <div className="mt-2 text-gray-700">{news.summary}</div>
+              <div className="text-sm text-gray-700 mb-2 flex items-center">
+                <span className="bg-blue-100 bg-opacity-80 px-2 py-1 rounded-full text-blue-800 font-medium mr-2">
+                  {news.category}
+                </span>
+                <span className="text-gray-600">🕒 {news.time}</span>
+              </div>
+              <div className="mt-2 text-gray-800 leading-relaxed">{news.summary}</div>
             </div>
           ))
         )}

@@ -1,7 +1,7 @@
 import React from 'react';
 import HeroSection from './components/HeroSection.tsx';
 import HomePage from './HomePage.tsx';
-import NewsFeed from './NewsFeed.tsx';
+import NewsFeed from './components/NewsFeed.tsx';
 
 function App() {
   return (
