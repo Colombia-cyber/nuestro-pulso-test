@@ -1,36 +1,41 @@
 import React from 'react';
-import HeroSection from './components/HeroSection.tsx';
-import HomePage from './HomePage.tsx';
-import NewsFeed from './NewsFeed.tsx';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { CivicEngagementProvider } from './context/CivicEngagementContext';
+import Navbar from './components/Navigation';
+import Footer from './components/Footer';
+
+// Pages
+import HomePage from './pages/HomePage';
+import ChatPage from './pages/ChatPage';
+import NewsPage from './pages/NewsPage';
+import LegislationPage from './pages/LegislationPage';
+import CongressPage from './pages/CongressPage';
+import PollsPage from './pages/PollsPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section */}
-      <HeroSection />
-      
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        {/* Home Page Content */}
-        <HomePage />
-        
-        {/* News Feed */}
-        <section className="mt-12">
-          <NewsFeed />
-        </section>
-      </main>
-      
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-8 mt-16">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-lg font-semibold mb-2">🇨🇴 Nuestro Pulso</p>
-          <p className="text-gray-400">Red Cívica de Colombia - Construyendo el futuro juntos</p>
-          <div className="mt-4 text-sm text-gray-500">
-            <p>© 2024 Nuestro Pulso. Todos los derechos reservados.</p>
-          </div>
+    <CivicEngagementProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50">
+          <Navbar />
+          
+          <main>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/chat" element={<ChatPage />} />
+              <Route path="/news" element={<NewsPage />} />
+              <Route path="/legislation" element={<LegislationPage />} />
+              <Route path="/congress" element={<CongressPage />} />
+              <Route path="/polls" element={<PollsPage />} />
+              <Route path="/analytics" element={<AnalyticsPage />} />
+            </Routes>
+          </main>
+          
+          <Footer />
         </div>
-      </footer>
-    </div>
+      </Router>
+    </CivicEngagementProvider>
   );
 }
 

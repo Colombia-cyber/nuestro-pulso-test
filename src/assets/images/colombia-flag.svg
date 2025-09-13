@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600">
+  <!-- Colombian Flag -->
+  <rect width="900" height="300" fill="#FFD700"/>
+  <rect y="300" width="900" height="150" fill="#0033CC"/>
+  <rect y="450" width="900" height="150" fill="#CC0000"/>
+</svg>

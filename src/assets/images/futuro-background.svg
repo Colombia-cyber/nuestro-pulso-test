@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <!-- Futuro Background with Colombian Mountains and Sky -->
+  <defs>
+    <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#FFD700;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#FFA500;stop-opacity:0.6" />
+    </linearGradient>
+    <linearGradient id="mountainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#228B22;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#006400;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Sky -->
+  <rect width="1200" height="800" fill="url(#skyGradient)"/>
+  
+  <!-- Mountains -->
+  <path d="M0 500 L200 300 L400 400 L600 250 L800 350 L1000 200 L1200 300 L1200 800 L0 800 Z" 
+        fill="url(#mountainGradient)"/>
+  
+  <!-- Coffee plants (abstract) -->
+  <circle cx="150" cy="450" r="30" fill="#228B22" opacity="0.7"/>
+  <circle cx="350" cy="480" r="25" fill="#228B22" opacity="0.7"/>
+  <circle cx="650" cy="420" r="35" fill="#228B22" opacity="0.7"/>
+  <circle cx="950" cy="400" r="28" fill="#228B22" opacity="0.7"/>
+  
+  <!-- City silhouette -->
+  <rect x="100" y="580" width="20" height="80" fill="#2F4F4F" opacity="0.8"/>
+  <rect x="130" y="560" width="25" height="100" fill="#2F4F4F" opacity="0.8"/>
+  <rect x="160" y="570" width="18" height="90" fill="#2F4F4F" opacity="0.8"/>
+  <rect x="900" y="550" width="22" height="110" fill="#2F4F4F" opacity="0.8"/>
+  <rect x="930" y="570" width="28" height="90" fill="#2F4F4F" opacity="0.8"/>
+  
+  <!-- Sun -->
+  <circle cx="1000" cy="150" r="50" fill="#FFD700" opacity="0.8"/>
+  
+  <!-- Clouds -->
+  <ellipse cx="300" cy="120" rx="60" ry="30" fill="white" opacity="0.7"/>
+  <ellipse cx="700" cy="100" rx="80" ry="40" fill="white" opacity="0.6"/>
+  
+  <!-- FUTURO text overlay -->
+  <text x="600" y="400" font-family="Arial, sans-serif" font-size="120" font-weight="bold" 
+        text-anchor="middle" fill="white" opacity="0.9" stroke="#FFD700" stroke-width="2">
+    FUTURO
+  </text>
+</svg>
