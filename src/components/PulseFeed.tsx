@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   FaHeart, FaComment, FaShare, FaUser, FaCalendarAlt, 
-  FaHashtag, FaImage, FaVideo, FaNewspaper, FaPin 
+  FaHashtag, FaImage, FaVideo, FaNewspaper, FaThumbtack 
 } from 'react-icons/fa';
 
 interface FeedItem {
@@ -232,7 +232,7 @@ const PulseFeed: React.FC = () => {
                         <span className="text-blue-500">✓</span>
                       )}
                       {item.isPinned && (
-                        <FaPin className="text-orange-500 w-3 h-3" />
+                        <FaThumbtack className="text-orange-500 w-3 h-3" />
                       )}
                       {item.isFeatured && (
                         <span className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded-full">
