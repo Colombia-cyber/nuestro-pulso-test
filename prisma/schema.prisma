@@ -1,0 +1,601 @@
+// Nuestro Pulso: Colombia's Civic Intelligence Platform
+// Unified Prisma Schema for all flagship civic-tech modules
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User Management
+model User {
+  id              String   @id @default(cuid())
+  email           String   @unique
+  username        String   @unique
+  displayName     String?
+  avatar          String?
+  bio             String?
+  location        String?
+  verified        Boolean  @default(false)
+  role            UserRole @default(CITIZEN)
+  isActive        Boolean  @default(true)
+  lastSeen        DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Authentication
+  firebaseUid     String?  @unique
+  emailVerified   Boolean  @default(false)
+
+  // Relationships
+  posts           Post[]
+  comments        Comment[]
+  reels           Reel[]
+  messages        Message[]
+  sentRequests    FriendRequest[] @relation("Requester")
+  receivedRequests FriendRequest[] @relation("Recipient")
+  
+  // Incident Reporting
+  reportedIncidents Incident[] @relation("Reporter")
+  assignedIncidents Incident[] @relation("Assignee")
+  alerts          Alert[]
+  
+  // Congress & Elections
+  congressFeedItems CongressFeed[]
+  billVotes       BillVote[]
+  pollResponses   PollResponse[]
+  electionVotes   ElectionVote[]
+  
+  // Marketplace & Civic Assistant
+  marketplaceItems MarketplaceItem[]
+  civicQueries    CivicAssistantQuery[]
+  
+  @@map("users")
+}
+
+enum UserRole {
+  CITIZEN
+  MODERATOR
+  OFFICIAL
+  ADMIN
+  JOURNALIST
+}
+
+// Friend System
+model FriendRequest {
+  id          String             @id @default(cuid())
+  requesterId String
+  recipientId String
+  status      FriendRequestStatus @default(PENDING)
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  requester   User @relation("Requester", fields: [requesterId], references: [id], onDelete: Cascade)
+  recipient   User @relation("Recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+
+  @@unique([requesterId, recipientId])
+  @@map("friend_requests")
+}
+
+enum FriendRequestStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+// Messaging System
+model Message {
+  id         String    @id @default(cuid())
+  content    String
+  senderId   String
+  receiverId String
+  isRead     Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  sender     User @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User @relation(fields: [receiverId], references: [id], name: "ReceivedMessages")
+
+  @@map("messages")
+}
+
+// Content System
+model Post {
+  id          String   @id @default(cuid())
+  content     String
+  imageUrl    String?
+  authorId    String
+  categoryId  String?
+  isPublic    Boolean  @default(true)
+  isPinned    Boolean  @default(false)
+  likesCount  Int      @default(0)
+  sharesCount Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author      User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category    PostCategory? @relation(fields: [categoryId], references: [id])
+  comments    Comment[]
+  tags        PostTag[]
+
+  @@map("posts")
+}
+
+model PostCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  color       String?
+  icon        String?
+  createdAt   DateTime @default(now())
+
+  posts       Post[]
+
+  @@map("post_categories")
+}
+
+model PostTag {
+  id     String @id @default(cuid())
+  postId String
+  tag    String
+
+  post   Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, tag])
+  @@map("post_tags")
+}
+
+model Comment {
+  id          String   @id @default(cuid())
+  content     String
+  authorId    String
+  postId      String
+  parentId    String?
+  likesCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author      User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post        Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  parent      Comment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies     Comment[] @relation("CommentReplies")
+
+  @@map("comments")
+}
+
+// Reels System
+model Reel {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  videoUrl    String
+  thumbnailUrl String?
+  duration    Int      // in seconds
+  authorId    String
+  categoryId  String?
+  viewsCount  Int      @default(0)
+  likesCount  Int      @default(0)
+  sharesCount Int      @default(0)
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author      User @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  category    ReelCategory? @relation(fields: [categoryId], references: [id])
+  tags        ReelTag[]
+
+  @@map("reels")
+}
+
+model ReelCategory {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  description String?
+  color       String?
+  icon        String?
+  createdAt   DateTime @default(now())
+
+  reels       Reel[]
+
+  @@map("reel_categories")
+}
+
+model ReelTag {
+  id     String @id @default(cuid())
+  reelId String
+  tag    String
+
+  reel   Reel @relation(fields: [reelId], references: [id], onDelete: Cascade)
+
+  @@unique([reelId, tag])
+  @@map("reel_tags")
+}
+
+// News Topics System
+model NewsTopic {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  content     String
+  imageUrl    String?
+  sourceUrl   String?
+  category    String?
+  author      String?
+  publishedAt DateTime?
+  isPublished Boolean  @default(true)
+  isFeatured  Boolean  @default(false)
+  viewsCount  Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  tags        NewsTopicTag[]
+
+  @@map("news_topics")
+}
+
+model NewsTopicTag {
+  id          String @id @default(cuid())
+  newsTopicId String
+  tag         String
+
+  newsTopic   NewsTopic @relation(fields: [newsTopicId], references: [id], onDelete: Cascade)
+
+  @@unique([newsTopicId, tag])
+  @@map("news_topic_tags")
+}
+
+// Incident Reporting System
+model Incident {
+  id           String        @id @default(cuid())
+  title        String
+  description  String
+  type         IncidentType
+  severity     IncidentSeverity @default(MEDIUM)
+  status       IncidentStatus @default(REPORTED)
+  location     String?
+  latitude     Float?
+  longitude    Float?
+  imageUrl     String?
+  reporterId   String
+  assigneeId   String?
+  resolution   String?
+  resolvedAt   DateTime?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  reporter     User @relation("Reporter", fields: [reporterId], references: [id])
+  assignee     User? @relation("Assignee", fields: [assigneeId], references: [id])
+  alerts       Alert[]
+
+  @@map("incidents")
+}
+
+enum IncidentType {
+  INFRASTRUCTURE
+  SECURITY
+  ENVIRONMENT
+  CORRUPTION
+  SERVICE_FAILURE
+  OTHER
+}
+
+enum IncidentSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum IncidentStatus {
+  REPORTED
+  INVESTIGATING
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+// Alert System
+model Alert {
+  id          String     @id @default(cuid())
+  title       String
+  message     String
+  type        AlertType
+  severity    AlertSeverity @default(MEDIUM)
+  isActive    Boolean    @default(true)
+  location    String?
+  expiresAt   DateTime?
+  userId      String?
+  incidentId  String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  user        User? @relation(fields: [userId], references: [id])
+  incident    Incident? @relation(fields: [incidentId], references: [id])
+
+  @@map("alerts")
+}
+
+enum AlertType {
+  EMERGENCY
+  WEATHER
+  TRAFFIC
+  SECURITY
+  EVENT
+  MAINTENANCE
+  GENERAL
+}
+
+enum AlertSeverity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// Congress Tracking System
+model CongressFeed {
+  id          String   @id @default(cuid())
+  title       String
+  content     String
+  type        CongressType
+  sessionDate DateTime?
+  chamber     Chamber?
+  status      CongressStatus @default(ACTIVE)
+  authorId    String?
+  sourceUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  author      User? @relation(fields: [authorId], references: [id])
+  bills       Bill[]
+
+  @@map("congress_feed")
+}
+
+enum CongressType {
+  SESSION
+  DEBATE
+  VOTE
+  COMMITTEE
+  ANNOUNCEMENT
+}
+
+enum Chamber {
+  SENATE
+  HOUSE
+  BOTH
+}
+
+enum CongressStatus {
+  ACTIVE
+  COMPLETED
+  CANCELLED
+  POSTPONED
+}
+
+// Bill Tracking
+model Bill {
+  id              String     @id @default(cuid())
+  number          String     @unique
+  title           String
+  description     String
+  fullText        String?
+  status          BillStatus @default(INTRODUCED)
+  chamber         Chamber
+  introducedDate  DateTime
+  lastActionDate  DateTime?
+  congressFeedId  String?
+  sourceUrl       String?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  congressFeed    CongressFeed? @relation(fields: [congressFeedId], references: [id])
+  votes           BillVote[]
+
+  @@map("bills")
+}
+
+enum BillStatus {
+  INTRODUCED
+  COMMITTEE
+  PASSED_CHAMBER
+  SENT_OTHER_CHAMBER
+  PASSED_CONGRESS
+  SIGNED
+  VETOED
+  FAILED
+}
+
+model BillVote {
+  id       String   @id @default(cuid())
+  billId   String
+  userId   String
+  vote     VoteType
+  createdAt DateTime @default(now())
+
+  bill     Bill @relation(fields: [billId], references: [id], onDelete: Cascade)
+  user     User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([billId, userId])
+  @@map("bill_votes")
+}
+
+enum VoteType {
+  YES
+  NO
+  ABSTAIN
+}
+
+// Polling System
+model Poll {
+  id          String     @id @default(cuid())
+  question    String
+  description String?
+  type        PollType   @default(SINGLE_CHOICE)
+  isActive    Boolean    @default(true)
+  isPublic    Boolean    @default(true)
+  startDate   DateTime   @default(now())
+  endDate     DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  options     PollOption[]
+  responses   PollResponse[]
+
+  @@map("polls")
+}
+
+enum PollType {
+  SINGLE_CHOICE
+  MULTIPLE_CHOICE
+  RATING_SCALE
+  TEXT_RESPONSE
+}
+
+model PollOption {
+  id       String @id @default(cuid())
+  pollId   String
+  text     String
+  order    Int    @default(0)
+
+  poll     Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  responses PollResponse[]
+
+  @@map("poll_options")
+}
+
+model PollResponse {
+  id         String   @id @default(cuid())
+  pollId     String
+  optionId   String?
+  userId     String
+  textResponse String?
+  ratingValue  Int?
+  createdAt  DateTime @default(now())
+
+  poll       Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  option     PollOption? @relation(fields: [optionId], references: [id])
+  user       User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, userId])
+  @@map("poll_responses")
+}
+
+// Election System
+model Election {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  type        ElectionType
+  startDate   DateTime
+  endDate     DateTime
+  isActive    Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  candidates  Candidate[]
+  votes       ElectionVote[]
+
+  @@map("elections")
+}
+
+enum ElectionType {
+  PRESIDENTIAL
+  CONGRESSIONAL
+  MUNICIPAL
+  REGIONAL
+  REFERENDUM
+}
+
+model Candidate {
+  id          String   @id @default(cuid())
+  name        String
+  bio         String?
+  imageUrl    String?
+  party       String?
+  platform    String?
+  electionId  String
+  createdAt   DateTime @default(now())
+
+  election    Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  votes       ElectionVote[]
+
+  @@map("candidates")
+}
+
+model ElectionVote {
+  id          String   @id @default(cuid())
+  electionId  String
+  candidateId String
+  userId      String
+  createdAt   DateTime @default(now())
+
+  election    Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  candidate   Candidate @relation(fields: [candidateId], references: [id], onDelete: Cascade)
+  user        User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([electionId, userId])
+  @@map("election_votes")
+}
+
+// Marketplace System
+model MarketplaceItem {
+  id          String           @id @default(cuid())
+  title       String
+  description String
+  price       Decimal?
+  currency    String           @default("COP")
+  type        MarketplaceType
+  category    String?
+  location    String?
+  imageUrls   String[]
+  contactInfo String?
+  isActive    Boolean          @default(true)
+  sellerId    String
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  seller      User @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@map("marketplace_items")
+}
+
+enum MarketplaceType {
+  PRODUCT
+  SERVICE
+  JOB
+  HOUSING
+  VEHICLE
+  OTHER
+}
+
+// Civic Assistant System
+model CivicAssistantQuery {
+  id          String             @id @default(cuid())
+  query       String
+  response    String?
+  category    QueryCategory?
+  isResolved  Boolean            @default(false)
+  isPublic    Boolean            @default(false)
+  userId      String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+
+  user        User? @relation(fields: [userId], references: [id])
+
+  @@map("civic_assistant_queries")
+}
+
+enum QueryCategory {
+  LEGAL
+  HEALTHCARE
+  EDUCATION
+  TRANSPORTATION
+  HOUSING
+  EMPLOYMENT
+  GOVERNMENT_SERVICES
+  OTHER
+}
