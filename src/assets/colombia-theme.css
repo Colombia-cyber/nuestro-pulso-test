@@ -1,0 +1,72 @@
+/* Colombian Flag Theme CSS Variables */
+:root {
+  /* Colombian Flag Colors */
+  --colombia-yellow: #FDE047;
+  --colombia-blue: #1D4ED8; 
+  --colombia-red: #DC2626;
+  
+  /* Extended Colombian Theme Palette */
+  --colombia-yellow-light: #FEF3C7;
+  --colombia-yellow-dark: #D97706;
+  --colombia-blue-light: #DBEAFE;
+  --colombia-blue-dark: #1E3A8A;
+  --colombia-red-light: #FEE2E2;
+  --colombia-red-dark: #991B1B;
+  
+  /* Colombian Eagle/Condor Theme */
+  --colombia-gold: #F59E0B;
+  --colombia-emerald: #059669;
+  
+  /* Background gradients */
+  --colombia-flag-gradient: linear-gradient(to bottom, var(--colombia-yellow) 50%, var(--colombia-blue) 50%, var(--colombia-blue) 75%, var(--colombia-red) 75%);
+  --colombia-hero-gradient: linear-gradient(135deg, var(--colombia-yellow-light) 0%, var(--colombia-blue-light) 50%, var(--colombia-red-light) 100%);
+}
+
+/* Colombian Flag Background Pattern */
+.colombia-flag-bg {
+  background: var(--colombia-flag-gradient);
+  position: relative;
+}
+
+.colombia-flag-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* Colombian Eagle/Condor themed background */
+.colombia-hero-bg {
+  background: var(--colombia-hero-gradient);
+  position: relative;
+  overflow: hidden;
+}
+
+.colombia-hero-bg::before {
+  content: '🦅';
+  position: absolute;
+  font-size: 200px;
+  opacity: 0.05;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Colombia themed text styles */
+.colombia-text-primary {
+  color: var(--colombia-blue);
+}
+
+.colombia-text-accent {
+  color: var(--colombia-red);
+}
+
+.colombia-text-highlight {
+  color: var(--colombia-yellow-dark);
+}
