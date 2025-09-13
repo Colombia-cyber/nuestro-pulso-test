@@ -2,9 +2,18 @@ import React from 'react';
 
 const HeroSection: React.FC = () => {
   return (
-    <div className="relative bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 min-h-screen flex items-center justify-center">
-      {/* Glass morphism overlay */}
-      <div className="absolute inset-0 bg-white bg-opacity-20 backdrop-blur-lg"></div>
+    <div 
+      className="relative min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
+      style={{
+        // Background image featuring hopeful Colombian landscape with flag elements
+        // Located in /public/colombia-background.svg - optimized for text overlays
+        backgroundImage: `url('/colombia-background.svg')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+      }}
+    >
+      {/* Overlay for better text readability while maintaining hopeful theme */}
+      <div className="absolute inset-0 bg-white bg-opacity-25 backdrop-blur-sm"></div>
       
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">

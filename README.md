@@ -72,11 +72,19 @@ npm run preview
 
 ## 🎨 Diseño y UX
 
+- **Background Image**: Hero section con imagen de fondo que incorpora tema esperanzador y elementos de la bandera colombiana, con espacio abierto adecuado para superposiciones de texto
 - **Glass Morphism**: Diseño moderno con efectos de vidrio esmerilado
 - **Colores Patrióticos**: Paleta basada en la bandera colombiana
 - **Responsive**: Optimizado para móviles, tablets y desktop
 - **Accesibilidad**: Cumple estándares WCAG para inclusión
 - **Performance**: Carga rápida con code splitting automático
+
+### Background Assets
+La imagen de fondo principal se encuentra en `/public/colombia-background.svg` y presenta:
+- Paisaje montañoso con cielo esperanzador
+- Elementos sutiles de la bandera colombiana
+- Área central despejada para contenido de texto
+- Diseño optimizado para diferentes tamaños de pantalla
 
 ## 📦 Scripts Disponibles
 

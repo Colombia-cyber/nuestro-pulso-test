@@ -1,0 +1,43 @@
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Sky gradient background -->
+  <defs>
+    <radialGradient id="skyGradient" cx="50%" cy="20%" r="80%">
+      <stop offset="0%" style="stop-color:#87CEEB"/>
+      <stop offset="100%" style="stop-color:#4A90E2"/>
+    </radialGradient>
+    <linearGradient id="mountainGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#2D5016"/>
+      <stop offset="100%" style="stop-color:#1A3009"/>
+    </linearGradient>
+    <linearGradient id="sunGradient" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#FFD700"/>
+      <stop offset="100%" style="stop-color:#FFA500"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Sky background -->
+  <rect width="1920" height="1080" fill="url(#skyGradient)"/>
+  
+  <!-- Sun -->
+  <circle cx="300" cy="200" r="80" fill="url(#sunGradient)" opacity="0.8"/>
+  
+  <!-- Mountains in background -->
+  <path d="M0 600 Q480 400 960 500 Q1440 600 1920 450 L1920 1080 L0 1080 Z" fill="url(#mountainGradient)" opacity="0.6"/>
+  <path d="M0 700 Q320 550 640 600 Q1280 650 1920 580 L1920 1080 L0 1080 Z" fill="url(#mountainGradient)" opacity="0.4"/>
+  
+  <!-- Subtle Colombian flag elements -->
+  <rect x="1700" y="100" width="200" height="133" fill="#FDE047" opacity="0.3"/>
+  <rect x="1700" y="233" width="200" height="133" fill="#3B82F6" opacity="0.3"/>
+  <rect x="1700" y="366" width="200" height="133" fill="#EF4444" opacity="0.3"/>
+  
+  <!-- Decorative elements representing hope and progress -->
+  <g opacity="0.2">
+    <!-- Rising birds -->
+    <path d="M100 400 Q120 380 140 400 Q160 380 180 400" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+    <path d="M150 420 Q170 400 190 420 Q210 400 230 420" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+    <path d="M200 440 Q220 420 240 440 Q260 420 280 440" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+  </g>
+  
+  <!-- Central area kept clear for text overlay -->
+  <rect x="480" y="300" width="960" height="480" fill="rgba(255,255,255,0.1)" rx="20" opacity="0.3"/>
+</svg>
