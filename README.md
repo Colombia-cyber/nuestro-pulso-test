@@ -4,27 +4,76 @@
 
 Una aplicación web moderna construida con React, Vite, TypeScript y Tailwind CSS que permite a los ciudadanos colombianos participar en debates, encuestas, chat en vivo y seguir la actividad política nacional.
 
-![Nuestro Pulso Screenshot](https://github.com/user-attachments/assets/e564ca66-8499-47f6-8b89-469474232f7f)
+## 🚀 Características Principales
 
-## 🚀 Características
+### 🏠 **Landing Page Responsiva**
+- Hero section con bandera colombiana y tema "Futuro"
+- Estadísticas de participación ciudadana en tiempo real
+- Call-to-action para registro y participación
+- Diseño móvil-first con utilidades de Tailwind CSS
 
-- **🗨️ Chat en Vivo**: Conversaciones en tiempo real sobre temas de interés nacional
-- **🗣️ Debates**: Debates estructurados sobre políticas públicas
-- **📊 Encuestas**: Sistema de votación y encuestas ciudadanas
-- **🏛️ Seguimiento del Congreso**: Actividad legislativa en tiempo real
-- **📈 Centro Electoral**: Información electoral actualizada
-- **📰 Noticias**: Feed de noticias políticas nacionales e internacionales
-- **🔥 Firebase Integration**: Autenticación y análisis
-- **📱 PWA Ready**: Aplicación web progresiva optimizada
+### 📊 **Dashboard de Participación Cívica**
+- **💬 Chat en Vivo**: Salas de conversación por temas (Política, Educación, Salud, etc.)
+- **📰 Noticias Verificadas**: Feed de noticias con categorización y trending topics
+- **📜 Seguimiento Legislativo**: Monitor de proyectos de ley y proceso legislativo
+- **🏛️ Monitor del Congreso**: Actividad de congresistas y métricas de rendimiento
+- **📊 Encuestas Ciudadanas**: Votaciones en tiempo real con resultados visuales
+- **📈 Analíticas Públicas**: Datos y tendencias de participación por región
+
+### 🎨 **Tema Colombiano**
+- Paleta de colores de la bandera (amarillo, azul, rojo)
+- Iconografía patriótica (águila, bandera, símbolos nacionales)
+- Fondo "Futuro" con paisajes colombianos
+- Elementos visuales representativos
 
 ## 🛠️ Stack Tecnológico
 
 - **Frontend**: React 18 + TypeScript + Vite
-- **Styling**: Tailwind CSS con glass-morphism design
+- **Styling**: Tailwind CSS con diseño mobile-first
+- **Routing**: React Router v6 para navegación SPA
+- **Iconos**: React Icons (Feather Icons)
 - **Backend**: Firebase (Auth, Analytics)
-- **APIs**: News API para noticias en tiempo real
 - **Build**: Vite con optimizaciones de producción
 - **Linting**: ESLint + TypeScript
+
+## 📁 Estructura del Proyecto
+
+```
+src/
+├── assets/
+│   └── images/
+│       ├── colombia-flag.svg
+│       ├── colombia-eagle.svg
+│       └── futuro-background.svg
+├── components/
+│   ├── Navigation.tsx
+│   ├── Footer.tsx
+│   └── [otros componentes globales]
+├── features/
+│   ├── news/
+│   │   └── NewsCard.tsx
+│   ├── polls/
+│   │   └── PollCard.tsx
+│   ├── congress/
+│   ├── legislation/
+│   ├── analytics/
+│   └── chat/
+├── pages/
+│   ├── HomePage.tsx
+│   ├── ChatPage.tsx
+│   ├── NewsPage.tsx
+│   ├── LegislationPage.tsx
+│   ├── CongressPage.tsx
+│   ├── PollsPage.tsx
+│   └── AnalyticsPage.tsx
+├── context/
+│   └── CivicEngagementContext.tsx
+├── hooks/
+│   └── index.ts
+├── utils/
+│   └── index.ts
+└── App.jsx
+```
 
 ## 🏃‍♂️ Inicio Rápido
 
@@ -51,7 +100,6 @@ cp .env.example .env
 VITE_FIREBASE_API_KEY=tu_api_key_aqui
 VITE_FIREBASE_AUTH_DOMAIN=tu_proyecto.firebaseapp.com
 VITE_FIREBASE_PROJECT_ID=tu_proyecto_id
-VITE_NEWS_API_KEY=tu_news_api_key_aqui
 ```
 
 ### 3. Desarrollo
@@ -70,32 +118,68 @@ npm run build
 npm run preview
 ```
 
+## 🎯 Rutas de Navegación
+
+- `/` - Landing page principal con hero y features
+- `/chat` - Salas de chat en tiempo real por temas
+- `/news` - Noticias verificadas con categorización
+- `/legislation` - Seguimiento de proyectos de ley
+- `/congress` - Monitor de actividad del congreso
+- `/polls` - Encuestas ciudadanas activas
+- `/analytics` - Dashboard de analíticas públicas
+
+## 🧪 Testing
+
+### Testing Manual
+1. **Landing Page**: Verificar hero section, stats, y call-to-action
+2. **Navegación**: Probar todas las rutas y navegación móvil
+3. **Responsive**: Validar diseño en móvil, tablet y desktop
+4. **Interacciones**: Probar encuestas, chat, y filtros de noticias
+5. **Performance**: Verificar tiempos de carga y optimizaciones
+
+### Comandos de Testing
+```bash
+# Verificar build sin errores
+npm run build
+
+# Linting de código
+npm run lint
+
+# Validar TypeScript
+npx tsc --noEmit
+
+# Servidor de desarrollo para testing manual
+npm run dev
+```
+
 ## 🎨 Diseño y UX
 
-- **Glass Morphism**: Diseño moderno con efectos de vidrio esmerilado
-- **Colores Patrióticos**: Paleta basada en la bandera colombiana
-- **Responsive**: Optimizado para móviles, tablets y desktop
-- **Accesibilidad**: Cumple estándares WCAG para inclusión
-- **Performance**: Carga rápida con code splitting automático
+- **Mobile-First**: Diseño responsivo que prioriza experiencia móvil
+- **Colores Patrióticos**: Paleta basada en la bandera colombiana (FFD700, 0033CC, CC0000)
+- **Glassmorphism**: Efectos de vidrio esmerilado para modernidad
+- **Accesibilidad**: Contrastes adecuados y navegación por teclado
+- **Performance**: Lazy loading y code splitting automático
 
 ## 📦 Scripts Disponibles
 
-- `npm run dev` - Servidor de desarrollo
-- `npm run build` - Build de producción  
-- `npm run preview` - Vista previa del build
-- `npm run lint` - Linting con ESLint
+- `npm run dev` - Servidor de desarrollo con hot reload
+- `npm run build` - Build optimizado para producción  
+- `npm run preview` - Vista previa del build de producción
+- `npm run lint` - Linting con ESLint y TypeScript
 
-## 🔧 Configuración
+## 🔧 Configuración Avanzada
 
 ### Firebase Setup
 1. Crear proyecto en [Firebase Console](https://console.firebase.google.com)
 2. Habilitar Authentication y Analytics
-3. Copiar configuración al archivo `.env`
+3. Configurar dominio en Auth settings
+4. Copiar configuración al archivo `.env`
 
-### News API Setup
-1. Registrarse en [NewsAPI.org](https://newsapi.org)
-2. Obtener API key gratuita
-3. Agregar `VITE_NEWS_API_KEY` al archivo `.env`
+### Vercel Deployment
+El proyecto está configurado para despliegue automático en Vercel:
+- Build command: `npm run build`
+- Output directory: `dist`
+- Node.js version: 18.x
 
 ## 🤝 Contribución
 
@@ -103,9 +187,17 @@ npm run preview
 
 1. Fork del proyecto
 2. Crear rama feature (`git checkout -b feature/nueva-funcionalidad`)
-3. Commit cambios (`git commit -m 'Agregar nueva funcionalidad'`)
-4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
-5. Abrir Pull Request
+3. Seguir estructura de carpetas establecida
+4. Commit cambios (`git commit -m 'feat: agregar nueva funcionalidad'`)
+5. Push a la rama (`git push origin feature/nueva-funcionalidad`)
+6. Abrir Pull Request
+
+### Estándares de Código
+- Usar TypeScript para todos los componentes nuevos
+- Seguir convenciones de nombres establecidas
+- Componentes funcionales con hooks
+- Clases de Tailwind CSS para styling
+- Props tipadas con interfaces
 
 ## 📄 Licencia
 
