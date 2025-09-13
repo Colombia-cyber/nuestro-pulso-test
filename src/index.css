@@ -34,6 +34,27 @@ body {
   .transition-all-smooth {
     @apply transition-all duration-300 ease-in-out;
   }
+  
+  /* Performance optimization for INP */
+  .btn-optimized {
+    @apply transform-gpu;
+    will-change: transform, opacity;
+  }
+  
+  .btn-optimized:hover {
+    @apply scale-105;
+  }
+  
+  .btn-optimized:active {
+    @apply scale-95;
+    transition-duration: 0.1s;
+  }
+  
+  /* Optimized scrolling */
+  .scroll-optimized {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
 }
 
 /* Reduce motion for users who prefer it */
@@ -46,4 +67,19 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+  
+  .btn-optimized:hover,
+  .btn-optimized:active {
+    transform: none !important;
+  }
+}
+
+/* Performance improvements for large lists */
+.virtual-scroll {
+  contain: layout style paint;
+}
+
+/* Better focus indicators for accessibility */
+.focus-ring:focus-visible {
+  @apply ring-2 ring-blue-500 ring-offset-2 outline-none;
 }
