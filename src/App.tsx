@@ -1,14 +1,28 @@
 import React from "react";
 import Navbar from "./components/Navbar";
-import GoogleWebSearchBar from "./components/GoogleWebSearchBar";
+import HeroSection from "./components/HeroSection";
+import CivicModulesGrid from "./components/CivicModulesGrid";
+import NewsFeed from "./components/NewsFeed";
+import Footer from "./components/Footer";
+import OnboardingTour from "./components/OnboardingTour";
 
 function App() {
   return (
-    <div>
+    <div className="min-h-screen bg-colombia-gradient">
       <Navbar />
-      {/* Universal fallback: visible on all routes */}
-      <GoogleWebSearchBar />
-      {/* ...rest of your app, routes, sections... */}
+      <OnboardingTour />
+      
+      {/* Hero Section */}
+      <HeroSection />
+      
+      {/* Civic Modules */}
+      <CivicModulesGrid />
+      
+      {/* News Feed */}
+      <NewsFeed />
+      
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
