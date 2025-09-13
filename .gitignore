@@ -14,6 +14,9 @@ build/
 .env.test.local
 .env.production.local
 
+# Server data files
+server/data/
+
 # IDE/Editor files
 .vscode/
 .idea/
