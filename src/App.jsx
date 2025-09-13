@@ -79,15 +79,30 @@ function App() {
   return (
     <AuthProvider>
       <div className="min-h-screen bg-gray-50">
+        {/* Skip Link for Accessibility */}
+        <a 
+          href="#main-content" 
+          className="skip-link focus-ring"
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              const main = document.getElementById('main-content');
+              main?.focus();
+            }
+          }}
+        >
+          Saltar al contenido principal
+        </a>
+
         <Navigation activeModule={activeModule} setActiveModule={setActiveModule} />
         
         {/* Main Content with top padding for fixed navigation */}
-        <div className="pt-16">
+        <div id="main-content" tabIndex={-1} className="pt-16">
           {renderActiveModule()}
         </div>
         
         {/* Footer */}
-        <footer className="bg-gray-800 text-white py-8 mt-16">
+        <footer className="bg-gray-800 text-white py-8 mt-16" role="contentinfo">
           <div className="container mx-auto px-4 text-center">
             <p className="text-lg font-semibold mb-2">🇨🇴 Nuestro Pulso</p>
             <p className="text-gray-400">Red Cívica de Colombia - Construyendo el futuro juntos</p>

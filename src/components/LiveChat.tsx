@@ -59,22 +59,27 @@ const LiveChat: React.FC = () => {
           {/* Message Input */}
           <div className="p-4">
             <div className="flex space-x-3">
+              <label htmlFor="chat-input" className="sr-only">Mensaje de chat</label>
               <input
+                id="chat-input"
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
                 placeholder="Comparte tu opinión cívica responsablemente..."
                 className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                aria-describedby="chat-guidelines"
               />
               <button
                 onClick={sendMessage}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                aria-label="Enviar mensaje"
+                disabled={!newMessage.trim()}
               >
                 Enviar
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-2">
+            <p id="chat-guidelines" className="text-xs text-gray-500 mt-2">
               Recordatorio: Mantén un diálogo respetuoso y constructivo sobre temas cívicos
             </p>
           </div>
