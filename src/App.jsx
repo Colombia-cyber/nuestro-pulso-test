@@ -1,7 +1,7 @@
 import React from 'react';
 import HeroSection from './components/HeroSection.tsx';
 import HomePage from './HomePage.tsx';
-import NewsFeed from './NewsFeed.tsx';
+import News from './components/News.tsx';
 
 function App() {
   return (
@@ -14,9 +14,9 @@ function App() {
         {/* Home Page Content */}
         <HomePage />
         
-        {/* News Feed */}
+        {/* Enhanced News Section */}
         <section className="mt-12">
-          <NewsFeed />
+          <News />
         </section>
       </main>
       
