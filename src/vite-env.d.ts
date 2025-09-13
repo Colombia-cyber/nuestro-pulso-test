@@ -10,7 +10,3 @@ interface ImportMetaEnv {
   readonly VITE_FIREBASE_MEASUREMENT_ID: string
   readonly VITE_NEWS_API_KEY: string
 }
-
-interface ImportMeta {
-  readonly env: ImportMetaEnv
-}

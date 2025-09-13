@@ -91,7 +91,7 @@ const GoogleWebSearchBar: React.FC = () => {
         {results.length === 0 && query && !loading && <div>No se encontraron resultados en Google.</div>}
         {results.length > 0 && (
           <ul style={{listStyle: 'none', padding: 0}}>
-            {results.map((item, idx) => (
+            {results.map((item) => (
               <li key={item.link} style={{
                 background: '#fafafa',
                 borderRadius: '10px',
