@@ -5,16 +5,16 @@ import GoogleWebSearchBar from "./components/GoogleWebSearchBar";
 import HomePage from "./HomePage";
 import EnhancedNewsFeed from "./components/EnhancedNewsFeed";
 import EnhancedLiveChat from "./components/EnhancedLiveChat";
-import Debate from "./components/Debate";
+import EnhancedDebate from "./components/EnhancedDebate";
 import EnhancedSurvey from "./components/EnhancedSurvey";
-import PulseReels from "./components/PulseReels";
+import EnhancedPulseReels from "./components/EnhancedPulseReels";
 import Marketplace from "./components/Marketplace";
 import ElectionHub from "./components/ElectionHub";
 import CongressTracker from "./components/CongressTracker";
 import Comments from "./components/Comments";
 import Care from "./components/Care";
 import Alerts from "./components/Alerts";
-import CopilotAssistant from "./components/CopilotAssistant";
+import EnhancedCopilotAssistant from "./components/EnhancedCopilotAssistant";
 
 // Error Boundary Component
 class AppErrorBoundary extends React.Component<
@@ -72,11 +72,11 @@ function App() {
       case 'chat':
         return <EnhancedLiveChat />;
       case 'debate':
-        return <Debate />;
+        return <EnhancedDebate />;
       case 'survey':
         return <EnhancedSurvey />;
       case 'reels':
-        return <PulseReels />;
+        return <EnhancedPulseReels />;
       case 'marketplace':
         return <Marketplace />;
       case 'search':
@@ -104,7 +104,7 @@ function App() {
       case 'alerts':
         return <Alerts />;
       case 'copilot':
-        return <CopilotAssistant />;
+        return <EnhancedCopilotAssistant />;
       default:
         return <HomePage />;
     }
