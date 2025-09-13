@@ -1,6 +1,8 @@
 import { initializeApp } from "firebase/app";
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 
 // Firebase project configuration using environment variables
 const firebaseConfig = {
@@ -16,6 +18,15 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
+const functions = getFunctions(app);
+
+// Connect to emulators in development
+if (import.meta.env.DEV) {
+  // Uncomment these lines if using Firebase emulators in development
+  // connectFirestoreEmulator(db, 'localhost', 8080);
+  // connectFunctionsEmulator(functions, 'localhost', 5001);
+}
 
 // Initialize Analytics only on client side and when supported
 let analytics = null;
@@ -29,4 +40,4 @@ if (typeof window !== 'undefined') {
   });
 }
 
-export { app, analytics, auth };
+export { app, analytics, auth, db, functions };
