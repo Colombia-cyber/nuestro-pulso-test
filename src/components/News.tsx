@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const News: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState('todas');
 
   const categories = [
@@ -22,6 +24,7 @@ const News: React.FC = () => {
       source: 'Ministerio de Educación',
       time: '2 horas',
       image: '📚',
+      hasVideo: true,
       engagement: { likes: 245, shares: 89, comments: 34 }
     },
     {
@@ -32,6 +35,7 @@ const News: React.FC = () => {
       source: 'Alcaldía de Bogotá',
       time: '4 horas',
       image: '🌱',
+      hasVideo: false,
       engagement: { likes: 189, shares: 67, comments: 28 }
     },
     {
@@ -42,6 +46,7 @@ const News: React.FC = () => {
       source: 'Congreso de la República',
       time: '6 horas',
       image: '🏥',
+      hasVideo: true,
       engagement: { likes: 156, shares: 92, comments: 78 }
     },
     {
@@ -52,6 +57,7 @@ const News: React.FC = () => {
       source: 'Cancillería',
       time: '8 horas',
       image: '🤝',
+      hasVideo: false,
       engagement: { likes: 203, shares: 45, comments: 19 }
     }
   ];
@@ -64,12 +70,37 @@ const News: React.FC = () => {
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto">
         <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 p-6 rounded-lg mb-6">
-          <h1 className="text-3xl font-bold text-white mb-2">📰 Noticias Cívicas</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">📰 Noticias Cívicas & Videos</h1>
           <p className="text-white/90">Mantente informado sobre los temas que afectan a Colombia</p>
           <div className="mt-4 flex items-center space-x-6 text-white/80">
             <span>🔄 Actualizado cada hora</span>
             <span>✅ Fuentes verificadas</span>
             <span>📊 Análisis de impacto cívico</span>
+            <span>🎬 Con videos explicativos</span>
+          </div>
+        </div>
+
+        {/* Quick Access to Video Content */}
+        <div className="bg-purple-50 border-l-4 border-purple-500 p-4 mb-6 rounded-r-lg">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-lg font-semibold text-purple-800 mb-2">🎬 Videos y Reels Cívicos</h3>
+              <p className="text-purple-700">Accede instantáneamente a contenido visual sobre noticias y temas cívicos</p>
+            </div>
+            <div className="flex space-x-3">
+              <button 
+                onClick={() => navigate('/reels')}
+                className="bg-purple-600 text-white px-6 py-3 rounded-lg hover:bg-purple-700 font-semibold"
+              >
+                🎥 Ver Reels
+              </button>
+              <button 
+                onClick={() => navigate('/debates')}
+                className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-semibold"
+              >
+                🔴 Debates en Vivo
+              </button>
+            </div>
           </div>
         </div>
 
@@ -114,7 +145,14 @@ const News: React.FC = () => {
             <div key={article.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
               <div className="p-6">
                 <div className="flex items-start space-x-4">
-                  <div className="text-4xl">{article.image}</div>
+                  <div className="relative">
+                    <div className="text-4xl">{article.image}</div>
+                    {article.hasVideo && (
+                      <div className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">
+                        🎥
+                      </div>
+                    )}
+                  </div>
                   <div className="flex-1">
                     <div className="flex items-center space-x-2 mb-2">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
@@ -128,6 +166,12 @@ const News: React.FC = () => {
                       <span className="text-sm text-gray-500">{article.source}</span>
                       <span className="text-sm text-gray-500">•</span>
                       <span className="text-sm text-gray-500">hace {article.time}</span>
+                      {article.hasVideo && (
+                        <>
+                          <span className="text-sm text-gray-500">•</span>
+                          <span className="text-sm text-purple-600 font-medium">📹 Con video</span>
+                        </>
+                      )}
                     </div>
                     
                     <h3 className="text-xl font-bold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer">
@@ -150,6 +194,15 @@ const News: React.FC = () => {
                           <span>💬</span>
                           <span>{article.engagement.comments}</span>
                         </button>
+                        {article.hasVideo && (
+                          <button 
+                            onClick={() => navigate('/reels')}
+                            className="flex items-center space-x-1 hover:text-red-600 font-medium"
+                          >
+                            <span>🎥</span>
+                            <span>Ver video</span>
+                          </button>
+                        )}
                       </div>
                       <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
                         Leer artículo completo →
@@ -182,6 +235,41 @@ const News: React.FC = () => {
                 {hashtag}
               </span>
             ))}
+          </div>
+        </div>
+
+        {/* Quick Module Access */}
+        <div className="mt-8 bg-gray-50 rounded-lg p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">🚀 Explorar Más Contenido</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <button 
+              onClick={() => navigate('/reels')}
+              className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow text-center"
+            >
+              <div className="text-2xl mb-2">🎬</div>
+              <div className="text-sm font-medium">Pulse Reels</div>
+            </button>
+            <button 
+              onClick={() => navigate('/debates')}
+              className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow text-center"
+            >
+              <div className="text-2xl mb-2">🗣️</div>
+              <div className="text-sm font-medium">Debates en Vivo</div>
+            </button>
+            <button 
+              onClick={() => navigate('/chat')}
+              className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow text-center"
+            >
+              <div className="text-2xl mb-2">💬</div>
+              <div className="text-sm font-medium">Chat en Vivo</div>
+            </button>
+            <button 
+              onClick={() => navigate('/elecciones')}
+              className="bg-white p-4 rounded-lg shadow hover:shadow-md transition-shadow text-center"
+            >
+              <div className="text-2xl mb-2">🗳️</div>
+              <div className="text-sm font-medium">Elecciones</div>
+            </button>
           </div>
         </div>
       </div>
