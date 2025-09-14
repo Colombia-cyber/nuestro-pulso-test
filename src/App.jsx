@@ -6,6 +6,7 @@ import News from './components/News.tsx';
 import Debate from './components/Debate.tsx';
 import Survey from './components/Survey.tsx';
 import PulseReels from './components/PulseReels.tsx';
+import CommunityHub from './components/CommunityHub.tsx';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -20,6 +21,8 @@ function App() {
         return <Survey />;
       case 'reels':
         return <PulseReels />;
+      case 'community':
+        return <CommunityHub />;
       case 'home':
       default:
         return (
@@ -80,6 +83,12 @@ function App() {
             className={`font-medium transition ${currentView === 'reels' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
           >
             🎬 Reels
+          </button>
+          <button 
+            onClick={() => setCurrentView('community')}
+            className={`font-medium transition ${currentView === 'community' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+          >
+            🏛️ Community Hub
           </button>
         </div>
         <div>
