@@ -1,11 +1,11 @@
 import React from "react";
-import Navbar from "../components/Navbar";
+import Navigation from "../components/Navigation";
 import HeroSection from "../components/HeroSection";
 
 export default function Home() {
   return (
     <div>
-      <Navbar />
+      <Navigation currentView="home" onNavigate={() => {}} />
       <div className="pt-20">
         <HeroSection />
       </div>

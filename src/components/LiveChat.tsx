@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const LiveChat: React.FC = () => {
   const [messages, setMessages] = useState([
@@ -7,22 +7,51 @@ const LiveChat: React.FC = () => {
     { id: 3, user: 'María González', message: 'Estoy de acuerdo. ¿Cómo podemos participar más activamente?', time: '10:35', avatar: '👩‍💻' },
   ]);
   const [newMessage, setNewMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const sendMessage = () => {
-    if (newMessage.trim()) {
-      setMessages([
-        ...messages,
-        {
-          id: messages.length + 1,
-          user: 'Tú',
-          message: newMessage,
-          time: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }),
-          avatar: '🙋‍♂️'
-        }
-      ]);
+  const sendMessage = async () => {
+    if (!newMessage.trim()) return;
+    
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      const newMsg = {
+        id: messages.length + 1,
+        user: 'Tú',
+        message: newMessage,
+        time: new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' }),
+        avatar: '🙋‍♂️'
+      };
+      
+      setMessages(prev => [...prev, newMsg]);
       setNewMessage('');
+    } catch (err) {
+      setError('Error enviando mensaje. Inténtalo de nuevo.');
+      console.error('Send message error:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  };
+
+  useEffect(() => {
+    // Add top padding for fixed navigation
+    document.body.style.paddingTop = '80px';
+    return () => {
+      document.body.style.paddingTop = '0';
+    };
+  }, []);
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -32,18 +61,30 @@ const LiveChat: React.FC = () => {
           <p className="text-white/90">Únete a la conversación cívica de Colombia en tiempo real</p>
           <div className="mt-4 flex items-center space-x-4 text-white/80">
             <span className="flex items-center">
-              <span className="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
+              <span className="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
               1,247 personas conectadas
             </span>
             <span>Moderado por voluntarios cívicos</span>
           </div>
         </div>
 
+        {error && (
+          <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-4">
+            <p className="text-red-700">{error}</p>
+            <button 
+              onClick={() => setError(null)}
+              className="text-sm text-red-600 hover:text-red-800 mt-1"
+            >
+              Cerrar
+            </button>
+          </div>
+        )}
+
         <div className="bg-white rounded-lg shadow-lg">
           {/* Chat Messages */}
           <div className="h-96 overflow-y-auto p-4 border-b">
             {messages.map((msg) => (
-              <div key={msg.id} className="mb-4 flex items-start space-x-3">
+              <div key={msg.id} className="mb-4 flex items-start space-x-3 animate-fade-in">
                 <div className="text-2xl">{msg.avatar}</div>
                 <div className="flex-1">
                   <div className="flex items-center space-x-2 mb-1">
@@ -54,6 +95,22 @@ const LiveChat: React.FC = () => {
                 </div>
               </div>
             ))}
+            {isLoading && (
+              <div className="mb-4 flex items-start space-x-3">
+                <div className="text-2xl">🙋‍♂️</div>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2 mb-1">
+                    <span className="font-semibold text-gray-900">Tú</span>
+                    <span className="text-sm text-gray-500">enviando...</span>
+                  </div>
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Message Input */}
@@ -63,15 +120,18 @@ const LiveChat: React.FC = () => {
                 type="text"
                 value={newMessage}
                 onChange={(e) => setNewMessage(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+                onKeyPress={handleKeyPress}
                 placeholder="Comparte tu opinión cívica responsablemente..."
-                className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                disabled={isLoading}
+                maxLength={500}
               />
               <button
                 onClick={sendMessage}
-                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                disabled={isLoading || !newMessage.trim()}
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Enviar
+                {isLoading ? 'Enviando...' : 'Enviar'}
               </button>
             </div>
             <p className="text-xs text-gray-500 mt-2">
@@ -82,17 +142,17 @@ const LiveChat: React.FC = () => {
 
         {/* Chat Rooms */}
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div className="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500">
+          <div className="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500 hover:shadow-md transition-shadow cursor-pointer">
             <h3 className="font-semibold text-gray-900 mb-2">🏛️ Política Nacional</h3>
             <p className="text-sm text-gray-600 mb-2">Discusiones sobre gobierno y políticas públicas</p>
             <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">432 activos</span>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow border-l-4 border-green-500">
+          <div className="bg-white p-4 rounded-lg shadow border-l-4 border-green-500 hover:shadow-md transition-shadow cursor-pointer">
             <h3 className="font-semibold text-gray-900 mb-2">🌱 Medio Ambiente</h3>
             <p className="text-sm text-gray-600 mb-2">Cambio climático y sostenibilidad en Colombia</p>
             <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">289 activos</span>
           </div>
-          <div className="bg-white p-4 rounded-lg shadow border-l-4 border-yellow-500">
+          <div className="bg-white p-4 rounded-lg shadow border-l-4 border-yellow-500 hover:shadow-md transition-shadow cursor-pointer">
             <h3 className="font-semibold text-gray-900 mb-2">📚 Educación</h3>
             <p className="text-sm text-gray-600 mb-2">Sistema educativo y políticas de formación</p>
             <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">156 activos</span>

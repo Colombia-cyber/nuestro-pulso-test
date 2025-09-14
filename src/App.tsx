@@ -1,11 +1,11 @@
 import React from "react";
-import Navbar from "./components/Navbar";
+import Navigation from "./components/Navigation";
 import GoogleWebSearchBar from "./components/GoogleWebSearchBar";
 
 function App() {
   return (
     <div>
-      <Navbar />
+      <Navigation currentView="home" onNavigate={() => {}} />
       {/* Universal fallback: visible on all routes */}
       <GoogleWebSearchBar />
       {/* ...rest of your app, routes, sections... */}
