@@ -6,9 +6,35 @@ import News from './components/News.tsx';
 import Debate from './components/Debate.tsx';
 import Survey from './components/Survey.tsx';
 import PulseReels from './components/PulseReels.tsx';
+import CommunityHub from './components/CommunityHub.tsx';
+import EnhancedTopicsBar from './components/EnhancedTopicsBar.tsx';
+import UniversalSearch from './components/UniversalSearch.tsx';
+import TopicPage from './components/TopicPage.tsx';
+import UserSettings from './components/UserSettings.tsx';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
+  const [selectedTopic, setSelectedTopic] = useState('');
+  const [showTopicPage, setShowTopicPage] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+
+  const handleTopicSelect = (topicId) => {
+    setSelectedTopic(topicId);
+    setShowTopicPage(true);
+  };
+
+  const handleSearchResultSelect = (result) => {
+    // Handle search result selection
+    if (result.type === 'topic') {
+      handleTopicSelect(result.id);
+    } else if (result.type === 'people') {
+      // Handle people pages (like Gustavo Petro, Donald Trump)
+      const personId = result.title.toLowerCase().includes('petro') ? 'gustavo-petro' : 
+                      result.title.toLowerCase().includes('trump') ? 'donald-trump' : 
+                      result.id;
+      handleTopicSelect(personId);
+    }
+  };
 
   const renderCurrentView = () => {
     switch (currentView) {
@@ -20,12 +46,27 @@ function App() {
         return <Survey />;
       case 'reels':
         return <PulseReels />;
+      case 'community':
+        return <CommunityHub />;
       case 'home':
       default:
         return (
           <>
             {/* Hero Section */}
             <HeroSection onNavigate={setCurrentView} />
+            
+            {/* Universal Search */}
+            <section className="container mx-auto px-4 py-8">
+              <UniversalSearch onResultSelect={handleSearchResultSelect} />
+            </section>
+
+            {/* Enhanced Topics Bar */}
+            <section className="container mx-auto px-4">
+              <EnhancedTopicsBar 
+                onTopicSelect={handleTopicSelect}
+                selectedTopic={selectedTopic}
+              />
+            </section>
             
             {/* Main Content */}
             <main className="container mx-auto px-4 py-8">
@@ -76,6 +117,12 @@ function App() {
             🗣️ Debates
           </button>
           <button 
+            onClick={() => setCurrentView('community')}
+            className={`font-medium transition ${currentView === 'community' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+          >
+            💬 Community Hub
+          </button>
+          <button 
             onClick={() => setCurrentView('reels')}
             className={`font-medium transition ${currentView === 'reels' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
           >
@@ -83,6 +130,12 @@ function App() {
           </button>
         </div>
         <div>
+          <button 
+            onClick={() => setShowSettings(true)}
+            className="mr-4 bg-gray-100 text-gray-700 px-4 py-2 rounded-lg font-medium shadow hover:bg-gray-200 transition"
+          >
+            ⚙️ Configuración
+          </button>
           <button className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white px-4 py-2 rounded-lg font-bold shadow hover:scale-105 transition">
             Ingresar
           </button>
@@ -93,6 +146,20 @@ function App() {
       <div className="pt-20">
         {renderCurrentView()}
       </div>
+      
+      {/* Topic Page Modal */}
+      {showTopicPage && (
+        <TopicPage 
+          topicId={selectedTopic}
+          onClose={() => setShowTopicPage(false)}
+        />
+      )}
+
+      {/* Settings Modal */}
+      <UserSettings 
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
       
       {/* Footer */}
       <footer className="bg-gray-800 text-white py-8 mt-16">
