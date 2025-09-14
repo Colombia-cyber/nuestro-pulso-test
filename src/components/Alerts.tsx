@@ -3,8 +3,9 @@ import React from 'react';
 const Alerts: React.FC = () => {
   const alerts = [
     { id: 1, type: 'urgent', title: 'Votación importante mañana', message: 'Reforma tributaria en plenaria del Senado', time: '2 min' },
-    { id: 2, type: 'news', title: 'Nueva encuesta disponible', message: 'Participa en la encuesta sobre transporte público', time: '1 hora' },
-    { id: 3, type: 'debate', title: 'Debate en vivo ahora', message: 'Educación digital: ¿prioridad nacional?', time: '30 min' }
+    { id: 2, type: 'news', title: 'Nuevas noticias conservadoras', message: 'Análisis electoral: candidatos de derecha ganan terreno', time: '1 hora' },
+    { id: 3, type: 'debate', title: 'Debate en vivo ahora', message: 'Educación digital: ¿prioridad nacional?', time: '30 min' },
+    { id: 4, type: 'community', title: 'Nueva comunidad creada', message: 'Únete al grupo "Ciudadanos por el Cambio"', time: '2 horas' }
   ];
 
   return (
@@ -19,7 +20,8 @@ const Alerts: React.FC = () => {
           {alerts.map((alert) => (
             <div key={alert.id} className={`bg-white rounded-lg shadow-lg p-4 border-l-4 ${
               alert.type === 'urgent' ? 'border-red-500' :
-              alert.type === 'news' ? 'border-blue-500' : 'border-yellow-500'
+              alert.type === 'news' ? 'border-blue-500' : 
+              alert.type === 'community' ? 'border-green-500' : 'border-yellow-500'
             }`}>
               <div className="flex justify-between items-start">
                 <div>
@@ -44,8 +46,12 @@ const Alerts: React.FC = () => {
               <span>Votaciones importantes</span>
             </label>
             <label className="flex items-center">
-              <input type="checkbox" className="mr-3" />
-              <span>Nuevas encuestas</span>
+              <input type="checkbox" className="mr-3" defaultChecked />
+              <span>Noticias conservadoras</span>
+            </label>
+            <label className="flex items-center">
+              <input type="checkbox" className="mr-3" defaultChecked />
+              <span>Actualizaciones de comunidad</span>
             </label>
           </div>
         </div>
