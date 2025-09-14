@@ -11,11 +11,21 @@ type Article = {
 const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY || '27aa99ad66064f04b9ef515c312a78eb';
 
 const fetchNews = async (params: string) => {
-  const res = await fetch(
-    `https://newsapi.org/v2/everything?${params}&apiKey=${NEWS_API_KEY}`
-  );
-  const data = await res.json();
-  return data.articles || [];
+  try {
+    const res = await fetch(
+      `https://newsapi.org/v2/everything?${params}&apiKey=${NEWS_API_KEY}`
+    );
+    
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    
+    const data = await res.json();
+    return data.articles || [];
+  } catch (error) {
+    console.warn('Failed to fetch news:', error);
+    return []; // Return empty array on error
+  }
 };
 
 export default function NewsFeed() {
@@ -26,16 +36,22 @@ export default function NewsFeed() {
 
   useEffect(() => {
     async function loadAll() {
-      setLoading(true);
-      const [co, auPmTrump, politics] = await Promise.all([
-        fetchNews('q=Gustavo Petro&language=es&sortBy=publishedAt'),
-        fetchNews('q=(Prime Minister OR PM OR "Anthony Albanese") AND "Donald Trump"&language=en&sortBy=publishedAt'),
-        fetchNews('q=politics&language=en&sortBy=publishedAt'),
-      ]);
-      setColombianNews(co);
-      setAustralianPmTrumpNews(auPmTrump);
-      setPoliticsNews(politics);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const [co, auPmTrump, politics] = await Promise.all([
+          fetchNews('q=Gustavo Petro&language=es&sortBy=publishedAt'),
+          fetchNews('q=(Prime Minister OR PM OR "Anthony Albanese") AND "Donald Trump"&language=en&sortBy=publishedAt'),
+          fetchNews('q=politics&language=en&sortBy=publishedAt'),
+        ]);
+        setColombianNews(co);
+        setAustralianPmTrumpNews(auPmTrump);
+        setPoliticsNews(politics);
+      } catch (error) {
+        console.error('Error loading news:', error);
+        // Optionally set some fallback content here
+      } finally {
+        setLoading(false);
+      }
     }
     loadAll();
   }, []);
