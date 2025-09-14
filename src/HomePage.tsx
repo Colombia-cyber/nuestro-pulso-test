@@ -1,6 +1,20 @@
 import React from 'react';
+import { getTrendingPolls } from './data/samplePolls';
+import PollCard from './components/polls/PollCard';
 
 const HomePage: React.FC = () => {
+  const trendingPolls = getTrendingPolls().slice(0, 2); // Get top 2 trending polls
+
+  const handleVote = (pollId: string, optionId: string) => {
+    console.log(`Voted for option ${optionId} in poll ${pollId}`);
+    // In a real app, this would make an API call
+  };
+
+  const handleViewDetails = (pollId: string) => {
+    console.log(`View details for poll ${pollId}`);
+    // In a real app, this would navigate to the poll details page
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
@@ -26,11 +40,20 @@ const HomePage: React.FC = () => {
             </p>
           </div>
           
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-semibold mb-4 text-purple-600">Encuestas</h3>
-            <p className="text-gray-600">
-              Comparte tu opinión en encuestas sobre temas de actualidad.
+          <div className="bg-white rounded-lg shadow-md p-6 ring-2 ring-yellow-400 relative overflow-hidden">
+            <div className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-red-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">
+              🔥 POPULAR
+            </div>
+            <h3 className="text-xl font-semibold mb-4 text-purple-600 flex items-center gap-2">
+              <span>📊</span>
+              <span>Encuestas</span>
+            </h3>
+            <p className="text-gray-600 mb-3">
+              Comparte tu opinión en encuestas sobre temas de actualidad y política nacional.
             </p>
+            <div className="text-sm text-purple-600 font-semibold">
+              +48,000 votos esta semana
+            </div>
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6">
@@ -39,6 +62,48 @@ const HomePage: React.FC = () => {
               Mantente informado sobre perspectivas conservadoras y cobertura electoral.
             </p>
           </div>
+        </div>
+
+        {/* Featured Polls Preview Section */}
+        <div className="mt-12 mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-lg bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500">
+                <span className="text-white text-xl">🔥</span>
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Encuestas Trending</h2>
+                <p className="text-gray-600 text-sm">
+                  Las encuestas más populares del momento
+                </p>
+              </div>
+            </div>
+            <a 
+              href="/encuestas" 
+              className="text-blue-600 hover:text-blue-800 font-semibold text-sm transition-colors"
+            >
+              Ver todas →
+            </a>
+          </div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {trendingPolls.map((poll) => (
+              <PollCard
+                key={poll.id}
+                poll={poll}
+                onVote={handleVote}
+                onViewDetails={handleViewDetails}
+                compact={true}
+              />
+            ))}
+          </div>
+
+          {trendingPolls.length === 0 && (
+            <div className="text-center py-8 bg-white/50 rounded-lg border border-gray-200">
+              <span className="text-4xl mb-2 block">📊</span>
+              <p className="text-gray-600">No hay encuestas trending en este momento</p>
+            </div>
+          )}
         </div>
 
         {/* Right Wing News Preview Section */}

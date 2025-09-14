@@ -4,6 +4,7 @@ import { FiMenu } from "react-icons/fi";
 const navLinks = [
   { name: "Chat", href: "#chat" },
   { name: "Debate", href: "#debate" },
+  { name: "Encuestas", href: "#encuestas" },
   { name: "Survey", href: "#survey" },
   { name: "News", href: "#news" },
   { name: "Comments", href: "#comments" },
