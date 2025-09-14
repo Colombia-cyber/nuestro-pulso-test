@@ -48,9 +48,81 @@ To get started with the project, follow these instructions:
 - Built with TypeScript, React, and Tailwind CSS
 - Feature parity with existing civic engagement platforms
 - Continuous Integration and Continuous Deployment (CI/CD) workflow
+- **🗳️ Comprehensive Polls Module**
+  - Interactive voting with real-time results
+  - Colombian patriotic UI theme
+  - Category-based filtering (Politics, Social, Economy, Security, Education, Health)
+  - Regional polls (National, Bogotá, Medellín, Cali, etc.)
+  - Trending polls algorithm
+  - Mobile-responsive glassmorphism design
+  - Backend-ready poll creation interface
 
 ## Testing
 To run tests for the project, use the following command:
 ```bash
 npm test
+```
+
+## Polls Module
+
+### Overview
+The Polls module is a comprehensive civic engagement feature that allows users to create, participate in, and view results of polls on important Colombian topics.
+
+### Key Features
+- **Real-time Voting**: Instant vote counting with percentage calculations
+- **Category System**: Organized by Politics, Social, Economy, Security, Education, and Health
+- **Regional Filtering**: National and regional polls (Bogotá, Medellín, Cali, etc.)
+- **Trending Algorithm**: Popular polls highlighted prominently
+- **Colombian Theme**: Patriotic yellow, blue, and red color scheme throughout
+- **Mobile-First**: Responsive design with glassmorphism effects
+- **Accessibility**: Full keyboard navigation and screen reader support
+
+### Components
+- `PollCard`: Individual poll display with voting interface
+- `TrendingPolls`: Highlighted popular polls section
+- `PollsGrid`: Filterable grid of all polls
+- `PollsPage`: Main polls landing page
+- `PollDetailPage`: Full-page detailed poll view
+- `CreatePoll`: Backend-ready poll creation interface
+
+### Data Structure
+```typescript
+interface Poll {
+  id: string;
+  title: string;
+  description: string;
+  question: string;
+  options: PollOption[];
+  totalVotes: number;
+  category: 'politica' | 'social' | 'economia' | 'seguridad' | 'educacion' | 'salud';
+  tags: string[];
+  createdAt: Date;
+  endsAt: Date;
+  isActive: boolean;
+  isTrending: boolean;
+  // ... additional fields
+}
+```
+
+### Usage Examples
+```tsx
+// Display trending polls
+<TrendingPolls 
+  polls={trendingPolls} 
+  onVote={handleVote}
+  onViewDetails={handleViewDetails}
+/>
+
+// Create new poll
+<CreatePoll 
+  onPollCreate={handlePollCreate}
+  onCancel={handleCancel}
+/>
+
+// Detailed poll view
+<PollDetailPage 
+  poll={poll} 
+  onVote={handleVote}
+  userVote={userVote}
+/>
 ```
