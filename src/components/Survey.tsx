@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PetroPoll from './PetroPoll';
 
 const Survey: React.FC = () => {
   const [selectedAnswers, setSelectedAnswers] = useState<{[key: string]: string}>({});
@@ -72,6 +73,14 @@ const Survey: React.FC = () => {
             <span>👥 45,231 respuestas esta semana</span>
             <span>📈 Resultados en tiempo real</span>
           </div>
+        </div>
+
+        {/* Featured Presidential Poll */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">
+            🔥 Encuesta Presidencial Destacada
+          </h2>
+          <PetroPoll />
         </div>
 
         {/* Featured Survey */}

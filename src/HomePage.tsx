@@ -1,4 +1,5 @@
 import React from 'react';
+import PetroPoll from './components/PetroPoll';
 
 const HomePage: React.FC = () => {
   return (
@@ -10,6 +11,16 @@ const HomePage: React.FC = () => {
         <p className="text-center text-gray-600 mb-12">
           La plataforma líder de participación cívica en Colombia
         </p>
+        
+        {/* Featured Poll Section */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
+            🔥 Encuesta Destacada
+          </h2>
+          <div className="max-w-4xl mx-auto">
+            <PetroPoll />
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div className="bg-white rounded-lg shadow-md p-6">
