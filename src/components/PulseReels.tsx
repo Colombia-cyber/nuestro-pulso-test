@@ -6,14 +6,140 @@ const PulseReels: React.FC = () => {
   const categories = [
     { id: 'todos', name: 'Todos', icon: '🎬' },
     { id: 'politica', name: 'Política', icon: '🏛️' },
+    { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' },
+    { id: 'australia', name: 'Australia', icon: '🇦🇺' },
+    { id: 'petro', name: 'Gustavo Petro', icon: '🇨🇴' },
     { id: 'educacion', name: 'Educación', icon: '📚' },
     { id: 'ambiente', name: 'Ambiente', icon: '🌱' },
     { id: 'participacion', name: 'Participación', icon: '👥' },
+    { id: 'debates', name: 'Debates', icon: '🗣️' },
+    { id: 'mundial', name: 'Mundial', icon: '🌍' },
   ];
 
   const reels = [
+    // Donald Trump Reels
     {
       id: 1,
+      title: 'Trump Rally Highlights: Key Policy Announcements',
+      description: 'Principales anuncios de política económica y migratoria del expresidente Donald Trump',
+      category: 'trump',
+      duration: '4:30',
+      views: 125420,
+      likes: 8920,
+      thumbnail: '🇺🇸',
+      author: 'Political News Network'
+    },
+    {
+      id: 2,
+      title: 'Trump vs DeSantis: Republican Primary Analysis',
+      description: 'Análisis comparativo de las campañas republicanas para 2024',
+      category: 'trump',
+      duration: '3:45',
+      views: 98750,
+      likes: 5643,
+      thumbnail: '🗳️',
+      author: 'Campaign Watch'
+    },
+
+    // Australia Reels
+    {
+      id: 3,
+      title: 'Australia\'s Pacific Strategy: PM Albanese\'s Vision',
+      description: 'Estrategia del primer ministro australiano para el Indo-Pacífico',
+      category: 'australia',
+      duration: '5:20',
+      views: 67340,
+      likes: 3421,
+      thumbnail: '🇦🇺',
+      author: 'ABC News Australia'
+    },
+    {
+      id: 4,
+      title: 'AUKUS Alliance: What It Means for Australia',
+      description: 'Impacto de la alianza AUKUS en la defensa australiana',
+      category: 'australia',
+      duration: '6:15',
+      views: 45230,
+      likes: 2156,
+      thumbnail: '⚓',
+      author: 'Defense Today'
+    },
+
+    // Gustavo Petro Reels
+    {
+      id: 5,
+      title: 'Petro\'s Peace Plan: Regional Dialogues Explained',
+      description: 'Explicación detallada del plan de paz total del presidente Petro',
+      category: 'petro',
+      duration: '4:15',
+      views: 89560,
+      likes: 4234,
+      thumbnail: '🇨🇴',
+      author: 'Colombia Política'
+    },
+    {
+      id: 6,
+      title: 'Economic Reforms Under Petro Government',
+      description: 'Análisis de las reformas económicas del gobierno Petro',
+      category: 'petro',
+      duration: '5:45',
+      views: 72180,
+      likes: 3789,
+      thumbnail: '📊',
+      author: 'Caracol Noticias'
+    },
+
+    // World News Reels
+    {
+      id: 7,
+      title: 'Global Climate Summit: Historic Agreements',
+      description: 'Cobertura de los acuerdos históricos en la cumbre climática mundial',
+      category: 'mundial',
+      duration: '7:20',
+      views: 156780,
+      likes: 12340,
+      thumbnail: '🌍',
+      author: 'UN Climate Channel'
+    },
+    {
+      id: 8,
+      title: 'Europe Election Trends: Conservative Rise',
+      description: 'Análisis del crecimiento conservador en las elecciones europeas',
+      category: 'mundial',
+      duration: '4:50',
+      views: 87950,
+      likes: 5687,
+      thumbnail: '🇪🇺',
+      author: 'EuroNews Politics'
+    },
+
+    // Debate Reels
+    {
+      id: 9,
+      title: 'Congressional Debate: Tax Reform Live Analysis',
+      description: 'Análisis en vivo del debate sobre reforma tributaria en el Congreso',
+      category: 'debates',
+      duration: '12:30',
+      views: 203450,
+      likes: 15670,
+      thumbnail: '🏛️',
+      author: 'Congreso en Vivo'
+    },
+    {
+      id: 10,
+      title: 'Citizens Debate: Healthcare Reform',
+      description: 'Debate ciudadano sobre la reforma al sistema de salud',
+      category: 'debates',
+      duration: '8:15',
+      views: 134560,
+      likes: 9823,
+      thumbnail: '🗣️',
+      author: 'Foro Ciudadano'
+    },
+
+    // Original content...
+    {
+      id: 11,
       title: 'Cómo participar en el proceso electoral colombiano',
       description: 'Guía rápida sobre tu derecho al voto y los requisitos para participar',
       category: 'politica',
@@ -24,7 +150,7 @@ const PulseReels: React.FC = () => {
       author: 'Registraduría Nacional'
     },
     {
-      id: 2,
+      id: 12,
       title: 'El poder de la participación ciudadana en tu municipio',
       description: 'Conoce cómo puedes influir en las decisiones locales de tu comunidad',
       category: 'participacion',
@@ -35,7 +161,7 @@ const PulseReels: React.FC = () => {
       author: 'Fundación Corona'
     },
     {
-      id: 3,
+      id: 13,
       title: 'Presupuestos participativos: Tu voz en las finanzas públicas',
       description: 'Aprende cómo los ciudadanos pueden decidir en qué se invierte el presupuesto',
       category: 'participacion',
@@ -46,7 +172,7 @@ const PulseReels: React.FC = () => {
       author: 'Transparencia Colombia'
     },
     {
-      id: 4,
+      id: 14,
       title: 'Cambio climático y acción ciudadana en Colombia',
       description: 'Iniciativas locales que están marcando la diferencia ambiental',
       category: 'ambiente',
@@ -57,7 +183,7 @@ const PulseReels: React.FC = () => {
       author: 'WWF Colombia'
     },
     {
-      id: 5,
+      id: 15,
       title: 'Educación digital: Cerrando la brecha tecnológica',
       description: 'Programas gubernamentales para mejorar el acceso a la educación digital',
       category: 'educacion',
@@ -68,7 +194,7 @@ const PulseReels: React.FC = () => {
       author: 'MinEducación'
     },
     {
-      id: 6,
+      id: 16,
       title: 'Control ciudadano a la corrupción',
       description: 'Herramientas y mecanismos para denunciar actos de corrupción',
       category: 'politica',
@@ -83,6 +209,21 @@ const PulseReels: React.FC = () => {
   const filteredReels = selectedCategory === 'todos' 
     ? reels 
     : reels.filter(reel => reel.category === selectedCategory);
+
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'trump': return 'bg-red-100 text-red-800';
+      case 'australia': return 'bg-blue-100 text-blue-800';
+      case 'petro': return 'bg-yellow-100 text-yellow-800';
+      case 'mundial': return 'bg-green-100 text-green-800';
+      case 'debates': return 'bg-purple-100 text-purple-800';
+      case 'politica': return 'bg-blue-100 text-blue-800';
+      case 'participacion': return 'bg-green-100 text-green-800';
+      case 'ambiente': return 'bg-emerald-100 text-emerald-800';
+      case 'educacion': return 'bg-purple-100 text-purple-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -137,14 +278,8 @@ const PulseReels: React.FC = () => {
               {/* Content */}
               <div className="p-4">
                 <div className="flex items-center space-x-2 mb-2">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    reel.category === 'politica' ? 'bg-blue-100 text-blue-800' :
-                    reel.category === 'participacion' ? 'bg-green-100 text-green-800' :
-                    reel.category === 'ambiente' ? 'bg-emerald-100 text-emerald-800' :
-                    reel.category === 'educacion' ? 'bg-purple-100 text-purple-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {categories.find(c => c.id === reel.category)?.name}
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getCategoryColor(reel.category)}`}>
+                    {categories.find(c => c.id === reel.category)?.name || reel.category}
                   </span>
                   <span className="text-xs text-gray-500">{reel.author}</span>
                 </div>
