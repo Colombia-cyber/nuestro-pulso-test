@@ -6,6 +6,7 @@ const News: React.FC = () => {
   const categories = [
     { id: 'todas', name: 'Todas', icon: '📰' },
     { id: 'politica', name: 'Política', icon: '🏛️' },
+    { id: 'derecha', name: 'Right Wing', icon: '🗳️' },
     { id: 'economia', name: 'Economía', icon: '💰' },
     { id: 'social', name: 'Social', icon: '👥' },
     { id: 'ambiente', name: 'Ambiente', icon: '🌱' },
@@ -53,6 +54,36 @@ const News: React.FC = () => {
       time: '8 horas',
       image: '🤝',
       engagement: { likes: 203, shares: 45, comments: 19 }
+    },
+    {
+      id: 5,
+      title: 'Centro Democrático propone nueva agenda conservadora para 2025',
+      summary: 'El partido de oposición presenta propuestas sobre seguridad, economía de mercado y valores tradicionales.',
+      category: 'derecha',
+      source: 'Centro Democrático',
+      time: '1 hora',
+      image: '🗳️',
+      engagement: { likes: 312, shares: 156, comments: 89 }
+    },
+    {
+      id: 6,
+      title: 'Candidatos conservadores lideran encuestas en varias regiones',
+      summary: 'Nuevas mediciones muestran crecimiento de candidatos de derecha en alcaldías y gobernaciones.',
+      category: 'derecha',
+      source: 'Encuestas Invamer',
+      time: '3 horas',
+      image: '📊',
+      engagement: { likes: 278, shares: 134, comments: 67 }
+    },
+    {
+      id: 7,
+      title: 'Propuesta de reducción de impuestos empresariales gana apoyo',
+      summary: 'Sectores empresariales y políticos de derecha impulsan iniciativa para estimular la inversión privada.',
+      category: 'derecha',
+      source: 'ANDI',
+      time: '5 horas',
+      image: '💼',
+      engagement: { likes: 198, shares: 89, comments: 45 }
     }
   ];
 
@@ -121,6 +152,7 @@ const News: React.FC = () => {
                         article.category === 'educacion' ? 'bg-blue-100 text-blue-800' :
                         article.category === 'ambiente' ? 'bg-green-100 text-green-800' :
                         article.category === 'salud' ? 'bg-red-100 text-red-800' :
+                        article.category === 'derecha' ? 'bg-orange-100 text-orange-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
                         {categories.find(c => c.id === article.category)?.name}
