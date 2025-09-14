@@ -1,11 +1,11 @@
 {
   "name": "Nuestro Pulso - Red Cívica de Colombia",
   "short_name": "Nuestro Pulso",
-  "description": "La plataforma líder de participación cívica en Colombia",
+  "description": "La plataforma líder de participación cívica en Colombia. Únete a debates, encuestas, chat en vivo y más.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#3B82F6",
+  "background_color": "#FCDC00",
+  "theme_color": "#003A70",
   "orientation": "portrait-primary",
   "icons": [
     {
@@ -19,13 +19,13 @@
       "type": "image/png"
     }
   ],
-  "categories": ["government", "social", "news", "education"],
+  "categories": ["government", "social", "news", "education", "lifestyle"],
   "lang": "es-CO",
   "scope": "/",
   "prefer_related_applications": false,
   "shortcuts": [
     {
-      "name": "Chat en Vivo",
+      "name": "Chat Cívico",
       "short_name": "Chat",
       "description": "Únete a conversaciones cívicas en tiempo real",
       "url": "/?module=chat",
@@ -33,17 +33,24 @@
     },
     {
       "name": "Debates",
-      "short_name": "Debates",
-      "description": "Participa en debates estructurados",
+      "short_name": "Debates", 
+      "description": "Participa en debates estructurados sobre políticas públicas",
       "url": "/?module=debate",
       "icons": [{ "src": "/debate-icon.png", "sizes": "96x96" }]
     },
     {
       "name": "Congreso",
       "short_name": "Congreso",
-      "description": "Sigue la actividad legislativa",
+      "description": "Sigue la actividad legislativa en tiempo real",
       "url": "/?module=congress",
       "icons": [{ "src": "/congress-icon.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Encuestas",
+      "short_name": "Encuestas",
+      "description": "Participa en encuestas sobre temas de actualidad",
+      "url": "/?module=polls",
+      "icons": [{ "src": "/polls-icon.png", "sizes": "96x96" }]
     }
   ]
 }

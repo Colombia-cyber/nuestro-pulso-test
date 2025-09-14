@@ -1,9 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  font-family: 'Inter', sans-serif;
+@layer base {
+  * {
+    @apply scroll-smooth;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply bg-gradient-to-br from-gray-50 to-gray-100 min-h-screen;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/25 backdrop-blur-md border border-white/20 shadow-glass;
+  }
+  
+  .glass-card-strong {
+    @apply bg-white/40 backdrop-blur-lg border border-white/30 shadow-glass;
+  }
+  
+  .btn-primary {
+    @apply bg-gradient-to-r from-colombian-yellow via-colombian-blue to-colombian-red text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300;
+  }
+  
+  .btn-secondary {
+    @apply bg-glass-white backdrop-blur-md border border-white/30 text-colombian-blue font-semibold py-3 px-6 rounded-xl shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300;
+  }
+  
+  .text-gradient {
+    @apply bg-gradient-to-r from-colombian-yellow via-colombian-blue to-colombian-red bg-clip-text text-transparent;
+  }
+  
+  .section-hero {
+    @apply min-h-screen bg-gradient-to-br from-colombian-blue via-colombian-yellow to-colombian-red relative overflow-hidden;
+  }
+  
+  .floating-element {
+    @apply animate-float;
+  }
+  
+  .fade-in {
+    @apply animate-fade-in;
+  }
+  
+  .slide-up {
+    @apply animate-slide-up;
+  }
 }
