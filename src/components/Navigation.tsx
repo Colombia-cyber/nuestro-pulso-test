@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from './AuthContext';
 import LoginModal from './LoginModal';
 
@@ -11,23 +12,31 @@ const Navigation: React.FC<NavigationProps> = ({ activeModule, setActiveModule }
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
   
   const modules = [
-    { id: 'home', name: 'Inicio', icon: '🏠' },
-    { id: 'chat', name: 'Chat en Vivo', icon: '💬' },
-    { id: 'debate', name: 'Debate', icon: '🗣️' },
-    { id: 'survey', name: 'Encuestas', icon: '📊' },
-    { id: 'news', name: 'Noticias', icon: '📰' },
-    { id: 'comments', name: 'Comentarios', icon: '💭' },
-    { id: 'care', name: 'Cuidado', icon: '🤝' },
-    { id: 'congress', name: 'Congreso', icon: '🏛️' },
-    { id: 'reels', name: 'Pulse Reels', icon: '🎬' },
-    { id: 'marketplace', name: 'Mercado', icon: '🛒' },
-    { id: 'search', name: 'Buscar', icon: '🔍' },
-    { id: 'alerts', name: 'Alertas', icon: '🔔' },
-    { id: 'elections', name: 'Elecciones', icon: '🗳️' },
-    { id: 'copilot', name: 'Asistente', icon: '🤖' },
+    { id: 'home', name: 'Inicio', icon: '🏠', path: '/' },
+    { id: 'chat', name: 'Chat en Vivo', icon: '💬', path: '/chat' },
+    { id: 'debate', name: 'Debate', icon: '🗣️', path: '/debate' },
+    { id: 'survey', name: 'Encuestas', icon: '📊', path: '/survey' },
+    { id: 'news', name: 'Noticias', icon: '📰', path: '/news' },
+    { id: 'comments', name: 'Comentarios', icon: '💭', path: '/comments' },
+    { id: 'care', name: 'Cuidado', icon: '🤝', path: '/care' },
+    { id: 'congress', name: 'Congreso', icon: '🏛️', path: '/congress' },
+    { id: 'reels', name: 'Pulse Reels', icon: '🎬', path: '/reels' },
+    { id: 'marketplace', name: 'Mercado', icon: '🛒', path: '/marketplace' },
+    { id: 'search', name: 'Buscar', icon: '🔍', path: '/search' },
+    { id: 'alerts', name: 'Alertas', icon: '🔔', path: '/alerts' },
+    { id: 'elections', name: 'Elecciones', icon: '🗳️', path: '/elections' },
+    { id: 'copilot', name: 'Asistente', icon: '🤖', path: '/copilot' },
   ];
+
+  const handleModuleClick = (module: { id: string; path: string }) => {
+    setActiveModule(module.id);
+    navigate(module.path);
+    setMobileMenuOpen(false);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 shadow-lg z-50">
@@ -47,9 +56,9 @@ const Navigation: React.FC<NavigationProps> = ({ activeModule, setActiveModule }
             {modules.slice(0, 8).map((module) => (
               <button
                 key={module.id}
-                onClick={() => setActiveModule(module.id)}
+                onClick={() => handleModuleClick(module)}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-all ${
-                  activeModule === module.id
+                  activeModule === module.id || location.pathname === module.path
                     ? 'bg-white text-blue-600 shadow-md'
                     : 'text-white hover:bg-white/20'
                 }`}
@@ -68,9 +77,9 @@ const Navigation: React.FC<NavigationProps> = ({ activeModule, setActiveModule }
                 {modules.slice(8).map((module) => (
                   <button
                     key={module.id}
-                    onClick={() => setActiveModule(module.id)}
+                    onClick={() => handleModuleClick(module)}
                     className={`block w-full text-left px-4 py-2 text-sm hover:bg-gray-100 ${
-                      activeModule === module.id ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
+                      activeModule === module.id || location.pathname === module.path ? 'bg-blue-50 text-blue-600' : 'text-gray-700'
                     }`}
                   >
                     <span className="mr-2">{module.icon}</span>
@@ -135,12 +144,9 @@ const Navigation: React.FC<NavigationProps> = ({ activeModule, setActiveModule }
             {modules.map((module) => (
               <button
                 key={module.id}
-                onClick={() => {
-                  setActiveModule(module.id);
-                  setMobileMenuOpen(false);
-                }}
+                onClick={() => handleModuleClick(module)}
                 className={`block w-full text-left px-3 py-2 rounded-md text-sm font-medium ${
-                  activeModule === module.id
+                  activeModule === module.id || location.pathname === module.path
                     ? 'bg-blue-50 text-blue-600'
                     : 'text-gray-700 hover:bg-gray-100'
                 }`}
