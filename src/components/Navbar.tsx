@@ -9,6 +9,10 @@ const Navbar: React.FC = () => {
       </div>
       <div className="flex gap-6">
         <a href="/" className="text-blue-900 font-medium hover:text-blue-600 transition">Inicio</a>
+        <a href="/encuestas" className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1">
+          <span>📊</span>
+          <span>Encuestas</span>
+        </a>
         <a href="/explorar" className="text-blue-900 font-medium hover:text-blue-600 transition">Explorar</a>
         <a href="/participar" className="text-blue-900 font-medium hover:text-blue-600 transition">Participar</a>
         <a href="/acerca" className="text-blue-900 font-medium hover:text-blue-600 transition">Acerca</a>
