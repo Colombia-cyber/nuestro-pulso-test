@@ -1,7 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const Survey: React.FC = () => {
   const [selectedAnswers, setSelectedAnswers] = useState<{[key: string]: string}>({});
+  const [votedPolls, setVotedPolls] = useState<{[key: string]: string}>({});
+  const [liveResults, setLiveResults] = useState<{[key: string]: any}>({});
+
+  // Simulate live updates for quick polls
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setLiveResults(prev => ({
+        ...prev,
+        'transport-bogota': {
+          si: Math.floor(Math.random() * 100) + 2800,
+          no: Math.floor(Math.random() * 50) + 1200,
+          noSeguro: Math.floor(Math.random() * 30) + 450
+        },
+        'tax-reform': {
+          si: Math.floor(Math.random() * 100) + 1900,
+          no: Math.floor(Math.random() * 200) + 3400,
+          noSeguro: Math.floor(Math.random() * 50) + 670
+        }
+      }));
+    }, 5000); // Update every 5 seconds
+    
+    return () => clearInterval(interval);
+  }, []);
 
   const surveys = [
     {
@@ -39,14 +62,26 @@ const Survey: React.FC = () => {
     {
       id: 'transport-bogota',
       question: '¿Apoya la expansión del sistema de ciclorrutas en Bogotá?',
-      votes: { si: 2847, no: 1203, noSeguro: 456 },
-      total: 4506
+      votes: liveResults['transport-bogota'] || { si: 2847, no: 1203, noSeguro: 456 },
+      get total() { return this.votes.si + this.votes.no + this.votes.noSeguro; }
     },
     {
       id: 'tax-reform',
       question: '¿La reforma tributaria beneficiará a la clase media colombiana?',
-      votes: { si: 1895, no: 3452, noSeguro: 678 },
-      total: 6025
+      votes: liveResults['tax-reform'] || { si: 1895, no: 3452, noSeguro: 678 },
+      get total() { return this.votes.si + this.votes.no + this.votes.noSeguro; }
+    },
+    {
+      id: 'education-budget',
+      question: '¿Debería aumentarse el presupuesto para educación pública?',
+      votes: { si: 4320, no: 890, noSeguro: 234 },
+      get total() { return this.votes.si + this.votes.no + this.votes.noSeguro; }
+    },
+    {
+      id: 'renewable-energy',
+      question: '¿Colombia debería priorizar las energías renovables sobre el petróleo?',
+      votes: { si: 3120, no: 2450, noSeguro: 890 },
+      get total() { return this.votes.si + this.votes.no + this.votes.noSeguro; }
     }
   ];
 
@@ -57,8 +92,31 @@ const Survey: React.FC = () => {
     }));
   };
 
+  const handleQuickVote = (pollId: string, option: string) => {
+    if (!votedPolls[pollId]) {
+      setVotedPolls(prev => ({
+        ...prev,
+        [pollId]: option
+      }));
+      
+      // Simulate vote submission with immediate feedback
+      setTimeout(() => {
+        alert(`¡Voto registrado! Gracias por participar en "${quickPolls.find(p => p.id === pollId)?.question}"`);
+      }, 100);
+    }
+  };
+
   const calculatePercentage = (votes: number, total: number) => {
     return Math.round((votes / total) * 100);
+  };
+
+  const getVoteButtonClass = (pollId: string, option: string, baseClass: string) => {
+    if (votedPolls[pollId] === option) {
+      return `${baseClass} ring-2 ring-offset-2 ring-white opacity-90`;
+    } else if (votedPolls[pollId]) {
+      return `${baseClass} opacity-50 cursor-not-allowed`;
+    }
+    return `${baseClass} hover:opacity-80`;
   };
 
   return (
@@ -152,68 +210,136 @@ const Survey: React.FC = () => {
 
         {/* Quick Polls */}
         <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">Encuestas Rápidas</h3>
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">
+            Encuestas Rápidas 
+            <span className="ml-2 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+              🔴 EN VIVO
+            </span>
+          </h3>
           <div className="space-y-4">
             {quickPolls.map((poll) => (
-              <div key={poll.id} className="border rounded-lg p-4">
+              <div key={poll.id} className="border rounded-lg p-4 bg-gray-50">
                 <h4 className="font-semibold text-gray-900 mb-3">{poll.question}</h4>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <button className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600">
-                        Sí
+                    <div className="flex items-center space-x-3">
+                      <button 
+                        onClick={() => handleQuickVote(poll.id, 'si')}
+                        disabled={!!votedPolls[poll.id]}
+                        className={getVoteButtonClass(poll.id, 'si', 'bg-green-500 text-white px-4 py-2 rounded font-medium transition-all')}
+                      >
+                        {votedPolls[poll.id] === 'si' ? '✓ ' : ''}Sí
                       </button>
                       <span className="text-sm text-gray-600">
                         {poll.votes.si.toLocaleString()} votos ({calculatePercentage(poll.votes.si, poll.total)}%)
                       </span>
                     </div>
-                    <div className="w-32 bg-gray-200 rounded-full h-2">
+                    <div className="w-32 bg-gray-200 rounded-full h-3 overflow-hidden">
                       <div 
-                        className="bg-green-500 h-2 rounded-full" 
+                        className="bg-green-500 h-3 rounded-full transition-all duration-1000" 
                         style={{ width: `${calculatePercentage(poll.votes.si, poll.total)}%` }}
                       ></div>
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600">
-                        No
+                    <div className="flex items-center space-x-3">
+                      <button 
+                        onClick={() => handleQuickVote(poll.id, 'no')}
+                        disabled={!!votedPolls[poll.id]}
+                        className={getVoteButtonClass(poll.id, 'no', 'bg-red-500 text-white px-4 py-2 rounded font-medium transition-all')}
+                      >
+                        {votedPolls[poll.id] === 'no' ? '✓ ' : ''}No
                       </button>
                       <span className="text-sm text-gray-600">
                         {poll.votes.no.toLocaleString()} votos ({calculatePercentage(poll.votes.no, poll.total)}%)
                       </span>
                     </div>
-                    <div className="w-32 bg-gray-200 rounded-full h-2">
+                    <div className="w-32 bg-gray-200 rounded-full h-3 overflow-hidden">
                       <div 
-                        className="bg-red-500 h-2 rounded-full" 
+                        className="bg-red-500 h-3 rounded-full transition-all duration-1000" 
                         style={{ width: `${calculatePercentage(poll.votes.no, poll.total)}%` }}
                       ></div>
                     </div>
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <button className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
-                        No estoy seguro
+                    <div className="flex items-center space-x-3">
+                      <button 
+                        onClick={() => handleQuickVote(poll.id, 'noSeguro')}
+                        disabled={!!votedPolls[poll.id]}
+                        className={getVoteButtonClass(poll.id, 'noSeguro', 'bg-gray-500 text-white px-4 py-2 rounded font-medium transition-all')}
+                      >
+                        {votedPolls[poll.id] === 'noSeguro' ? '✓ ' : ''}No estoy seguro
                       </button>
                       <span className="text-sm text-gray-600">
                         {poll.votes.noSeguro.toLocaleString()} votos ({calculatePercentage(poll.votes.noSeguro, poll.total)}%)
                       </span>
                     </div>
-                    <div className="w-32 bg-gray-200 rounded-full h-2">
+                    <div className="w-32 bg-gray-200 rounded-full h-3 overflow-hidden">
                       <div 
-                        className="bg-gray-500 h-2 rounded-full" 
+                        className="bg-gray-500 h-3 rounded-full transition-all duration-1000" 
                         style={{ width: `${calculatePercentage(poll.votes.noSeguro, poll.total)}%` }}
                       ></div>
                     </div>
                   </div>
                 </div>
-                <div className="mt-2 text-xs text-gray-500">
-                  Total: {poll.total.toLocaleString()} votos
+                <div className="mt-3 flex justify-between items-center text-xs text-gray-500">
+                  <span>Total: {poll.total.toLocaleString()} votos</span>
+                  {votedPolls[poll.id] && (
+                    <span className="text-green-600 font-medium">✓ Has votado</span>
+                  )}
+                  {liveResults[poll.id] && (
+                    <span className="animate-pulse text-blue-600">🔄 Actualizando...</span>
+                  )}
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Create Poll Section */}
+        <div className="mt-8 bg-blue-50 rounded-lg p-6 border border-blue-200">
+          <h3 className="text-xl font-semibold text-gray-900 mb-4">💡 Crear Nueva Encuesta</h3>
+          <p className="text-gray-600 mb-4">
+            ¿Tienes una pregunta importante para la ciudadanía? Propón una nueva encuesta cívica.
+          </p>
+          <div className="space-y-4">
+            <input 
+              type="text" 
+              placeholder="¿Cuál es tu pregunta para Colombia?"
+              className="w-full border rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
+            <div className="flex gap-2">
+              <input 
+                type="text" 
+                placeholder="Opción 1"
+                className="flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              <input 
+                type="text" 
+                placeholder="Opción 2"
+                className="flex-1 border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              <button className="bg-gray-200 text-gray-600 px-3 py-2 rounded-lg hover:bg-gray-300">
+                + Opción
+              </button>
+            </div>
+            <div className="flex justify-between items-center">
+              <div className="flex items-center space-x-4">
+                <label className="flex items-center">
+                  <input type="checkbox" className="mr-2" />
+                  <span className="text-sm text-gray-600">Permitir opción "No estoy seguro"</span>
+                </label>
+                <label className="flex items-center">
+                  <input type="checkbox" className="mr-2" />
+                  <span className="text-sm text-gray-600">Encuesta anónima</span>
+                </label>
+              </div>
+              <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 font-semibold">
+                Proponer Encuesta
+              </button>
+            </div>
           </div>
         </div>
       </div>

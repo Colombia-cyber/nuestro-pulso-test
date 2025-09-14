@@ -1,6 +1,10 @@
 import React from 'react';
 
-const HeroSection: React.FC = () => {
+interface HeroSectionProps {
+  onNavigate: (view: string) => void;
+}
+
+const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
   return (
     <div className="relative bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 min-h-screen flex items-center justify-center">
       {/* Glass morphism overlay */}
@@ -32,13 +36,22 @@ const HeroSection: React.FC = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="px-8 py-4 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 font-semibold">
+            <button 
+              onClick={() => onNavigate('reels')}
+              className="px-8 py-4 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 font-semibold"
+            >
               💬 Chat en Vivo
             </button>
-            <button className="px-8 py-4 bg-green-600 text-white rounded-xl shadow-lg hover:bg-green-700 transform hover:scale-105 transition-all duration-200 font-semibold">
+            <button 
+              onClick={() => onNavigate('debates')}
+              className="px-8 py-4 bg-green-600 text-white rounded-xl shadow-lg hover:bg-green-700 transform hover:scale-105 transition-all duration-200 font-semibold"
+            >
               🗣️ Debates
             </button>
-            <button className="px-8 py-4 bg-purple-600 text-white rounded-xl shadow-lg hover:bg-purple-700 transform hover:scale-105 transition-all duration-200 font-semibold">
+            <button 
+              onClick={() => onNavigate('polls')}
+              className="px-8 py-4 bg-purple-600 text-white rounded-xl shadow-lg hover:bg-purple-700 transform hover:scale-105 transition-all duration-200 font-semibold"
+            >
               📊 Encuestas
             </button>
           </div>
