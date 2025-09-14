@@ -138,19 +138,41 @@ export default function NewsFeed() {
   };
 
   const handleLoadMore = async (category: string) => {
-    // Simulate loading more articles - in real app, this would fetch next page
-    const moreArticles = await fetchMockNews(category);
+    // Simulate loading more articles - generate unique content
+    const generateMoreArticles = (baseCategoryData: Article[], categoryName: string): Article[] => {
+      const moreArticles: Article[] = [];
+      const baseId = Math.max(...baseCategoryData.map(a => a.id), 0);
+      
+      for (let i = 1; i <= 3; i++) {
+        moreArticles.push({
+          id: baseId + i,
+          title: `Nueva noticia ${categoryName} #${i} - ${new Date().toLocaleTimeString()}`,
+          description: `Esta es una nueva noticia generada dinámicamente para la categoría ${categoryName}. Contenido actualizado cada vez que se carga más información.`,
+          fullContent: `Contenido completo para la noticia ${i} de ${categoryName}. Esta noticia fue generada dinámicamente para mostrar la funcionalidad de "Cargar más" sin repetir el mismo contenido. El sistema puede generar contenido único cada vez que el usuario solicita más información.`,
+          source: { name: `Fuente Dinámica ${categoryName}` },
+          publishedAt: new Date().toISOString(),
+          url: "#",
+          urlToImage: "/api/placeholder/400/200",
+          category: categoryName.toLowerCase(),
+          engagement: { 
+            likes: Math.floor(Math.random() * 500) + 50, 
+            shares: Math.floor(Math.random() * 100) + 10, 
+            comments: Math.floor(Math.random() * 50) + 5 
+          }
+        });
+      }
+      return moreArticles;
+    };
     
-    switch (category) {
-      case 'colombian':
-        setColombianNews(prev => [...prev, ...moreArticles.slice(0, 2)]);
-        break;
-      case 'international':
-        setInternationalNews(prev => [...prev, ...moreArticles.slice(0, 2)]);
-        break;
-      case 'technology':
-        setTechnologyNews(prev => [...prev, ...moreArticles.slice(0, 2)]);
-        break;
+    if (category === 'colombian') {
+      const newColombianArticles = generateMoreArticles(colombianNews, 'Colombia');
+      setColombianNews(prev => [...prev, ...newColombianArticles]);
+    } else if (category === 'international') {
+      const newInternationalArticles = generateMoreArticles(internationalNews, 'Internacional');
+      setInternationalNews(prev => [...prev, ...newInternationalArticles]);
+    } else if (category === 'technology') {
+      const newTechnologyArticles = generateMoreArticles(technologyNews, 'Tecnología');
+      setTechnologyNews(prev => [...prev, ...newTechnologyArticles]);
     }
   };
 

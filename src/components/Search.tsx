@@ -157,6 +157,13 @@ const Search: React.FC = () => {
     navigate(result.url);
   };
 
+  const handleKeyPress = (event: React.KeyboardEvent, result: SearchResult) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleResultClick(result);
+    }
+  };
+
   const getTypeColor = (type: string) => {
     const typeConfig = searchTypes.find(t => t.id === type);
     return typeConfig?.color || 'gray';
@@ -197,39 +204,50 @@ const Search: React.FC = () => {
         <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1">
+              <label htmlFor="search-input" className="sr-only">
+                Buscar en toda la plataforma cívica
+              </label>
               <input
+                id="search-input"
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Buscar debates, noticias, encuestas, proyectos de ley, candidatos..."
-                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                aria-describedby="search-help"
               />
+              <div id="search-help" className="sr-only">
+                Escribe para buscar en todos los módulos de la plataforma cívica
+              </div>
             </div>
             <button 
               onClick={() => setShowFilters(!showFilters)}
-              className="bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-colors"
+              className="bg-gray-100 text-gray-700 px-4 py-3 rounded-lg hover:bg-gray-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+              aria-expanded={showFilters}
+              aria-controls="search-filters"
             >
-              <span className="mr-2">⚙️</span>
+              <span className="mr-2" aria-hidden="true">⚙️</span>
               Filtros
             </button>
           </div>
 
           {/* Search Filters */}
           {showFilters && (
-            <div className="mt-4 pt-4 border-t">
+            <div id="search-filters" className="mt-4 pt-4 border-t" role="region" aria-label="Filtros de búsqueda">
               <h3 className="text-sm font-medium text-gray-700 mb-3">Filtrar por tipo de contenido:</h3>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-2" role="group" aria-label="Tipos de contenido">
                 {searchTypes.map((type) => (
                   <button
                     key={type.id}
                     onClick={() => setSelectedFilter(type.id)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                       selectedFilter === type.id
-                        ? `bg-${type.color}-600 text-white`
-                        : `bg-${type.color}-100 text-${type.color}-700 hover:bg-${type.color}-200`
+                        ? `bg-blue-600 text-white`
+                        : `bg-gray-100 text-gray-700 hover:bg-gray-200`
                     }`}
+                    aria-pressed={selectedFilter === type.id}
                   >
-                    <span className="mr-1">{type.icon}</span>
+                    <span className="mr-1" aria-hidden="true">{type.icon}</span>
                     {type.name}
                   </button>
                 ))}
@@ -239,10 +257,10 @@ const Search: React.FC = () => {
 
           {/* Search Stats */}
           {query && (
-            <div className="mt-4 text-sm text-gray-600">
+            <div className="mt-4 text-sm text-gray-600" role="status" aria-live="polite">
               {loading ? (
                 <div className="flex items-center">
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2"></div>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-500 mr-2" aria-hidden="true"></div>
                   Buscando...
                 </div>
               ) : (
@@ -257,42 +275,46 @@ const Search: React.FC = () => {
 
         {/* Search Results */}
         {query && (
-          <div className="space-y-4">
+          <div className="space-y-4" role="region" aria-label="Resultados de búsqueda">
             {loading ? (
-              <div className="flex items-center justify-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              <div className="flex items-center justify-center py-12" role="status" aria-label="Cargando resultados">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500" aria-hidden="true"></div>
                 <span className="ml-3 text-gray-600">Buscando en todos los módulos...</span>
               </div>
             ) : results.length > 0 ? (
-              results.map((result) => (
+              results.map((result, index) => (
                 <div
                   key={result.id}
                   onClick={() => handleResultClick(result)}
-                  className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer border-l-4"
-                  style={{ borderLeftColor: `var(--${getTypeColor(result.type)}-500)` }}
+                  onKeyDown={(e) => handleKeyPress(e, result)}
+                  className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer border-l-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  style={{ borderLeftColor: '#3B82F6' }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Ver ${result.title} en ${searchTypes.find(t => t.id === result.type)?.name}`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-2 mb-2">
-                        <span className="text-lg">{getTypeIcon(result.type)}</span>
-                        <span className={`px-2 py-1 rounded text-xs font-medium bg-${getTypeColor(result.type)}-100 text-${getTypeColor(result.type)}-800`}>
+                        <span className="text-lg" aria-hidden="true">{getTypeIcon(result.type)}</span>
+                        <span className={`px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800`}>
                           {searchTypes.find(t => t.id === result.type)?.name}
                         </span>
                         {result.category && (
                           <>
-                            <span className="text-gray-400">•</span>
+                            <span className="text-gray-400" aria-hidden="true">•</span>
                             <span className="text-sm text-gray-600 capitalize">{result.category}</span>
                           </>
                         )}
                         {result.source && (
                           <>
-                            <span className="text-gray-400">•</span>
+                            <span className="text-gray-400" aria-hidden="true">•</span>
                             <span className="text-sm text-gray-600">{result.source}</span>
                           </>
                         )}
                         {result.date && (
                           <>
-                            <span className="text-gray-400">•</span>
+                            <span className="text-gray-400" aria-hidden="true">•</span>
                             <span className="text-sm text-gray-600">
                               {new Date(result.date).toLocaleDateString('es-CO')}
                             </span>
@@ -304,59 +326,59 @@ const Search: React.FC = () => {
                         {highlightText(result.title, query)}
                       </h3>
                       
-                      <p className="text-gray-600 mb-3">
+                      <p className="text-gray-600 mb-3 line-clamp-2">
                         {highlightText(result.description, query)}
                       </p>
                       
                       {result.engagement && (
-                        <div className="flex items-center space-x-4 text-sm text-gray-500">
+                        <div className="flex items-center space-x-4 text-sm text-gray-500" aria-label="Estadísticas de participación">
                           {result.engagement.likes && (
                             <span className="flex items-center space-x-1">
-                              <span>👍</span>
-                              <span>{result.engagement.likes}</span>
+                              <span aria-hidden="true">👍</span>
+                              <span>{result.engagement.likes} me gusta</span>
                             </span>
                           )}
                           {result.engagement.comments && (
                             <span className="flex items-center space-x-1">
-                              <span>💬</span>
-                              <span>{result.engagement.comments}</span>
+                              <span aria-hidden="true">💬</span>
+                              <span>{result.engagement.comments} comentarios</span>
                             </span>
                           )}
                           {result.engagement.participants && (
                             <span className="flex items-center space-x-1">
-                              <span>👥</span>
-                              <span>{result.engagement.participants}</span>
+                              <span aria-hidden="true">👥</span>
+                              <span>{result.engagement.participants} participantes</span>
                             </span>
                           )}
                         </div>
                       )}
                     </div>
                     
-                    <div className="ml-4">
+                    <div className="ml-4" aria-hidden="true">
                       <div className="text-sm text-gray-500">
                         Relevancia: {result.relevanceScore}%
                       </div>
-                      <button className="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium">
+                      <div className="mt-2 text-blue-600 hover:text-blue-800 text-sm font-medium">
                         Ver detalles →
-                      </button>
+                      </div>
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="text-center py-12">
-                <div className="text-6xl mb-4">🔍</div>
+              <div className="text-center py-12" role="status">
+                <div className="text-6xl mb-4" aria-hidden="true">🔍</div>
                 <h3 className="text-xl font-semibold text-gray-700 mb-2">No se encontraron resultados</h3>
                 <p className="text-gray-600 mb-4">
                   No encontramos contenido que coincida con "{query}"
                 </p>
                 <div className="text-sm text-gray-500">
                   <p>Sugerencias:</p>
-                  <ul className="mt-2 space-y-1">
-                    <li>• Verifica la ortografía de las palabras</li>
-                    <li>• Intenta con términos más generales</li>
-                    <li>• Usa palabras clave diferentes</li>
-                    <li>• Cambia el filtro de búsqueda</li>
+                  <ul className="mt-2 space-y-1 list-disc list-inside">
+                    <li>Verifica la ortografía de las palabras</li>
+                    <li>Intenta con términos más generales</li>
+                    <li>Usa palabras clave diferentes</li>
+                    <li>Cambia el filtro de búsqueda</li>
                   </ul>
                 </div>
               </div>
