@@ -12,6 +12,7 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
-    'no-unused-vars': 'off', // Disable for now to focus on deployment issues
+    'no-unused-vars': 'off',
+    'no-undef': 'off', // TypeScript handles this
   },
 }
