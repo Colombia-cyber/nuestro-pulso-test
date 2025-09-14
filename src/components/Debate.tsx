@@ -1,5 +1,43 @@
 import React, { useState, useEffect } from 'react';
 
+interface Comment {
+  id: string;
+  author: string;
+  position: 'favor' | 'contra';
+  content: string;
+  timestamp: string;
+  upvotes: number;
+  replies: Reply[];
+}
+
+interface Reply {
+  id: string;
+  author: string;
+  content: string;
+  timestamp: string;
+  upvotes: number;
+}
+
+interface VoteResults {
+  favor: number;
+  contra: number;
+}
+
+interface DebateData {
+  id: string;
+  title: string;
+  description: string;
+  status: 'live' | 'scheduled';
+  participants: number;
+  timeLeft?: string;
+  scheduledTime?: string;
+  category: string;
+  voteResults?: VoteResults;
+  totalVotes?: number;
+  comments?: Comment[];
+  interested?: number;
+}
+
 const Debate: React.FC = () => {
   const [selectedDebate, setSelectedDebate] = useState<string | null>(null);
   const [newComment, setNewComment] = useState('');
@@ -147,12 +185,12 @@ const Debate: React.FC = () => {
                   <div>
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-green-700 font-medium text-lg">✅ A Favor</span>
-                      <span className="text-2xl font-bold text-green-700">{debate.voteResults.favor}%</span>
+                      <span className="text-2xl font-bold text-green-700">{debate.voteResults?.favor ?? 0}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-4">
                       <div 
                         className="bg-green-500 h-4 rounded-full transition-all duration-1000"
-                        style={{ width: `${debate.voteResults.favor}%` }}
+                        style={{ width: `${debate.voteResults?.favor ?? 0}%` }}
                       ></div>
                     </div>
                   </div>
@@ -160,19 +198,19 @@ const Debate: React.FC = () => {
                   <div>
                     <div className="flex justify-between items-center mb-2">
                       <span className="text-red-700 font-medium text-lg">❌ En Contra</span>
-                      <span className="text-2xl font-bold text-red-700">{debate.voteResults.contra}%</span>
+                      <span className="text-2xl font-bold text-red-700">{debate.voteResults?.contra ?? 0}%</span>
                     </div>
                     <div className="w-full bg-gray-200 rounded-full h-4">
                       <div 
                         className="bg-red-500 h-4 rounded-full transition-all duration-1000"
-                        style={{ width: `${debate.voteResults.contra}%` }}
+                        style={{ width: `${debate.voteResults?.contra ?? 0}%` }}
                       ></div>
                     </div>
                   </div>
                 </div>
                 
                 <div className="mt-4 text-center">
-                  <p className="text-gray-600">Total de votos: {debate.totalVotes.toLocaleString()}</p>
+                  <p className="text-gray-600">Total de votos: {debate.totalVotes?.toLocaleString() ?? '0'}</p>
                 </div>
               </div>
 
@@ -181,7 +219,7 @@ const Debate: React.FC = () => {
                 <h3 className="text-xl font-semibold mb-4">Argumentos y Comentarios</h3>
                 
                 <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {debate.comments.map((comment) => (
+                  {debate.comments?.map((comment) => (
                     <div key={comment.id} className={`p-4 rounded-lg border-l-4 ${
                       comment.position === 'favor' 
                         ? 'bg-green-50 border-green-500' 
@@ -302,11 +340,11 @@ const Debate: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span>Comentarios:</span>
-                    <span className="font-semibold">{debate.comments.length}</span>
+                    <span className="font-semibold">{debate.comments?.length ?? 0}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Votos totales:</span>
-                    <span className="font-semibold">{debate.totalVotes.toLocaleString()}</span>
+                    <span className="font-semibold">{debate.totalVotes?.toLocaleString() ?? '0'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Tiempo restante:</span>
