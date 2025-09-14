@@ -1,16 +1,8 @@
 import React from "react";
-import Navbar from "./components/Navbar";
-import GoogleWebSearchBar from "./components/GoogleWebSearchBar";
+import AppRouter from "./router/AppRouter";
 
 function App() {
-  return (
-    <div>
-      <Navbar />
-      {/* Universal fallback: visible on all routes */}
-      <GoogleWebSearchBar />
-      {/* ...rest of your app, routes, sections... */}
-    </div>
-  );
+  return <AppRouter />;
 }
 
 export default App;

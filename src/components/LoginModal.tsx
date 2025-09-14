@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../context/AuthContext';
 
 interface LoginModalProps {
-  isOpen: boolean;
   onClose: () => void;
 }
 
-const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
+const LoginModal: React.FC<LoginModalProps> = ({ onClose }) => {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -14,8 +13,6 @@ const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   
   const { login, register, loginWithGoogle } = useAuth();
-
-  if (!isOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

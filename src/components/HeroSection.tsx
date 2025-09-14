@@ -1,8 +1,18 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const HeroSection: React.FC = () => {
   return (
-    <div className="relative bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 min-h-screen flex items-center justify-center">
+    <div className="relative bg-gradient-to-br from-yellow-400 via-blue-500 to-red-500 min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Sunlight background effect */}
+      <div className="absolute inset-0 bg-gradient-radial from-yellow-300/40 via-transparent to-transparent"></div>
+      <div className="absolute top-20 right-20 w-96 h-96 bg-yellow-200 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+      
+      {/* Colombian Eagle */}
+      <div className="absolute top-10 right-10 text-8xl opacity-20 animate-float">
+        🦅
+      </div>
+      
       {/* Glass morphism overlay */}
       <div className="absolute inset-0 bg-white bg-opacity-20 backdrop-blur-lg"></div>
       
@@ -32,37 +42,46 @@ const HeroSection: React.FC = () => {
           </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4">
-            <button className="px-8 py-4 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 font-semibold">
+            <Link 
+              to="/chat"
+              className="px-8 py-4 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 font-semibold"
+            >
               💬 Chat en Vivo
-            </button>
-            <button className="px-8 py-4 bg-green-600 text-white rounded-xl shadow-lg hover:bg-green-700 transform hover:scale-105 transition-all duration-200 font-semibold">
+            </Link>
+            <Link 
+              to="/debate"
+              className="px-8 py-4 bg-green-600 text-white rounded-xl shadow-lg hover:bg-green-700 transform hover:scale-105 transition-all duration-200 font-semibold"
+            >
               🗣️ Debates
-            </button>
-            <button className="px-8 py-4 bg-purple-600 text-white rounded-xl shadow-lg hover:bg-purple-700 transform hover:scale-105 transition-all duration-200 font-semibold">
+            </Link>
+            <Link 
+              to="/survey"
+              className="px-8 py-4 bg-purple-600 text-white rounded-xl shadow-lg hover:bg-purple-700 transform hover:scale-105 transition-all duration-200 font-semibold"
+            >
               📊 Encuestas
-            </button>
+            </Link>
           </div>
         </div>
         
         {/* Feature highlights */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30">
+          <Link to="/congress" className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30 hover:bg-opacity-30 transition-all transform hover:scale-105">
             <div className="text-3xl mb-4">🏛️</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">Congreso</h3>
             <p className="text-gray-700">Sigue la actividad legislativa en tiempo real</p>
-          </div>
+          </Link>
           
-          <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30">
+          <Link to="/analytics" className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30 hover:bg-opacity-30 transition-all transform hover:scale-105">
             <div className="text-3xl mb-4">📈</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">Elecciones</h3>
             <p className="text-gray-700">Centro de información electoral actualizada</p>
-          </div>
+          </Link>
           
-          <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30">
+          <Link to="/news" className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30 hover:bg-opacity-30 transition-all transform hover:scale-105">
             <div className="text-3xl mb-4">📰</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">Noticias</h3>
             <p className="text-gray-700">Análisis y cobertura de eventos cívicos</p>
-          </div>
+          </Link>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from './AuthContext';
+import { useAuth } from '../context/AuthContext';
 import LoginModal from './LoginModal';
 
 interface NavigationProps {
@@ -182,7 +182,6 @@ const Navigation: React.FC<NavigationProps> = ({ activeModule, setActiveModule }
       )}
 
       <LoginModal 
-        isOpen={showLoginModal} 
         onClose={() => setShowLoginModal(false)} 
       />
     </nav>
