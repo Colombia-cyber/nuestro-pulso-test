@@ -1,5 +1,36 @@
 import React, { useState } from 'react';
 
+interface NewsItem {
+  id: number;
+  title: string;
+  summary: string;
+  fullContent: string;
+  category: string;
+  source: string;
+  time: string;
+  image: string;
+  engagement: {
+    likes: number;
+    shares: number;
+    comments: number;
+  };
+  readTime: string;
+  political_lean: string;
+  videoUrl?: string;
+  youtubeId?: string;
+  isBreaking?: boolean;
+}
+
+interface Reel {
+  id: string;
+  title: string;
+  thumbnail: string;
+  duration: string;
+  views: number;
+  category: string;
+  youtubeId: string;
+}
+
 const News: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const [selectedArticle, setSelectedArticle] = useState<any>(null);
