@@ -1,20 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+
+interface NewsArticle {
+  id: number;
+  title: string;
+  summary: string;
+  fullContent: string;
+  category: string;
+  source: string;
+  time: string;
+  image: string;
+  engagement: {
+    likes: number;
+    shares: number;
+    comments: number;
+  };
+  readTime: string;
+  political_lean: string;
+  videoUrl?: string;
+  relatedLinks?: string[];
+}
 
 const News: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('todas');
-  const [selectedArticle, setSelectedArticle] = useState<any>(null);
+  const [selectedArticle, setSelectedArticle] = useState<NewsArticle | null>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const categories = [
-    { id: 'todas', name: 'Todas', icon: '📰' },
-    { id: 'politica', name: 'Política', icon: '🏛️' },
-    { id: 'derecha', name: 'Right Wing', icon: '🗳️' },
-    { id: 'izquierda', name: 'Left Wing', icon: '🌹' },
-    { id: 'independiente', name: 'Independiente', icon: '⚖️' },
-    { id: 'economia', name: 'Economía', icon: '💰' },
-    { id: 'social', name: 'Social', icon: '👥' },
-    { id: 'ambiente', name: 'Ambiente', icon: '🌱' },
-    { id: 'educacion', name: 'Educación', icon: '📚' },
-    { id: 'salud', name: 'Salud', icon: '🏥' }
+    { id: 'todas', name: 'Todas', icon: '📰', count: 156 },
+    { id: 'politica', name: 'Política', icon: '🏛️', count: 45 },
+    { id: 'derecha', name: 'Right Wing', icon: '🗳️', count: 23 },
+    { id: 'izquierda', name: 'Left Wing', icon: '🌹', count: 18 },
+    { id: 'independiente', name: 'Independiente', icon: '⚖️', count: 12 },
+    { id: 'economia', name: 'Economía', icon: '💰', count: 34 },
+    { id: 'social', name: 'Social', icon: '👥', count: 28 },
+    { id: 'ambiente', name: 'Ambiente', icon: '🌱', count: 19 },
+    { id: 'educacion', name: 'Educación', icon: '📚', count: 16 },
+    { id: 'salud', name: 'Salud', icon: '🏥', count: 21 },
+    { id: 'tecnologia', name: 'Tecnología', icon: '💻', count: 14 },
+    { id: 'deportes', name: 'Deportes', icon: '⚽', count: 31 },
+    { id: 'cultura', name: 'Cultura', icon: '🎭', count: 9 },
+    { id: 'internacional', name: 'Internacional', icon: '🌍', count: 26 }
   ];
 
   const news = [
