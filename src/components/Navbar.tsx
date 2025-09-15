@@ -1,6 +1,11 @@
 import React from "react";
 
-const Navbar: React.FC = () => {
+interface NavbarProps {
+  currentView: string;
+  onNavigate: (view: string) => void;
+}
+
+const Navbar: React.FC<NavbarProps> = ({ currentView, onNavigate }) => {
   return (
     <nav className="w-full bg-white shadow-sm py-4 px-8 flex flex-row items-center justify-between fixed top-0 left-0 z-50">
       <div className="flex items-center gap-2">
@@ -8,14 +13,37 @@ const Navbar: React.FC = () => {
         <span className="font-bold text-lg text-yellow-700">Nuestro Pulso</span>
       </div>
       <div className="flex gap-6">
-        <a href="/" className="text-blue-900 font-medium hover:text-blue-600 transition">Inicio</a>
-        <a href="/encuestas" className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1">
+        <button 
+          onClick={() => onNavigate('home')}
+          className={`font-medium transition ${currentView === 'home' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+        >
+          Inicio
+        </button>
+        <button 
+          onClick={() => onNavigate('polls')}
+          className={`font-medium transition flex items-center gap-1 ${currentView === 'polls' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+        >
           <span>📊</span>
           <span>Encuestas</span>
-        </a>
-        <a href="/explorar" className="text-blue-900 font-medium hover:text-blue-600 transition">Explorar</a>
-        <a href="/participar" className="text-blue-900 font-medium hover:text-blue-600 transition">Participar</a>
-        <a href="/acerca" className="text-blue-900 font-medium hover:text-blue-600 transition">Acerca</a>
+        </button>
+        <button 
+          onClick={() => onNavigate('news')}
+          className={`font-medium transition ${currentView === 'news' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+        >
+          Explorar
+        </button>
+        <button 
+          onClick={() => onNavigate('debates')}
+          className={`font-medium transition ${currentView === 'debates' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+        >
+          Participar
+        </button>
+        <button 
+          onClick={() => onNavigate('home')}
+          className={`font-medium transition ${currentView === 'home' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+        >
+          Acerca
+        </button>
       </div>
       <div>
         <button className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white px-4 py-2 rounded-lg font-bold shadow hover:scale-105 transition">Ingresar</button>

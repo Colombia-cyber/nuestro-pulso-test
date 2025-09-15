@@ -2,7 +2,11 @@ import React from 'react';
 import { getTrendingPolls } from './data/samplePolls';
 import PollCard from './components/polls/PollCard';
 
-const HomePage: React.FC = () => {
+interface HomePageProps {
+  onNavigate: (view: string) => void;
+}
+
+const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const trendingPolls = getTrendingPolls().slice(0, 2); // Get top 2 trending polls
 
   const handleVote = (pollId: string, optionId: string) => {
@@ -78,12 +82,12 @@ const HomePage: React.FC = () => {
                 </p>
               </div>
             </div>
-            <a 
-              href="/encuestas" 
+            <button 
+              onClick={() => onNavigate('polls')}
               className="text-blue-600 hover:text-blue-800 font-semibold text-sm transition-colors"
             >
               Ver todas →
-            </a>
+            </button>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
