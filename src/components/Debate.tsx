@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-interface Comment {
+interface DebateComment {
   id: string;
   author: string;
   position: 'favor' | 'contra';
@@ -34,7 +34,7 @@ interface DebateData {
   category: string;
   voteResults?: VoteResults;
   totalVotes?: number;
-  comments?: Comment[];
+  comments?: DebateComment[];
   interested?: number;
 }
 
