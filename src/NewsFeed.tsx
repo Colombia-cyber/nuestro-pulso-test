@@ -1,21 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { Article, getMockNews } from './data/mockNewsData';
 
-type Article = {
-  title: string;
-  description: string;
-  source: { name: string };
-  publishedAt: string;
-  url: string;
-};
-
-const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY || '27aa99ad66064f04b9ef515c312a78eb';
-
-const fetchNews = async (params: string) => {
-  const res = await fetch(
-    `https://newsapi.org/v2/everything?${params}&apiKey=${NEWS_API_KEY}`
-  );
-  const data = await res.json();
-  return data.articles || [];
+// Mock fetch function that simulates API delay and returns mock data
+const fetchNews = async (category: 'colombian' | 'trump' | 'rightWing' | 'politics'): Promise<Article[]> => {
+  // Simulate network delay
+  await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 400));
+  
+  return getMockNews(category);
 };
 
 export default function NewsFeed() {
@@ -28,17 +19,27 @@ export default function NewsFeed() {
   useEffect(() => {
     async function loadAll() {
       setLoading(true);
-      const [co, auPmTrump, politics, rightWing] = await Promise.all([
-        fetchNews('q=Gustavo Petro&language=es&sortBy=publishedAt'),
-        fetchNews('q=(Prime Minister OR PM OR "Anthony Albanese") AND "Donald Trump"&language=en&sortBy=publishedAt'),
-        fetchNews('q=politics&language=en&sortBy=publishedAt'),
-        fetchNews('q=(conservative OR "right wing" OR republican OR "Centro Democratico" OR "election polls" OR "conservative candidate")&language=en&sortBy=publishedAt'),
-      ]);
-      setColombianNews(co);
-      setAustralianPmTrumpNews(auPmTrump);
-      setPoliticsNews(politics);
-      setRightWingNews(rightWing);
-      setLoading(false);
+      try {
+        const [co, trump, politics, rightWing] = await Promise.all([
+          fetchNews('colombian'),
+          fetchNews('trump'),
+          fetchNews('politics'),
+          fetchNews('rightWing'),
+        ]);
+        setColombianNews(co);
+        setAustralianPmTrumpNews(trump);
+        setPoliticsNews(politics);
+        setRightWingNews(rightWing);
+      } catch (error) {
+        console.error('Error loading news:', error);
+        // Even on error, we have mock data, so we can still show content
+        setColombianNews(getMockNews('colombian'));
+        setAustralianPmTrumpNews(getMockNews('trump'));
+        setPoliticsNews(getMockNews('politics'));
+        setRightWingNews(getMockNews('rightWing'));
+      } finally {
+        setLoading(false);
+      }
     }
     loadAll();
   }, []);
@@ -64,7 +65,7 @@ export default function NewsFeed() {
         )}
       </div>
       <div className="lg:w-1/4 w-full h-[70vh] overflow-y-auto">
-        <h2 className="text-lg font-bold mb-2 text-[#0033A0]">Australian PM & Donald Trump</h2>
+        <h2 className="text-lg font-bold mb-2 text-[#0033A0]">Donald Trump & US Politics</h2>
         {loading && australianPmTrumpNews.length === 0 ? (
           <div>Loading...</div>
         ) : (
