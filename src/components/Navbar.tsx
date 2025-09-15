@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import GoogleWebSearchBar from "./GoogleWebSearchBar";
+import UniversalSearchBar from "./UniversalSearchBar";
 
 interface NavbarProps {
   onNavigate?: (view: string) => void;
@@ -36,13 +36,6 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
           >
             <span>📰</span>
             <span>Noticias</span>
-          </button>
-          <button 
-            onClick={() => handleNavClick('reels')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
-          >
-            <span>🎬</span>
-            <span>Reels</span>
           </button>
           <button 
             onClick={() => handleNavClick('community-hub')}
@@ -127,7 +120,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
               </button>
             </div>
             <div className="p-6">
-              <GoogleWebSearchBar />
+              <UniversalSearchBar />
             </div>
           </div>
         </div>

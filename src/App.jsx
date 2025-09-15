@@ -5,7 +5,8 @@ import NewsFeed from './NewsFeed.tsx';
 import News from './components/News.tsx';
 import Debate from './components/Debate.tsx';
 import Survey from './components/Survey.tsx';
-import PulseReels from './components/PulseReels.tsx';
+import UniversalSearchBar from './components/UniversalSearchBar.tsx';
+import CommunityHub from './pages/CommunityHub.tsx';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -18,8 +19,14 @@ function App() {
         return <Debate />;
       case 'polls':
         return <Survey />;
-      case 'reels':
-        return <PulseReels />;
+      case 'search':
+        return (
+          <div className="container mx-auto px-4 py-8">
+            <UniversalSearchBar />
+          </div>
+        );
+      case 'community-hub':
+        return <CommunityHub />;
       case 'home':
       default:
         return (
@@ -64,6 +71,18 @@ function App() {
             📰 Noticias
           </button>
           <button 
+            onClick={() => setCurrentView('search')}
+            className={`font-medium transition ${currentView === 'search' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+          >
+            🔍 Buscar
+          </button>
+          <button 
+            onClick={() => setCurrentView('community-hub')}
+            className={`font-medium transition ${currentView === 'community-hub' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+          >
+            💭 Community Hub
+          </button>
+          <button 
             onClick={() => setCurrentView('polls')}
             className={`font-medium transition ${currentView === 'polls' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
           >
@@ -74,12 +93,6 @@ function App() {
             className={`font-medium transition ${currentView === 'debates' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
           >
             🗣️ Debates
-          </button>
-          <button 
-            onClick={() => setCurrentView('reels')}
-            className={`font-medium transition ${currentView === 'reels' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
-          >
-            🎬 Reels
           </button>
         </div>
         <div>

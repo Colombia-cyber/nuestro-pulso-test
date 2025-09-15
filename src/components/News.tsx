@@ -15,13 +15,11 @@ const News: React.FC = () => {
     { id: 'independiente', name: 'Independiente', icon: '⚖️' },
     { id: 'economia', name: 'Economía', icon: '💰' },
     { id: 'social', name: 'Social', icon: '👥' },
-    { id: 'ambiente', name: 'Ambiente', icon: '🌱' },
     { id: 'educacion', name: 'Educación', icon: '📚' },
     { id: 'salud', name: 'Salud', icon: '🏥' },
     { id: 'terror', name: 'Terror', icon: '🚨' },
     { id: 'congreso', name: 'Congress', icon: '🏛️' },
-    { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' },
-    { id: 'tecnologia', name: 'Technology', icon: '💻' }
+    { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' }
   ];
 
   const news = [
@@ -48,29 +46,6 @@ Las inscripciones para el programa comenzarán el próximo mes a través de la p
     },
     {
       id: 2,
-      title: 'Bogotá implementa nuevas medidas para mejorar la calidad del aire',
-      summary: 'La administración distrital presenta un plan integral para reducir la contaminación atmosférica en un 30% para 2025.',
-      fullContent: `La alcaldía de Bogotá presentó ayer el "Plan Aire Limpio 2024-2028", una estrategia integral que busca reducir significativamente los niveles de contaminación atmosférica en la capital colombiana.
-
-El alcalde Carlos Fernando Galán anunció que la ciudad invertirá 2 billones de pesos en los próximos cuatro años para implementar medidas que incluyen la ampliación del sistema de transporte público eléctrico, la creación de nuevas zonas verdes y la implementación de tecnologías de monitoreo ambiental en tiempo real.
-
-Entre las medidas más destacadas se encuentra la expansión del sistema TransMilenio con 200 buses eléctricos adicionales, la creación de 15 nuevos parques urbanos y la implementación de ciclovías que conectarán todos los sectores de la ciudad.
-
-El plan también incluye restricciones más estrictas para vehículos particulares en el centro de la ciudad y incentivos fiscales para empresas que adopten tecnologías limpias.
-
-"Nuestro objetivo es que Bogotá sea una ciudad modelo en sostenibilidad ambiental para América Latina", declaró el alcalde durante la presentación del plan.
-
-Los primeros resultados del plan se esperan ver en los próximos seis meses, con la instalación de nuevas estaciones de monitoreo de calidad del aire en 50 puntos estratégicos de la ciudad.`,
-      category: 'ambiente',
-      source: 'Alcaldía de Bogotá',
-      time: '4 horas',
-      image: '🌱',
-      engagement: { likes: 189, shares: 67, comments: 28 },
-      readTime: '5 min',
-      political_lean: 'izquierda'
-    },
-    {
-      id: 3,
       title: 'Centro Democrático propone nueva agenda conservadora para 2025',
       summary: 'El partido de oposición presenta propuestas sobre seguridad, economía de mercado y valores tradicionales.',
       fullContent: `El Centro Democrático, principal partido de oposición en Colombia, presentó oficialmente su agenda política para 2025, enfocada en tres pilares fundamentales: seguridad ciudadana, crecimiento económico y fortalecimiento de los valores tradicionales.
@@ -95,7 +70,7 @@ La agenda será presentada formalmente en el Congreso de la República el próxi
       political_lean: 'derecha'
     },
     {
-      id: 4,
+      id: 3,
       title: 'Pacto Histórico impulsa reforma al sistema pensional con enfoque social',
       summary: 'La coalición de gobierno presenta propuesta para garantizar pensiones dignas a trabajadores informales.',
       fullContent: `El Pacto Histórico, coalición que apoya al presidente Gustavo Petro, anunció una nueva propuesta de reforma al sistema pensional que busca garantizar una vejez digna para todos los colombianos, especialmente para quienes han trabajado en la informalidad.
@@ -120,7 +95,7 @@ El gobierno espera radicar el proyecto en el Congreso antes de finalizar el año
       political_lean: 'izquierda'
     },
     {
-      id: 5,
+      id: 4,
       title: 'Análisis independiente: Los retos económicos de Colombia en 2024',
       summary: 'Expertos académicos evalúan objetivamente los desafíos y oportunidades económicas del país.',
       fullContent: `Un grupo de economistas independientes de las universidades Javeriana, Nacional y Andes publicó un análisis comprehensivo sobre los principales retos económicos que enfrentará Colombia en 2024.
@@ -145,7 +120,7 @@ Los economistas recomiendan crear un consejo económico nacional permanente que 
       political_lean: 'independiente'
     },
     {
-      id: 6,
+      id: 5,
       title: 'Alerta de seguridad: Incrementan amenazas terroristas en zonas fronterizas',
       summary: 'Fuerzas militares colombianas reportan aumento en actividad de grupos armados ilegales en la frontera con Venezuela.',
       fullContent: `El Alto Mando Militar de Colombia emitió una alerta de seguridad tras detectar un incremento significativo en la actividad de grupos armados ilegales en las zonas fronterizas con Venezuela, particularmente en los departamentos de Norte de Santander y Arauca.
@@ -170,7 +145,7 @@ La población civil ha sido evacuada preventivamente de tres municipios consider
       political_lean: 'independiente'
     },
     {
-      id: 7,
+      id: 6,
       title: 'Congreso aprueba proyecto de ley sobre inteligencia artificial en el sector público',
       summary: 'El Senado colombiano aprobó en primer debate una normativa para regular el uso de IA en entidades gubernamentales.',
       fullContent: `El Senado de la República aprobó en primer debate el proyecto de ley que busca regular el uso de inteligencia artificial en el sector público colombiano, convirtiéndose en uno de los primeros países de América Latina en abordar esta temática legislativa.
@@ -197,7 +172,7 @@ El proyecto ahora pasa a la Cámara de Representantes, donde se espera que sea d
       political_lean: 'independiente'
     },
     {
-      id: 8,
+      id: 7,
       title: 'Trump anuncia nueva política comercial que afectaría exportaciones colombianas',
       summary: 'El expresidente estadounidense propone aranceles adicionales a productos agrícolas latinoamericanos en caso de volver al poder.',
       fullContent: `Durante un mitin en Florida, el expresidente Donald Trump anunció su intención de implementar nuevos aranceles comerciales que afectarían significativamente las exportaciones colombianas, particularmente en los sectores de café, flores y productos agrícolas.
@@ -224,30 +199,241 @@ La Asociación Nacional de Exportadores (ANALDEX) solicitó al gobierno colombia
       political_lean: 'independiente'
     },
     {
-      id: 9,
-      title: 'Colombia lanza plan nacional de transformación digital para 2030',
-      summary: 'El gobierno presenta una estrategia integral para digitalizar el 80% de los trámites públicos y conectar todas las zonas rurales.',
-      fullContent: `El Ministerio de Tecnologías de la Información y las Comunicaciones (MinTIC) lanzó oficialmente el "Plan Nacional de Transformación Digital 2024-2030", una ambiciosa estrategia que busca posicionar a Colombia como líder tecnológico en América Latina.
+      id: 8,
+      title: 'Propuesta conservadora de reforma tributaria enfocada en reducción de impuestos',
+      summary: 'Senadores del Centro Democrático y Cambio Radical presentan alternativa que privilegia la reducción fiscal para estimular inversión.',
+      fullContent: `Una coalición de senadores conservadores, liderada por el Centro Democrático y respaldada por Cambio Radical, presentó una propuesta alternativa de reforma tributaria que se enfoca en la reducción significativa de impuestos para personas naturales y empresas.
 
-El plan, que requiere una inversión de $8 billones de pesos durante seis años, tiene cuatro objetivos principales: digitalizar el 80% de los trámites gubernamentales, conectar el 95% del territorio nacional con internet de alta velocidad, formar un millón de ciudadanos en competencias digitales y crear 300,000 empleos en el sector tecnológico.
+La propuesta, denominada "Reforma para el Crecimiento", busca reducir el impuesto de renta para personas naturales del 39% al 28%, y para empresas del 35% al 25%, con el objetivo de estimular la inversión privada y la creación de empleo.
 
-La ministra Carmen Ligia Valderrama explicó durante la presentación que el plan incluye la construcción de 5,000 kilómetros de fibra óptica, la instalación de 10,000 puntos de acceso Wi-Fi gratuito en zonas rurales y la creación de 50 centros de innovación tecnológica en todo el país.
+El senador Carlos Felipe Mejía, ponente principal de la iniciativa, argumentó que "la mejor política social es generar empleo, y esto solo se logra liberando la capacidad productiva del sector privado a través de menores cargas tributarias".
 
-"Esta es la transformación más ambiciosa que ha emprendido Colombia en materia tecnológica", declaró Valderrama en el evento realizado en el Centro de Innovación de Bogotá.
+La propuesta incluye la eliminación del impuesto a las transacciones financieras (4x1000), la reducción del IVA del 19% al 16% para productos de la canasta básica, y la creación de incentivos tributarios especiales para empresas que inviertan en investigación y desarrollo.
 
-El sector privado también participará activamente en la iniciativa. Empresas como Claro, Movistar, Tigo y ETB han comprometido inversiones por $2 billones adicionales para acelerar el despliegue de redes 5G y mejorar la cobertura en zonas apartadas.
+Para compensar la reducción en ingresos fiscales, la coalición propone eliminar subsidios considerados ineficientes, reducir el gasto burocrático en un 15%, y implementar un plan agresivo de formalización empresarial que amplíe la base tributaria.
 
-El plan incluye programas especiales para comunidades indígenas y afrodescendientes, garantizando que la transformación digital sea inclusiva y respete la diversidad cultural del país.
+"Necesitamos un Estado más eficiente y menos costoso, que permita al sector privado ser el motor del crecimiento económico", declaró la senadora María Fernanda Cabal durante la presentación.
 
-Los primeros resultados se esperan ver en 2025, con el lanzamiento de la plataforma "Colombia Digital", que centralizará todos los servicios gubernamentales en línea y permitirá a los ciudadanos realizar la mayoría de trámites desde sus dispositivos móviles.
+La propuesta también incluye la eliminación de gabelas y beneficios tributarios para sectores específicos, argumentando que esto generaría mayor equidad y transparencia en el sistema fiscal.
 
-La iniciativa cuenta con el respaldo del Banco Interamericano de Desarrollo (BID), que otorgó un crédito de $500 millones para financiar la primera fase del proyecto.`,
-      category: 'tecnologia',
-      source: 'El Tiempo Tecnología',
-      time: '3 horas',
-      image: '💻',
-      engagement: { likes: 423, shares: 198, comments: 87 },
+El gobierno nacional ha expresado reservas sobre la viabilidad fiscal de estas medidas, argumentando que podrían generar un déficit presupuestal insostenible.`,
+      category: 'derecha',
+      source: 'Congreso Nacional',
+      time: '4 horas',
+      image: '🗳️',
+      engagement: { likes: 289, shares: 145, comments: 67 },
       readTime: '6 min',
+      political_lean: 'derecha'
+    },
+    {
+      id: 9,
+      title: 'Coalición de izquierda propone ley de redistribución de tierras ociosas',
+      summary: 'El Pacto Histórico presenta proyecto para expropiar tierras improductivas y entregarlas a campesinos sin tierra.',
+      fullContent: `El Pacto Histórico presentó en el Congreso un ambicioso proyecto de ley que busca redistribuir tierras ociosas a campesinos sin tierra, como parte fundamental de la reforma agraria integral prometida durante la campaña electoral.
+
+La iniciativa, liderada por el senador Iván Cepeda, establece que todas las tierras que permanezcan improductivas por más de tres años podrán ser objeto de expropiación con fines de redistribución, pagando una compensación basada en el avalúo catastral.
+
+"La concentración de la tierra en Colombia es una de las más altas del mundo, mientras miles de familias campesinas no tienen donde cultivar sus alimentos", declaró Cepeda durante la presentación del proyecto.
+
+El proyecto define como tierras ociosas aquellas que tengan menos del 30% de su extensión en producción agrícola o pecuaria, excluyendo reservas naturales y áreas de conservación ambiental.
+
+La propuesta incluye la creación de un fondo de tierras administrado por la Agencia Nacional de Tierras, que se encargaría de identificar, expropiar y redistribuir los predios ociosos a familias campesinas, comunidades indígenas y afrodescendientes.
+
+Los beneficiarios recibirían no solo la tierra, sino también créditos blandos, asistencia técnica y apoyo para la comercialización de sus productos, con el objetivo de garantizar la viabilidad económica de los nuevos proyectos productivos.
+
+La senadora Clara López argumentó que "la redistribución de tierras es fundamental para lograr la paz territorial y reducir la desigualdad en el campo colombiano".
+
+Los gremios agropecuarios han expresado fuerte oposición al proyecto, argumentando que podría generar inseguridad jurídica y desestimular la inversión en el sector rural.
+
+El proyecto deberá pasar por cuatro debates en el Congreso antes de convertirse en ley, proceso que se espera tome al menos seis meses.`,
+      category: 'izquierda',
+      source: 'Senado de la República',
+      time: '5 horas',
+      image: '🌹',
+      engagement: { likes: 412, shares: 298, comments: 156 },
+      readTime: '7 min',
+      political_lean: 'izquierda'
+    },
+    {
+      id: 10,
+      title: 'Debate conservador sobre valores tradicionales en educación pública',
+      summary: 'Sectores conservadores proponen fortalecer la enseñanza de valores familiares y patrióticos en colegios públicos.',
+      fullContent: `Una coalición de congresistas conservadores, padres de familia y organizaciones religiosas lanzó una campaña nacional para promover la enseñanza de valores tradicionales en el sistema educativo público colombiano.
+
+La iniciativa, denominada "Educación con Valores", busca incluir en el currículo obligatorio materias sobre historia patria, educación cívica tradicional, ética basada en valores familiares y respeto por los símbolos nacionales.
+
+El senador Eduardo Pulgar, vocero de la iniciativa, argumentó que "la educación debe formar ciudadanos íntegros, con amor por la patria y respeto por las tradiciones que han forjado nuestra identidad nacional".
+
+La propuesta incluye la creación de la asignatura "Valores y Tradiciones Colombianas", que sería obligatoria desde primero de primaria hasta grado once, con un enfoque en el fortalecimiento de la familia como núcleo fundamental de la sociedad.
+
+Los contenidos incluirían el estudio de la historia patria desde una perspectiva que destaque los valores heroicos y patrióticos, la importancia de la familia nuclear, el respeto por las autoridades y las tradiciones religiosas del país.
+
+La representante Martha Lucía Ramírez destacó que "necesitamos formar jóvenes con principios sólidos, que valoren el trabajo, la disciplina y el respeto por las instituciones democráticas".
+
+La propuesta también contempla la creación de programas de capacitación para docentes en "pedagogía de valores", y el establecimiento de mecanismos de participación de padres de familia en la definición de contenidos educativos.
+
+Sectores progresistas han criticado la iniciativa, argumentando que podría promover una visión dogmática de la educación y limitar el pensamiento crítico de los estudiantes.
+
+El Ministerio de Educación anunció que evaluará la propuesta en el marco de la autonomía curricular de las instituciones educativas y los principios de diversidad y pluralismo.`,
+      category: 'derecha',
+      source: 'Cámara de Representantes',
+      time: '3 horas',
+      image: '🗳️',
+      engagement: { likes: 234, shares: 123, comments: 89 },
+      readTime: '6 min',
+      political_lean: 'derecha'
+    },
+    {
+      id: 11,
+      title: 'Movimiento progresista impulsa agenda de derechos LGBTI+ en el Congreso',
+      summary: 'Bancada del Pacto Histórico presenta proyecto de ley integral para garantizar derechos de la población LGBTI+.',
+      fullContent: `La bancada del Pacto Histórico en el Congreso presentó un proyecto de ley integral para garantizar los derechos de la población LGBTI+ en Colombia, que incluye medidas contra la discriminación, reconocimiento de identidades de género y protección de familias diversas.
+
+La iniciativa, liderada por la representante Katherine Miranda, busca crear un marco legal comprehensivo que garantice la igualdad de derechos para todas las personas, independientemente de su orientación sexual o identidad de género.
+
+"Colombia debe ser un país donde todas las personas puedan vivir con dignidad y sin temor a la discriminación", declaró Miranda durante la presentación del proyecto en el Capitolio.
+
+El proyecto incluye la tipificación de crímenes de odio por orientación sexual e identidad de género, con penas de hasta 20 años de prisión para los responsables de estos delitos.
+
+También contempla el reconocimiento legal de las identidades de género trans, permitiendo el cambio de marcadores de género en documentos oficiales mediante un proceso administrativo simplificado.
+
+En materia de familias, la propuesta establece el derecho a la adopción para parejas del mismo sexo, equiparando sus derechos con los de las parejas heterosexuales.
+
+La senadora Angélica Lozano argumentó que "los derechos humanos no son negociables y Colombia debe ponerse a la vanguardia en la protección de las minorías sexuales y de género".
+
+El proyecto también incluye la creación de programas de educación sexual integral en colegios, con enfoque en diversidad y respeto por las diferencias.
+
+Organizaciones conservadoras y religiosas han anunciado su oposición al proyecto, argumentando que podría afectar los valores familiares tradicionales y la libertad religiosa.
+
+La iniciativa deberá superar cuatro debates en el Congreso, donde se espera un intenso debate entre sectores progresistas y conservadores.`,
+      category: 'izquierda',
+      source: 'Congreso de la República',
+      time: '2 horas',
+      image: '🌹',
+      engagement: { likes: 378, shares: 267, comments: 145 },
+      readTime: '6 min',
+      political_lean: 'izquierda'
+    },
+    {
+      id: 12,
+      title: 'Propuesta conservadora de incentivos para empresas familiares',
+      summary: 'Centro Democrático presenta proyecto para beneficiar tributariamente a empresas dirigidas por núcleos familiares.',
+      fullContent: `El Centro Democrático presentó en el Congreso un proyecto de ley que busca crear incentivos tributarios especiales para empresas familiares, con el objetivo de fortalecer este tipo de organizaciones que considera fundamentales para la economía nacional.
+
+La iniciativa, liderada por el senador Honorio Henríquez, propone reducir en un 30% el impuesto de renta para empresas donde al menos el 60% de la propiedad esté en manos de miembros de una misma familia.
+
+"Las empresas familiares son la columna vertebral de nuestra economía y merecen un tratamiento tributario diferencial que reconozca su contribución al desarrollo nacional", declaró Henríquez durante la presentación.
+
+El proyecto define como empresa familiar aquella en la que una familia controla la mayoría de las decisiones estratégicas, la propiedad y la gestión, y donde existe la intención de transferir el negocio a las siguientes generaciones.
+
+Los beneficios tributarios incluyen también la exención del impuesto a las transacciones financieras para operaciones relacionadas con la sucesión empresarial, y tasas preferenciales para créditos destinados a la modernización de estas empresas.
+
+La propuesta contempla la creación de un registro nacional de empresas familiares en la Superintendencia de Sociedades, que se encargaría de verificar el cumplimiento de los requisitos para acceder a los beneficios.
+
+El representante Gabriel Santos argumentó que "las empresas familiares generan empleo de calidad, mantienen vínculos estrechos con sus comunidades y tienen una visión de largo plazo que beneficia al país".
+
+El proyecto también incluye programas de capacitación y acompañamiento para facilitar los procesos de sucesión generacional en estas empresas, reconociendo que uno de sus principales desafíos es la transición entre generaciones.
+
+El gobierno nacional ha expresado interés en la propuesta, aunque solicitó un estudio detallado sobre el impacto fiscal de las medidas propuestas.
+
+Los gremios empresariales han respaldado la iniciativa, argumentando que podría fortalecer el tejido empresarial nacional y promover la estabilidad económica.`,
+      category: 'derecha',
+      source: 'Portafolio Empresarial',
+      time: '6 horas',
+      image: '🗳️',
+      engagement: { likes: 156, shares: 87, comments: 43 },
+      readTime: '5 min',
+      political_lean: 'derecha'
+    },
+    {
+      id: 13,
+      title: 'Izquierda propone reforma laboral para fortalecer derechos de trabajadores',
+      summary: 'Pacto Histórico presenta proyecto que busca reducir jornada laboral y fortalecer negociación colectiva.',
+      fullContent: `El Pacto Histórico presentó en el Congreso una ambiciosa reforma laboral que busca modernizar las relaciones de trabajo en Colombia, con énfasis en la reducción de la jornada laboral y el fortalecimiento de los derechos de los trabajadores.
+
+La propuesta, liderada por el senador Alexander López, incluye la reducción gradual de la jornada laboral de 48 a 40 horas semanales, sin reducción salarial, como parte de una estrategia para mejorar la calidad de vida de los trabajadores.
+
+"Los trabajadores colombianos merecen condiciones laborales dignas que les permitan desarrollarse integralmente como personas", declaró López durante la presentación del proyecto.
+
+La reforma propone fortalecer significativamente la negociación colectiva, estableciendo la obligatoriedad para todas las empresas con más de 50 empleados de negociar condiciones laborales con organizaciones sindicales.
+
+El proyecto también incluye la tipificación del acoso laboral como delito penal, con sanciones que van desde multas hasta prisión para empleadores que incurran en estas prácticas.
+
+En materia de estabilidad laboral, la propuesta elimina los contratos de prestación de servicios para actividades permanentes de las empresas, obligando a la contratación directa con todos los beneficios laborales.
+
+La senadora Aída Avella argumentó que "es hora de que Colombia supere la precarización laboral y construya relaciones de trabajo basadas en la dignidad y la justicia social".
+
+La reforma contempla también la creación de un fondo de desempleo financiado con aportes tripartitos (Estado, empleadores y trabajadores) que garantice ingresos básicos a personas desempleadas por hasta seis meses.
+
+Los gremios empresariales han expresado fuertes críticas al proyecto, argumentando que podría incrementar significativamente los costos laborales y afectar la competitividad de las empresas colombianas.
+
+El proyecto deberá pasar por un extenso proceso de debate en el Congreso, donde se espera una fuerte confrontación entre sectores empresariales y sindicales.`,
+      category: 'izquierda',
+      source: 'Central Unitaria de Trabajadores',
+      time: '4 horas',
+      image: '🌹',
+      engagement: { likes: 445, shares: 234, comments: 178 },
+      readTime: '7 min',
+      political_lean: 'izquierda'
+    },
+    {
+      id: 14,
+      title: 'Análisis de salud pública: Desafíos del sistema de salud colombiano',
+      summary: 'Estudio académico independiente evalúa fortalezas y debilidades del sistema de salud nacional.',
+      fullContent: `Un estudio comprehensivo realizado por investigadores de la Universidad de los Andes y la Universidad Nacional evaluó el estado actual del sistema de salud colombiano, identificando tanto logros significativos como desafíos persistentes.
+
+La investigación, dirigida por la doctora Carmen Lucía Cuéllar, analizó datos de los últimos cinco años para evaluar el desempeño del sistema en términos de cobertura, calidad, eficiencia y equidad.
+
+Entre los logros destacados, el estudio reconoce que Colombia ha alcanzado una cobertura universal del 97.2% de la población, una de las más altas de América Latina, y ha logrado reducir significativamente la mortalidad infantil en la última década.
+
+Sin embargo, el informe identifica problemas críticos como las largas listas de espera para procedimientos especializados, con tiempos promedio de 6 meses para cirugías no urgentes, y las disparidades en calidad entre diferentes regiones del país.
+
+"El sistema colombiano tiene bases sólidas, pero requiere ajustes importantes para garantizar acceso oportuno y calidad homogénea en todo el territorio", concluyó Cuéllar.
+
+El estudio revela que el 68% de los usuarios reporta demoras excesivas en la atención especializada, y que existe una brecha significativa en la disponibilidad de profesionales de la salud entre zonas urbanas y rurales.
+
+En términos de sostenibilidad financiera, los investigadores advierten sobre el crecimiento del gasto en salud por encima del PIB, lo que podría generar presiones fiscales en el mediano plazo.
+
+El informe recomienda fortalecer la atención primaria, mejorar los sistemas de información, optimizar la gestión de recursos y desarrollar estrategias específicas para reducir las brechas territoriales.
+
+Los investigadores también sugieren explorar modelos de telemedicina para mejorar el acceso en zonas rurales y establecer mecanismos más eficientes de control de calidad en la prestación de servicios.`,
+      category: 'salud',
+      source: 'Universidad de los Andes',
+      time: '8 horas',
+      image: '🏥',
+      engagement: { likes: 123, shares: 67, comments: 34 },
+      readTime: '6 min',
+      political_lean: 'independiente'
+    },
+    {
+      id: 15,
+      title: 'Debate político sobre política migratoria y refugiados venezolanos',
+      summary: 'Sectores políticos debaten estrategias para manejar la migración venezolana y la integración regional.',
+      fullContent: `El Congreso colombiano inició un debate sobre la política migratoria nacional, centrado principalmente en el manejo de la migración venezolana y la necesidad de desarrollar estrategias de integración sostenibles.
+
+Colombia alberga actualmente cerca de 2.9 millones de migrantes venezolanos, convirtiéndose en el país que más refugiados ha recibido de la crisis migratoria regional.
+
+El senador Juan Carlos Losada, del Pacto Histórico, defendió la política de puertas abiertas implementada por el gobierno, argumentando que "Colombia tiene la responsabilidad humanitaria de acoger a quienes huyen de la crisis venezolana".
+
+Por su parte, el Centro Democrático, a través del senador Paloma Valencia, propuso una política más restrictiva que incluya mayores controles fronterizos y mecanismos de deportación para migrantes irregulares que cometan delitos.
+
+"Debemos proteger a los migrantes que vienen a trabajar honradamente, pero también proteger a los colombianos de quienes aprovechan nuestra generosidad para delinquir", declaró Valencia.
+
+El debate incluye la discusión sobre el Estatuto Temporal de Protección, que ha otorgado regularización a más de 1.7 millones de venezolanos, permitiéndoles acceder a servicios de salud, educación y trabajo formal.
+
+Los datos oficiales muestran que el 78% de los migrantes venezolanos en Colombia están en edad productiva, y que su aporte al PIB nacional ha sido positivo, contribuyendo con el 0.4% del crecimiento económico.
+
+Sin embargo, persisten desafíos en términos de integración laboral, con altas tasas de informalidad entre la población migrante, y presiones sobre los sistemas de salud y educación en las ciudades de mayor recepción.
+
+El gobierno nacional ha solicitado mayor apoyo internacional para atender las necesidades de la población migrante, argumentando que se trata de una crisis regional que requiere respuestas coordenadas.
+
+El debate parlamentario continuará en las próximas semanas, donde se espera la presentación de propuestas concretas para mejorar la política migratoria nacional.`,
+      category: 'social',
+      source: 'Defensoría del Pueblo',
+      time: '5 horas',
+      image: '👥',
+      engagement: { likes: 89, shares: 45, comments: 67 },
+      readTime: '7 min',
       political_lean: 'independiente'
     }
   ];
