@@ -38,13 +38,6 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
             <span>Noticias</span>
           </button>
           <button 
-            onClick={() => handleNavClick('reels')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
-          >
-            <span>🎬</span>
-            <span>Reels</span>
-          </button>
-          <button 
             onClick={() => handleNavClick('community-hub')}
             className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
           >

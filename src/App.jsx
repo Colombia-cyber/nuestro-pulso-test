@@ -5,7 +5,6 @@ import NewsFeed from './NewsFeed.tsx';
 import News from './components/News.tsx';
 import Debate from './components/Debate.tsx';
 import Survey from './components/Survey.tsx';
-import PulseReels from './components/PulseReels.tsx';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -18,8 +17,6 @@ function App() {
         return <Debate />;
       case 'polls':
         return <Survey />;
-      case 'reels':
-        return <PulseReels />;
       case 'home':
       default:
         return (
@@ -74,12 +71,6 @@ function App() {
             className={`font-medium transition ${currentView === 'debates' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
           >
             🗣️ Debates
-          </button>
-          <button 
-            onClick={() => setCurrentView('reels')}
-            className={`font-medium transition ${currentView === 'reels' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
-          >
-            🎬 Reels
           </button>
         </div>
         <div>

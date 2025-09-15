@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import News from "./components/News";
-import PulseReels from "./components/PulseReels";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 
@@ -17,8 +16,6 @@ function App() {
     switch (currentView) {
       case 'news':
         return <News />;
-      case 'reels':
-        return <PulseReels />;
       case 'comments':
         return <Comments />;
       case 'community-hub':

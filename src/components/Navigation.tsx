@@ -21,7 +21,6 @@ const Navigation: React.FC<NavigationProps> = ({ activeModule, setActiveModule }
     { id: 'comments', name: 'Comentarios', icon: '💭' },
     { id: 'care', name: 'Cuidado', icon: '🤝' },
     { id: 'congress', name: 'Congreso', icon: '🏛️' },
-    { id: 'reels', name: 'Pulse Reels', icon: '🎬' },
     { id: 'marketplace', name: 'Mercado', icon: '🛒' },
     { id: 'search', name: 'Buscar', icon: '🔍' },
     { id: 'alerts', name: 'Alertas', icon: '🔔' },
