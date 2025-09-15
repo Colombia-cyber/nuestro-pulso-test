@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import GoogleWebSearchBar from "./GoogleWebSearchBar";
+import UniversalSearchBar from "./UniversalSearchBar";
 
 interface NavbarProps {
   onNavigate?: (view: string) => void;
@@ -120,7 +120,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
               </button>
             </div>
             <div className="p-6">
-              <GoogleWebSearchBar />
+              <UniversalSearchBar />
             </div>
           </div>
         </div>

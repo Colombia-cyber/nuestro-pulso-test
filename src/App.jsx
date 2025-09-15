@@ -5,6 +5,7 @@ import NewsFeed from './NewsFeed.tsx';
 import News from './components/News.tsx';
 import Debate from './components/Debate.tsx';
 import Survey from './components/Survey.tsx';
+import UniversalSearchBar from './components/UniversalSearchBar.tsx';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -17,6 +18,12 @@ function App() {
         return <Debate />;
       case 'polls':
         return <Survey />;
+      case 'search':
+        return (
+          <div className="container mx-auto px-4 py-8">
+            <UniversalSearchBar />
+          </div>
+        );
       case 'home':
       default:
         return (
@@ -59,6 +66,12 @@ function App() {
             className={`font-medium transition ${currentView === 'news' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
           >
             📰 Noticias
+          </button>
+          <button 
+            onClick={() => setCurrentView('search')}
+            className={`font-medium transition ${currentView === 'search' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+          >
+            🔍 Buscar
           </button>
           <button 
             onClick={() => setCurrentView('polls')}
