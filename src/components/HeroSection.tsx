@@ -59,19 +59,28 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
         
         {/* Feature highlights */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30">
+          <div 
+            onClick={() => onNavigate('congress')}
+            className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30 cursor-pointer hover:bg-opacity-30 transition-all duration-200 transform hover:scale-105"
+          >
             <div className="text-3xl mb-4">🏛️</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">Congreso</h3>
             <p className="text-gray-700">Sigue la actividad legislativa en tiempo real</p>
           </div>
           
-          <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30">
+          <div 
+            onClick={() => onNavigate('elections')}
+            className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30 cursor-pointer hover:bg-opacity-30 transition-all duration-200 transform hover:scale-105"
+          >
             <div className="text-3xl mb-4">📈</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">Elecciones</h3>
             <p className="text-gray-700">Centro de información electoral actualizada</p>
           </div>
           
-          <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30">
+          <div 
+            onClick={() => onNavigate('news')}
+            className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30 cursor-pointer hover:bg-opacity-30 transition-all duration-200 transform hover:scale-105"
+          >
             <div className="text-3xl mb-4">📰</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">Noticias</h3>
             <p className="text-gray-700">Análisis y cobertura de eventos cívicos</p>

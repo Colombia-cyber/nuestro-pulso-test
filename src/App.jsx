@@ -6,6 +6,8 @@ import News from './components/News.tsx';
 import Debate from './components/Debate.tsx';
 import Survey from './components/Survey.tsx';
 import PulseReels from './components/PulseReels.tsx';
+import CongressTracker from './components/CongressTracker.tsx';
+import ElectionHub from './components/ElectionHub.tsx';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -20,6 +22,10 @@ function App() {
         return <Survey />;
       case 'reels':
         return <PulseReels />;
+      case 'congress':
+        return <CongressTracker />;
+      case 'elections':
+        return <ElectionHub />;
       case 'home':
       default:
         return (
