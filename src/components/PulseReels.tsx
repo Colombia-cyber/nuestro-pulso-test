@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import VideoModal from './VideoModal';
 
 const PulseReels: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<any>(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [likedVideos, setLikedVideos] = useState<Set<number>>(new Set());
 
   const categories = [
     { id: 'todos', name: 'Todos', icon: '🎬' },
@@ -27,7 +32,8 @@ const PulseReels: React.FC = () => {
       views: 15420,
       likes: 892,
       thumbnail: '🗳️',
-      author: 'Registraduría Nacional'
+      author: 'Registraduría Nacional',
+      youtubeId: 'M7lc1UVf-VE'
     },
     {
       id: 2,
@@ -38,7 +44,8 @@ const PulseReels: React.FC = () => {
       views: 23100,
       likes: 1547,
       thumbnail: '🤝',
-      author: 'Fundación Corona'
+      author: 'Fundación Corona',
+      youtubeId: 'LXb3EKWsInQ'
     },
     {
       id: 3,
@@ -49,7 +56,8 @@ const PulseReels: React.FC = () => {
       views: 8950,
       likes: 673,
       thumbnail: '💰',
-      author: 'Transparencia Colombia'
+      author: 'Transparencia Colombia',
+      youtubeId: 'fJ9rUzIMcZQ'
     },
     {
       id: 4,
@@ -60,7 +68,8 @@ const PulseReels: React.FC = () => {
       views: 31200,
       likes: 2156,
       thumbnail: '🌍',
-      author: 'WWF Colombia'
+      author: 'WWF Colombia',
+      youtubeId: 'QH2-TGUlwu4'
     },
     {
       id: 5,
@@ -71,7 +80,8 @@ const PulseReels: React.FC = () => {
       views: 12340,
       likes: 789,
       thumbnail: '💻',
-      author: 'MinEducación'
+      author: 'MinEducación',
+      youtubeId: 'M7lc1UVf-VE'
     },
     {
       id: 6,
@@ -82,7 +92,8 @@ const PulseReels: React.FC = () => {
       views: 19800,
       likes: 1342,
       thumbnail: '⚖️',
-      author: 'Veeduría Ciudadana'
+      author: 'Veeduría Ciudadana',
+      youtubeId: 'fJ9rUzIMcZQ'
     },
     {
       id: 7,
@@ -93,7 +104,8 @@ const PulseReels: React.FC = () => {
       views: 45200,
       likes: 2890,
       thumbnail: '🇺🇸',
-      author: 'CNN Colombia'
+      author: 'CNN Colombia',
+      youtubeId: 'LXb3EKWsInQ'
     },
     {
       id: 8,
@@ -104,7 +116,8 @@ const PulseReels: React.FC = () => {
       views: 78900,
       likes: 4560,
       thumbnail: '🏛️',
-      author: 'Canal Congreso'
+      author: 'Canal Congreso',
+      youtubeId: 'QH2-TGUlwu4'
     },
     {
       id: 9,
@@ -115,7 +128,8 @@ const PulseReels: React.FC = () => {
       views: 23400,
       likes: 1890,
       thumbnail: '🚨',
-      author: 'Caracol Noticias'
+      author: 'Caracol Noticias',
+      youtubeId: 'M7lc1UVf-VE'
     },
     {
       id: 10,
@@ -126,7 +140,8 @@ const PulseReels: React.FC = () => {
       views: 34500,
       likes: 2340,
       thumbnail: '💻',
-      author: 'TechColombia'
+      author: 'TechColombia',
+      youtubeId: 'LXb3EKWsInQ'
     }
   ];
 
@@ -152,9 +167,52 @@ const PulseReels: React.FC = () => {
     return () => clearTimeout(timer);
   }, [selectedCategory]);
 
-  const filteredReels = selectedCategory === 'todos' 
-    ? reels 
-    : reels.filter(reel => reel.category === selectedCategory);
+  // Filter and search reels
+  const filteredReels = reels.filter(reel => {
+    const matchesCategory = selectedCategory === 'todos' || reel.category === selectedCategory;
+    const matchesSearch = searchTerm === '' || 
+      reel.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      reel.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      reel.author.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
+  // Handle video click
+  const handleVideoClick = (reel: any) => {
+    setSelectedVideo(reel);
+    setIsVideoModalOpen(true);
+  };
+
+  // Handle like toggle
+  const handleLikeToggle = (videoId: number, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent video modal from opening
+    const newLikedVideos = new Set(likedVideos);
+    if (newLikedVideos.has(videoId)) {
+      newLikedVideos.delete(videoId);
+    } else {
+      newLikedVideos.add(videoId);
+    }
+    setLikedVideos(newLikedVideos);
+  };
+
+  // Handle share
+  const handleShare = (reel: any, platform: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent video modal from opening
+    const url = window.location.href;
+    const text = `¡Mira este video en Nuestro Pulso! ${reel.title}`;
+    
+    switch (platform) {
+      case 'twitter':
+        window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, '_blank');
+        break;
+      case 'facebook':
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        break;
+      case 'whatsapp':
+        window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`, '_blank');
+        break;
+    }
+  };
 
   // Loading skeleton for reels
   const LoadingSkeletonReels = () => (
@@ -212,22 +270,48 @@ const PulseReels: React.FC = () => {
 
         {/* Categories */}
         <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  selectedCategory === category.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                <span className="mr-1">{category.icon}</span>
-                {category.name}
-              </button>
-            ))}
+          <div className="flex flex-col md:flex-row gap-4">
+            {/* Search Bar */}
+            <div className="flex-1">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Buscar videos..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
+                  <span className="text-gray-400">🔍</span>
+                </div>
+              </div>
+            </div>
+            
+            {/* Category Filters */}
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    selectedCategory === category.id
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  <span className="mr-1">{category.icon}</span>
+                  {category.name}
+                </button>
+              ))}
+            </div>
           </div>
+          
+          {/* Results Info */}
+          {searchTerm && (
+            <div className="mt-3 text-sm text-gray-600">
+              {filteredReels.length} resultado{filteredReels.length !== 1 ? 's' : ''} encontrado{filteredReels.length !== 1 ? 's' : ''} para "{searchTerm}"
+            </div>
+          )}
         </div>
 
         {/* Reels Grid */}
@@ -239,7 +323,11 @@ const PulseReels: React.FC = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredReels.map((reel) => (
-            <div key={reel.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer">
+            <div 
+              key={reel.id} 
+              className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer"
+              onClick={() => handleVideoClick(reel)}
+            >
               {/* Thumbnail */}
               <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 h-64 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <div className="text-6xl">{reel.thumbnail}</div>
@@ -251,6 +339,28 @@ const PulseReels: React.FC = () => {
                     ▶️
                   </div>
                 </div>
+                
+                {/* Quick Action Buttons */}
+                <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={(e) => handleLikeToggle(reel.id, e)}
+                    className={`p-2 rounded-full transition-colors ${
+                      likedVideos.has(reel.id) 
+                        ? 'bg-red-500 text-white' 
+                        : 'bg-white bg-opacity-80 text-gray-700 hover:bg-red-500 hover:text-white'
+                    }`}
+                    title="Me gusta"
+                  >
+                    ❤️
+                  </button>
+                  <button
+                    onClick={(e) => handleShare(reel, 'whatsapp', e)}
+                    className="p-2 rounded-full bg-white bg-opacity-80 text-gray-700 hover:bg-green-500 hover:text-white transition-colors"
+                    title="Compartir en WhatsApp"
+                  >
+                    📱
+                  </button>
+                </div>
               </div>
 
               {/* Content */}
@@ -261,6 +371,7 @@ const PulseReels: React.FC = () => {
                     reel.category === 'participacion' ? 'bg-green-100 text-green-800' :
                     reel.category === 'ambiente' ? 'bg-emerald-100 text-emerald-800' :
                     reel.category === 'educacion' ? 'bg-purple-100 text-purple-800' :
+                    reel.category === 'tecnologia' ? 'bg-indigo-100 text-indigo-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>
                     {categories.find(c => c.id === reel.category)?.name}
@@ -281,13 +392,31 @@ const PulseReels: React.FC = () => {
                       <span>{reel.views.toLocaleString()}</span>
                     </span>
                     <span className="flex items-center space-x-1">
-                      <span>❤️</span>
-                      <span>{reel.likes.toLocaleString()}</span>
+                      <span className={likedVideos.has(reel.id) ? 'text-red-500' : ''}>❤️</span>
+                      <span className={likedVideos.has(reel.id) ? 'text-red-500' : ''}>
+                        {(reel.likes + (likedVideos.has(reel.id) ? 1 : 0)).toLocaleString()}
+                      </span>
                     </span>
                   </div>
-                  <button className="text-blue-600 hover:text-blue-800 font-medium">
-                    Ver ahora
-                  </button>
+                  <div className="flex items-center space-x-1">
+                    <button 
+                      onClick={(e) => handleShare(reel, 'twitter', e)}
+                      className="text-blue-400 hover:text-blue-600 p-1 rounded transition-colors"
+                      title="Compartir en Twitter"
+                    >
+                      🐦
+                    </button>
+                    <button 
+                      onClick={(e) => handleShare(reel, 'facebook', e)}
+                      className="text-blue-600 hover:text-blue-800 p-1 rounded transition-colors"
+                      title="Compartir en Facebook"
+                    >
+                      📘
+                    </button>
+                    <button className="text-blue-600 hover:text-blue-800 font-medium">
+                      Ver ahora
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -343,6 +472,13 @@ const PulseReels: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      <VideoModal
+        isOpen={isVideoModalOpen}
+        onClose={() => setIsVideoModalOpen(false)}
+        video={selectedVideo}
+      />
     </div>
   );
 };
