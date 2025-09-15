@@ -15,13 +15,11 @@ const News: React.FC = () => {
     { id: 'independiente', name: 'Independiente', icon: '⚖️' },
     { id: 'economia', name: 'Economía', icon: '💰' },
     { id: 'social', name: 'Social', icon: '👥' },
-    { id: 'ambiente', name: 'Ambiente', icon: '🌱' },
     { id: 'educacion', name: 'Educación', icon: '📚' },
     { id: 'salud', name: 'Salud', icon: '🏥' },
     { id: 'terror', name: 'Terror', icon: '🚨' },
     { id: 'congreso', name: 'Congress', icon: '🏛️' },
-    { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' },
-    { id: 'tecnologia', name: 'Technology', icon: '💻' }
+    { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' }
   ];
 
   const news = [
@@ -46,29 +44,7 @@ Las inscripciones para el programa comenzarán el próximo mes a través de la p
       readTime: '4 min',
       political_lean: 'independiente'
     },
-    {
-      id: 2,
-      title: 'Bogotá implementa nuevas medidas para mejorar la calidad del aire',
-      summary: 'La administración distrital presenta un plan integral para reducir la contaminación atmosférica en un 30% para 2025.',
-      fullContent: `La alcaldía de Bogotá presentó ayer el "Plan Aire Limpio 2024-2028", una estrategia integral que busca reducir significativamente los niveles de contaminación atmosférica en la capital colombiana.
 
-El alcalde Carlos Fernando Galán anunció que la ciudad invertirá 2 billones de pesos en los próximos cuatro años para implementar medidas que incluyen la ampliación del sistema de transporte público eléctrico, la creación de nuevas zonas verdes y la implementación de tecnologías de monitoreo ambiental en tiempo real.
-
-Entre las medidas más destacadas se encuentra la expansión del sistema TransMilenio con 200 buses eléctricos adicionales, la creación de 15 nuevos parques urbanos y la implementación de ciclovías que conectarán todos los sectores de la ciudad.
-
-El plan también incluye restricciones más estrictas para vehículos particulares en el centro de la ciudad y incentivos fiscales para empresas que adopten tecnologías limpias.
-
-"Nuestro objetivo es que Bogotá sea una ciudad modelo en sostenibilidad ambiental para América Latina", declaró el alcalde durante la presentación del plan.
-
-Los primeros resultados del plan se esperan ver en los próximos seis meses, con la instalación de nuevas estaciones de monitoreo de calidad del aire en 50 puntos estratégicos de la ciudad.`,
-      category: 'ambiente',
-      source: 'Alcaldía de Bogotá',
-      time: '4 horas',
-      image: '🌱',
-      engagement: { likes: 189, shares: 67, comments: 28 },
-      readTime: '5 min',
-      political_lean: 'izquierda'
-    },
     {
       id: 3,
       title: 'Centro Democrático propone nueva agenda conservadora para 2025',
@@ -225,31 +201,55 @@ La Asociación Nacional de Exportadores (ANALDEX) solicitó al gobierno colombia
     },
     {
       id: 9,
-      title: 'Colombia lanza plan nacional de transformación digital para 2030',
-      summary: 'El gobierno presenta una estrategia integral para digitalizar el 80% de los trámites públicos y conectar todas las zonas rurales.',
-      fullContent: `El Ministerio de Tecnologías de la Información y las Comunicaciones (MinTIC) lanzó oficialmente el "Plan Nacional de Transformación Digital 2024-2030", una ambiciosa estrategia que busca posicionar a Colombia como líder tecnológico en América Latina.
+      title: 'Movimiento conservador propone mayor inversión en defensa nacional',
+      summary: 'Líderes de derecha abogan por fortalecer las fuerzas armadas y aumentar el presupuesto militar para combatir amenazas terroristas.',
+      fullContent: `Una coalición de partidos conservadores colombianos presentó una propuesta para incrementar significativamente el presupuesto de defensa nacional, argumentando que es necesario fortalecer las capacidades militares del país frente a las crecientes amenazas de grupos terroristas.
 
-El plan, que requiere una inversión de $8 billones de pesos durante seis años, tiene cuatro objetivos principales: digitalizar el 80% de los trámites gubernamentales, conectar el 95% del territorio nacional con internet de alta velocidad, formar un millón de ciudadanos en competencias digitales y crear 300,000 empleos en el sector tecnológico.
+El senador Paloma Valencia, del Centro Democrático, encabezó la iniciativa que propone aumentar el gasto militar en un 35% durante los próximos tres años, destinando recursos adicionales para modernizar el equipamiento de las Fuerzas Armadas y mejorar la inteligencia militar.
 
-La ministra Carmen Ligia Valderrama explicó durante la presentación que el plan incluye la construcción de 5,000 kilómetros de fibra óptica, la instalación de 10,000 puntos de acceso Wi-Fi gratuito en zonas rurales y la creación de 50 centros de innovación tecnológica en todo el país.
+"Colombia enfrenta amenazas reales que requieren una respuesta contundente. No podemos permitir que grupos criminales y terroristas pongan en riesgo la seguridad de nuestros ciudadanos", declaró Valencia durante la presentación de la propuesta.
 
-"Esta es la transformación más ambiciosa que ha emprendido Colombia en materia tecnológica", declaró Valderrama en el evento realizado en el Centro de Innovación de Bogotá.
+La iniciativa incluye la adquisición de nuevos helicópteros de combate, sistemas de vigilancia satelital avanzados y el fortalecimiento de las unidades élite del Ejército Nacional. También propone crear 5,000 nuevas plazas para soldados profesionales.
 
-El sector privado también participará activamente en la iniciativa. Empresas como Claro, Movistar, Tigo y ETB han comprometido inversiones por $2 billones adicionales para acelerar el despliegue de redes 5G y mejorar la cobertura en zonas apartadas.
+Los promotores de la propuesta argumentan que una defensa fuerte es fundamental para proteger la democracia y garantizar el orden público, especialmente en regiones donde persiste la presencia de grupos armados ilegales.
 
-El plan incluye programas especiales para comunidades indígenas y afrodescendientes, garantizando que la transformación digital sea inclusiva y respete la diversidad cultural del país.
+La oposición ha criticado la propuesta, alegando que esos recursos podrían ser mejor invertidos en educación y programas sociales. Sin embargo, los promotores insisten en que la seguridad es prerequisito para cualquier desarrollo social.
 
-Los primeros resultados se esperan ver en 2025, con el lanzamiento de la plataforma "Colombia Digital", que centralizará todos los servicios gubernamentales en línea y permitirá a los ciudadanos realizar la mayoría de trámites desde sus dispositivos móviles.
+El proyecto será debatido en el Congreso el próximo mes, donde se espera un debate intenso sobre las prioridades presupuestales del país.`,
+      category: 'derecha',
+      source: 'El Colombiano',
+      time: '2 horas',
+      image: '🛡️',
+      engagement: { likes: 198, shares: 89, comments: 67 },
+      readTime: '5 min',
+      political_lean: 'derecha'
+    },
+    {
+      id: 10,
+      title: 'Movimientos sociales exigen justicia social y redistribución de la riqueza',
+      summary: 'Coalición de izquierda presenta agenda progresista que incluye reformas estructurales para reducir la desigualdad en Colombia.',
+      fullContent: `Una amplia coalición de movimientos sociales, sindicatos y organizaciones de izquierda presentó una agenda progresista que busca transformar estructuralmente el modelo económico colombiano para construir una sociedad más justa e igualitaria.
 
-La iniciativa cuenta con el respaldo del Banco Interamericano de Desarrollo (BID), que otorgó un crédito de $500 millones para financiar la primera fase del proyecto.`,
-      category: 'tecnologia',
-      source: 'El Tiempo Tecnología',
-      time: '3 horas',
-      image: '💻',
-      engagement: { likes: 423, shares: 198, comments: 87 },
+La senadora María José Pizarro, del Pacto Histórico, lideró la presentación de esta propuesta que incluye una reforma agraria integral, la nacionalización de recursos naturales estratégicos y la implementación de un sistema de salud completamente público y gratuito.
+
+"La desigualdad en Colombia ha alcanzado niveles inaceptables. Es hora de implementar políticas que pongan a las personas y el planeta por encima del lucro", declaró Pizarro durante el evento realizado en la Universidad Nacional.
+
+La agenda incluye la creación de un banco público de desarrollo, la implementación de una renta básica universal financiada con impuestos a las grandes fortunas, y la transición hacia una economía verde que genere empleos dignos y sostenibles.
+
+Los organizadores proponen también fortalecer la participación ciudadana en las decisiones económicas a través de presupuestos participativos y consejos territoriales de planificación donde las comunidades tengan voz y voto.
+
+"Queremos una Colombia donde nadie se quede atrás, donde los derechos sociales sean garantizados por el Estado y donde las empresas contribuyan justamente al desarrollo nacional", explicó el líder sindical Diógenes Orjuela.
+
+La propuesta será socializada en todos los departamentos del país durante los próximos meses, buscando generar un gran movimiento ciudadano que respalde estas transformaciones estructurales.`,
+      category: 'izquierda',
+      source: 'Colombia Informa',
+      time: '4 horas',
+      image: '✊',
+      engagement: { likes: 267, shares: 134, comments: 98 },
       readTime: '6 min',
-      political_lean: 'independiente'
+      political_lean: 'izquierda'
     }
+
   ];
 
   // Simulate loading news articles
@@ -523,7 +523,6 @@ La iniciativa cuenta con el respaldo del Banco Interamericano de Desarrollo (BID
                     <div className="flex items-center space-x-2 mb-2">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         article.category === 'educacion' ? 'bg-blue-100 text-blue-800' :
-                        article.category === 'ambiente' ? 'bg-green-100 text-green-800' :
                         article.category === 'salud' ? 'bg-red-100 text-red-800' :
                         article.category === 'derecha' ? 'bg-orange-100 text-orange-800' :
                         'bg-gray-100 text-gray-800'

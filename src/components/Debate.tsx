@@ -121,7 +121,7 @@ const Debate: React.FC = () => {
       status: 'scheduled',
       scheduledTime: 'Mañana 10:00 AM',
       participants: 890,
-      category: 'Ambiente',
+      category: 'Economía',
       interested: 890
     }
   ];
@@ -499,7 +499,6 @@ const Debate: React.FC = () => {
               <select className="border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500">
                 <option>Política Social</option>
                 <option>Economía</option>
-                <option>Ambiente</option>
                 <option>Educación</option>
                 <option>Salud</option>
                 <option>Seguridad</option>

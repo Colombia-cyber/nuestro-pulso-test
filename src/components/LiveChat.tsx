@@ -81,16 +81,11 @@ const LiveChat: React.FC = () => {
         </div>
 
         {/* Chat Rooms */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="bg-white p-4 rounded-lg shadow border-l-4 border-blue-500">
             <h3 className="font-semibold text-gray-900 mb-2">🏛️ Política Nacional</h3>
             <p className="text-sm text-gray-600 mb-2">Discusiones sobre gobierno y políticas públicas</p>
             <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">432 activos</span>
-          </div>
-          <div className="bg-white p-4 rounded-lg shadow border-l-4 border-green-500">
-            <h3 className="font-semibold text-gray-900 mb-2">🌱 Medio Ambiente</h3>
-            <p className="text-sm text-gray-600 mb-2">Cambio climático y sostenibilidad en Colombia</p>
-            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">289 activos</span>
           </div>
           <div className="bg-white p-4 rounded-lg shadow border-l-4 border-yellow-500">
             <h3 className="font-semibold text-gray-900 mb-2">📚 Educación</h3>

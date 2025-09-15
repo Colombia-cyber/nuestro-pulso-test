@@ -9,12 +9,10 @@ const PulseReels: React.FC = () => {
     { id: 'todos', name: 'Todos', icon: '🎬' },
     { id: 'politica', name: 'Política', icon: '🏛️' },
     { id: 'educacion', name: 'Educación', icon: '📚' },
-    { id: 'ambiente', name: 'Ambiente', icon: '🌱' },
     { id: 'participacion', name: 'Participación', icon: '👥' },
     { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' },
     { id: 'congreso', name: 'Congress', icon: '🏛️' },
-    { id: 'terror', name: 'Terror', icon: '🚨' },
-    { id: 'tecnologia', name: 'Technology', icon: '💻' }
+    { id: 'terror', name: 'Terror', icon: '🚨' }
   ];
 
   const reels = [
@@ -51,17 +49,7 @@ const PulseReels: React.FC = () => {
       thumbnail: '💰',
       author: 'Transparencia Colombia'
     },
-    {
-      id: 4,
-      title: 'Cambio climático y acción ciudadana en Colombia',
-      description: 'Iniciativas locales que están marcando la diferencia ambiental',
-      category: 'ambiente',
-      duration: '5:10',
-      views: 31200,
-      likes: 2156,
-      thumbnail: '🌍',
-      author: 'WWF Colombia'
-    },
+
     {
       id: 5,
       title: 'Educación digital: Cerrando la brecha tecnológica',
@@ -117,17 +105,7 @@ const PulseReels: React.FC = () => {
       thumbnail: '🚨',
       author: 'Caracol Noticias'
     },
-    {
-      id: 10,
-      title: 'Revolución digital: Colombia 5G para todos',
-      description: 'Cómo la tecnología 5G transformará la conectividad en Colombia',
-      category: 'tecnologia',
-      duration: '4:15',
-      views: 34500,
-      likes: 2340,
-      thumbnail: '💻',
-      author: 'TechColombia'
-    }
+
   ];
 
   // Simulate loading reels
@@ -259,7 +237,6 @@ const PulseReels: React.FC = () => {
                   <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                     reel.category === 'politica' ? 'bg-blue-100 text-blue-800' :
                     reel.category === 'participacion' ? 'bg-green-100 text-green-800' :
-                    reel.category === 'ambiente' ? 'bg-emerald-100 text-emerald-800' :
                     reel.category === 'educacion' ? 'bg-purple-100 text-purple-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>
