@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-import UniversalSearchBar from "./UniversalSearchBar";
 
 interface NavbarProps {
   onNavigate?: (view: string) => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
-  const [showSearchModal, setShowSearchModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleNavClick = (view: string) => {
     if (onNavigate) {
@@ -14,60 +13,95 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
     }
   };
 
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      // Navigate to search page with query
+      onNavigate && onNavigate(`search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
   return (
-    <>
-      <nav className="w-full bg-white shadow-sm py-4 px-8 flex flex-row items-center justify-between fixed top-0 left-0 z-50">
+    <nav className="w-full bg-white shadow-sm py-3 px-4 lg:px-8 flex flex-col lg:flex-row items-center justify-between fixed top-0 left-0 z-50 gap-3 lg:gap-0">
+      {/* Top row on mobile, left side on desktop */}
+      <div className="flex items-center justify-between w-full lg:w-auto">
         <div className="flex items-center gap-2">
-          <img src="/colombia-flag.png" alt="Colombia Flag" className="w-10 h-7" />
-          <span className="font-bold text-lg text-yellow-700">Nuestro Pulso</span>
+          <img src="/colombia-flag.png" alt="Colombia Flag" className="w-8 h-6 lg:w-10 lg:h-7" />
+          <span className="font-bold text-lg lg:text-xl text-yellow-700">Nuestro Pulso</span>
         </div>
         
-        <div className="flex gap-6 items-center">
+        {/* Mobile menu toggle could go here if needed */}
+      </div>
+      
+      {/* Search bar - always visible, responsive */}
+      <div className="w-full lg:flex-1 lg:max-w-md lg:mx-6">
+        <form onSubmit={handleSearchSubmit} className="flex gap-2">
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Buscar noticias, debates, políticos..."
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm lg:text-base"
+          />
+          <button
+            type="submit"
+            className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1 text-sm lg:text-base"
+          >
+            <span>🔍</span>
+            <span className="hidden sm:inline">Buscar</span>
+          </button>
+        </form>
+      </div>
+
+      {/* Navigation and right side */}
+      <div className="flex items-center justify-between w-full lg:w-auto gap-4">
+        {/* Navigation links */}
+        <div className="flex gap-2 lg:gap-4 items-center overflow-x-auto">
           <button 
             onClick={() => handleNavClick('home')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 whitespace-nowrap text-xs lg:text-sm"
           >
             <span>🏠</span>
-            <span>Inicio</span>
+            <span className="hidden sm:inline">Inicio</span>
           </button>
           <button 
             onClick={() => handleNavClick('news')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 whitespace-nowrap text-xs lg:text-sm"
           >
             <span>📰</span>
-            <span>Noticias</span>
+            <span className="hidden sm:inline">Noticias</span>
           </button>
           <button 
             onClick={() => handleNavClick('community-hub')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 whitespace-nowrap text-xs lg:text-sm"
           >
             <span>💭</span>
-            <span>Community Hub</span>
+            <span className="hidden sm:inline">Hub</span>
           </button>
           <button 
             onClick={() => handleNavClick('encuestas')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 whitespace-nowrap text-xs lg:text-sm"
           >
             <span>📊</span>
-            <span>Encuestas</span>
+            <span className="hidden sm:inline">Encuestas</span>
           </button>
           <button 
-            onClick={() => setShowSearchModal(true)}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
+            onClick={() => handleNavClick('pulse-reels')}
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 whitespace-nowrap text-xs lg:text-sm"
           >
-            <span>🔍</span>
-            <span>Buscar</span>
+            <span>🎬</span>
+            <span className="hidden sm:inline">Reels</span>
           </button>
         </div>
 
-        <div className="flex items-center gap-4">
-          {/* Social Icons */}
-          <div className="flex items-center gap-2">
+        {/* Right side */}
+        <div className="flex items-center gap-2 lg:gap-4">
+          {/* Social Icons - hidden on small screens */}
+          <div className="hidden md:flex items-center gap-2">
             <a 
               href="https://www.google.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
+              className="text-xl lg:text-2xl hover:scale-110 transition-transform cursor-pointer"
               title="Google"
             >
               🌐
@@ -76,56 +110,18 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
               href="https://www.youtube.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
+              className="text-xl lg:text-2xl hover:scale-110 transition-transform cursor-pointer"
               title="YouTube"
             >
               📺
             </a>
-            <a 
-              href="https://www.facebook.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
-              title="Facebook"
-            >
-              📘
-            </a>
-            <a 
-              href="https://www.twitter.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
-              title="Twitter"
-            >
-              🐦
-            </a>
           </div>
-          <button className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white px-4 py-2 rounded-lg font-bold shadow hover:scale-105 transition">
+          <button className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white px-3 py-2 lg:px-4 lg:py-2 rounded-lg font-bold shadow hover:scale-105 transition text-xs lg:text-sm">
             Ingresar
           </button>
         </div>
-      </nav>
-
-      {/* Search Modal */}
-      {showSearchModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-900">🔍 Búsqueda Google</h2>
-              <button 
-                onClick={() => setShowSearchModal(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="p-6">
-              <UniversalSearchBar />
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+      </div>
+    </nav>
   );
 };
 

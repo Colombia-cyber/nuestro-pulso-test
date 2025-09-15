@@ -1,12 +1,16 @@
 import React from "react";
-import GoogleWebSearchBar from "../components/GoogleWebSearchBar";
+import UniversalSearchBar from "../components/UniversalSearchBar";
 
-const SearchPage: React.FC = () => (
-  <div>
-    <h1>Búsqueda Universal</h1>
-    <GoogleWebSearchBar />
-    {/* Optionally add filters, advanced options, etc. */}
-  </div>
-);
+interface SearchPageProps {
+  initialQuery?: string;
+}
+
+const SearchPage: React.FC<SearchPageProps> = ({ initialQuery = '' }) => {
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <UniversalSearchBar initialQuery={initialQuery} />
+    </div>
+  );
+};
 
 export default SearchPage;
