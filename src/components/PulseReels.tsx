@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { ReelItem } from '../types/news';
+import { getReelsByCategory, getAllReels } from '../data/mockReelsData';
 
 const PulseReels: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reels, setReels] = useState<ReelItem[]>([]);
 
   const categories = [
     { id: 'todos', name: 'Todos', icon: '🎬' },
@@ -17,119 +20,6 @@ const PulseReels: React.FC = () => {
     { id: 'tecnologia', name: 'Technology', icon: '💻' }
   ];
 
-  const reels = [
-    {
-      id: 1,
-      title: 'Cómo participar en el proceso electoral colombiano',
-      description: 'Guía rápida sobre tu derecho al voto y los requisitos para participar',
-      category: 'politica',
-      duration: '2:30',
-      views: 15420,
-      likes: 892,
-      thumbnail: '🗳️',
-      author: 'Registraduría Nacional'
-    },
-    {
-      id: 2,
-      title: 'El poder de la participación ciudadana en tu municipio',
-      description: 'Conoce cómo puedes influir en las decisiones locales de tu comunidad',
-      category: 'participacion',
-      duration: '3:15',
-      views: 23100,
-      likes: 1547,
-      thumbnail: '🤝',
-      author: 'Fundación Corona'
-    },
-    {
-      id: 3,
-      title: 'Presupuestos participativos: Tu voz en las finanzas públicas',
-      description: 'Aprende cómo los ciudadanos pueden decidir en qué se invierte el presupuesto',
-      category: 'participacion',
-      duration: '4:20',
-      views: 8950,
-      likes: 673,
-      thumbnail: '💰',
-      author: 'Transparencia Colombia'
-    },
-    {
-      id: 4,
-      title: 'Cambio climático y acción ciudadana en Colombia',
-      description: 'Iniciativas locales que están marcando la diferencia ambiental',
-      category: 'ambiente',
-      duration: '5:10',
-      views: 31200,
-      likes: 2156,
-      thumbnail: '🌍',
-      author: 'WWF Colombia'
-    },
-    {
-      id: 5,
-      title: 'Educación digital: Cerrando la brecha tecnológica',
-      description: 'Programas gubernamentales para mejorar el acceso a la educación digital',
-      category: 'educacion',
-      duration: '3:45',
-      views: 12340,
-      likes: 789,
-      thumbnail: '💻',
-      author: 'MinEducación'
-    },
-    {
-      id: 6,
-      title: 'Control ciudadano a la corrupción',
-      description: 'Herramientas y mecanismos para denunciar actos de corrupción',
-      category: 'politica',
-      duration: '4:00',
-      views: 19800,
-      likes: 1342,
-      thumbnail: '⚖️',
-      author: 'Veeduría Ciudadana'
-    },
-    {
-      id: 7,
-      title: 'Trump: Impacto en las relaciones Colombia-Estados Unidos',
-      description: 'Análisis sobre las políticas comerciales de Trump y su efecto en Colombia',
-      category: 'trump',
-      duration: '6:30',
-      views: 45200,
-      likes: 2890,
-      thumbnail: '🇺🇸',
-      author: 'CNN Colombia'
-    },
-    {
-      id: 8,
-      title: 'Sesión extraordinaria del Congreso sobre reforma tributaria',
-      description: 'Cobertura en vivo del debate parlamentario más importante del año',
-      category: 'congreso',
-      duration: '12:45',
-      views: 78900,
-      likes: 4560,
-      thumbnail: '🏛️',
-      author: 'Canal Congreso'
-    },
-    {
-      id: 9,
-      title: 'Alerta de seguridad: Amenazas terroristas en fronteras',
-      description: 'Informe especial sobre medidas de seguridad en zonas fronterizas',
-      category: 'terror',
-      duration: '8:20',
-      views: 23400,
-      likes: 1890,
-      thumbnail: '🚨',
-      author: 'Caracol Noticias'
-    },
-    {
-      id: 10,
-      title: 'Revolución digital: Colombia 5G para todos',
-      description: 'Cómo la tecnología 5G transformará la conectividad en Colombia',
-      category: 'tecnologia',
-      duration: '4:15',
-      views: 34500,
-      likes: 2340,
-      thumbnail: '💻',
-      author: 'TechColombia'
-    }
-  ];
-
   // Simulate loading reels
   useEffect(() => {
     setIsLoading(true);
@@ -138,23 +28,27 @@ const PulseReels: React.FC = () => {
     // Simulate API call delay
     const timer = setTimeout(() => {
       try {
-        // Simulate potential error (5% chance)
-        if (Math.random() < 0.05) {
+        // Simulate potential error (2% chance)
+        if (Math.random() < 0.02) {
           throw new Error('Error al cargar los reels. Verifica tu conexión.');
         }
+        
+        const categoryReels = selectedCategory === 'todos' 
+          ? getAllReels() 
+          : getReelsByCategory(selectedCategory);
+        
+        setReels(categoryReels);
         setIsLoading(false);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error desconocido');
         setIsLoading(false);
       }
-    }, 800);
+    }, 500 + Math.random() * 500);
 
     return () => clearTimeout(timer);
   }, [selectedCategory]);
 
-  const filteredReels = selectedCategory === 'todos' 
-    ? reels 
-    : reels.filter(reel => reel.category === selectedCategory);
+  const filteredReels = reels;
 
   // Loading skeleton for reels
   const LoadingSkeletonReels = () => (

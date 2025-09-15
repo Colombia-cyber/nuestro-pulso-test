@@ -1,21 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { Article } from './types/news';
+import { getNewsByCategory } from './data/mockNewsData';
 
-type Article = {
-  title: string;
-  description: string;
-  source: { name: string };
-  publishedAt: string;
-  url: string;
-};
-
-const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY || '27aa99ad66064f04b9ef515c312a78eb';
-
-const fetchNews = async (params: string) => {
-  const res = await fetch(
-    `https://newsapi.org/v2/everything?${params}&apiKey=${NEWS_API_KEY}`
-  );
-  const data = await res.json();
-  return data.articles || [];
+// Simulate API delay for realistic loading experience
+const fetchNewsWithDelay = async (category: string): Promise<Article[]> => {
+  await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 700));
+  return getNewsByCategory(category);
 };
 
 export default function NewsFeed() {
@@ -28,17 +18,27 @@ export default function NewsFeed() {
   useEffect(() => {
     async function loadAll() {
       setLoading(true);
-      const [co, auPmTrump, politics, rightWing] = await Promise.all([
-        fetchNews('q=Gustavo Petro&language=es&sortBy=publishedAt'),
-        fetchNews('q=(Prime Minister OR PM OR "Anthony Albanese") AND "Donald Trump"&language=en&sortBy=publishedAt'),
-        fetchNews('q=politics&language=en&sortBy=publishedAt'),
-        fetchNews('q=(conservative OR "right wing" OR republican OR "Centro Democratico" OR "election polls" OR "conservative candidate")&language=en&sortBy=publishedAt'),
-      ]);
-      setColombianNews(co);
-      setAustralianPmTrumpNews(auPmTrump);
-      setPoliticsNews(politics);
-      setRightWingNews(rightWing);
-      setLoading(false);
+      try {
+        const [co, auPmTrump, congress, rightWing] = await Promise.all([
+          fetchNewsWithDelay('colombia'),
+          fetchNewsWithDelay('trump'),
+          fetchNewsWithDelay('congress'),
+          fetchNewsWithDelay('rightWing'),
+        ]);
+        setColombianNews(co);
+        setAustralianPmTrumpNews(auPmTrump);
+        setPoliticsNews(congress);
+        setRightWingNews(rightWing);
+      } catch (error) {
+        console.error('Error loading news:', error);
+        // Fallback to empty arrays or show error message
+        setColombianNews([]);
+        setAustralianPmTrumpNews([]);
+        setPoliticsNews([]);
+        setRightWingNews([]);
+      } finally {
+        setLoading(false);
+      }
     }
     loadAll();
   }, []);
@@ -47,8 +47,16 @@ export default function NewsFeed() {
     <div className="flex flex-col lg:flex-row gap-4 sticky top-16 z-40 bg-white/80 p-4 rounded-xl shadow-lg font-['Inter']">
       <div className="lg:w-1/4 w-full h-[70vh] overflow-y-auto">
         <h2 className="text-lg font-bold mb-2 text-[#0033A0]">Noticias sobre Gustavo Petro (Colombia)</h2>
-        {loading && colombianNews.length === 0 ? (
-          <div>Cargando...</div>
+        {loading ? (
+          <div className="bg-gray-100 rounded-lg p-4 animate-pulse">
+            <div className="h-4 bg-gray-300 rounded mb-2"></div>
+            <div className="h-3 bg-gray-300 rounded mb-1"></div>
+            <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+          </div>
+        ) : colombianNews.length === 0 ? (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <p className="text-yellow-800 text-sm">No hay noticias disponibles en este momento.</p>
+          </div>
         ) : (
           colombianNews.map((article, idx) => (
             <a key={idx} href={article.url} target="_blank" rel="noopener noreferrer"
@@ -64,9 +72,17 @@ export default function NewsFeed() {
         )}
       </div>
       <div className="lg:w-1/4 w-full h-[70vh] overflow-y-auto">
-        <h2 className="text-lg font-bold mb-2 text-[#0033A0]">Australian PM & Donald Trump</h2>
-        {loading && australianPmTrumpNews.length === 0 ? (
-          <div>Loading...</div>
+        <h2 className="text-lg font-bold mb-2 text-[#0033A0]">Donald Trump & Colombia Relations</h2>
+        {loading ? (
+          <div className="bg-gray-100 rounded-lg p-4 animate-pulse">
+            <div className="h-4 bg-gray-300 rounded mb-2"></div>
+            <div className="h-3 bg-gray-300 rounded mb-1"></div>
+            <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+          </div>
+        ) : australianPmTrumpNews.length === 0 ? (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <p className="text-yellow-800 text-sm">No hay noticias disponibles en este momento.</p>
+          </div>
         ) : (
           australianPmTrumpNews.map((article, idx) => (
             <a key={idx} href={article.url} target="_blank" rel="noopener noreferrer"
@@ -82,9 +98,17 @@ export default function NewsFeed() {
         )}
       </div>
       <div className="lg:w-1/4 w-full h-[70vh] overflow-y-auto">
-        <h2 className="text-lg font-bold mb-2 text-[#0033A0]">Right Wing & Election Coverage</h2>
-        {loading && rightWingNews.length === 0 ? (
-          <div>Loading...</div>
+        <h2 className="text-lg font-bold mb-2 text-[#0033A0]">Conservative Politics & Elections</h2>
+        {loading ? (
+          <div className="bg-gray-100 rounded-lg p-4 animate-pulse">
+            <div className="h-4 bg-gray-300 rounded mb-2"></div>
+            <div className="h-3 bg-gray-300 rounded mb-1"></div>
+            <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+          </div>
+        ) : rightWingNews.length === 0 ? (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <p className="text-yellow-800 text-sm">No hay noticias disponibles en este momento.</p>
+          </div>
         ) : (
           rightWingNews.map((article, idx) => (
             <a key={idx} href={article.url} target="_blank" rel="noopener noreferrer"
@@ -100,9 +124,17 @@ export default function NewsFeed() {
         )}
       </div>
       <div className="lg:w-1/4 w-full h-[70vh] overflow-y-auto">
-        <h2 className="text-lg font-bold mb-2 text-[#0033A0]">Major Politics Events</h2>
-        {loading && politicsNews.length === 0 ? (
-          <div>Loading...</div>
+        <h2 className="text-lg font-bold mb-2 text-[#0033A0]">Colombian Congress & Politics</h2>
+        {loading ? (
+          <div className="bg-gray-100 rounded-lg p-4 animate-pulse">
+            <div className="h-4 bg-gray-300 rounded mb-2"></div>
+            <div className="h-3 bg-gray-300 rounded mb-1"></div>
+            <div className="h-3 bg-gray-300 rounded w-3/4"></div>
+          </div>
+        ) : politicsNews.length === 0 ? (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+            <p className="text-yellow-800 text-sm">No hay noticias disponibles en este momento.</p>
+          </div>
         ) : (
           politicsNews.map((article, idx) => (
             <a key={idx} href={article.url} target="_blank" rel="noopener noreferrer"
