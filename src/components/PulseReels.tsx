@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const PulseReels: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('todos');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const categories = [
     { id: 'todos', name: 'Todos', icon: '🎬' },
@@ -9,6 +11,10 @@ const PulseReels: React.FC = () => {
     { id: 'educacion', name: 'Educación', icon: '📚' },
     { id: 'ambiente', name: 'Ambiente', icon: '🌱' },
     { id: 'participacion', name: 'Participación', icon: '👥' },
+    { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' },
+    { id: 'congreso', name: 'Congress', icon: '🏛️' },
+    { id: 'terror', name: 'Terror', icon: '🚨' },
+    { id: 'tecnologia', name: 'Technology', icon: '💻' }
   ];
 
   const reels = [
@@ -77,12 +83,119 @@ const PulseReels: React.FC = () => {
       likes: 1342,
       thumbnail: '⚖️',
       author: 'Veeduría Ciudadana'
+    },
+    {
+      id: 7,
+      title: 'Trump: Impacto en las relaciones Colombia-Estados Unidos',
+      description: 'Análisis sobre las políticas comerciales de Trump y su efecto en Colombia',
+      category: 'trump',
+      duration: '6:30',
+      views: 45200,
+      likes: 2890,
+      thumbnail: '🇺🇸',
+      author: 'CNN Colombia'
+    },
+    {
+      id: 8,
+      title: 'Sesión extraordinaria del Congreso sobre reforma tributaria',
+      description: 'Cobertura en vivo del debate parlamentario más importante del año',
+      category: 'congreso',
+      duration: '12:45',
+      views: 78900,
+      likes: 4560,
+      thumbnail: '🏛️',
+      author: 'Canal Congreso'
+    },
+    {
+      id: 9,
+      title: 'Alerta de seguridad: Amenazas terroristas en fronteras',
+      description: 'Informe especial sobre medidas de seguridad en zonas fronterizas',
+      category: 'terror',
+      duration: '8:20',
+      views: 23400,
+      likes: 1890,
+      thumbnail: '🚨',
+      author: 'Caracol Noticias'
+    },
+    {
+      id: 10,
+      title: 'Revolución digital: Colombia 5G para todos',
+      description: 'Cómo la tecnología 5G transformará la conectividad en Colombia',
+      category: 'tecnologia',
+      duration: '4:15',
+      views: 34500,
+      likes: 2340,
+      thumbnail: '💻',
+      author: 'TechColombia'
     }
   ];
+
+  // Simulate loading reels
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+    
+    // Simulate API call delay
+    const timer = setTimeout(() => {
+      try {
+        // Simulate potential error (5% chance)
+        if (Math.random() < 0.05) {
+          throw new Error('Error al cargar los reels. Verifica tu conexión.');
+        }
+        setIsLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+        setIsLoading(false);
+      }
+    }, 800);
+
+    return () => clearTimeout(timer);
+  }, [selectedCategory]);
 
   const filteredReels = selectedCategory === 'todos' 
     ? reels 
     : reels.filter(reel => reel.category === selectedCategory);
+
+  // Loading skeleton for reels
+  const LoadingSkeletonReels = () => (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {[1, 2, 3, 4, 5, 6].map((i) => (
+        <div key={i} className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse">
+          <div className="bg-gray-300 h-64"></div>
+          <div className="p-4">
+            <div className="flex items-center space-x-2 mb-2">
+              <div className="w-16 h-4 bg-gray-300 rounded-full"></div>
+              <div className="w-20 h-3 bg-gray-300 rounded"></div>
+            </div>
+            <div className="w-3/4 h-5 bg-gray-300 rounded mb-2"></div>
+            <div className="w-full h-4 bg-gray-300 rounded mb-3"></div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-3 bg-gray-300 rounded"></div>
+                <div className="w-12 h-3 bg-gray-300 rounded"></div>
+              </div>
+              <div className="w-16 h-3 bg-gray-300 rounded"></div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  // Error state for reels
+  const ErrorStateReels = () => (
+    <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+      <div className="text-6xl mb-4">📱</div>
+      <h3 className="text-2xl font-bold text-gray-900 mb-4">Error al cargar Reels</h3>
+      <p className="text-gray-600 mb-6">{error}</p>
+      <button 
+        onClick={() => window.location.reload()}
+        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        Reintentar
+      </button>
+    </div>
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -118,8 +231,14 @@ const PulseReels: React.FC = () => {
         </div>
 
         {/* Reels Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredReels.map((reel) => (
+        <div className="mb-8">
+          {isLoading ? (
+            <LoadingSkeletonReels />
+          ) : error ? (
+            <ErrorStateReels />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredReels.map((reel) => (
             <div key={reel.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer">
               {/* Thumbnail */}
               <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 h-64 flex items-center justify-center group-hover:scale-105 transition-transform">
@@ -173,6 +292,8 @@ const PulseReels: React.FC = () => {
               </div>
             </div>
           ))}
+            </div>
+          )}
         </div>
 
         {/* Featured Live Stream */}
