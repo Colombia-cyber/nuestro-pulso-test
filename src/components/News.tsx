@@ -1,11 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useInfiniteNews } from '../hooks/useInfiniteScroll';
+import { dataService } from '../services/dataService';
+import { NewsData } from '../data/mockDataGenerator';
 import Comments from './Comments';
 
 const News: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('todas');
-  const [selectedArticle, setSelectedArticle] = useState<any>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<NewsData | null>(null);
+  const [trendingTopics, setTrendingTopics] = useState<string[]>([]);
+  const [breakingNews, setBreakingNews] = useState<NewsData[]>([]);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
   const categories = [
     { id: 'todas', name: 'Todas', icon: '📰' },
@@ -23,6 +27,56 @@ const News: React.FC = () => {
     { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' },
     { id: 'tecnologia', name: 'Technology', icon: '💻' }
   ];
+
+  // Use infinite scroll hook for news
+  const {
+    data: news,
+    loading,
+    error,
+    hasMore,
+    totalItems,
+    metadata,
+    refresh,
+    retry,
+    observeElement
+  } = useInfiniteNews({
+    category: selectedCategory,
+    enabled: true
+  });
+
+  // Set up intersection observer for infinite scroll
+  useEffect(() => {
+    if (sentinelRef.current) {
+      observeElement(sentinelRef.current);
+    }
+  }, [observeElement]);
+
+  // Load trending topics and breaking news
+  useEffect(() => {
+    const loadAdditionalData = async () => {
+      try {
+        const [trending, live] = await Promise.all([
+          dataService.getTrendingTopics(selectedCategory),
+          dataService.getLiveContent()
+        ]);
+        setTrendingTopics(trending);
+        setBreakingNews(live.news);
+      } catch (err) {
+        console.warn('Failed to load additional data:', err);
+      }
+    };
+
+    loadAdditionalData();
+  }, [selectedCategory]);
+
+  const handleCategoryChange = (categoryId: string) => {
+    setSelectedCategory(categoryId);
+    setSelectedArticle(null); // Reset selected article when changing category
+  };
+
+  const handleArticleClick = (article: NewsData) => {
+    setSelectedArticle(article);
+  };
 
   const news = [
     {
