@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { activityTracker } from '../services/ActivityTracker';
 
 interface SearchResult {
@@ -13,7 +13,11 @@ interface SearchResult {
   image?: string;
 }
 
-// Mock search data with Colombian-relevant content
+interface UniversalSearchBarProps {
+  initialQuery?: string;
+}
+
+// Mock search data with Colombian-relevant content (excluding technology)
 const mockSearchData: SearchResult[] = [
   {
     id: '1',
@@ -72,19 +76,19 @@ const mockSearchData: SearchResult[] = [
   },
   {
     id: '6',
-    title: 'Colombia avanza en transformación digital para 2030',
-    summary: 'El MinTIC presenta el plan nacional de digitalización que conectará el 95% del territorio con internet de alta velocidad.',
+    title: 'Reforma tributaria genera debate en el sector empresarial',
+    summary: 'Los gremios económicos presentan sus observaciones sobre las modificaciones propuestas al sistema tributario colombiano.',
     source: 'Portafolio',
-    category: 'Tecnología',
+    category: 'Economía',
     timestamp: '2024-01-13T11:30:00Z',
-    relevanceScore: 70,
+    relevanceScore: 78,
     link: '#',
-    image: '💻'
+    image: '💰'
   }
 ];
 
-const UniversalSearchBar: React.FC = () => {
-  const [query, setQuery] = useState('');
+const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({ initialQuery = '' }) => {
+  const [query, setQuery] = useState(initialQuery);
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('all');
@@ -92,55 +96,112 @@ const UniversalSearchBar: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [displayMode, setDisplayMode] = useState<'cards' | 'list'>('cards');
   const [expandedResults, setExpandedResults] = useState<Set<string>>(new Set());
+  const [totalResults, setTotalResults] = useState(0);
 
   const resultsPerPage = 6;
+  const maxPages = 10; // Google-like pagination
 
-  // Mock search function
-  const performSearch = async (searchQuery: string): Promise<SearchResult[]> => {
+  // Debounced search
+  const [debouncedQuery, setDebouncedQuery] = useState(initialQuery);
+  
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query]);
+
+  // Perform search when debounced query changes
+  useEffect(() => {
+    if (debouncedQuery.trim()) {
+      performSearch(debouncedQuery);
+    } else {
+      setResults([]);
+      setTotalResults(0);
+    }
+  }, [debouncedQuery]);
+
+  // Handle initial query
+  useEffect(() => {
+    if (initialQuery && initialQuery !== query) {
+      setQuery(initialQuery);
+    }
+  }, [initialQuery]);
+
+  // Mock search function with pagination simulation
+  const performSearch = async (searchQuery: string): Promise<void> => {
     setLoading(true);
     
     // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise(resolve => setTimeout(resolve, 600));
     
     if (!searchQuery.trim()) {
       setLoading(false);
-      return [];
+      setResults([]);
+      setTotalResults(0);
+      return;
     }
 
-    // Filter mock data based on query
-    const filtered = mockSearchData.filter(item => 
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    try {
+      // Filter mock data based on query (excluding technology)
+      const filtered = mockSearchData.filter(item => 
+        item.category.toLowerCase() !== 'tecnología' && // Hide technology content
+        (item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+         item.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+         item.category.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
 
-    // Add some dynamic results based on query
-    const dynamicResults: SearchResult[] = [
-      {
-        id: `dynamic-${Date.now()}`,
-        title: `Últimas noticias sobre "${searchQuery}" en Colombia`,
-        summary: `Cobertura actualizada y análisis de los eventos más relevantes relacionados con ${searchQuery} en el contexto colombiano.`,
-        source: 'Nuestro Pulso Agregador',
-        category: 'Agregado',
-        timestamp: new Date().toISOString(),
-        relevanceScore: 100,
-        link: '#',
-        image: '📰'
+      // Add some dynamic results based on query for more realistic pagination
+      const dynamicResults: SearchResult[] = [];
+      
+      // Generate additional mock results for pagination demo
+      for (let i = 0; i < 15; i++) {
+        dynamicResults.push({
+          id: `dynamic-${Date.now()}-${i}`,
+          title: `Análisis sobre "${searchQuery}" - Parte ${i + 1}`,
+          summary: `Cobertura detallada y análisis especializado sobre ${searchQuery} en el contexto político y social colombiano. Esta información incluye múltiples perspectivas y fuentes verificadas.`,
+          source: 'Nuestro Pulso Agregador',
+          category: 'Agregado',
+          timestamp: new Date(Date.now() - i * 3600000).toISOString(), // Spread over hours
+          relevanceScore: Math.max(60, 100 - i * 3),
+          link: '#',
+          image: '📰'
+        });
       }
-    ];
+
+      const allResults = [...filtered, ...dynamicResults];
+      setResults(allResults);
+      setTotalResults(allResults.length);
+      setCurrentPage(1);
+      
+      // Track search activity
+      activityTracker.trackSearch(searchQuery, allResults.length, filter !== 'all' ? filter : undefined);
+    } catch (error) {
+      console.error('Search error:', error);
+      setResults([]);
+      setTotalResults(0);
+    }
 
     setLoading(false);
-    return [...dynamicResults, ...filtered];
   };
 
-  const handleSearch = async (e: React.FormEvent) => {
+  const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const searchResults = await performSearch(query);
-    setResults(searchResults);
-    setCurrentPage(1);
-    
-    // Track search activity
-    activityTracker.trackSearch(query, searchResults.length, filter !== 'all' ? filter : undefined);
+    if (query.trim()) {
+      performSearch(query);
+      
+      // Update URL with search query
+      const newUrl = `/search?q=${encodeURIComponent(query)}`;
+      window.history.pushState({ view: 'search', query }, '', newUrl);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSearch(e as any);
+    }
   };
 
   const filteredResults = results.filter(result => {
@@ -161,7 +222,7 @@ const UniversalSearchBar: React.FC = () => {
     }
   });
 
-  const totalPages = Math.ceil(sortedResults.length / resultsPerPage);
+  const totalPages = Math.min(Math.ceil(sortedResults.length / resultsPerPage), maxPages);
   const startIndex = (currentPage - 1) * resultsPerPage;
   const paginatedResults = sortedResults.slice(startIndex, startIndex + resultsPerPage);
 
@@ -186,17 +247,56 @@ const UniversalSearchBar: React.FC = () => {
     return `Hace ${diffInDays} día${diffInDays > 1 ? 's' : ''}`;
   };
 
+  const handleResultClick = (result: SearchResult) => {
+    // Track view activity
+    activityTracker.trackView(result.title, result.category);
+    
+    // Add visual feedback
+    console.log('Opening result:', result.title);
+    // In a real app, this would navigate to the article detail page
+  };
+
+  const generatePageNumbers = () => {
+    const pages = [];
+    const showEllipsis = totalPages > 7;
+    
+    if (!showEllipsis) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Google-like pagination logic
+      if (currentPage <= 4) {
+        for (let i = 1; i <= 5; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      } else if (currentPage >= totalPages - 3) {
+        pages.push(1);
+        pages.push('...');
+        for (let i = totalPages - 4; i <= totalPages; i++) pages.push(i);
+      } else {
+        pages.push(1);
+        pages.push('...');
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) pages.push(i);
+        pages.push('...');
+        pages.push(totalPages);
+      }
+    }
+    
+    return pages;
+  };
+
   return (
     <div className="max-w-6xl mx-auto">
       {/* Colombian-inspired header */}
-      <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 rounded-lg p-8 mb-8 text-white">
+      <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 rounded-lg p-6 lg:p-8 mb-8 text-white">
         <div className="flex items-center gap-4 mb-4">
-          <span className="text-4xl">🔍</span>
+          <span className="text-3xl lg:text-4xl">🔍</span>
           <div>
-            <h1 className="text-3xl font-bold">Búsqueda Universal</h1>
-            <p className="text-white/90">Explora toda la información cívica y política de Colombia</p>
+            <h1 className="text-2xl lg:text-3xl font-bold">Búsqueda Universal</h1>
+            <p className="text-white/90 text-sm lg:text-base">Explora toda la información cívica y política de Colombia</p>
           </div>
-          <span className="text-4xl ml-auto">🇨🇴</span>
+          <span className="text-3xl lg:text-4xl ml-auto">🇨🇴</span>
         </div>
         
         {/* Search form */}
@@ -205,15 +305,16 @@ const UniversalSearchBar: React.FC = () => {
             <input
               value={query}
               onChange={e => setQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
               placeholder="Buscar noticias, políticas, candidatos, reformas..."
-              className="flex-1 p-4 rounded-lg text-gray-900 placeholder-gray-500 text-lg focus:ring-4 focus:ring-white/30 focus:outline-none"
+              className="flex-1 p-3 lg:p-4 rounded-lg text-gray-900 placeholder-gray-500 text-base lg:text-lg focus:ring-4 focus:ring-white/30 focus:outline-none"
             />
             <button
               type="submit"
               disabled={loading}
-              className="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold hover:bg-gray-100 disabled:opacity-50 transition-all shadow-lg"
+              className="bg-white text-blue-600 px-6 lg:px-8 py-3 lg:py-4 rounded-lg font-bold hover:bg-gray-100 disabled:opacity-50 transition-all shadow-lg whitespace-nowrap"
             >
-              {loading ? '🔄' : '🔍'} Buscar
+              {loading ? '🔄' : '🔍'} <span className="hidden sm:inline">Buscar</span>
             </button>
           </div>
         </form>
@@ -236,20 +337,20 @@ const UniversalSearchBar: React.FC = () => {
       </div>
 
       {/* Results section */}
-      {results.length > 0 && (
+      {(results.length > 0 || loading) && (
         <div className="space-y-6">
           {/* Controls */}
           <div className="bg-white rounded-lg shadow-sm p-4">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <span className="font-medium text-gray-700">
-                  📊 {filteredResults.length} resultados para "{query}"
+                <span className="font-medium text-gray-700 text-sm lg:text-base">
+                  📊 {loading ? 'Buscando...' : `${filteredResults.length} resultados para "${query}"`}
                 </span>
                 
-                {/* Category filter */}
+                {/* Category filter - excluding technology */}
                 <select
                   value={filter}
-                  onChange={e => setFilter(e.target.value)}
+                  onChange={e => {setFilter(e.target.value); setCurrentPage(1);}}
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="all">Todas las categorías</option>
@@ -257,7 +358,8 @@ const UniversalSearchBar: React.FC = () => {
                   <option value="internacional">Internacional</option>
                   <option value="social">Social</option>
                   <option value="seguridad">Seguridad</option>
-                  <option value="tecnología">Tecnología</option>
+                  <option value="economía">Economía</option>
+                  {/* Technology option deliberately excluded */}
                 </select>
 
                 {/* Sort options */}
@@ -282,7 +384,7 @@ const UniversalSearchBar: React.FC = () => {
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
-                  🔲 Tarjetas
+                  🔲 <span className="hidden sm:inline">Tarjetas</span>
                 </button>
                 <button
                   onClick={() => setDisplayMode('list')}
@@ -292,7 +394,7 @@ const UniversalSearchBar: React.FC = () => {
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
-                  📄 Lista
+                  📄 <span className="hidden sm:inline">Lista</span>
                 </button>
               </div>
             </div>
@@ -307,111 +409,133 @@ const UniversalSearchBar: React.FC = () => {
           )}
 
           {/* Results */}
-          {!loading && (
-            <div className={displayMode === 'cards' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
-              {paginatedResults.map((result) => (
-                <div 
-                  key={result.id} 
-                  className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 ${
-                    displayMode === 'list' ? 'p-4' : 'p-6'
-                  }`}
-                >
-                  <div className={displayMode === 'list' ? 'flex items-start gap-4' : ''}>
-                    {/* Image/Icon */}
-                    <div className={`${displayMode === 'list' ? 'text-3xl' : 'text-4xl text-center mb-4'}`}>
-                      {result.image}
-                    </div>
-
-                    <div className="flex-1">
-                      {/* Category and timestamp */}
-                      <div className="flex items-center justify-between mb-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          result.category === 'Política' ? 'bg-blue-100 text-blue-800' :
-                          result.category === 'Internacional' ? 'bg-green-100 text-green-800' :
-                          result.category === 'Social' ? 'bg-purple-100 text-purple-800' :
-                          result.category === 'Seguridad' ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'
-                        }`}>
-                          {result.category}
-                        </span>
-                        <span className="text-xs text-gray-500">{formatTimeAgo(result.timestamp)}</span>
+          {!loading && paginatedResults.length > 0 && (
+            <>
+              <div className={displayMode === 'cards' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
+                {paginatedResults.map((result) => (
+                  <div 
+                    key={result.id} 
+                    className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-all border border-gray-200 cursor-pointer ${
+                      displayMode === 'list' ? 'p-4' : 'p-6'
+                    } hover:scale-[1.02]`}
+                    onClick={() => handleResultClick(result)}
+                  >
+                    <div className={displayMode === 'list' ? 'flex items-start gap-4' : ''}>
+                      {/* Image/Icon */}
+                      <div className={`${displayMode === 'list' ? 'text-3xl' : 'text-4xl text-center mb-4'}`}>
+                        {result.image}
                       </div>
 
-                      {/* Title */}
-                      <h3 className={`font-bold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer ${
-                        displayMode === 'list' ? 'text-lg' : 'text-xl'
-                      }`}>
-                        {result.title}
-                      </h3>
-
-                      {/* Summary */}
-                      <p className={`text-gray-600 mb-4 ${
-                        displayMode === 'list' ? 'text-sm' : ''
-                      } ${
-                        expandedResults.has(result.id) ? '' : 'line-clamp-2'
-                      }`}>
-                        {result.summary}
-                      </p>
-
-                      {/* Actions */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => toggleExpanded(result.id)}
-                            className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                          >
-                            {expandedResults.has(result.id) ? '▲ Menos' : '▼ Más'}
-                          </button>
-                          <span className="text-gray-300">•</span>
-                          <span className="text-sm text-gray-500">{result.source}</span>
+                      <div className="flex-1">
+                        {/* Category and timestamp */}
+                        <div className="flex items-center justify-between mb-2">
+                          <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                            result.category === 'Política' ? 'bg-blue-100 text-blue-800' :
+                            result.category === 'Internacional' ? 'bg-green-100 text-green-800' :
+                            result.category === 'Social' ? 'bg-purple-100 text-purple-800' :
+                            result.category === 'Seguridad' ? 'bg-red-100 text-red-800' :
+                            result.category === 'Economía' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {result.category}
+                          </span>
+                          <span className="text-xs text-gray-500">{formatTimeAgo(result.timestamp)}</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <span className="text-xs text-gray-500">Relevancia:</span>
-                          <span className="text-xs font-medium text-blue-600">{result.relevanceScore}%</span>
+
+                        {/* Title */}
+                        <h3 className={`font-bold text-gray-900 mb-2 hover:text-blue-600 ${
+                          displayMode === 'list' ? 'text-lg' : 'text-xl'
+                        }`}>
+                          {result.title}
+                        </h3>
+
+                        {/* Summary */}
+                        <p className={`text-gray-600 mb-4 ${
+                          displayMode === 'list' ? 'text-sm' : ''
+                        } ${
+                          expandedResults.has(result.id) ? '' : 'line-clamp-2'
+                        }`}>
+                          {result.summary}
+                        </p>
+
+                        {/* Actions */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                toggleExpanded(result.id);
+                              }}
+                              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                            >
+                              {expandedResults.has(result.id) ? '▲ Menos' : '▼ Más'}
+                            </button>
+                            <span className="text-gray-300">•</span>
+                            <span className="text-sm text-gray-500">{result.source}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <span className="text-xs text-gray-500">Relevancia:</span>
+                            <span className="text-xs font-medium text-blue-600">{result.relevanceScore}%</span>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2">
-              <button
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors"
-              >
-                ← Anterior
-              </button>
-              
-              <div className="flex gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-2 rounded-lg transition-colors ${
-                      currentPage === page
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {page}
-                  </button>
                 ))}
               </div>
 
-              <button
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors"
-              >
-                Siguiente →
-              </button>
-            </div>
+              {/* Google-like Pagination */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-center gap-2 flex-wrap">
+                  <button
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors"
+                  >
+                    ← Anterior
+                  </button>
+                  
+                  <div className="flex gap-1 flex-wrap">
+                    {generatePageNumbers().map((page, index) => (
+                      <React.Fragment key={index}>
+                        {page === '...' ? (
+                          <span className="px-3 py-2 text-gray-500">...</span>
+                        ) : (
+                          <button
+                            onClick={() => setCurrentPage(page as number)}
+                            className={`px-3 py-2 rounded-lg transition-colors min-w-[2.5rem] ${
+                              currentPage === page
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors"
+                  >
+                    Siguiente →
+                  </button>
+                </div>
+              )}
+
+              {/* Results info */}
+              <div className="text-center text-sm text-gray-500">
+                Mostrando {startIndex + 1}-{Math.min(startIndex + resultsPerPage, sortedResults.length)} de {sortedResults.length} resultados
+                {sortedResults.length >= resultsPerPage * maxPages && (
+                  <span className="block mt-1">
+                    💡 Refina tu búsqueda para ver resultados más específicos
+                  </span>
+                )}
+              </div>
+            </>
           )}
         </div>
       )}
@@ -430,6 +554,17 @@ const UniversalSearchBar: React.FC = () => {
           >
             Nueva búsqueda
           </button>
+        </div>
+      )}
+
+      {/* Initial state */}
+      {!query && !results.length && !loading && (
+        <div className="text-center py-16">
+          <div className="text-6xl mb-4">📰</div>
+          <h3 className="text-2xl font-bold text-gray-900 mb-4">Busca información cívica y política</h3>
+          <p className="text-gray-600 mb-6">
+            Utiliza la barra de búsqueda para encontrar noticias, debates, políticas y más contenido relevante para Colombia
+          </p>
         </div>
       )}
     </div>
