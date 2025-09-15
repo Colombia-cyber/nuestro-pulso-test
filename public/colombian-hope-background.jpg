@@ -1,0 +1,8 @@
+body {
+  background-image: url('/colombian-hope-background.jpg');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center center;
+  min-height: 100vh;
+  color: #222222;
+}
