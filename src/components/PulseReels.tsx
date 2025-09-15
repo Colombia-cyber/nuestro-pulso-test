@@ -127,6 +127,94 @@ const PulseReels: React.FC = () => {
       likes: 2340,
       thumbnail: '💻',
       author: 'TechColombia'
+    },
+    {
+      id: 11,
+      title: 'Derechos humanos en Colombia: Avances y desafíos 2024',
+      description: 'Análisis integral sobre la situación de derechos humanos en el país',
+      category: 'politica',
+      duration: '7:50',
+      views: 16780,
+      likes: 1234,
+      thumbnail: '⚖️',
+      author: 'Defensoría del Pueblo'
+    },
+    {
+      id: 12,
+      title: 'Emprendimiento juvenil: Historias de éxito en Colombia',
+      description: 'Jóvenes emprendedores que están transformando sus comunidades',
+      category: 'participacion',
+      duration: '5:30',
+      views: 28900,
+      likes: 1876,
+      thumbnail: '🚀',
+      author: 'iNNpulsa Colombia'
+    },
+    {
+      id: 13,
+      title: 'Conservación de biodiversidad: Colombia megadiverso',
+      description: 'Esfuerzos de conservación en ecosistemas colombianos únicos',
+      category: 'ambiente',
+      duration: '6:15',
+      views: 19650,
+      likes: 1523,
+      thumbnail: '🦋',
+      author: 'Instituto Humboldt'
+    },
+    {
+      id: 14,
+      title: 'Educación rural: Cerrando brechas en zonas apartadas',
+      description: 'Programas innovadores para llevar educación de calidad al campo',
+      category: 'educacion',
+      duration: '4:45',
+      views: 14230,
+      likes: 967,
+      thumbnail: '🏫',
+      author: 'Ministerio de Educación'
+    },
+    {
+      id: 15,
+      title: 'Análisis electoral: Tendencias políticas en América Latina',
+      description: 'Panorama político regional y su impacto en Colombia',
+      category: 'trump',
+      duration: '9:20',
+      views: 35780,
+      likes: 2145,
+      thumbnail: '🌎',
+      author: 'BBC Mundo'
+    },
+    {
+      id: 16,
+      title: 'Congreso Virtual: Cómo participar desde casa',
+      description: 'Guía para seguir y participar en sesiones virtuales del Congreso',
+      category: 'congreso',
+      duration: '3:55',
+      views: 21450,
+      likes: 1687,
+      thumbnail: '📱',
+      author: 'Senado de Colombia'
+    },
+    {
+      id: 17,
+      title: 'Prevención del terrorismo: Estrategias comunitarias',
+      description: 'Cómo las comunidades pueden contribuir a la prevención del terrorismo',
+      category: 'terror',
+      duration: '6:40',
+      views: 18320,
+      likes: 1256,
+      thumbnail: '🛡️',
+      author: 'Policía Nacional'
+    },
+    {
+      id: 18,
+      title: 'Inteligencia Artificial en el gobierno colombiano',
+      description: 'Implementación de IA para mejorar servicios públicos',
+      category: 'tecnologia',
+      duration: '5:25',
+      views: 27890,
+      likes: 1934,
+      thumbnail: '🤖',
+      author: 'MinTIC'
     }
   ];
 
@@ -204,9 +292,9 @@ const PulseReels: React.FC = () => {
           <h1 className="text-3xl font-bold text-white mb-2">🎬 Pulse Reels</h1>
           <p className="text-white/90">Videos cortos sobre temas cívicos y participación ciudadana</p>
           <div className="mt-4 flex items-center space-x-6 text-white/80">
-            <span>🎥 24 videos esta semana</span>
-            <span>👁️ 150K+ visualizaciones</span>
-            <span>📱 Contenido móvil</span>
+            <span>🎥 48 videos esta semana</span>
+            <span>👁️ 450K+ visualizaciones</span>
+            <span>📱 Contenido móvil optimizado</span>
           </div>
         </div>
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { getTrendingPolls } from './data/samplePolls';
 import PollCard from './components/polls/PollCard';
+import SocialMediaIntegration from './components/SocialMediaIntegration';
 
 const HomePage: React.FC = () => {
   const trendingPolls = getTrendingPolls().slice(0, 2); // Get top 2 trending polls
@@ -13,6 +14,11 @@ const HomePage: React.FC = () => {
   const handleViewDetails = (pollId: string) => {
     console.log(`View details for poll ${pollId}`);
     // In a real app, this would navigate to the poll details page
+  };
+
+  const handlePostToCommunityHub = (content: string) => {
+    console.log('Post to Community Hub:', content);
+    // In a real app, this would make an API call to post to the community hub
   };
 
   return (
@@ -106,8 +112,13 @@ const HomePage: React.FC = () => {
           )}
         </div>
 
+        {/* Social Media Integration */}
+        <div className="mt-12">
+          <SocialMediaIntegration onPostToCommunityHub={handlePostToCommunityHub} />
+        </div>
+
         {/* Right Wing News Preview Section */}
-        <div className="mt-12 bg-gradient-to-r from-orange-400 to-red-500 rounded-lg p-6">
+        <div className="mt-8 bg-gradient-to-r from-orange-400 to-red-500 rounded-lg p-6">
           <h2 className="text-2xl font-bold text-white mb-4">🗳️ Noticias Conservadoras y Elecciones</h2>
           <p className="text-white/90 mb-6">
             Últimas noticias sobre política conservadora, candidatos, encuestas electorales y análisis de derecha
