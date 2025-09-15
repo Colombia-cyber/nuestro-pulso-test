@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Comments from './Comments';
 
 const News: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const [selectedArticle, setSelectedArticle] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   const categories = [
     { id: 'todas', name: 'Todas', icon: '📰' },
@@ -14,7 +17,11 @@ const News: React.FC = () => {
     { id: 'social', name: 'Social', icon: '👥' },
     { id: 'ambiente', name: 'Ambiente', icon: '🌱' },
     { id: 'educacion', name: 'Educación', icon: '📚' },
-    { id: 'salud', name: 'Salud', icon: '🏥' }
+    { id: 'salud', name: 'Salud', icon: '🏥' },
+    { id: 'terror', name: 'Terror', icon: '🚨' },
+    { id: 'congreso', name: 'Congress', icon: '🏛️' },
+    { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' },
+    { id: 'tecnologia', name: 'Technology', icon: '💻' }
   ];
 
   const news = [
@@ -136,12 +143,209 @@ Los economistas recomiendan crear un consejo económico nacional permanente que 
       engagement: { likes: 167, shares: 92, comments: 45 },
       readTime: '7 min',
       political_lean: 'independiente'
+    },
+    {
+      id: 6,
+      title: 'Alerta de seguridad: Incrementan amenazas terroristas en zonas fronterizas',
+      summary: 'Fuerzas militares colombianas reportan aumento en actividad de grupos armados ilegales en la frontera con Venezuela.',
+      fullContent: `El Alto Mando Militar de Colombia emitió una alerta de seguridad tras detectar un incremento significativo en la actividad de grupos armados ilegales en las zonas fronterizas con Venezuela, particularmente en los departamentos de Norte de Santander y Arauca.
+
+Según el informe del general Carlos Alberto Patiño, comandante de las Fuerzas Militares, se han identificado nuevas rutas de tráfico de armas y drogas utilizadas por grupos residuales de las FARC y bandas criminales que operan desde territorio venezolano.
+
+"Hemos detectado un patrón preocupante en el incremento de amenazas contra la población civil y nuestras unidades militares", declaró Patiño durante una rueda de prensa en el Ministerio de Defensa.
+
+El informe indica que estos grupos han intensificado sus actividades de extorsión, secuestro y atentados contra la infraestructura petrolera de la región. En los últimos tres meses se han registrado 15 atentados contra oleoductos y torres de energía eléctrica.
+
+La respuesta del gobierno ha incluido el refuerzo de 2,000 soldados adicionales en la zona y la implementación de nuevas tecnologías de vigilancia satelital proporcionadas por Estados Unidos y la Unión Europea.
+
+Las autoridades venezolanas han sido notificadas oficialmente sobre estas actividades, aunque hasta el momento no han respondido a las solicitudes de cooperación binacional para combatir estos grupos.
+
+La población civil ha sido evacuada preventivamente de tres municipios considerados de alto riesgo, mientras se mantiene un cordón de seguridad en un radio de 50 kilómetros de la frontera.`,
+      category: 'terror',
+      source: 'Reuters Colombia',
+      time: '30 minutos',
+      image: '🚨',
+      engagement: { likes: 89, shares: 234, comments: 156 },
+      readTime: '6 min',
+      political_lean: 'independiente'
+    },
+    {
+      id: 7,
+      title: 'Congreso aprueba proyecto de ley sobre inteligencia artificial en el sector público',
+      summary: 'El Senado colombiano aprobó en primer debate una normativa para regular el uso de IA en entidades gubernamentales.',
+      fullContent: `El Senado de la República aprobó en primer debate el proyecto de ley que busca regular el uso de inteligencia artificial en el sector público colombiano, convirtiéndose en uno de los primeros países de América Latina en abordar esta temática legislativa.
+
+La iniciativa, presentada por la senadora María José Pizarro del Pacto Histórico y respaldada por parlamentarios de diferentes bancadas, establece un marco normativo para garantizar el uso ético y transparente de la IA en entidades estatales.
+
+El proyecto define principios fundamentales como la transparencia algorítmica, la no discriminación, la protección de datos personales y la rendición de cuentas en los sistemas de IA utilizados por el gobierno.
+
+"Esta ley posiciona a Colombia como líder regional en la regulación de tecnologías emergentes", declaró Pizarro durante el debate en el pleno del Senado.
+
+La normativa establece que todas las entidades públicas deberán registrar sus sistemas de IA ante una nueva autoridad regulatoria, además de someterse a auditorías periódicas para verificar el cumplimiento de los estándares éticos.
+
+El ministro de Tecnologías de la Información y las Comunicaciones, Mauricio Lizcano, respaldó la iniciativa y anunció que el gobierno destinará $50 mil millones de pesos para implementar los nuevos estándares.
+
+La oposición, liderada por el Centro Democrático, expresó preocupaciones sobre los costos de implementación y solicitó un estudio de impacto fiscal antes de la votación en segundo debate.
+
+El proyecto ahora pasa a la Cámara de Representantes, donde se espera que sea debatido durante las próximas semanas.`,
+      category: 'congreso',
+      source: 'AP News Colombia',
+      time: '1 hora',
+      image: '🏛️',
+      engagement: { likes: 342, shares: 127, comments: 98 },
+      readTime: '5 min',
+      political_lean: 'independiente'
+    },
+    {
+      id: 8,
+      title: 'Trump anuncia nueva política comercial que afectaría exportaciones colombianas',
+      summary: 'El expresidente estadounidense propone aranceles adicionales a productos agrícolas latinoamericanos en caso de volver al poder.',
+      fullContent: `Durante un mitin en Florida, el expresidente Donald Trump anunció su intención de implementar nuevos aranceles comerciales que afectarían significativamente las exportaciones colombianas, particularmente en los sectores de café, flores y productos agrícolas.
+
+La propuesta, que formaría parte de su plataforma electoral para 2024, incluye un arancel del 25% a productos agrícolas de países que "no cooperen adecuadamente" en la lucha contra el narcotráfico, una categoría en la que incluye a Colombia.
+
+"Vamos a proteger a los agricultores estadounidenses de la competencia desleal y vamos a asegurar que los países que permiten el flujo de drogas hacia Estados Unidos paguen el precio", declaró Trump ante una multitud de seguidores.
+
+La medida tendría un impacto devastador en la economía colombiana, considerando que Estados Unidos es el principal destino de las exportaciones del país, representando el 31% del total.
+
+El embajador de Colombia en Washington, Francisco Santos, emitió un comunicado expresando "profunda preocupación" por estas declaraciones y recordando que Colombia es uno de los principales aliados de Estados Unidos en la lucha contra el narcotráfico.
+
+Analistas económicos estiman que los aranceles propuestos por Trump podrían reducir las exportaciones colombianas en $3.2 mil millones anuales y afectar a más de 500,000 empleos directos e indirectos.
+
+El presidente Gustavo Petro convocó a una reunión de emergencia del Consejo de Ministros para evaluar posibles respuestas diplomáticas y estrategias de diversificación comercial.
+
+La Asociación Nacional de Exportadores (ANALDEX) solicitó al gobierno colombiano intensificar las gestiones diplomáticas para evitar que estas propuestas se materialicen.`,
+      category: 'trump',
+      source: 'BBC Mundo',
+      time: '2 horas',
+      image: '🇺🇸',
+      engagement: { likes: 567, shares: 389, comments: 234 },
+      readTime: '7 min',
+      political_lean: 'independiente'
+    },
+    {
+      id: 9,
+      title: 'Colombia lanza plan nacional de transformación digital para 2030',
+      summary: 'El gobierno presenta una estrategia integral para digitalizar el 80% de los trámites públicos y conectar todas las zonas rurales.',
+      fullContent: `El Ministerio de Tecnologías de la Información y las Comunicaciones (MinTIC) lanzó oficialmente el "Plan Nacional de Transformación Digital 2024-2030", una ambiciosa estrategia que busca posicionar a Colombia como líder tecnológico en América Latina.
+
+El plan, que requiere una inversión de $8 billones de pesos durante seis años, tiene cuatro objetivos principales: digitalizar el 80% de los trámites gubernamentales, conectar el 95% del territorio nacional con internet de alta velocidad, formar un millón de ciudadanos en competencias digitales y crear 300,000 empleos en el sector tecnológico.
+
+La ministra Carmen Ligia Valderrama explicó durante la presentación que el plan incluye la construcción de 5,000 kilómetros de fibra óptica, la instalación de 10,000 puntos de acceso Wi-Fi gratuito en zonas rurales y la creación de 50 centros de innovación tecnológica en todo el país.
+
+"Esta es la transformación más ambiciosa que ha emprendido Colombia en materia tecnológica", declaró Valderrama en el evento realizado en el Centro de Innovación de Bogotá.
+
+El sector privado también participará activamente en la iniciativa. Empresas como Claro, Movistar, Tigo y ETB han comprometido inversiones por $2 billones adicionales para acelerar el despliegue de redes 5G y mejorar la cobertura en zonas apartadas.
+
+El plan incluye programas especiales para comunidades indígenas y afrodescendientes, garantizando que la transformación digital sea inclusiva y respete la diversidad cultural del país.
+
+Los primeros resultados se esperan ver en 2025, con el lanzamiento de la plataforma "Colombia Digital", que centralizará todos los servicios gubernamentales en línea y permitirá a los ciudadanos realizar la mayoría de trámites desde sus dispositivos móviles.
+
+La iniciativa cuenta con el respaldo del Banco Interamericano de Desarrollo (BID), que otorgó un crédito de $500 millones para financiar la primera fase del proyecto.`,
+      category: 'tecnologia',
+      source: 'El Tiempo Tecnología',
+      time: '3 horas',
+      image: '💻',
+      engagement: { likes: 423, shares: 198, comments: 87 },
+      readTime: '6 min',
+      political_lean: 'independiente'
     }
   ];
+
+  // Simulate loading news articles
+  useEffect(() => {
+    setIsLoading(true);
+    setError(null);
+    
+    // Simulate API call delay
+    const timer = setTimeout(() => {
+      try {
+        // Simulate potential error (10% chance)
+        if (Math.random() < 0.1) {
+          throw new Error('Error al cargar las noticias. Por favor, intenta nuevamente.');
+        }
+        setIsLoading(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Error desconocido');
+        setIsLoading(false);
+      }
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, [selectedCategory]);
 
   const filteredNews = selectedCategory === 'todas' 
     ? news 
     : news.filter(item => item.category === selectedCategory || item.political_lean === selectedCategory);
+
+  // Loading skeleton component
+  const LoadingSkeleton = () => (
+    <div className="space-y-6">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse">
+          <div className="p-6">
+            <div className="flex items-start space-x-4">
+              <div className="w-16 h-16 bg-gray-300 rounded-lg"></div>
+              <div className="flex-1">
+                <div className="flex items-center space-x-2 mb-2">
+                  <div className="w-20 h-6 bg-gray-300 rounded-full"></div>
+                  <div className="w-24 h-4 bg-gray-300 rounded"></div>
+                </div>
+                <div className="w-3/4 h-6 bg-gray-300 rounded mb-2"></div>
+                <div className="w-full h-4 bg-gray-300 rounded mb-4"></div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="w-12 h-4 bg-gray-300 rounded"></div>
+                    <div className="w-12 h-4 bg-gray-300 rounded"></div>
+                    <div className="w-12 h-4 bg-gray-300 rounded"></div>
+                  </div>
+                  <div className="w-32 h-4 bg-gray-300 rounded"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+
+  // Error state component
+  const ErrorState = () => (
+    <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+      <div className="text-6xl mb-4">😕</div>
+      <h3 className="text-2xl font-bold text-gray-900 mb-4">Error al cargar noticias</h3>
+      <p className="text-gray-600 mb-6">{error}</p>
+      <button 
+        onClick={() => window.location.reload()}
+        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+      >
+        Intentar nuevamente
+      </button>
+    </div>
+  );
+
+  // No content state component
+  const NoContent = () => (
+    <div className="bg-white rounded-lg shadow-lg p-8 text-center">
+      <div className="text-6xl mb-4">📰</div>
+      <h3 className="text-2xl font-bold text-gray-900 mb-4">No hay noticias disponibles</h3>
+      <p className="text-gray-600 mb-6">
+        No se encontraron artículos para la categoría seleccionada. 
+        Intenta con otra categoría o busca temas específicos.
+      </p>
+      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <button 
+          onClick={() => setSelectedCategory('todas')}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          Ver todas las noticias
+        </button>
+        <button className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+          Buscar temas relacionados
+        </button>
+      </div>
+    </div>
+  );
 
   if (selectedArticle) {
     return (
@@ -243,6 +447,11 @@ Los economistas recomiendan crear un consejo económico nacional permanente que 
               ))}
             </div>
           </div>
+
+          {/* Comments Section */}
+          <div className="mt-8">
+            <Comments articleId={selectedArticle.id} articleTitle={selectedArticle.title} />
+          </div>
         </div>
       </div>
     );
@@ -298,7 +507,14 @@ Los economistas recomiendan crear un consejo económico nacional permanente que 
 
         {/* News Feed */}
         <div className="space-y-6">
-          {filteredNews.map((article) => (
+          {isLoading ? (
+            <LoadingSkeleton />
+          ) : error ? (
+            <ErrorState />
+          ) : filteredNews.length === 0 ? (
+            <NoContent />
+          ) : (
+            filteredNews.map((article) => (
             <div key={article.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
               <div className="p-6">
                 <div className="flex items-start space-x-4">
@@ -351,7 +567,7 @@ Los economistas recomiendan crear un consejo económico nacional permanente que 
                 </div>
               </div>
             </div>
-          ))}
+          )))}
         </div>
 
         {/* Trending Topics */}
