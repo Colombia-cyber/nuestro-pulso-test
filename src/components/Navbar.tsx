@@ -25,42 +25,49 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         <div className="flex gap-6 items-center">
           <button 
             onClick={() => handleNavClick('home')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 hover:bg-yellow-50 px-2 py-1 rounded"
           >
             <span>🏠</span>
             <span>Inicio</span>
           </button>
           <button 
             onClick={() => handleNavClick('news')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 hover:bg-yellow-50 px-2 py-1 rounded"
           >
             <span>📰</span>
             <span>Noticias</span>
           </button>
           <button 
             onClick={() => handleNavClick('reels')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 hover:bg-yellow-50 px-2 py-1 rounded"
           >
             <span>🎬</span>
             <span>Reels</span>
           </button>
           <button 
-            onClick={() => handleNavClick('community-hub')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
+            onClick={() => handleNavClick('debates')}
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 hover:bg-yellow-50 px-2 py-1 rounded"
           >
-            <span>💭</span>
-            <span>Community Hub</span>
+            <span>🗣️</span>
+            <span>Debates</span>
           </button>
           <button 
-            onClick={() => handleNavClick('encuestas')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
+            onClick={() => handleNavClick('polls')}
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 hover:bg-yellow-50 px-2 py-1 rounded"
           >
             <span>📊</span>
             <span>Encuestas</span>
           </button>
           <button 
+            onClick={() => handleNavClick('community-hub')}
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 hover:bg-yellow-50 px-2 py-1 rounded"
+          >
+            <span>💭</span>
+            <span>Community</span>
+          </button>
+          <button 
             onClick={() => setShowSearchModal(true)}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1"
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 hover:bg-yellow-50 px-2 py-1 rounded"
           >
             <span>🔍</span>
             <span>Buscar</span>

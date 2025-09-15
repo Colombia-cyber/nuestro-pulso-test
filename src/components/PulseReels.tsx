@@ -108,17 +108,39 @@ const PulseReels: React.FC = () => {
     },
     {
       id: 9,
-      title: 'Alerta de seguridad: Amenazas terroristas en fronteras',
-      description: 'Informe especial sobre medidas de seguridad en zonas fronterizas',
+      title: 'Operativo antiterrorista en Bogotá: Cómo se desarrolló',
+      description: 'Detalles del operativo que desmanteló célula terrorista en la capital',
       category: 'terror',
       duration: '8:20',
-      views: 23400,
-      likes: 1890,
+      views: 89400,
+      likes: 5890,
       thumbnail: '🚨',
       author: 'Caracol Noticias'
     },
     {
       id: 10,
+      title: 'Alerta de seguridad: Amenazas terroristas en fronteras',
+      description: 'Informe especial sobre medidas de seguridad en zonas fronterizas',
+      category: 'terror',
+      duration: '7:15',
+      views: 67200,
+      likes: 3670,
+      thumbnail: '🚨',
+      author: 'RCN Noticias'
+    },
+    {
+      id: 11,
+      title: 'Células dormidas del ELN: La amenaza urbana',
+      description: 'Análisis sobre la reactivación de estructuras guerrilleras en las ciudades',
+      category: 'terror',
+      duration: '9:45',
+      views: 54300,
+      likes: 2890,
+      thumbnail: '🚨',
+      author: 'Semana TV'
+    },
+    {
+      id: 12,
       title: 'Revolución digital: Colombia 5G para todos',
       description: 'Cómo la tecnología 5G transformará la conectividad en Colombia',
       category: 'tecnologia',
@@ -127,6 +149,28 @@ const PulseReels: React.FC = () => {
       likes: 2340,
       thumbnail: '💻',
       author: 'TechColombia'
+    },
+    {
+      id: 13,
+      title: 'Políticas de Trump vs Colombia: Análisis económico',
+      description: 'Expertos analizan el impacto de las propuestas arancelarias de Trump',
+      category: 'trump',
+      duration: '11:20',
+      views: 76800,
+      likes: 4230,
+      thumbnail: '🇺🇸',
+      author: 'Bloomberg Colombia'
+    },
+    {
+      id: 14,
+      title: 'Debate en el Congreso: Ley de Inteligencia Artificial',
+      description: 'Cobertura completa del histórico debate sobre regulación de IA',
+      category: 'congreso',
+      duration: '15:30',
+      views: 92300,
+      likes: 6780,
+      thumbnail: '🏛️',
+      author: 'Congreso TV'
     }
   ];
 
@@ -188,12 +232,24 @@ const PulseReels: React.FC = () => {
       <div className="text-6xl mb-4">📱</div>
       <h3 className="text-2xl font-bold text-gray-900 mb-4">Error al cargar Reels</h3>
       <p className="text-gray-600 mb-6">{error}</p>
-      <button 
-        onClick={() => window.location.reload()}
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-      >
-        Reintentar
-      </button>
+      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <button 
+          onClick={() => {
+            setError(null);
+            setIsLoading(true);
+            setTimeout(() => setIsLoading(false), 1000);
+          }}
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+        >
+          🔄 Reintentar
+        </button>
+        <button 
+          onClick={() => setSelectedCategory('todos')}
+          className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+        >
+          📺 Ver todos los reels
+        </button>
+      </div>
     </div>
   );
 

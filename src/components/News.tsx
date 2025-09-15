@@ -9,6 +9,10 @@ const News: React.FC = () => {
 
   const categories = [
     { id: 'todas', name: 'Todas', icon: '📰' },
+    { id: 'terror', name: 'Terror & Seguridad', icon: '🚨' },
+    { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' },
+    { id: 'congreso', name: 'Congress', icon: '🏛️' },
+    { id: 'tecnologia', name: 'Technology', icon: '💻' },
     { id: 'politica', name: 'Política', icon: '🏛️' },
     { id: 'derecha', name: 'Right Wing', icon: '🗳️' },
     { id: 'izquierda', name: 'Left Wing', icon: '🌹' },
@@ -17,11 +21,7 @@ const News: React.FC = () => {
     { id: 'social', name: 'Social', icon: '👥' },
     { id: 'ambiente', name: 'Ambiente', icon: '🌱' },
     { id: 'educacion', name: 'Educación', icon: '📚' },
-    { id: 'salud', name: 'Salud', icon: '🏥' },
-    { id: 'terror', name: 'Terror', icon: '🚨' },
-    { id: 'congreso', name: 'Congress', icon: '🏛️' },
-    { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' },
-    { id: 'tecnologia', name: 'Technology', icon: '💻' }
+    { id: 'salud', name: 'Salud', icon: '🏥' }
   ];
 
   const news = [
@@ -247,6 +247,89 @@ La iniciativa cuenta con el respaldo del Banco Interamericano de Desarrollo (BID
       time: '3 horas',
       image: '💻',
       engagement: { likes: 423, shares: 198, comments: 87 },
+      readTime: '6 min',
+      political_lean: 'independiente'
+    },
+    {
+      id: 10,
+      title: 'Capturada célula terrorista que planeaba atentados en Bogotá y Medellín',
+      summary: 'La Policía Nacional desmantela red criminal que preparaba ataques coordinados contra infraestructura crítica en principales ciudades.',
+      fullContent: `La Policía Nacional, en operación conjunta con el CTI de la Fiscalía y el Ejército Nacional, capturó a 12 integrantes de una célula terrorista que planeaba ejecutar atentados simultáneos en Bogotá y Medellín durante la próxima semana.
+
+La operación "Escudo Dorado" se desarrolló en cinco departamentos del país tras una investigación de seis meses que permitió identificar los planes criminales del grupo, que tenía como objetivo atacar estaciones de TransMilenio, centros comerciales y sedes gubernamentales.
+
+El director de la Policía Nacional, general William René Salamanca, informó que durante los allanamientos se incautaron 200 kilogramos de explosivos, armas de guerra, municiones y material de comunicaciones sofisticadas.
+
+"Esta red criminal tenía conexiones con grupos terroristas internacionales y había logrado infiltrar algunos funcionarios públicos para obtener información sobre medidas de seguridad", declaró Salamanca durante rueda de prensa.
+
+Los detenidos, entre los que se encuentran tres extranjeros de nacionalidad venezolana, habían establecido laboratorios clandestinos para la fabricación de artefactos explosivos en zonas rurales de Cundinamarca y Antioquia.
+
+La investigación reveló que el grupo recibía financiamiento a través de actividades de narcotráfico y extorsión, con ingresos estimados en $2 mil millones de pesos mensuales que utilizaban para adquirir armamento y reclutar nuevos integrantes.
+
+El presidente Gustavo Petro felicitó a las fuerzas de seguridad por el operativo y anunció el refuerzo de medidas de protección en las principales ciudades del país.
+
+La Fiscalía imputó cargos por concierto para delinquir agravado, terrorismo, fabricación y tráfico de armas, y lavado de activos. Los capturados no obtuvieron beneficio de excarcelación.`,
+      category: 'terror',
+      source: 'Reuters Colombia',
+      time: '1 hora',
+      image: '🚨',
+      engagement: { likes: 156, shares: 423, comments: 267 },
+      readTime: '5 min',
+      political_lean: 'independiente'
+    },
+    {
+      id: 11,
+      title: 'Alertan sobre células dormidas del ELN en zonas urbanas de Colombia',
+      summary: 'Inteligencia militar detecta reactivación de estructuras urbanas del grupo guerrillero en principales ciudades del país.',
+      fullContent: `El Comando General de las Fuerzas Militares emitió una alerta de máximo nivel tras detectar la reactivación de células urbanas del Ejército de Liberación Nacional (ELN) en Bogotá, Cali, Barranquilla y Bucaramanga.
+
+Según el informe de inteligencia presentado por el general Alberto José Mejía, estas estructuras habían permanecido inactivas durante los últimos dos años pero han intensificado sus operaciones de reclutamiento y financiamiento en las últimas semanas.
+
+"Hemos identificado al menos 15 células que operan bajo la modalidad de 'redes dormidas' y que han comenzado a activarse siguiendo órdenes directas del Comando Central del ELN", informó Mejía durante la sesión del Consejo de Seguridad Nacional.
+
+Las células están conformadas por estudiantes universitarios, comerciantes y profesionales que mantienen una fachada de legalidad mientras desarrollan actividades de inteligencia, reclutamiento y logística para el grupo guerrillero.
+
+La investigación revela que estas estructuras han logrado infiltrar sindicatos, universidades públicas y organizaciones sociales, desde donde promueven protestas y movilizaciones que pueden derivar en actos de violencia urbana.
+
+El ministro de Defensa, Iván Velásquez, anunció la implementación del Plan "Artemisa Urbano" que incluye operativos de inteligencia en 12 ciudades del país y el refuerzo de la seguridad en campus universitarios y zonas comerciales.
+
+"No vamos a permitir que el terrorismo urbano se convierta en una estrategia viable para estos grupos al margen de la ley", declaró Velásquez tras la reunión con alcaldes de las ciudades afectadas.
+
+Las autoridades solicitaron a la ciudadanía reportar actividades sospechosas y han establecido una línea de denuncias confidenciales que opera las 24 horas.`,
+      category: 'terror',
+      source: 'AP News Colombia',
+      time: '2 horas',
+      image: '🚨',
+      engagement: { likes: 234, shares: 567, comments: 345 },
+      readTime: '7 min',
+      political_lean: 'independiente'
+    },
+    {
+      id: 12,
+      title: 'Desmantelan laboratorio de explosivos caseros en zona rural de Nariño',
+      summary: 'Operativo conjunto desarticula complejo criminal destinado a fabricación de artefactos explosivos para grupos armados ilegales.',
+      fullContent: `Unidades del Ejército Nacional y la Policía Antinarcóticos desmantelaron un sofisticado laboratorio de fabricación de explosivos caseros en zona rural del municipio de Tumaco, Nariño, en operación que se extendió por más de 12 horas.
+
+El coronel Andrés Castellanos, comandante de la Brigada 29, informó que el laboratorio tenía capacidad para producir hasta 500 kilogramos de explosivos mensuales, destinados a grupos armados ilegales que operan en la frontera con Ecuador.
+
+Durante el operativo se incautaron 1.2 toneladas de material precursor, 180 artefactos explosivos ya ensamblados, manuales de fabricación en español e inglés, y equipos especializados valuados en $800 millones de pesos.
+
+"Este laboratorio representaba una amenaza directa para la seguridad nacional, ya que abastecía a diferentes estructuras criminales del Pacífico colombiano", declaró Castellanos desde el lugar de los hechos.
+
+La investigación preliminar indica que el complejo criminal operaba desde hace dos años bajo la dirección de un ingeniero químico venezolano con experiencia en manejo de explosivos militares.
+
+Se capturaron cinco personas, incluyendo al presunto cabecilla conocido como "El Químico", quien tendría vínculos con redes de tráfico de armas internacionales que operan desde Venezuela y Ecuador.
+
+El material incautado será trasladado a Bogotá para análisis forense que permita establecer si los explosivos fueron utilizados en atentados recientes contra la infraestructura petrolera del país.
+
+La Fiscalía abrió investigación por los delitos de fabricación y tráfico de armas de fuego, concierto para delinquir agravado y terrorismo, que contemplan penas de hasta 30 años de prisión.
+
+Las autoridades confirmaron que intensificarán los operativos en la región para desarticular otras estructuras similares que puedan estar operando en la zona fronteriza.`,
+      category: 'terror',
+      source: 'BBC Mundo',
+      time: '45 minutos',
+      image: '🚨',
+      engagement: { likes: 289, shares: 445, comments: 178 },
       readTime: '6 min',
       political_lean: 'independiente'
     }
@@ -493,13 +576,19 @@ La iniciativa cuenta con el respaldo del Banco Interamericano de Desarrollo (BID
         {/* Breaking News */}
         <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
           <div className="flex items-center">
-            <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold mr-3">
-              🚨 ÚLTIMO MOMENTO
+            <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold mr-3 animate-pulse">
+              🚨 ALERTA DE SEGURIDAD
             </span>
             <p className="text-red-800 font-medium">
-              Presidente anuncia nueva inversión de $2 billones para infraestructura rural
+              Capturada célula terrorista que planeaba atentados en Bogotá y Medellín
             </p>
-            <button className="ml-auto text-red-600 hover:text-red-800 text-sm font-medium">
+            <button 
+              onClick={() => {
+                setSelectedCategory('terror');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+              }}
+              className="ml-auto text-red-600 hover:text-red-800 text-sm font-medium"
+            >
               Leer más →
             </button>
           </div>

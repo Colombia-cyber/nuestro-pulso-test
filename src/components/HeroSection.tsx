@@ -40,19 +40,19 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
               onClick={() => onNavigate('reels')}
               className="px-8 py-4 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 font-semibold"
             >
-              💬 Chat en Vivo
+              🎬 Pulse Reels
             </button>
             <button 
               onClick={() => onNavigate('debates')}
               className="px-8 py-4 bg-green-600 text-white rounded-xl shadow-lg hover:bg-green-700 transform hover:scale-105 transition-all duration-200 font-semibold"
             >
-              🗣️ Debates
+              🗣️ Debates en Vivo
             </button>
             <button 
               onClick={() => onNavigate('polls')}
               className="px-8 py-4 bg-purple-600 text-white rounded-xl shadow-lg hover:bg-purple-700 transform hover:scale-105 transition-all duration-200 font-semibold"
             >
-              📊 Encuestas
+              📊 Encuestas Cívicas
             </button>
           </div>
         </div>

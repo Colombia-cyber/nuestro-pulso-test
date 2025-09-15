@@ -5,6 +5,8 @@ import News from "./components/News";
 import PulseReels from "./components/PulseReels";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
+import PollsPage from "./components/polls/PollsPage";
+import Debate from "./components/Debate";
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -23,6 +25,11 @@ function App() {
         return <Comments />;
       case 'community-hub':
         return <CommunityHub />;
+      case 'polls':
+      case 'encuestas':
+        return <PollsPage />;
+      case 'debates':
+        return <Debate />;
       case 'home':
       default:
         return <HeroSection onNavigate={handleNavigate} />;
