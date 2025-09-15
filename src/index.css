@@ -6,4 +6,86 @@
 
 body {
   font-family: 'Inter', sans-serif;
+  /* Colombian-themed gradient background */
+  background: linear-gradient(135deg, 
+    #FFD700 0%,     /* Colombian Yellow */
+    #0066CC 25%,    /* Colombian Blue */
+    #FF0000 50%,    /* Colombian Red */
+    #FFD700 75%,    /* Back to Yellow */
+    #0066CC 100%    /* End with Blue */
+  );
+  background-attachment: fixed;
+  min-height: 100vh;
 }
+
+/* Alternative Colombian landscape-inspired background */
+.bg-colombia-landscape {
+  background: linear-gradient(180deg, 
+    #87CEEB 0%,     /* Sky blue */
+    #98FB98 20%,    /* Light green for mountains */
+    #228B22 40%,    /* Forest green */
+    #8B4513 60%,    /* Brown for earth */
+    #DAA520 80%,    /* Goldenrod for fields */
+    #FFD700 100%    /* Colombian gold */
+  );
+}
+
+/* Vibrant Colombian flag pattern background */
+.bg-colombia-vibrant {
+  background: linear-gradient(45deg,
+    #FFD700 0%, #FFD700 33.33%,
+    #0066CC 33.33%, #0066CC 66.66%,
+    #FF0000 66.66%, #FF0000 100%
+  );
+  background-size: 300px 300px;
+  animation: colombianPattern 20s ease-in-out infinite;
+}
+
+@keyframes colombianPattern {
+  0%, 100% { 
+    background-position: 0% 0%; 
+    filter: brightness(1) hue-rotate(0deg);
+  }
+  25% { 
+    background-position: 25% 25%; 
+    filter: brightness(1.1) hue-rotate(5deg);
+  }
+  50% { 
+    background-position: 50% 50%; 
+    filter: brightness(1.2) hue-rotate(10deg);
+  }
+  75% { 
+    background-position: 75% 25%; 
+    filter: brightness(1.1) hue-rotate(5deg);
+  }
+}
+
+/* Glass morphism effect for cards */
+.glass-morphism {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+}
+
+/* Loading skeleton animation */
+.skeleton {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Smooth transitions for navigation */
+.smooth-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Colombian pride colors for text */
+.text-colombia-yellow { color: #FFD700; }
+.text-colombia-blue { color: #0066CC; }
+.text-colombia-red { color: #FF0000; }
