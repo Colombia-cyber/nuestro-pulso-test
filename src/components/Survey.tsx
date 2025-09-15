@@ -120,31 +120,43 @@ const Survey: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 p-6 rounded-lg mb-6">
-          <h1 className="text-3xl font-bold text-white mb-2">📊 Encuestas Cívicas</h1>
-          <p className="text-white/90">Tu opinión importa: participa en encuestas que moldean las políticas públicas</p>
-          <div className="mt-4 flex items-center space-x-6 text-white/80">
-            <span>📋 12 encuestas activas</span>
-            <span>👥 45,231 respuestas esta semana</span>
-            <span>📈 Resultados en tiempo real</span>
+    <div className="min-h-screen">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-4xl mx-auto">
+          <div className="vibrant-card rounded-2xl p-8 mb-8 text-center">
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-600 via-blue-600 to-red-600 bg-clip-text text-transparent">
+              📊 Encuestas Cívicas de Colombia
+            </h1>
+            <p className="text-xl text-gray-700 mb-6">Tu opinión importa: participa en encuestas que moldean las políticas públicas</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="flex items-center justify-center space-x-2 bg-blue-100 p-3 rounded-lg">
+                <span className="text-xl">📋</span>
+                <span className="font-semibold text-blue-800">12 encuestas activas</span>
+              </div>
+              <div className="flex items-center justify-center space-x-2 bg-green-100 p-3 rounded-lg">
+                <span className="text-xl">👥</span>
+                <span className="font-semibold text-green-800">45,231 respuestas esta semana</span>
+              </div>
+              <div className="flex items-center justify-center space-x-2 bg-purple-100 p-3 rounded-lg">
+                <span className="text-xl">📈</span>
+                <span className="font-semibold text-purple-800">Resultados en tiempo real</span>
+              </div>
+            </div>
           </div>
-        </div>
 
         {/* Featured Survey */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div className="flex items-center justify-between mb-4">
+        <div className="vibrant-card rounded-xl p-8 mb-8">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{surveys[0].title}</h2>
-              <p className="text-gray-600 mt-1">{surveys[0].description}</p>
+              <h2 className="text-3xl font-bold text-gray-900">{surveys[0].title}</h2>
+              <p className="text-gray-700 mt-2 text-lg">{surveys[0].description}</p>
             </div>
             <div className="text-right">
-              <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-medium">
+              <span className="bg-green-100 text-green-800 px-4 py-2 rounded-full text-sm font-bold">
                 {surveys[0].status}
               </span>
-              <div className="text-sm text-gray-500 mt-1">
-                {surveys[0].responses.toLocaleString()} respuestas
+              <div className="text-sm text-gray-500 mt-2">
+                <span className="font-semibold">{surveys[0].responses.toLocaleString()}</span> respuestas
               </div>
             </div>
           </div>
@@ -209,18 +221,18 @@ const Survey: React.FC = () => {
         </div>
 
         {/* Quick Polls */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">
-            Encuestas Rápidas 
-            <span className="ml-2 bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+        <div className="vibrant-card rounded-xl p-8">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+            <span>Encuestas Rápidas</span>
+            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold animate-pulse">
               🔴 EN VIVO
             </span>
           </h3>
-          <div className="space-y-4">
+          <div className="space-y-6">
             {quickPolls.map((poll) => (
-              <div key={poll.id} className="border rounded-lg p-4 bg-gray-50">
-                <h4 className="font-semibold text-gray-900 mb-3">{poll.question}</h4>
-                <div className="space-y-3">
+              <div key={poll.id} className="content-overlay rounded-xl p-6">
+                <h4 className="font-bold text-gray-900 mb-4 text-lg">{poll.question}</h4>
+                <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <button 
@@ -299,9 +311,12 @@ const Survey: React.FC = () => {
         </div>
 
         {/* Create Poll Section */}
-        <div className="mt-8 bg-blue-50 rounded-lg p-6 border border-blue-200">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">💡 Crear Nueva Encuesta</h3>
-          <p className="text-gray-600 mb-4">
+        <div className="mt-12 vibrant-card rounded-xl p-8 bg-gradient-to-br from-blue-50 to-purple-50">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+            <span className="text-3xl">💡</span>
+            <span>Crear Nueva Encuesta</span>
+          </h3>
+          <p className="text-gray-700 mb-6 text-lg">
             ¿Tienes una pregunta importante para la ciudadanía? Propón una nueva encuesta cívica.
           </p>
           <div className="space-y-4">
@@ -343,6 +358,7 @@ const Survey: React.FC = () => {
           </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

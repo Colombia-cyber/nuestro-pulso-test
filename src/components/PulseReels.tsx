@@ -85,140 +85,167 @@ const PulseReels: React.FC = () => {
     : reels.filter(reel => reel.category === selectedCategory);
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 p-6 rounded-lg mb-6">
-          <h1 className="text-3xl font-bold text-white mb-2">🎬 Pulse Reels</h1>
-          <p className="text-white/90">Videos cortos sobre temas cívicos y participación ciudadana</p>
-          <div className="mt-4 flex items-center space-x-6 text-white/80">
-            <span>🎥 24 videos esta semana</span>
-            <span>👁️ 150K+ visualizaciones</span>
-            <span>📱 Contenido móvil</span>
+    <div className="min-h-screen">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          {/* Header */}
+          <div className="vibrant-card rounded-2xl p-8 mb-8 text-center">
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-600 via-blue-600 to-red-600 bg-clip-text text-transparent">
+              🎬 Pulse Reels Colombia
+            </h1>
+            <p className="text-xl text-gray-700 mb-6">Videos cortos sobre temas cívicos y participación ciudadana</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="flex items-center justify-center space-x-2 bg-purple-100 p-3 rounded-lg">
+                <span className="text-xl">🎥</span>
+                <span className="font-semibold text-purple-800">24 videos esta semana</span>
+              </div>
+              <div className="flex items-center justify-center space-x-2 bg-blue-100 p-3 rounded-lg">
+                <span className="text-xl">👁️</span>
+                <span className="font-semibold text-blue-800">150K+ visualizaciones</span>
+              </div>
+              <div className="flex items-center justify-center space-x-2 bg-green-100 p-3 rounded-lg">
+                <span className="text-xl">📱</span>
+                <span className="font-semibold text-green-800">Contenido móvil</span>
+              </div>
+            </div>
           </div>
-        </div>
 
-        {/* Categories */}
-        <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  selectedCategory === category.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                <span className="mr-1">{category.icon}</span>
-                {category.name}
-              </button>
-            ))}
+          {/* Categories */}
+          <div className="vibrant-card rounded-xl p-6 mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Explorar por categoría</h3>
+            <div className="flex flex-wrap gap-3">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all transform hover:scale-105 ${
+                    selectedCategory === category.id
+                      ? 'bg-blue-600 text-white shadow-lg'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  <span className="mr-2">{category.icon}</span>
+                  {category.name}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Reels Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredReels.map((reel) => (
-            <div key={reel.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer">
-              {/* Thumbnail */}
-              <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 h-64 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <div className="text-6xl">{reel.thumbnail}</div>
-                <div className="absolute bottom-4 right-4 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm">
-                  {reel.duration}
+          {/* Reels Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredReels.map((reel) => (
+              <div key={reel.id} className="vibrant-card rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 group cursor-pointer transform hover:scale-105">
+                {/* Thumbnail */}
+                <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 h-64 flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <div className="text-6xl">{reel.thumbnail}</div>
+                  <div className="absolute bottom-4 right-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-bold">
+                    {reel.duration}
+                  </div>
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
+                    <div className="text-white text-6xl opacity-0 group-hover:opacity-100 transition-opacity">
+                      ▶️
+                    </div>
+                  </div>
                 </div>
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
-                  <div className="text-white text-6xl opacity-0 group-hover:opacity-100 transition-opacity">
-                    ▶️
+
+                {/* Content */}
+                <div className="p-6">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold ${
+                      reel.category === 'politica' ? 'bg-blue-100 text-blue-800' :
+                      reel.category === 'participacion' ? 'bg-green-100 text-green-800' :
+                      reel.category === 'ambiente' ? 'bg-emerald-100 text-emerald-800' :
+                      reel.category === 'educacion' ? 'bg-purple-100 text-purple-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {categories.find(c => c.id === reel.category)?.name}
+                    </span>
+                    <span className="text-xs text-gray-600 font-medium">{reel.author}</span>
+                  </div>
+                  
+                  <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    {reel.title}
+                  </h3>
+                  
+                  <p className="text-gray-700 text-sm mb-4 line-clamp-2">{reel.description}</p>
+                  
+                  <div className="flex items-center justify-between text-sm text-gray-500">
+                    <div className="flex items-center space-x-4">
+                      <span className="flex items-center space-x-1">
+                        <span className="text-lg">👁️</span>
+                        <span className="font-medium">{reel.views.toLocaleString()}</span>
+                      </span>
+                      <span className="flex items-center space-x-1">
+                        <span className="text-lg">❤️</span>
+                        <span className="font-medium">{reel.likes.toLocaleString()}</span>
+                      </span>
+                    </div>
+                    <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 font-medium text-xs transition-all">
+                      Ver ahora
+                    </button>
                   </div>
                 </div>
               </div>
+            ))}
+          </div>
 
-              {/* Content */}
-              <div className="p-4">
-                <div className="flex items-center space-x-2 mb-2">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    reel.category === 'politica' ? 'bg-blue-100 text-blue-800' :
-                    reel.category === 'participacion' ? 'bg-green-100 text-green-800' :
-                    reel.category === 'ambiente' ? 'bg-emerald-100 text-emerald-800' :
-                    reel.category === 'educacion' ? 'bg-purple-100 text-purple-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {categories.find(c => c.id === reel.category)?.name}
-                  </span>
-                  <span className="text-xs text-gray-500">{reel.author}</span>
-                </div>
-                
-                <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600">
-                  {reel.title}
+          {/* Featured Live Stream */}
+          <div className="mt-12 vibrant-card rounded-xl p-8 bg-gradient-to-r from-red-50 to-red-100 border border-red-200">
+            <div className="flex items-start space-x-6">
+              <div className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold animate-pulse">
+                🔴 EN VIVO
+              </div>
+              <div className="flex-1">
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  Sesión del Congreso: Debate sobre Reforma Tributaria
                 </h3>
-                
-                <p className="text-gray-600 text-sm mb-3 line-clamp-2">{reel.description}</p>
-                
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <div className="flex items-center space-x-3">
-                    <span className="flex items-center space-x-1">
-                      <span>👁️</span>
-                      <span>{reel.views.toLocaleString()}</span>
-                    </span>
-                    <span className="flex items-center space-x-1">
-                      <span>❤️</span>
-                      <span>{reel.likes.toLocaleString()}</span>
-                    </span>
-                  </div>
-                  <button className="text-blue-600 hover:text-blue-800 font-medium">
-                    Ver ahora
-                  </button>
+                <p className="text-gray-700 mb-4 text-lg">
+                  Transmisión en vivo del debate en el Senado sobre las modificaciones a la reforma tributaria 2024
+                </p>
+                <div className="flex items-center space-x-6 text-sm text-gray-600">
+                  <span className="flex items-center space-x-2">
+                    <span className="text-lg">👥</span>
+                    <span className="font-medium">5,847 espectadores</span>
+                  </span>
+                  <span className="flex items-center space-x-2">
+                    <span className="text-lg">⏰</span>
+                    <span className="font-medium">Comenzó hace 1h 23m</span>
+                  </span>
                 </div>
               </div>
+              <button className="bg-red-500 text-white px-8 py-4 rounded-lg hover:bg-red-600 font-bold transition-all shadow-lg">
+                Unirse al Debate
+              </button>
             </div>
-          ))}
-        </div>
-
-        {/* Featured Live Stream */}
-        <div className="mt-8 bg-red-50 border border-red-200 rounded-lg p-6">
-          <div className="flex items-start space-x-4">
-            <div className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">
-              🔴 EN VIVO
-            </div>
-            <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                Sesión del Congreso: Debate sobre Reforma Tributaria
-              </h3>
-              <p className="text-gray-600 mb-3">
-                Transmisión en vivo del debate en el Senado sobre las modificaciones a la reforma tributaria 2024
-              </p>
-              <div className="flex items-center space-x-4 text-sm text-gray-500">
-                <span>👥 5,847 espectadores</span>
-                <span>⏰ Comenzó hace 1h 23m</span>
-              </div>
-            </div>
-            <button className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 font-semibold">
-              Unirse
-            </button>
           </div>
-        </div>
 
-        {/* Trending Topics */}
-        <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">🔥 Trending en Reels</h3>
-          <div className="flex flex-wrap gap-2">
-            {[
-              '#ParticipacionCiudadana',
-              '#TransparenciaGobierno',
-              '#VotoJoven',
-              '#CambioClimatico',
-              '#EducacionDigital',
-              '#ControlCorrupcion',
-              '#ReformaTributaria'
-            ].map((hashtag, index) => (
-              <span
-                key={index}
-                className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium cursor-pointer hover:bg-blue-200"
-              >
-                {hashtag}
-              </span>
-            ))}
+          {/* Trending Topics */}
+          <div className="mt-12 vibrant-card rounded-xl p-8">
+            <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+              <span className="text-3xl">🔥</span>
+              <span>Trending en Reels</span>
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
+              {[
+                '#ParticipacionCiudadana',
+                '#TransparenciaGobierno',
+                '#VotoJoven',
+                '#CambioClimatico',
+                '#EducacionDigital',
+                '#ControlCorrupcion',
+                '#ReformaTributaria'
+              ].map((hashtag, index) => (
+                <span
+                  key={index}
+                  className="bg-gradient-to-r from-purple-100 to-purple-200 text-purple-800 px-4 py-3 rounded-full text-sm font-bold cursor-pointer hover:from-purple-200 hover:to-purple-300 transition-all transform hover:scale-105 text-center"
+                >
+                  {hashtag}
+                </span>
+              ))}
+            </div>
+            <div className="mt-6 text-center">
+              <p className="text-gray-600">🎬 Descubre más contenido cívico en video</p>
+            </div>
           </div>
         </div>
       </div>

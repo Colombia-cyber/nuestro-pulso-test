@@ -249,32 +249,45 @@ Los economistas recomiendan crear un consejo económico nacional permanente que 
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 p-6 rounded-lg mb-6">
-          <h1 className="text-3xl font-bold text-white mb-2">📰 Noticias Cívicas</h1>
-          <p className="text-white/90">Mantente informado sobre los temas que afectan a Colombia</p>
-          <div className="mt-4 flex items-center space-x-6 text-white/80">
-            <span>🔄 Actualizado cada hora</span>
-            <span>✅ Fuentes verificadas</span>
-            <span>📊 Análisis de impacto cívico</span>
+    <div className="min-h-screen">
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="vibrant-card rounded-2xl p-8 mb-8 text-center">
+            <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-600 via-blue-600 to-red-600 bg-clip-text text-transparent">
+              📰 Noticias Cívicas de Colombia
+            </h1>
+            <p className="text-xl text-gray-700 mb-6">Mantente informado sobre los temas que afectan a Colombia</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+              <div className="flex items-center justify-center space-x-2 bg-blue-100 p-3 rounded-lg">
+                <span className="text-xl">🔄</span>
+                <span className="font-semibold text-blue-800">Actualizado cada hora</span>
+              </div>
+              <div className="flex items-center justify-center space-x-2 bg-green-100 p-3 rounded-lg">
+                <span className="text-xl">✅</span>
+                <span className="font-semibold text-green-800">Fuentes verificadas</span>
+              </div>
+              <div className="flex items-center justify-center space-x-2 bg-purple-100 p-3 rounded-lg">
+                <span className="text-xl">📊</span>
+                <span className="font-semibold text-purple-800">Análisis de impacto cívico</span>
+              </div>
+            </div>
           </div>
-        </div>
 
         {/* Categories */}
-        <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
-          <div className="flex flex-wrap gap-2">
+        <div className="vibrant-card rounded-xl p-6 mb-8">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Filtrar por categoría</h3>
+          <div className="flex flex-wrap gap-3">
             {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all transform hover:scale-105 ${
                   selectedCategory === category.id
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-blue-600 text-white shadow-lg'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
-                <span className="mr-1">{category.icon}</span>
+                <span className="mr-2">{category.icon}</span>
                 {category.name}
               </button>
             ))}
@@ -282,30 +295,35 @@ Los economistas recomiendan crear un consejo económico nacional permanente que 
         </div>
 
         {/* Breaking News */}
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
+        <div className="bg-gradient-to-r from-red-100 to-red-50 border-l-4 border-red-500 p-6 mb-8 rounded-r-xl vibrant-card">
           <div className="flex items-center">
-            <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold mr-3">
+            <span className="bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold mr-4 animate-pulse">
               🚨 ÚLTIMO MOMENTO
             </span>
-            <p className="text-red-800 font-medium">
-              Presidente anuncia nueva inversión de $2 billones para infraestructura rural
-            </p>
-            <button className="ml-auto text-red-600 hover:text-red-800 text-sm font-medium">
+            <div className="flex-1">
+              <p className="text-red-800 font-bold text-lg">
+                Presidente anuncia nueva inversión de $2 billones para infraestructura rural
+              </p>
+              <p className="text-red-700 text-sm mt-1">
+                La medida beneficiará a más de 500 municipios del país
+              </p>
+            </div>
+            <button className="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 font-medium transition-all">
               Leer más →
             </button>
           </div>
         </div>
 
         {/* News Feed */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {filteredNews.map((article) => (
-            <div key={article.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
-              <div className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="text-4xl">{article.image}</div>
+            <div key={article.id} className="vibrant-card rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]">
+              <div className="p-8">
+                <div className="flex items-start space-x-6">
+                  <div className="text-6xl flex-shrink-0">{article.image}</div>
                   <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                    <div className="flex items-center space-x-3 mb-4">
+                      <span className={`px-3 py-1 rounded-full text-sm font-bold ${
                         article.category === 'educacion' ? 'bg-blue-100 text-blue-800' :
                         article.category === 'ambiente' ? 'bg-green-100 text-green-800' :
                         article.category === 'salud' ? 'bg-red-100 text-red-800' :
@@ -314,36 +332,36 @@ Los economistas recomiendan crear un consejo económico nacional permanente que 
                       }`}>
                         {categories.find(c => c.id === article.category)?.name}
                       </span>
-                      <span className="text-sm text-gray-500">{article.source}</span>
+                      <span className="text-sm text-gray-600 font-medium">{article.source}</span>
                       <span className="text-sm text-gray-500">•</span>
                       <span className="text-sm text-gray-500">hace {article.time}</span>
                     </div>
                     
-                    <h3 className="text-xl font-bold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer"
+                    <h3 className="text-2xl font-bold text-gray-900 mb-4 hover:text-blue-600 cursor-pointer transition-colors leading-tight"
                         onClick={() => setSelectedArticle(article)}>
                       {article.title}
                     </h3>
                     
-                    <p className="text-gray-600 mb-4">{article.summary}</p>
+                    <p className="text-gray-700 mb-6 text-lg leading-relaxed">{article.summary}</p>
                     
                     <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4 text-sm text-gray-500">
-                        <button className="flex items-center space-x-1 hover:text-blue-600">
-                          <span>👍</span>
-                          <span>{article.engagement.likes}</span>
+                      <div className="flex items-center space-x-6 text-sm text-gray-500">
+                        <button className="flex items-center space-x-2 hover:text-blue-600 transition-colors">
+                          <span className="text-lg">👍</span>
+                          <span className="font-medium">{article.engagement.likes}</span>
                         </button>
-                        <button className="flex items-center space-x-1 hover:text-green-600">
-                          <span>📤</span>
-                          <span>{article.engagement.shares}</span>
+                        <button className="flex items-center space-x-2 hover:text-green-600 transition-colors">
+                          <span className="text-lg">📤</span>
+                          <span className="font-medium">{article.engagement.shares}</span>
                         </button>
-                        <button className="flex items-center space-x-1 hover:text-purple-600">
-                          <span>💬</span>
-                          <span>{article.engagement.comments}</span>
+                        <button className="flex items-center space-x-2 hover:text-purple-600 transition-colors">
+                          <span className="text-lg">💬</span>
+                          <span className="font-medium">{article.engagement.comments}</span>
                         </button>
                       </div>
                       <button 
                         onClick={() => setSelectedArticle(article)}
-                        className="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-medium transition-all shadow-lg">
                         Leer artículo completo →
                       </button>
                     </div>
@@ -355,9 +373,12 @@ Los economistas recomiendan crear un consejo económico nacional permanente que 
         </div>
 
         {/* Trending Topics */}
-        <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">🔥 Temas Trending</h3>
-          <div className="flex flex-wrap gap-2">
+        <div className="mt-12 vibrant-card rounded-xl p-8">
+          <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+            <span className="text-3xl">🔥</span>
+            <span>Temas Trending en Colombia</span>
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3">
             {[
               '#ReformaTributaria',
               '#TransportePublico',
@@ -369,14 +390,18 @@ Los economistas recomiendan crear un consejo económico nacional permanente que 
             ].map((hashtag, index) => (
               <span
                 key={index}
-                className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium cursor-pointer hover:bg-blue-200"
+                className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 px-4 py-3 rounded-full text-sm font-bold cursor-pointer hover:from-blue-200 hover:to-blue-300 transition-all transform hover:scale-105 text-center"
               >
                 {hashtag}
               </span>
             ))}
           </div>
+          <div className="mt-6 text-center">
+            <p className="text-gray-600">🔍 Explora más temas de actualidad nacional</p>
+          </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };

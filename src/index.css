@@ -4,6 +4,61 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Colombian Theme - Vibrant Background Integration */
 body {
   font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, 
+    rgba(255, 223, 0, 0.9) 0%,    /* Colombian Yellow */
+    rgba(0, 156, 224, 0.9) 35%,   /* Colombian Blue */
+    rgba(220, 53, 69, 0.9) 100%   /* Colombian Red */
+  ), url('/assets/images/colombian-hope-background.jpg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
+}
+
+/* Colombian Color Palette */
+:root {
+  --colombian-yellow: #ffdf00;
+  --colombian-blue: #009ce0;
+  --colombian-red: #dc3545;
+  --vibrant-yellow: #ffd700;
+  --vibrant-blue: #0066cc;
+  --vibrant-red: #cc0000;
+}
+
+/* Remove white backgrounds and add transparency */
+.content-overlay {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.vibrant-card {
+  background: linear-gradient(135deg, 
+    rgba(255, 255, 255, 0.95) 0%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+/* Colombian gradient utilities */
+.bg-colombian-gradient {
+  background: linear-gradient(135deg, 
+    var(--colombian-yellow) 0%,
+    var(--colombian-blue) 50%,
+    var(--colombian-red) 100%
+  );
+}
+
+.bg-colombian-light {
+  background: linear-gradient(135deg, 
+    rgba(255, 223, 0, 0.1) 0%,
+    rgba(0, 156, 224, 0.1) 50%,
+    rgba(220, 53, 69, 0.1) 100%
+  );
 }

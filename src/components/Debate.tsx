@@ -360,65 +360,76 @@ const Debate: React.FC = () => {
   }
   // Main debates list view
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen">
       <div className="container mx-auto py-8 px-4">
         {/* Hero section */}
-        <div className="bg-blue-800 rounded-lg p-6 mb-6 shadow-lg">
-          <h1 className="text-3xl font-bold text-white mb-2">🗣️ Debates Cívicos</h1>
-          <p className="text-white/90">Participa en debates estructurados sobre temas cruciales para Colombia</p>
-          <div className="mt-4 flex items-center space-x-6 text-white/80">
-            <span>🔴 3 debates en vivo</span>
-            <span>📅 5 programados hoy</span>
-            <span>👥 {liveParticipants.toLocaleString()} participantes activos</span>
+        <div className="vibrant-card rounded-2xl p-8 mb-8 text-center">
+          <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-600 via-blue-600 to-red-600 bg-clip-text text-transparent">
+            🗣️ Debates Cívicos de Colombia
+          </h1>
+          <p className="text-xl text-gray-700 mb-6">Participa en debates estructurados sobre temas cruciales para Colombia</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div className="flex items-center justify-center space-x-2 bg-red-100 p-3 rounded-lg">
+              <span className="text-xl">🔴</span>
+              <span className="font-semibold text-red-800">3 debates en vivo</span>
+            </div>
+            <div className="flex items-center justify-center space-x-2 bg-blue-100 p-3 rounded-lg">
+              <span className="text-xl">📅</span>
+              <span className="font-semibold text-blue-800">5 programados hoy</span>
+            </div>
+            <div className="flex items-center justify-center space-x-2 bg-green-100 p-3 rounded-lg">
+              <span className="text-xl">👥</span>
+              <span className="font-semibold text-green-800">{liveParticipants.toLocaleString()} participantes activos</span>
+            </div>
           </div>
         </div>
 
         {/* Active Debates */}
-        <div className="space-y-6">
+        <div className="space-y-8">
           {debates.map((debate) => (
-            <div key={debate.id} className="bg-white rounded-lg shadow-lg p-6">
-              <div className="flex items-center justify-between mb-4">
+            <div key={debate.id} className="vibrant-card rounded-xl p-8 hover:shadow-2xl transition-all duration-300">
+              <div className="flex items-center justify-between mb-6">
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">{debate.title}</h2>
-                  <p className="text-gray-600 mb-3">{debate.description}</p>
-                  <div className="flex items-center space-x-4">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  <h2 className="text-2xl font-bold text-gray-900 mb-3">{debate.title}</h2>
+                  <p className="text-gray-700 mb-4 text-lg">{debate.description}</p>
+                  <div className="flex items-center space-x-6">
+                    <span className={`px-4 py-2 rounded-full text-sm font-bold ${
                       debate.status === 'live' 
                         ? 'bg-red-100 text-red-800 animate-pulse' 
                         : 'bg-blue-100 text-blue-800'
                     }`}>
                       {debate.status === 'live' ? '🔴 En vivo' : '📅 Programado'}
                     </span>
-                    <span className="text-gray-600">
+                    <span className="text-gray-700 font-medium">
                       👥 {debate.status === 'live' ? debate.participants.toLocaleString() : debate.interested} 
                       {debate.status === 'live' ? ' participantes' : ' interesados'}
                     </span>
                     {debate.status === 'live' && (
-                      <span className="text-gray-600">⏰ Termina en {debate.timeLeft}</span>
+                      <span className="text-gray-700 font-medium">⏰ Termina en {debate.timeLeft}</span>
                     )}
                     {debate.status === 'scheduled' && (
-                      <span className="text-gray-600">🕒 {debate.scheduledTime}</span>
+                      <span className="text-gray-700 font-medium">🕒 {debate.scheduledTime}</span>
                     )}
-                    <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm">
+                    <span className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm font-medium">
                       {debate.category}
                     </span>
                   </div>
                 </div>
-                <div className="flex flex-col space-y-2">
+                <div className="flex flex-col space-y-3">
                   {debate.status === 'live' ? (
                     <>
                       <button 
                         onClick={() => setSelectedDebate(debate.id)}
-                        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 font-semibold"
+                        className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 font-bold transition-all shadow-lg"
                       >
                         Ver Debate Completo
                       </button>
-                      <button className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 text-sm">
+                      <button className="bg-green-600 text-white px-8 py-2 rounded-lg hover:bg-green-700 text-sm font-medium">
                         Participar Rápido
                       </button>
                     </>
                   ) : (
-                    <button className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 font-semibold">
+                    <button className="bg-gray-600 text-white px-8 py-3 rounded-lg hover:bg-gray-700 font-bold transition-all">
                       Recordar
                     </button>
                   )}
