@@ -1,36 +1,22 @@
 import React, { useState } from 'react';
-
-const GOOGLE_API_KEY = "AIzaSyB1wdNIgV2qUdJ8lUzjhKoRnYHpwi_QAWQ"; // Placeholder API key
-const GOOGLE_CX = "b1da68d0c729b40ae"; // Placeholder Custom Search Engine ID
-
-async function searchGoogleAPI(query: string) {
-  // Mock search results for demo purposes since we're using placeholder keys
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-  
-  return [
-    {
-      title: `Resultados sobre "${query}" - Noticias Colombia`,
-      link: 'https://example.com/colombia-news',
-      snippet: `Últimas noticias sobre ${query} en Colombia. Análisis, reportes y cobertura actualizada de los eventos más importantes del país.`
-    },
-    {
-      title: `${query} - Wikipedia`,
-      link: 'https://es.wikipedia.org/wiki/' + encodeURIComponent(query),
-      snippet: `Información enciclopédica sobre ${query}. Historia, contexto y datos relevantes de fuentes confiables.`
-    },
-    {
-      title: `Análisis: ${query} en el contexto colombiano`,
-      link: 'https://example.com/analysis',
-      snippet: `Análisis profundo sobre ${query} y su impacto en la sociedad colombiana. Perspectivas de expertos y datos actualizados.`
-    }
-  ];
-}
+import { useSearch } from '../hooks/useInfiniteScroll';
 
 const GoogleWebSearchBar: React.FC = () => {
-  const [query, setQuery] = useState('');
-  const [results, setResults] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const {
+    query,
+    setQuery,
+    filters,
+    setFilters,
+    results,
+    loading,
+    error,
+    hasMore,
+    totalResults,
+    search,
+    loadMore,
+    clearResults
+  } = useSearch();
+
   const [discussId, setDiscussId] = useState<string | null>(null);
   const [threads, setThreads] = useState<{[key: string]: { user: string, text: string }[] }>({});
   const [comment, setComment] = useState('');
@@ -39,17 +25,7 @@ const GoogleWebSearchBar: React.FC = () => {
     e.preventDefault();
     if (!query.trim()) return;
     
-    setLoading(true);
-    setError(null);
-    setDiscussId(null);
-    
-    try {
-      const googleResults = await searchGoogleAPI(query);
-      setResults(googleResults);
-    } catch (err: any) {
-      setError("Error al buscar en Google. Intenta nuevamente.");
-    }
-    setLoading(false);
+    await search(query, true);
   }
 
   function handleDiscuss(link: string) {
@@ -64,9 +40,18 @@ const GoogleWebSearchBar: React.FC = () => {
     setComment('');
   }
 
+  function handleFilterChange(filterType: string, value: string) {
+    setFilters((prev: any) => ({
+      ...prev,
+      [filterType]: prev[filterType]?.includes(value) 
+        ? prev[filterType].filter((v: any) => v !== value)
+        : [...(prev[filterType] || []), value]
+    }));
+  }
+
   const LoadingSkeleton = () => (
     <div className="space-y-4">
-      {[1, 2, 3].map((i) => (
+      {[1, 2, 3, 4, 5].map((i) => (
         <div key={i} className="bg-gray-50 rounded-lg p-4 animate-pulse">
           <div className="w-3/4 h-6 bg-gray-300 rounded mb-2"></div>
           <div className="w-full h-4 bg-gray-300 rounded mb-2"></div>
@@ -98,12 +83,77 @@ const GoogleWebSearchBar: React.FC = () => {
         </div>
       </form>
 
+      {/* Advanced Filters */}
+      {results.length > 0 && (
+        <div className="bg-gray-50 rounded-lg p-4 mb-6">
+          <h4 className="font-semibold text-gray-900 mb-3">🔧 Filtros avanzados:</h4>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de contenido:</label>
+              <div className="space-y-1">
+                {['news', 'video', 'article', 'social'].map(type => (
+                  <label key={type} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={filters.type?.includes(type) || false}
+                      onChange={() => handleFilterChange('type', type)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm capitalize">{type}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">País:</label>
+              <div className="space-y-1">
+                {[
+                  { code: 'CO', name: 'Colombia' },
+                  { code: 'US', name: 'Estados Unidos' },
+                  { code: 'ES', name: 'España' },
+                  { code: 'MX', name: 'México' }
+                ].map(country => (
+                  <label key={country.code} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={filters.country?.includes(country.code) || false}
+                      onChange={() => handleFilterChange('country', country.code)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm">{country.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Idioma:</label>
+              <div className="space-y-1">
+                {[
+                  { code: 'es', name: 'Español' },
+                  { code: 'en', name: 'Inglés' }
+                ].map(language => (
+                  <label key={language.code} className="flex items-center">
+                    <input
+                      type="checkbox"
+                      checked={filters.language?.includes(language.code) || false}
+                      onChange={() => handleFilterChange('language', language.code)}
+                      className="mr-2"
+                    />
+                    <span className="text-sm">{language.name}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Search Tips */}
       {!query && !results.length && (
         <div className="bg-blue-50 rounded-lg p-4 mb-6">
           <h3 className="font-semibold text-blue-900 mb-2">💡 Sugerencias de búsqueda:</h3>
           <div className="flex flex-wrap gap-2">
-            {['Donald Trump Colombia', 'Terror fronteras', 'Congreso reformas', 'Tecnología digital'].map((suggestion) => (
+            {['Donald Trump Colombia', 'Terror fronteras', 'Congreso reformas', 'Tecnología digital', 'Cambio climático', 'Educación digital'].map((suggestion) => (
               <button
                 key={suggestion}
                 onClick={() => setQuery(suggestion)}
@@ -120,7 +170,7 @@ const GoogleWebSearchBar: React.FC = () => {
       {loading && (
         <div className="text-center py-8">
           <div className="text-4xl mb-4">🔄</div>
-          <p className="text-gray-600">Buscando resultados relevantes...</p>
+          <p className="text-gray-600">Buscando en fuentes globales...</p>
         </div>
       )}
 
@@ -151,25 +201,45 @@ const GoogleWebSearchBar: React.FC = () => {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-semibold text-gray-900">
-              📊 {results.length} resultados para "{query}"
+              📊 {totalResults.toLocaleString()} resultados para "{query}"
             </h3>
-            <button
-              onClick={() => {setResults([]); setQuery('');}}
-              className="text-gray-500 hover:text-gray-700 text-sm"
-            >
-              Limpiar resultados
-            </button>
+            <div className="flex items-center space-x-4">
+              <span className="text-sm text-gray-600">
+                Mostrando {results.length} de {totalResults.toLocaleString()}
+              </span>
+              <button
+                onClick={clearResults}
+                className="text-gray-500 hover:text-gray-700 text-sm"
+              >
+                Limpiar resultados
+              </button>
+            </div>
           </div>
 
           {results.map((item, index) => (
-            <div key={item.link} className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+            <div key={item.id || index} className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
               <div className="p-6">
                 <div className="flex items-start justify-between mb-3">
-                  <h4 className="text-lg font-semibold text-blue-600 hover:text-blue-800">
-                    <a href={item.link} target="_blank" rel="noopener noreferrer" className="hover:underline">
-                      {item.title}
-                    </a>
-                  </h4>
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        item.type === 'news' ? 'bg-blue-100 text-blue-800' :
+                        item.type === 'video' ? 'bg-red-100 text-red-800' :
+                        item.type === 'article' ? 'bg-green-100 text-green-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {item.type}
+                      </span>
+                      <span className="text-xs text-gray-500">{item.domain}</span>
+                      <span className="text-xs text-gray-500">•</span>
+                      <span className="text-xs text-gray-500">{item.country}</span>
+                    </div>
+                    <h4 className="text-lg font-semibold text-blue-600 hover:text-blue-800 mb-2">
+                      <a href={item.url} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                        {item.title}
+                      </a>
+                    </h4>
+                  </div>
                   <span className="text-sm text-gray-500 ml-4">#{index + 1}</span>
                 </div>
                 
@@ -178,7 +248,7 @@ const GoogleWebSearchBar: React.FC = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <a 
-                      href={item.link} 
+                      href={item.url} 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors"
@@ -186,25 +256,25 @@ const GoogleWebSearchBar: React.FC = () => {
                       🔗 Visitar sitio
                     </a>
                     <button
-                      onClick={() => handleDiscuss(item.link)}
+                      onClick={() => handleDiscuss(item.url)}
                       className="bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-yellow-600 transition-colors"
                     >
-                      💬 {discussId === item.link ? 'Cerrar' : 'Discutir'}
+                      💬 {discussId === item.url ? 'Cerrar' : 'Discutir'}
                     </button>
                   </div>
                   <div className="text-sm text-gray-500">
-                    {threads[item.link]?.length || 0} comentarios
+                    {threads[item.url]?.length || 0} comentarios
                   </div>
                 </div>
 
                 {/* Discussion Thread */}
-                {discussId === item.link && (
+                {discussId === item.url && (
                   <div className="mt-6 bg-gray-50 rounded-lg p-4 border-t border-gray-200">
                     <h5 className="font-semibold text-gray-900 mb-4">💭 Discusión sobre este resultado</h5>
                     
                     {/* Existing Comments */}
                     <div className="space-y-3 mb-4">
-                      {(threads[item.link] || []).map((c, i) => (
+                      {(threads[item.url] || []).map((c, i) => (
                         <div key={i} className="bg-white rounded-lg p-3 shadow-sm">
                           <div className="flex items-start space-x-3">
                             <div className="text-lg">👤</div>
@@ -216,7 +286,7 @@ const GoogleWebSearchBar: React.FC = () => {
                         </div>
                       ))}
                       
-                      {(!threads[item.link] || threads[item.link].length === 0) && (
+                      {(!threads[item.url] || threads[item.url].length === 0) && (
                         <p className="text-gray-500 text-center py-4">
                           🌟 Sé el primero en comentar sobre este resultado
                         </p>
@@ -227,7 +297,7 @@ const GoogleWebSearchBar: React.FC = () => {
                     <form onSubmit={e => {
                       e.preventDefault();
                       if (comment.trim()) {
-                        postComment(item.link, comment);
+                        postComment(item.url, comment);
                       }
                     }}>
                       <div className="flex gap-3">
@@ -251,6 +321,26 @@ const GoogleWebSearchBar: React.FC = () => {
               </div>
             </div>
           ))}
+
+          {/* Load More Button */}
+          {hasMore && (
+            <div className="text-center py-8">
+              <button
+                onClick={loadMore}
+                disabled={loading}
+                className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+              >
+                {loading ? '🔄 Cargando...' : `📄 Cargar más resultados (${(totalResults - results.length).toLocaleString()} restantes)`}
+              </button>
+            </div>
+          )}
+
+          {!hasMore && results.length > 0 && (
+            <div className="text-center py-8">
+              <div className="text-4xl mb-2">🎉</div>
+              <p className="text-gray-600">¡Has visto todos los resultados disponibles!</p>
+            </div>
+          )}
         </div>
       )}
     </div>
