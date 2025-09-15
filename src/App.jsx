@@ -6,6 +6,7 @@ import News from './components/News.tsx';
 import Debate from './components/Debate.tsx';
 import Survey from './components/Survey.tsx';
 import UniversalSearchBar from './components/UniversalSearchBar.tsx';
+import CommunityHub from './pages/CommunityHub.tsx';
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -24,6 +25,8 @@ function App() {
             <UniversalSearchBar />
           </div>
         );
+      case 'community-hub':
+        return <CommunityHub />;
       case 'home':
       default:
         return (
@@ -72,6 +75,12 @@ function App() {
             className={`font-medium transition ${currentView === 'search' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
           >
             🔍 Buscar
+          </button>
+          <button 
+            onClick={() => setCurrentView('community-hub')}
+            className={`font-medium transition ${currentView === 'community-hub' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+          >
+            💭 Community Hub
           </button>
           <button 
             onClick={() => setCurrentView('polls')}

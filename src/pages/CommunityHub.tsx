@@ -1,8 +1,8 @@
 import React from "react";
-import Comments from "../components/Comments";
+import EnhancedCommunityHub from "../components/EnhancedCommunityHub";
 
 const CommunityHub: React.FC = () => {
-  return <Comments isHub={true} />;
+  return <EnhancedCommunityHub />;
 };
 
 export default CommunityHub;

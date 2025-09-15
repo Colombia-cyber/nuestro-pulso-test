@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { activityTracker } from '../services/ActivityTracker';
 
 interface SearchResult {
   id: string;
@@ -137,6 +138,9 @@ const UniversalSearchBar: React.FC = () => {
     const searchResults = await performSearch(query);
     setResults(searchResults);
     setCurrentPage(1);
+    
+    // Track search activity
+    activityTracker.trackSearch(query, searchResults.length, filter !== 'all' ? filter : undefined);
   };
 
   const filteredResults = results.filter(result => {
