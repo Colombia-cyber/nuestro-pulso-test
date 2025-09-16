@@ -1,146 +1,167 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { activityTracker } from '../services/ActivityTracker';
+import { searchDataService, SearchResult } from '../services/SearchDataService';
 
-interface SearchResult {
-  id: string;
-  title: string;
-  summary: string;
-  source: string;
-  category: string;
-  timestamp: string;
-  relevanceScore: number;
-  link: string;
-  image?: string;
+interface UniversalSearchBarProps {
+  compact?: boolean;
+  onNavigate?: (view: string) => void;
+  onClose?: () => void;
 }
 
-// Mock search data with Colombian-relevant content
-const mockSearchData: SearchResult[] = [
-  {
-    id: '1',
-    title: 'Gustavo Petro anuncia nueva política económica para 2024',
-    summary: 'El presidente colombiano presenta un plan integral de reformas económicas que incluye medidas fiscales y sociales para impulsar el crecimiento.',
-    source: 'El Tiempo',
-    category: 'Política',
-    timestamp: '2024-01-15T10:30:00Z',
-    relevanceScore: 95,
-    link: '#',
-    image: '🏛️'
-  },
-  {
-    id: '2', 
-    title: 'Centro Democrático critica políticas del gobierno actual',
-    summary: 'La oposición presenta observaciones detalladas sobre las políticas económicas y sociales implementadas por la administración Petro.',
-    source: 'Semana',
-    category: 'Política',
-    timestamp: '2024-01-15T08:45:00Z',
-    relevanceScore: 88,
-    link: '#',
-    image: '🗳️'
-  },
-  {
-    id: '3',
-    title: 'Trump propone nuevos aranceles que afectarían a Colombia',
-    summary: 'El expresidente estadounidense anuncia medidas comerciales que podrían impactar las exportaciones colombianas de café y flores.',
-    source: 'CNN Colombia',
-    category: 'Internacional',
-    timestamp: '2024-01-14T16:20:00Z',
-    relevanceScore: 82,
-    link: '#',
-    image: '🇺🇸'
-  },
-  {
-    id: '4',
-    title: 'Congreso debate reforma pensional con participación ciudadana',
-    summary: 'Las comisiones del Senado y Cámara abren espacios de diálogo para escuchar las propuestas de la sociedad civil sobre el sistema pensional.',
-    source: 'El Espectador',
-    category: 'Social',
-    timestamp: '2024-01-14T14:15:00Z',
-    relevanceScore: 75,
-    link: '#',
-    image: '🏛️'
-  },
-  {
-    id: '5',
-    title: 'Alerta de seguridad por actividad terrorista en fronteras',
-    summary: 'Las fuerzas militares reportan incremento en amenazas de grupos armados ilegales en las zonas fronterizas con Venezuela.',
-    source: 'Caracol Radio',
-    category: 'Seguridad',
-    timestamp: '2024-01-14T12:00:00Z',
-    relevanceScore: 90,
-    link: '#',
-    image: '🚨'
-  },
-  {
-    id: '6',
-    title: 'Colombia avanza en transformación digital para 2030',
-    summary: 'El MinTIC presenta el plan nacional de digitalización que conectará el 95% del territorio con internet de alta velocidad.',
-    source: 'Portafolio',
-    category: 'Tecnología',
-    timestamp: '2024-01-13T11:30:00Z',
-    relevanceScore: 70,
-    link: '#',
-    image: '💻'
-  }
-];
-
-const UniversalSearchBar: React.FC = () => {
+const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({ 
+  compact = false, 
+  onNavigate,
+  onClose 
+}) => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('relevance');
   const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalResults, setTotalResults] = useState(0);
+  const [hasMore, setHasMore] = useState(false);
   const [displayMode, setDisplayMode] = useState<'cards' | 'list'>('cards');
   const [expandedResults, setExpandedResults] = useState<Set<string>>(new Set());
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchTimeoutRef = useRef<number | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const resultsPerPage = 6;
+  const resultsPerPage = compact ? 3 : 6;
 
-  // Mock search function
-  const performSearch = async (searchQuery: string): Promise<SearchResult[]> => {
+  // Mock search function with pagination
+  const performSearch = async (searchQuery: string, page: number = 1): Promise<void> => {
     setLoading(true);
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    if (!searchQuery.trim()) {
-      setLoading(false);
-      return [];
-    }
-
-    // Filter mock data based on query
-    const filtered = mockSearchData.filter(item => 
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    // Add some dynamic results based on query
-    const dynamicResults: SearchResult[] = [
-      {
-        id: `dynamic-${Date.now()}`,
-        title: `Últimas noticias sobre "${searchQuery}" en Colombia`,
-        summary: `Cobertura actualizada y análisis de los eventos más relevantes relacionados con ${searchQuery} en el contexto colombiano.`,
-        source: 'Nuestro Pulso Agregador',
-        category: 'Agregado',
-        timestamp: new Date().toISOString(),
-        relevanceScore: 100,
-        link: '#',
-        image: '📰'
+    try {
+      const searchData = await searchDataService.searchWithPagination(
+        searchQuery, 
+        page, 
+        resultsPerPage,
+        filter !== 'all' ? filter : undefined
+      );
+      
+      if (page === 1) {
+        setResults(searchData.results);
+      } else {
+        setResults(prev => [...prev, ...searchData.results]);
       }
-    ];
-
+      
+      setTotalResults(searchData.totalResults);
+      setTotalPages(searchData.totalPages);
+      setHasMore(searchData.hasMore);
+      setCurrentPage(searchData.currentPage);
+      
+    } catch (error) {
+      console.error('Search error:', error);
+      
+      // Fallback to basic search if service fails
+      if (searchQuery.toLowerCase().includes('terror')) {
+        const fallbackData = searchDataService.addFallbackData('terror', resultsPerPage);
+        setResults(fallbackData);
+        setTotalResults(fallbackData.length);
+        setTotalPages(1);
+        setHasMore(false);
+      } else {
+        setResults([]);
+        setTotalResults(0);
+        setTotalPages(1);
+        setHasMore(false);
+      }
+    }
+    
     setLoading(false);
-    return [...dynamicResults, ...filtered];
   };
+
+  // Debounced search function
+  const debouncedSearch = useCallback(
+    (searchQuery: string) => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+      
+      searchTimeoutRef.current = window.setTimeout(async () => {
+        if (searchQuery.trim()) {
+          await performSearch(searchQuery, 1);
+          
+          // Track search activity
+          activityTracker.trackSearch(searchQuery, totalResults, filter !== 'all' ? filter : undefined);
+        } else {
+          setResults([]);
+          setTotalResults(0);
+          setTotalPages(1);
+          setHasMore(false);
+        }
+      }, 300);
+    },
+    [filter, totalResults]
+  );
+
+  // Effect for auto-search while typing
+  useEffect(() => {
+    debouncedSearch(query);
+    
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, [query, debouncedSearch]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    const searchResults = await performSearch(query);
-    setResults(searchResults);
-    setCurrentPage(1);
+    setShowSuggestions(false);
+    
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    
+    await performSearch(query, 1);
     
     // Track search activity
-    activityTracker.trackSearch(query, searchResults.length, filter !== 'all' ? filter : undefined);
+    activityTracker.trackSearch(query, totalResults, filter !== 'all' ? filter : undefined);
+  };
+
+  const handleLoadMore = async () => {
+    if (!hasMore || loading) return;
+    await performSearch(query, currentPage + 1);
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuery = e.target.value;
+    setQuery(newQuery);
+    setShowSuggestions(newQuery.length > 0);
+  };
+
+  const handleResultClick = (result: SearchResult) => {
+    if (onNavigate) {
+      // Navigate to appropriate detail view based on category
+      switch (result.category.toLowerCase()) {
+        case 'política':
+        case 'politica':
+          onNavigate('news');
+          break;
+        case 'social':
+          onNavigate('community-hub');
+          break;
+        default:
+          onNavigate('news');
+      }
+    }
+    
+    if (onClose && compact) {
+      onClose();
+    }
+    
+    // Track activity
+    activityTracker.trackView(result.title, result.category);
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setQuery(suggestion);
+    setShowSuggestions(false);
+    inputRef.current?.focus();
   };
 
   const filteredResults = results.filter(result => {
@@ -160,10 +181,6 @@ const UniversalSearchBar: React.FC = () => {
         return 0;
     }
   });
-
-  const totalPages = Math.ceil(sortedResults.length / resultsPerPage);
-  const startIndex = (currentPage - 1) * resultsPerPage;
-  const paginatedResults = sortedResults.slice(startIndex, startIndex + resultsPerPage);
 
   const toggleExpanded = (resultId: string) => {
     const newExpanded = new Set(expandedResults);
@@ -186,54 +203,135 @@ const UniversalSearchBar: React.FC = () => {
     return `Hace ${diffInDays} día${diffInDays > 1 ? 's' : ''}`;
   };
 
-  return (
-    <div className="max-w-6xl mx-auto">
-      {/* Colombian-inspired header */}
-      <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 rounded-lg p-8 mb-8 text-white">
-        <div className="flex items-center gap-4 mb-4">
-          <span className="text-4xl">🔍</span>
-          <div>
-            <h1 className="text-3xl font-bold">Búsqueda Universal</h1>
-            <p className="text-white/90">Explora toda la información cívica y política de Colombia</p>
-          </div>
-          <span className="text-4xl ml-auto">🇨🇴</span>
-        </div>
-        
-        {/* Search form */}
-        <form onSubmit={handleSearch} className="space-y-4">
-          <div className="flex gap-3">
-            <input
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="Buscar noticias, políticas, candidatos, reformas..."
-              className="flex-1 p-4 rounded-lg text-gray-900 placeholder-gray-500 text-lg focus:ring-4 focus:ring-white/30 focus:outline-none"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold hover:bg-gray-100 disabled:opacity-50 transition-all shadow-lg"
-            >
-              {loading ? '🔄' : '🔍'} Buscar
-            </button>
-          </div>
-        </form>
+  const getPopularSuggestions = () => {
+    return searchDataService.getPopularSearchTerms();
+  };
 
-        {/* Quick search suggestions */}
-        <div className="mt-4">
-          <p className="text-sm text-white/80 mb-2">Búsquedas populares:</p>
-          <div className="flex flex-wrap gap-2">
-            {['Gustavo Petro', 'Centro Democrático', 'Trump Colombia', 'Reforma pensional', 'Seguridad fronteras'].map((suggestion) => (
-              <button
-                key={suggestion}
-                onClick={() => setQuery(suggestion)}
-                className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-sm transition-colors backdrop-blur"
-              >
-                {suggestion}
-              </button>
-            ))}
-          </div>
+  return (
+    <div className={`max-w-6xl mx-auto ${compact ? 'max-w-md' : ''}`}>
+      {/* Compact Search Bar for Navbar */}
+      {compact ? (
+        <div className="relative">
+          <form onSubmit={handleSearch} className="relative">
+            <input
+              ref={inputRef}
+              value={query}
+              onChange={handleInputChange}
+              onFocus={() => setShowSuggestions(query.length > 0)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              placeholder="Buscar..."
+              className="w-full p-2 pl-8 pr-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              aria-label="Search input"
+            />
+            <span className="absolute left-2 top-1/2 transform -translate-y-1/2 text-gray-400">🔍</span>
+            {loading && (
+              <span className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 animate-spin">
+                🔄
+              </span>
+            )}
+          </form>
+
+          {/* Quick Suggestions Dropdown */}
+          {showSuggestions && !loading && (
+            <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-lg shadow-lg mt-1 z-50 max-h-60 overflow-y-auto">
+              {query.length > 0 && (
+                <div className="p-2">
+                  <div className="text-xs text-gray-500 mb-2">Sugerencias:</div>
+                  {getPopularSuggestions()
+                    .filter(suggestion => suggestion.toLowerCase().includes(query.toLowerCase()))
+                    .slice(0, 5)
+                    .map((suggestion) => (
+                      <button
+                        key={suggestion}
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        className="w-full text-left p-2 hover:bg-gray-100 rounded text-sm"
+                      >
+                        🔍 {suggestion}
+                      </button>
+                    ))}
+                </div>
+              )}
+              
+              {results.length > 0 && (
+                <div className="border-t border-gray-200 p-2">
+                  <div className="text-xs text-gray-500 mb-2">Resultados rápidos:</div>
+                  {results.slice(0, 3).map((result) => (
+                    <button
+                      key={result.id}
+                      onClick={() => handleResultClick(result)}
+                      className="w-full text-left p-2 hover:bg-gray-100 rounded text-sm border-l-2 border-blue-500"
+                    >
+                      <div className="font-medium">{result.title}</div>
+                      <div className="text-xs text-gray-500 truncate">{result.summary}</div>
+                    </button>
+                  ))}
+                  {results.length > 3 && (
+                    <div className="text-xs text-gray-500 p-2">
+                      +{results.length - 3} más resultados...
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
-      </div>
+      ) : (
+        // Full Search Interface
+        <>
+          {/* Colombian-inspired header */}
+          <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 rounded-lg p-8 mb-8 text-white">
+            <div className="flex items-center gap-4 mb-4">
+              <span className="text-4xl" role="img" aria-label="Search">🔍</span>
+              <div>
+                <h1 className="text-3xl font-bold">Búsqueda Universal</h1>
+                <p className="text-white/90">Explora toda la información cívica y política de Colombia</p>
+              </div>
+              <span className="text-4xl ml-auto" role="img" aria-label="Colombia flag">🇨🇴</span>
+            </div>
+            
+            {/* Search form */}
+            <form onSubmit={handleSearch} className="space-y-4">
+              <div className="flex gap-3">
+                <input
+                  ref={inputRef}
+                  value={query}
+                  onChange={handleInputChange}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleSearch(e);
+                    }
+                  }}
+                  placeholder="Buscar noticias, políticas, candidatos, reformas..."
+                  className="flex-1 p-4 rounded-lg text-gray-900 placeholder-gray-500 text-lg focus:ring-4 focus:ring-white/30 focus:outline-none"
+                  aria-label="Search for news, politics, candidates, reforms"
+                />
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold hover:bg-gray-100 disabled:opacity-50 transition-all shadow-lg"
+                  aria-label="Search button"
+                >
+                  {loading ? '🔄' : '🔍'} Buscar
+                </button>
+              </div>
+            </form>
+
+            {/* Quick search suggestions */}
+            <div className="mt-4">
+              <p className="text-sm text-white/80 mb-2">Búsquedas populares:</p>
+              <div className="flex flex-wrap gap-2">
+                {getPopularSuggestions().slice(0, 5).map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                    className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-sm transition-colors backdrop-blur"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
 
       {/* Results section */}
       {results.length > 0 && (
@@ -243,7 +341,7 @@ const UniversalSearchBar: React.FC = () => {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <span className="font-medium text-gray-700">
-                  📊 {filteredResults.length} resultados para "{query}"
+                  📊 {totalResults} resultados para "{query}"
                 </span>
                 
                 {/* Category filter */}
@@ -309,7 +407,7 @@ const UniversalSearchBar: React.FC = () => {
           {/* Results */}
           {!loading && (
             <div className={displayMode === 'cards' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
-              {paginatedResults.map((result) => (
+              {sortedResults.map((result: SearchResult) => (
                 <div 
                   key={result.id} 
                   className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 ${
@@ -338,9 +436,21 @@ const UniversalSearchBar: React.FC = () => {
                       </div>
 
                       {/* Title */}
-                      <h3 className={`font-bold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer ${
-                        displayMode === 'list' ? 'text-lg' : 'text-xl'
-                      }`}>
+                      <h3 
+                        className={`font-bold text-gray-900 mb-2 hover:text-blue-600 cursor-pointer ${
+                          displayMode === 'list' ? 'text-lg' : 'text-xl'
+                        }`}
+                        onClick={() => handleResultClick(result)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handleResultClick(result);
+                          }
+                        }}
+                        aria-label={`Open article: ${result.title}`}
+                      >
                         {result.title}
                       </h3>
 
@@ -359,11 +469,19 @@ const UniversalSearchBar: React.FC = () => {
                           <button
                             onClick={() => toggleExpanded(result.id)}
                             className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                            aria-label={expandedResults.has(result.id) ? 'Show less' : 'Show more'}
                           >
                             {expandedResults.has(result.id) ? '▲ Menos' : '▼ Más'}
                           </button>
                           <span className="text-gray-300">•</span>
                           <span className="text-sm text-gray-500">{result.source}</span>
+                          <button
+                            onClick={() => handleResultClick(result)}
+                            className="text-green-600 hover:text-green-800 text-sm font-medium ml-2"
+                            aria-label={`View details for ${result.title}`}
+                          >
+                            📖 Ver detalles
+                          </button>
                         </div>
                         <div className="flex items-center gap-1">
                           <span className="text-xs text-gray-500">Relevancia:</span>
@@ -431,6 +549,8 @@ const UniversalSearchBar: React.FC = () => {
             Nueva búsqueda
           </button>
         </div>
+      )}
+        </>
       )}
     </div>
   );
