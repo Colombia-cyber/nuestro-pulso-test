@@ -3,23 +3,31 @@ import Comments from './Comments';
 
 const News: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('todas');
+  const [selectedRegion, setSelectedRegion] = useState('colombia');
   const [selectedArticle, setSelectedArticle] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Regional filters for Colombian focus
+  const regions = [
+    { id: 'colombia', name: 'Colombia', icon: '🇨🇴', color: 'bg-colombia-blue' },
+    { id: 'latinamerica', name: 'Latinoamérica', icon: '🌎', color: 'bg-green-600' },
+    { id: 'mundo', name: 'Mundo', icon: '🌍', color: 'bg-blue-600' }
+  ];
+
   const categories = [
     { id: 'todas', name: 'Todas', icon: '📰' },
     { id: 'politica', name: 'Política', icon: '🏛️' },
-    { id: 'derecha', name: 'Right Wing', icon: '🗳️' },
-    { id: 'izquierda', name: 'Left Wing', icon: '🌹' },
+    { id: 'derecha', name: 'Conservador', icon: '🗳️' },
+    { id: 'izquierda', name: 'Progresista', icon: '🌹' },
     { id: 'independiente', name: 'Independiente', icon: '⚖️' },
     { id: 'economia', name: 'Economía', icon: '💰' },
     { id: 'social', name: 'Social', icon: '👥' },
     { id: 'educacion', name: 'Educación', icon: '📚' },
     { id: 'salud', name: 'Salud', icon: '🏥' },
-    { id: 'terror', name: 'Terror', icon: '🚨' },
-    { id: 'congreso', name: 'Congress', icon: '🏛️' },
-    { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' }
+    { id: 'seguridad', name: 'Seguridad', icon: '🚨' },
+    { id: 'congreso', name: 'Congreso', icon: '🏛️' },
+    { id: 'internacional', name: 'Internacional', icon: '🌐' }
   ];
 
   const news = [
@@ -37,6 +45,7 @@ Además de la cobertura de matrícula, las becas incluyen un auxilio alimentario
 
 Las inscripciones para el programa comenzarán el próximo mes a través de la plataforma digital del Icetex, y los primeros beneficiarios podrán comenzar sus estudios en el semestre académico de 2025.`,
       category: 'educacion',
+      region: 'colombia',
       source: 'Ministerio de Educación',
       time: '2 horas',
       image: '📚',
@@ -62,12 +71,53 @@ El partido también propone fortalecer la familia como núcleo fundamental de la
 
 La agenda será presentada formalmente en el Congreso de la República el próximo mes, donde el Centro Democrático buscará generar alianzas con otros sectores políticos afines.`,
       category: 'derecha',
+      region: 'colombia',
       source: 'Centro Democrático',
       time: '1 hora',
       image: '🗳️',
       engagement: { likes: 312, shares: 156, comments: 89 },
       readTime: '6 min',
       political_lean: 'derecha'
+    },
+    {
+      id: 15,
+      title: 'Argentina y Brasil fortalecen cooperación comercial regional',
+      summary: 'Los presidentes de Argentina y Brasil anuncian nuevos acuerdos comerciales que beneficiarán el intercambio en América Latina.',
+      fullContent: `Los presidentes de Argentina y Brasil se reunieron en Buenos Aires para firmar una serie de acuerdos comerciales que fortalecerán la cooperación económica regional y beneficiarán el intercambio comercial en América Latina.
+
+El acuerdo incluye la eliminación de aranceles para más de 200 productos agrícolas e industriales, facilitando el comercio bilateral que actualmente alcanza los $15 mil millones anuales.
+
+También se estableció un fondo de inversión conjunto de $2 mil millones para proyectos de infraestructura regional, especialmente en corredores de transporte que conectarán los mercados del Atlántico y Pacífico.
+
+Los analistas consideran que estos acuerdos podrían sentar las bases para una mayor integración económica latinoamericana, con Colombia como uno de los principales beneficiarios potenciales.`,
+      category: 'economia',
+      region: 'latinamerica',
+      source: 'Reuters Latinoamérica',
+      time: '3 horas',
+      image: '🌎',
+      engagement: { likes: 198, shares: 76, comments: 42 },
+      readTime: '3 min',
+      political_lean: 'independiente'
+    },
+    {
+      id: 16,
+      title: 'Cumbre del G20 aborda crisis climática global',
+      summary: 'Los líderes mundiales se reúnen para discutir medidas urgentes contra el cambio climático y la transición energética.',
+      fullContent: `La cumbre del G20 en Nueva Delhi se centró en abordar la crisis climática global, con los líderes mundiales comprometiéndose a acelerar la transición hacia energías renovables y reducir las emisiones de carbono.
+
+Se estableció un fondo global de $100 mil millones para ayudar a países en desarrollo a implementar tecnologías limpias y adaptarse al cambio climático.
+
+Colombia participó activamente en las discusiones, presentando su estrategia nacional de carbono neutralidad para 2050 y recibiendo reconocimiento por sus esfuerzos en conservación de biodiversidad.
+
+El acuerdo final incluye metas específicas para reducir las emisiones globales en un 45% para 2030, comparado con los niveles de 2019.`,
+      category: 'internacional',
+      region: 'mundo',
+      source: 'BBC World',
+      time: '4 horas',
+      image: '🌍',
+      engagement: { likes: 156, shares: 203, comments: 67 },
+      readTime: '5 min',
+      political_lean: 'independiente'
     },
     {
       id: 3,
@@ -460,9 +510,15 @@ El debate parlamentario continuará en las próximas semanas, donde se espera la
     return () => clearTimeout(timer);
   }, [selectedCategory]);
 
-  const filteredNews = selectedCategory === 'todas' 
-    ? news 
-    : news.filter(item => item.category === selectedCategory || item.political_lean === selectedCategory);
+  const filteredNews = news.filter(item => {
+    const categoryMatch = selectedCategory === 'todas' || 
+                         item.category === selectedCategory || 
+                         item.political_lean === selectedCategory;
+    const regionMatch = selectedRegion === 'colombia' ? 
+                       (item.region === selectedRegion) : 
+                       (item.region === selectedRegion);
+    return categoryMatch && regionMatch;
+  });
 
   // Loading skeleton component
   const LoadingSkeleton = () => (
@@ -644,28 +700,64 @@ El debate parlamentario continuará en las próximas semanas, donde se espera la
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-8 colombia-pattern-bg min-h-screen">
       <div className="max-w-6xl mx-auto">
-        <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 p-6 rounded-lg mb-6">
-          <h1 className="text-3xl font-bold text-white mb-2">📰 Noticias Cívicas</h1>
-          <p className="text-white/90">Mantente informado sobre los temas que afectan a Colombia</p>
-          <div className="mt-4 flex items-center space-x-6 text-white/80">
+        {/* Enhanced Colombian News Header */}
+        <div className="bg-colombia-gradient p-8 rounded-xl mb-8 colombia-glow">
+          <div className="flex items-center gap-4 mb-4">
+            <span className="text-4xl">📰</span>
+            <div>
+              <h1 className="text-3xl font-bold text-white">Noticias de Colombia</h1>
+              <p className="text-white/90">Mantente informado sobre los temas que afectan a Colombia y el mundo</p>
+            </div>
+            <span className="text-4xl ml-auto">🇨🇴</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-6 text-white/80">
             <span>🔄 Actualizado cada hora</span>
             <span>✅ Fuentes verificadas</span>
             <span>📊 Análisis de impacto cívico</span>
+            <span>🌎 Cobertura regional completa</span>
           </div>
         </div>
 
-        {/* Categories */}
-        <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
+        {/* Enhanced Regional Filters */}
+        <div className="card-colombia p-6 mb-6">
+          <h3 className="text-lg font-bold text-colombia-blue mb-4 flex items-center gap-2">
+            <span>🌎</span>
+            <span>Cobertura Regional</span>
+          </h3>
+          <div className="flex flex-wrap gap-3">
+            {regions.map((region) => (
+              <button
+                key={region.id}
+                onClick={() => setSelectedRegion(region.id)}
+                className={`px-4 py-3 rounded-lg text-sm font-medium transition-all duration-300 hover:scale-105 ${
+                  selectedRegion === region.id
+                    ? `${region.color} text-white colombia-glow`
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                <span className="mr-2">{region.icon}</span>
+                {region.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Enhanced Categories */}
+        <div className="card-colombia p-6 mb-6">
+          <h3 className="text-lg font-bold text-colombia-blue mb-4 flex items-center gap-2">
+            <span>📂</span>
+            <span>Categorías de Noticias</span>
+          </h3>
           <div className="flex flex-wrap gap-2">
             {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105 ${
                   selectedCategory === category.id
-                    ? 'bg-blue-600 text-white'
+                    ? 'bg-colombia-blue text-white colombia-glow'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -676,22 +768,22 @@ El debate parlamentario continuará en las próximas semanas, donde se espera la
           </div>
         </div>
 
-        {/* Breaking News */}
-        <div className="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded-r-lg">
+        {/* Breaking News Alert */}
+        <div className="bg-colombia-red/10 border-l-4 border-colombia-red p-4 mb-6 rounded-r-lg card-colombia">
           <div className="flex items-center">
-            <span className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold mr-3">
+            <span className="bg-colombia-red text-white px-3 py-1 rounded-full text-sm font-bold mr-3 animate-pulse">
               🚨 ÚLTIMO MOMENTO
             </span>
-            <p className="text-red-800 font-medium">
+            <p className="text-colombia-red font-medium">
               Presidente anuncia nueva inversión de $2 billones para infraestructura rural
             </p>
-            <button className="ml-auto text-red-600 hover:text-red-800 text-sm font-medium">
+            <button className="ml-auto text-colombia-red hover:text-colombia-blue text-sm font-medium transition-colors duration-300">
               Leer más →
             </button>
           </div>
         </div>
 
-        {/* News Feed */}
+        {/* Enhanced News Feed */}
         <div className="space-y-6">
           {isLoading ? (
             <LoadingSkeleton />
@@ -701,17 +793,25 @@ El debate parlamentario continuará en las próximas semanas, donde se espera la
             <NoContent />
           ) : (
             filteredNews.map((article) => (
-            <div key={article.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+            <div key={article.id} className="card-colombia overflow-hidden hover:scale-[1.02] transition-transform duration-300">
               <div className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="text-4xl">{article.image}</div>
+                <div className="flex items-start space-x-6">
+                  <div className="text-5xl flex-shrink-0">{article.image}</div>
                   <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
+                    <div className="flex items-center space-x-3 mb-3">
+                      <span className={`px-3 py-1 rounded-full text-xs font-bold text-white ${
+                        article.region === 'colombia' ? 'bg-colombia-blue' :
+                        article.region === 'latinamerica' ? 'bg-green-600' :
+                        'bg-blue-600'
+                      }`}>
+                        {regions.find(r => r.id === article.region)?.icon} {regions.find(r => r.id === article.region)?.name}
+                      </span>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         article.category === 'educacion' ? 'bg-blue-100 text-blue-800' :
-                        article.category === 'ambiente' ? 'bg-green-100 text-green-800' :
+                        article.category === 'economia' ? 'bg-green-100 text-green-800' :
                         article.category === 'salud' ? 'bg-red-100 text-red-800' :
                         article.category === 'derecha' ? 'bg-orange-100 text-orange-800' :
+                        article.category === 'izquierda' ? 'bg-purple-100 text-purple-800' :
                         'bg-gray-100 text-gray-800'
                       }`}>
                         {categories.find(c => c.id === article.category)?.name}
