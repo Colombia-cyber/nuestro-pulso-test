@@ -315,18 +315,51 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
 
   return (
     <div className="max-w-6xl mx-auto">
-      {/* Colombian-inspired header */}
-      <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 rounded-lg p-8 mb-8 text-white">
-        <div className="flex items-center gap-4 mb-4">
-          <span className="text-4xl">🔍</span>
-          <div>
-            <h1 className="text-3xl font-bold">Búsqueda Universal</h1>
-            <p className="text-white/90">Explora toda la información cívica y política de Colombia</p>
+      {/* Enhanced Colombian Search Header */}
+      <div className="bg-colombia-gradient rounded-xl p-8 mb-8 text-white colombia-glow">
+        <div className="flex items-center gap-4 mb-6">
+          <span className="text-5xl">🔍</span>
+          <div className="flex-1">
+            <h1 className="text-4xl font-bold mb-2">Búsqueda Universal de Colombia</h1>
+            <p className="text-white/90 text-lg">Explora toda la información cívica, política y de actualidad colombiana</p>
           </div>
-          <span className="text-4xl ml-auto">🇨🇴</span>
+          <div className="flex items-center gap-2">
+            <span className="text-4xl">🇨🇴</span>
+            <div className="flex flex-col items-center">
+              <div className="w-3 h-6 bg-colombia-yellow rounded-sm mb-1"></div>
+              <div className="w-3 h-6 bg-white rounded-sm mb-1"></div>
+              <div className="w-3 h-6 bg-colombia-red rounded-sm"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* Regional Search Filters */}
+        <div className="mb-6">
+          <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
+            <span>🌎</span>
+            <span>Ámbito de Búsqueda</span>
+          </h3>
+          <div className="flex flex-wrap gap-3">
+            <button className="px-4 py-2 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-lg text-white font-medium transition-all duration-300 hover:scale-105 border border-white/30">
+              <span className="mr-2">🇨🇴</span>
+              Colombia
+            </button>
+            <button className="px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg text-white/80 font-medium transition-all duration-300 hover:scale-105 border border-white/20">
+              <span className="mr-2">🌎</span>
+              Latinoamérica
+            </button>
+            <button className="px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg text-white/80 font-medium transition-all duration-300 hover:scale-105 border border-white/20">
+              <span className="mr-2">🌍</span>
+              Mundo
+            </button>
+            <button className="px-4 py-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm rounded-lg text-white/80 font-medium transition-all duration-300 hover:scale-105 border border-white/20">
+              <span className="mr-2">🌐</span>
+              Google
+            </button>
+          </div>
         </div>
         
-        {/* Search form */}
+        {/* Enhanced Search form */}
         <form onSubmit={handleSearch} className="space-y-4">
           <div className="relative">
             <div className="flex gap-3">
@@ -338,15 +371,15 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                   onKeyDown={handleKeyDown}
                   onFocus={() => setShowSuggestions(query.length > 1)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-                  placeholder="Buscar noticias, políticas, candidatos, reformas..."
-                  className="w-full p-4 rounded-lg text-gray-900 placeholder-gray-500 text-lg focus:ring-4 focus:ring-white/30 focus:outline-none"
+                  placeholder="Buscar noticias, políticas, candidatos, reformas colombianas..."
+                  className="w-full p-4 rounded-xl text-gray-900 placeholder-gray-500 text-lg focus:ring-4 focus:ring-white/30 focus:outline-none shadow-lg"
                   aria-label="Campo de búsqueda principal"
                   aria-describedby="search-help"
                 />
                 
                 {/* Search suggestions dropdown */}
                 {showSuggestions && suggestions.length > 0 && (
-                  <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto">
+                  <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-xl z-50 max-h-64 overflow-y-auto">
                     {suggestions.map((suggestion, index) => (
                       <button
                         key={index}
@@ -367,7 +400,7 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="bg-white text-blue-600 px-8 py-4 rounded-lg font-bold hover:bg-gray-100 disabled:opacity-50 transition-all shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-500"
+                className="bg-white text-colombia-blue px-8 py-4 rounded-xl font-bold hover:bg-gray-100 disabled:opacity-50 transition-all duration-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 hover:scale-105 colombia-glow"
                 aria-label="Ejecutar búsqueda"
               >
                 {loading ? '🔄' : '🔍'} Buscar
@@ -376,15 +409,18 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
           </div>
         </form>
 
-        {/* Quick search suggestions */}
-        <div className="mt-4">
-          <p className="text-sm text-white/80 mb-2" id="search-help">Búsquedas populares:</p>
-          <div className="flex flex-wrap gap-2">
+        {/* Enhanced quick search suggestions */}
+        <div className="mt-6">
+          <p className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+            <span>🔥</span>
+            <span>Búsquedas populares en Colombia:</span>
+          </p>
+          <div className="flex flex-wrap gap-3">
             {popularSuggestions.map((suggestion) => (
               <button
                 key={suggestion}
                 onClick={() => handleSuggestionSelect(suggestion)}
-                className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-sm transition-colors backdrop-blur focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-500"
+                className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 backdrop-blur border border-white/30 focus:outline-none focus:ring-2 focus:ring-white hover:scale-105"
                 type="button"
               >
                 {suggestion}
@@ -394,27 +430,27 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
         </div>
       </div>
 
-      {/* Results section */}
+      {/* Enhanced Results section */}
       {(results.length > 0 || loading) && (
         <div className="space-y-6" ref={searchResultsRef}>
-          {/* Controls */}
-          <div className="bg-white rounded-lg shadow-sm p-4">
+          {/* Enhanced Controls */}
+          <div className="card-colombia p-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
-                <span className="font-medium text-gray-700">
+                <span className="font-bold text-colombia-blue text-lg">
                   📊 {totalResults} resultados para "{query}"
                   {searchTime > 0 && (
-                    <span className="text-gray-500 ml-2">
+                    <span className="text-gray-600 ml-2 font-normal">
                       ({searchTime}ms - {searchSource === 'proxy' ? 'servidor' : searchSource === 'fallback' ? 'datos populares' : 'datos locales'})
                     </span>
                   )}
                 </span>
                 
-                {/* Category filter */}
+                {/* Enhanced Category filter */}
                 <select
                   value={filter}
                   onChange={e => handleFilterChange(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="border-2 border-colombia-blue/20 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-colombia-blue focus:outline-none font-medium"
                   aria-label="Filtrar por categoría"
                 >
                   {allCategories.map(category => (
@@ -424,11 +460,11 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                   ))}
                 </select>
 
-                {/* Sort options */}
+                {/* Enhanced Sort options */}
                 <select
                   value={sortBy}
                   onChange={e => handleSortChange(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="border-2 border-colombia-blue/20 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-colombia-blue focus:outline-none font-medium"
                   aria-label="Ordenar resultados"
                 >
                   <option value="relevance">Por relevancia</option>

@@ -8,11 +8,13 @@ const SearchPage: React.FC = () => {
   const initialCategory = urlParams.get('category') || 'todos';
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <UniversalSearchBar 
-        initialQuery={initialQuery}
-        initialCategory={initialCategory}
-      />
+    <div className="min-h-screen colombia-pattern-bg">
+      <div className="container mx-auto px-4 py-8">
+        <UniversalSearchBar 
+          initialQuery={initialQuery}
+          initialCategory={initialCategory}
+        />
+      </div>
     </div>
   );
 };
