@@ -1,146 +1,149 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { activityTracker } from '../services/ActivityTracker';
-
-interface SearchResult {
-  id: string;
-  title: string;
-  summary: string;
-  source: string;
-  category: string;
-  timestamp: string;
-  relevanceScore: number;
-  link: string;
-  image?: string;
-}
-
-// Mock search data with Colombian-relevant content
-const mockSearchData: SearchResult[] = [
-  {
-    id: '1',
-    title: 'Gustavo Petro anuncia nueva política económica para 2024',
-    summary: 'El presidente colombiano presenta un plan integral de reformas económicas que incluye medidas fiscales y sociales para impulsar el crecimiento.',
-    source: 'El Tiempo',
-    category: 'Política',
-    timestamp: '2024-01-15T10:30:00Z',
-    relevanceScore: 95,
-    link: '#',
-    image: '🏛️'
-  },
-  {
-    id: '2', 
-    title: 'Centro Democrático critica políticas del gobierno actual',
-    summary: 'La oposición presenta observaciones detalladas sobre las políticas económicas y sociales implementadas por la administración Petro.',
-    source: 'Semana',
-    category: 'Política',
-    timestamp: '2024-01-15T08:45:00Z',
-    relevanceScore: 88,
-    link: '#',
-    image: '🗳️'
-  },
-  {
-    id: '3',
-    title: 'Trump propone nuevos aranceles que afectarían a Colombia',
-    summary: 'El expresidente estadounidense anuncia medidas comerciales que podrían impactar las exportaciones colombianas de café y flores.',
-    source: 'CNN Colombia',
-    category: 'Internacional',
-    timestamp: '2024-01-14T16:20:00Z',
-    relevanceScore: 82,
-    link: '#',
-    image: '🇺🇸'
-  },
-  {
-    id: '4',
-    title: 'Congreso debate reforma pensional con participación ciudadana',
-    summary: 'Las comisiones del Senado y Cámara abren espacios de diálogo para escuchar las propuestas de la sociedad civil sobre el sistema pensional.',
-    source: 'El Espectador',
-    category: 'Social',
-    timestamp: '2024-01-14T14:15:00Z',
-    relevanceScore: 75,
-    link: '#',
-    image: '🏛️'
-  },
-  {
-    id: '5',
-    title: 'Alerta de seguridad por actividad terrorista en fronteras',
-    summary: 'Las fuerzas militares reportan incremento en amenazas de grupos armados ilegales en las zonas fronterizas con Venezuela.',
-    source: 'Caracol Radio',
-    category: 'Seguridad',
-    timestamp: '2024-01-14T12:00:00Z',
-    relevanceScore: 90,
-    link: '#',
-    image: '🚨'
-  },
-  {
-    id: '6',
-    title: 'Colombia avanza en transformación digital para 2030',
-    summary: 'El MinTIC presenta el plan nacional de digitalización que conectará el 95% del territorio con internet de alta velocidad.',
-    source: 'Portafolio',
-    category: 'Tecnología',
-    timestamp: '2024-01-13T11:30:00Z',
-    relevanceScore: 70,
-    link: '#',
-    image: '💻'
-  }
-];
+import { searchService, createDebouncedSearch } from '../services/UniversalSearchService';
+import { SearchResult } from '../data/searchFallbackData';
 
 const UniversalSearchBar: React.FC = () => {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [filter, setFilter] = useState('all');
   const [sortBy, setSortBy] = useState('relevance');
   const [currentPage, setCurrentPage] = useState(1);
   const [displayMode, setDisplayMode] = useState<'cards' | 'list'>('cards');
   const [expandedResults, setExpandedResults] = useState<Set<string>>(new Set());
+  const [totalResults, setTotalResults] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [hasMorePages, setHasMorePages] = useState(false);
 
-  const resultsPerPage = 6;
+  const resultsPerPage = 6; // Reduced for better pagination demo
 
-  // Mock search function
-  const performSearch = async (searchQuery: string): Promise<SearchResult[]> => {
-    setLoading(true);
+  // URL persistence for search state
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlQuery = urlParams.get('q');
+    const urlPage = urlParams.get('page');
+    const urlFilter = urlParams.get('filter');
     
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
+    if (urlQuery) {
+      setQuery(urlQuery);
+      if (urlQuery.trim()) {
+        performSearch(urlQuery, parseInt(urlPage || '1'));
+      }
+    }
+    if (urlPage) {
+      setCurrentPage(parseInt(urlPage));
+    }
+    if (urlFilter) {
+      setFilter(urlFilter);
+    }
+  }, []);
+
+  // Update URL when search state changes
+  const updateURL = useCallback((newQuery: string, newPage: number, newFilter: string = 'all') => {
+    const url = new URL(window.location.href);
+    if (newQuery.trim()) {
+      url.searchParams.set('q', newQuery);
+      url.searchParams.set('page', newPage.toString());
+      if (newFilter !== 'all') {
+        url.searchParams.set('filter', newFilter);
+      } else {
+        url.searchParams.delete('filter');
+      }
+    } else {
+      url.searchParams.delete('q');
+      url.searchParams.delete('page');
+      url.searchParams.delete('filter');
+    }
+    window.history.replaceState({}, '', url.toString());
+  }, []);
+
+  // Enhanced search function with error handling and pagination
+  const performSearch = async (searchQuery: string, page: number = 1): Promise<void> => {
     if (!searchQuery.trim()) {
-      setLoading(false);
-      return [];
+      setResults([]);
+      setTotalResults(0);
+      setTotalPages(0);
+      setHasMorePages(false);
+      setError(null);
+      return;
     }
 
-    // Filter mock data based on query
-    const filtered = mockSearchData.filter(item => 
-      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-
-    // Add some dynamic results based on query
-    const dynamicResults: SearchResult[] = [
-      {
-        id: `dynamic-${Date.now()}`,
-        title: `Últimas noticias sobre "${searchQuery}" en Colombia`,
-        summary: `Cobertura actualizada y análisis de los eventos más relevantes relacionados con ${searchQuery} en el contexto colombiano.`,
-        source: 'Nuestro Pulso Agregador',
-        category: 'Agregado',
-        timestamp: new Date().toISOString(),
-        relevanceScore: 100,
-        link: '#',
-        image: '📰'
-      }
-    ];
-
-    setLoading(false);
-    return [...dynamicResults, ...filtered];
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const searchResult = await searchService.search(searchQuery, page, resultsPerPage);
+      
+      setResults(searchResult.results);
+      setTotalResults(searchResult.totalResults);
+      setTotalPages(searchResult.totalPages);
+      setHasMorePages(searchResult.hasMorePages);
+      setCurrentPage(searchResult.currentPage);
+      
+      // Update URL with current search state
+      updateURL(searchQuery, page, filter);
+      
+      // Track search activity
+      activityTracker.trackSearch(searchQuery, searchResult.totalResults, filter !== 'all' ? filter : undefined);
+      
+    } catch (err: any) {
+      console.error('Search error:', err);
+      setError('Error al realizar la búsqueda. Por favor intenta nuevamente.');
+      setResults([]);
+      setTotalResults(0);
+      setTotalPages(0);
+      setHasMorePages(false);
+    } finally {
+      setLoading(false);
+    }
   };
+
+  // Debounced search for real-time input
+  const debouncedSearch = useCallback(
+    createDebouncedSearch((searchQuery: string) => {
+      if (searchQuery.trim()) {
+        performSearch(searchQuery, 1);
+      }
+    }, 300),
+    [filter]
+  );
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
-    const searchResults = await performSearch(query);
-    setResults(searchResults);
-    setCurrentPage(1);
+    await performSearch(query, 1);
+  };
+
+  // Handle input changes with debounced search
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuery = e.target.value;
+    setQuery(newQuery);
     
-    // Track search activity
-    activityTracker.trackSearch(query, searchResults.length, filter !== 'all' ? filter : undefined);
+    // Trigger debounced search for real-time results
+    if (newQuery.trim()) {
+      debouncedSearch(newQuery);
+    } else {
+      setResults([]);
+      setTotalResults(0);
+      setTotalPages(0);
+      setHasMorePages(false);
+      updateURL('', 1);
+    }
+  };
+
+  // Handle page changes
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    performSearch(query, newPage);
+  };
+
+  // Handle filter changes
+  const handleFilterChange = (newFilter: string) => {
+    setFilter(newFilter);
+    updateURL(query, 1, newFilter);
+    // Re-search with new filter would require server-side filtering
+    // For now, we'll filter on frontend
   };
 
   const filteredResults = results.filter(result => {
@@ -161,9 +164,8 @@ const UniversalSearchBar: React.FC = () => {
     }
   });
 
-  const totalPages = Math.ceil(sortedResults.length / resultsPerPage);
-  const startIndex = (currentPage - 1) * resultsPerPage;
-  const paginatedResults = sortedResults.slice(startIndex, startIndex + resultsPerPage);
+  // All results are now paginated on the server side
+  const displayResults = sortedResults;
 
   const toggleExpanded = (resultId: string) => {
     const newExpanded = new Set(expandedResults);
@@ -204,7 +206,7 @@ const UniversalSearchBar: React.FC = () => {
           <div className="flex gap-3">
             <input
               value={query}
-              onChange={e => setQuery(e.target.value)}
+              onChange={handleInputChange}
               placeholder="Buscar noticias, políticas, candidatos, reformas..."
               className="flex-1 p-4 rounded-lg text-gray-900 placeholder-gray-500 text-lg focus:ring-4 focus:ring-white/30 focus:outline-none"
             />
@@ -222,10 +224,13 @@ const UniversalSearchBar: React.FC = () => {
         <div className="mt-4">
           <p className="text-sm text-white/80 mb-2">Búsquedas populares:</p>
           <div className="flex flex-wrap gap-2">
-            {['Gustavo Petro', 'Centro Democrático', 'Trump Colombia', 'Reforma pensional', 'Seguridad fronteras'].map((suggestion) => (
+            {['Facebook', 'Gustavo Petro', 'Trump', 'Reforma pensional', 'Tecnología'].map((suggestion) => (
               <button
                 key={suggestion}
-                onClick={() => setQuery(suggestion)}
+                onClick={() => {
+                  setQuery(suggestion);
+                  performSearch(suggestion, 1);
+                }}
                 className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-sm transition-colors backdrop-blur"
               >
                 {suggestion}
@@ -243,13 +248,14 @@ const UniversalSearchBar: React.FC = () => {
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4">
                 <span className="font-medium text-gray-700">
-                  📊 {filteredResults.length} resultados para "{query}"
+                  📊 {totalResults} resultados para "{query}"
+                  {currentPage > 1 && ` (página ${currentPage} de ${totalPages})`}
                 </span>
                 
                 {/* Category filter */}
                 <select
                   value={filter}
-                  onChange={e => setFilter(e.target.value)}
+                  onChange={e => handleFilterChange(e.target.value)}
                   className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="all">Todas las categorías</option>
@@ -258,6 +264,8 @@ const UniversalSearchBar: React.FC = () => {
                   <option value="social">Social</option>
                   <option value="seguridad">Seguridad</option>
                   <option value="tecnología">Tecnología</option>
+                  <option value="economía">Economía</option>
+                  <option value="web">Resultados Web</option>
                 </select>
 
                 {/* Sort options */}
@@ -298,23 +306,59 @@ const UniversalSearchBar: React.FC = () => {
             </div>
           </div>
 
-          {/* Loading state */}
+          {/* Loading skeletons */}
           {loading && (
             <div className="text-center py-12">
-              <div className="text-6xl mb-4 animate-pulse">🔄</div>
+              <div className="text-6xl mb-4 animate-spin">⏳</div>
               <p className="text-gray-600 text-lg">Buscando resultados relevantes...</p>
+              <p className="text-gray-500 text-sm mt-2">Agregando datos de múltiples fuentes</p>
+              
+              {/* Loading skeletons */}
+              <div className="mt-8 space-y-4">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="bg-gray-50 rounded-lg p-4 animate-pulse">
+                    <div className="w-3/4 h-6 bg-gray-300 rounded mb-2"></div>
+                    <div className="w-full h-4 bg-gray-300 rounded mb-2"></div>
+                    <div className="w-1/2 h-4 bg-gray-300 rounded"></div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Error state */}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
+              <div className="text-4xl mb-4">⚠️</div>
+              <h3 className="text-lg font-semibold text-red-900 mb-2">Error de búsqueda</h3>
+              <p className="text-red-700 mb-4">{error}</p>
+              <button
+                onClick={() => performSearch(query, currentPage)}
+                className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
+              >
+                Reintentar búsqueda
+              </button>
             </div>
           )}
 
           {/* Results */}
-          {!loading && (
+          {!loading && !error && (
             <div className={displayMode === 'cards' ? 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6' : 'space-y-4'}>
-              {paginatedResults.map((result) => (
+              {displayResults.map((result) => (
                 <div 
                   key={result.id} 
-                  className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 ${
+                  className={`bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow border border-gray-200 cursor-pointer ${
                     displayMode === 'list' ? 'p-4' : 'p-6'
                   }`}
+                  onClick={() => {
+                    // Handle result click - open in new tab if external link, otherwise navigate
+                    if (result.link.startsWith('http')) {
+                      window.open(result.link, '_blank', 'noopener,noreferrer');
+                    } else {
+                      // Handle internal navigation if needed
+                      console.log('Navigate to:', result.link);
+                    }
+                  }}
                 >
                   <div className={displayMode === 'list' ? 'flex items-start gap-4' : ''}>
                     {/* Image/Icon */}
@@ -357,13 +401,30 @@ const UniversalSearchBar: React.FC = () => {
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <button
-                            onClick={() => toggleExpanded(result.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleExpanded(result.id);
+                            }}
                             className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                           >
                             {expandedResults.has(result.id) ? '▲ Menos' : '▼ Más'}
                           </button>
                           <span className="text-gray-300">•</span>
                           <span className="text-sm text-gray-500">{result.source}</span>
+                          {result.link.startsWith('http') && (
+                            <>
+                              <span className="text-gray-300">•</span>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  window.open(result.link, '_blank', 'noopener,noreferrer');
+                                }}
+                                className="text-green-600 hover:text-green-800 text-sm font-medium"
+                              >
+                                🔗 Abrir enlace
+                              </button>
+                            </>
+                          )}
                         </div>
                         <div className="flex items-center gap-1">
                           <span className="text-xs text-gray-500">Relevancia:</span>
@@ -377,59 +438,142 @@ const UniversalSearchBar: React.FC = () => {
             </div>
           )}
 
-          {/* Pagination */}
-          {totalPages > 1 && (
-            <div className="flex items-center justify-center gap-2">
-              <button
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors"
-              >
-                ← Anterior
-              </button>
-              
-              <div className="flex gap-1">
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                  <button
-                    key={page}
-                    onClick={() => setCurrentPage(page)}
-                    className={`px-3 py-2 rounded-lg transition-colors ${
-                      currentPage === page
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                    }`}
-                  >
-                    {page}
-                  </button>
-                ))}
+          {/* Enhanced Pagination */}
+          {totalPages > 1 && !loading && !error && (
+            <div className="space-y-4">
+              {/* Results summary */}
+              <div className="text-center text-gray-600">
+                Mostrando resultados {((currentPage - 1) * resultsPerPage) + 1} - {Math.min(currentPage * resultsPerPage, totalResults)} de {totalResults}
               </div>
+              
+              {/* Main pagination controls */}
+              <div className="flex items-center justify-center gap-2 flex-wrap">
+                <button
+                  onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors"
+                >
+                  ← Anterior
+                </button>
+                
+                {/* Page numbers */}
+                <div className="flex gap-1">
+                  {(() => {
+                    const maxVisible = 5;
+                    const start = Math.max(1, currentPage - Math.floor(maxVisible / 2));
+                    const end = Math.min(totalPages, start + maxVisible - 1);
+                    const pages = [];
+                    
+                    if (start > 1) {
+                      pages.push(
+                        <button key={1} onClick={() => handlePageChange(1)} className="px-3 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">1</button>
+                      );
+                      if (start > 2) {
+                        pages.push(<span key="ellipsis1" className="px-2 text-gray-500">...</span>);
+                      }
+                    }
+                    
+                    for (let i = start; i <= end; i++) {
+                      pages.push(
+                        <button
+                          key={i}
+                          onClick={() => handlePageChange(i)}
+                          className={`px-3 py-2 rounded-lg transition-colors ${
+                            currentPage === i
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        >
+                          {i}
+                        </button>
+                      );
+                    }
+                    
+                    if (end < totalPages) {
+                      if (end < totalPages - 1) {
+                        pages.push(<span key="ellipsis2" className="px-2 text-gray-500">...</span>);
+                      }
+                      pages.push(
+                        <button key={totalPages} onClick={() => handlePageChange(totalPages)} className="px-3 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors">{totalPages}</button>
+                      );
+                    }
+                    
+                    return pages;
+                  })()}
+                </div>
 
-              <button
-                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                disabled={currentPage === totalPages}
-                className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors"
-              >
-                Siguiente →
-              </button>
+                <button
+                  onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-200 transition-colors"
+                >
+                  Siguiente →
+                </button>
+              </div>
+              
+              {/* Quick page jump */}
+              {totalPages > 10 && (
+                <div className="flex items-center justify-center gap-2 text-sm">
+                  <span className="text-gray-600">Ir a página:</span>
+                  <input
+                    type="number"
+                    min="1"
+                    max={totalPages}
+                    value={currentPage}
+                    onChange={(e) => {
+                      const page = parseInt(e.target.value);
+                      if (page >= 1 && page <= totalPages) {
+                        handlePageChange(page);
+                      }
+                    }}
+                    className="w-16 px-2 py-1 border border-gray-300 rounded text-center focus:ring-2 focus:ring-blue-500"
+                  />
+                  <span className="text-gray-600">de {totalPages}</span>
+                </div>
+              )}
             </div>
           )}
         </div>
       )}
 
-      {/* Empty state */}
-      {!loading && query && results.length === 0 && (
+      {/* Enhanced empty state */}
+      {!loading && !error && query && results.length === 0 && (
         <div className="text-center py-16">
           <div className="text-6xl mb-4">🔍</div>
           <h3 className="text-2xl font-bold text-gray-900 mb-4">No se encontraron resultados</h3>
-          <p className="text-gray-600 mb-6">
-            Intenta con otros términos de búsqueda o explora las sugerencias populares
+          <p className="text-gray-600 mb-6 max-w-md mx-auto">
+            No encontramos resultados para "<strong>{query}</strong>". 
+            Intenta con otros términos de búsqueda o explora las sugerencias populares.
           </p>
-          <button
-            onClick={() => setQuery('')}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Nueva búsqueda
-          </button>
+          <div className="space-y-4">
+            <button
+              onClick={() => {
+                setQuery('');
+                setResults([]);
+                updateURL('', 1);
+              }}
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors mr-4"
+            >
+              Nueva búsqueda
+            </button>
+            <div className="mt-4">
+              <p className="text-sm text-gray-500 mb-2">Prueba con estas búsquedas populares:</p>
+              <div className="flex flex-wrap justify-center gap-2">
+                {['Facebook', 'Petro', 'Trump', 'Tecnología', 'Economía'].map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    onClick={() => {
+                      setQuery(suggestion);
+                      performSearch(suggestion, 1);
+                    }}
+                    className="bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-sm hover:bg-gray-200 transition-colors"
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>
