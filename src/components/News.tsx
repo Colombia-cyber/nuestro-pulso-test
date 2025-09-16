@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Comments from './Comments';
+import NewsFeed from '../NewsFeed';
 
 const News: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('todas');
   const [selectedArticle, setSelectedArticle] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showUniversalFeed, setShowUniversalFeed] = useState(false);
 
   const categories = [
     { id: 'todas', name: 'Todas', icon: '📰' },
@@ -658,21 +660,48 @@ El debate parlamentario continuará en las próximas semanas, donde se espera la
 
         {/* Categories */}
         <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
+          <div className="flex justify-between items-center mb-4">
+            <div className="flex flex-wrap gap-2">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    selectedCategory === category.id
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  <span className="mr-1">{category.icon}</span>
+                  {category.name}
+                </button>
+              ))}
+            </div>
+
+            {/* Toggle between Original and Universal Feed */}
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium text-gray-600">Modo:</span>
               <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
-                  selectedCategory === category.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                onClick={() => setShowUniversalFeed(false)}
+                className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                  !showUniversalFeed 
+                    ? 'bg-blue-100 text-blue-800 font-medium' 
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                 }`}
               >
-                <span className="mr-1">{category.icon}</span>
-                {category.name}
+                📰 Editorial
               </button>
-            ))}
+              <button
+                onClick={() => setShowUniversalFeed(true)}
+                className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                  showUniversalFeed 
+                    ? 'bg-green-100 text-green-800 font-medium' 
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                🔍 Universal
+              </button>
+            </div>
           </div>
         </div>
 
@@ -691,8 +720,13 @@ El debate parlamentario continuará en las próximas semanas, donde se espera la
           </div>
         </div>
 
-        {/* News Feed */}
-        <div className="space-y-6">
+        {/* Conditional Rendering: Universal Feed or Original News */}
+        {showUniversalFeed ? (
+          <NewsFeed />
+        ) : (
+          <>
+            {/* Original News Feed */}
+            <div className="space-y-6">
           {isLoading ? (
             <LoadingSkeleton />
           ) : error ? (
@@ -755,7 +789,7 @@ El debate parlamentario continuará en las próximas semanas, donde se espera la
             </div>
           )))}
         </div>
-
+        
         {/* Trending Topics */}
         <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
           <h3 className="text-xl font-semibold text-gray-900 mb-4">🔥 Temas Trending</h3>
@@ -778,6 +812,8 @@ El debate parlamentario continuará en las próximas semanas, donde se espera la
             ))}
           </div>
         </div>
+        </>
+        )}
       </div>
     </div>
   );
