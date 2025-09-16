@@ -112,21 +112,71 @@ class SearchService {
       };
     }
 
-    // Check if we should use fallback for popular queries
-    if (this.shouldUseFallback(query)) {
-      return this.getFallbackResults(options);
+    try {
+      // Always try server-side API first (prioritize the new implementation)
+      const apiResponse = await this.searchViaAPI(options);
+      return apiResponse;
+    } catch (error) {
+      console.warn('API search failed, falling back to proxy then local data:', error);
+      
+      try {
+        // Try original proxy method as fallback
+        const proxyResponse = await this.searchViaProxy(options);
+        return proxyResponse;
+      } catch (proxyError) {
+        console.warn('Proxy search also failed, using local fallback:', proxyError);
+        
+        // Final fallback to local mock data
+        return this.getFallbackResults(options);
+      }
+    }
+  }
+
+  // New API search method using the implemented backend
+  private async searchViaAPI(options: SearchOptions): Promise<SearchResponse> {
+    const { query, page = 1, limit = this.defaultLimit, category, sortBy } = options;
+    const startTime = Date.now();
+
+    // Use the new API endpoint
+    const apiUrl = this.proxyUrl.replace('/api/search', '') || 'http://localhost:3001';
+    
+    const params = new URLSearchParams({
+      q: query,
+      page: page.toString(),
+      limit: limit.toString(),
+      sort: sortBy || 'relevance'
+    });
+
+    if (category && category !== 'todos') {
+      params.append('category', category);
     }
 
-    try {
-      // Try server-side proxy first
-      const proxyResponse = await this.searchViaProxy(options);
-      return proxyResponse;
-    } catch (error) {
-      console.warn('Proxy search failed, falling back to local data:', error);
-      
-      // Fallback to local mock data
-      return this.getFallbackResults(options);
+    const response = await fetch(`${apiUrl}/api/search?${params}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'NuestroPulso/1.0'
+      },
+      // Add timeout to prevent hanging
+      signal: AbortSignal.timeout(10000)
+    });
+
+    if (!response.ok) {
+      throw new Error(`API search failed: ${response.status} ${response.statusText}`);
     }
+
+    const data = await response.json();
+
+    return {
+      query: data.query || query,
+      results: data.results || [],
+      totalResults: data.totalResults || 0,
+      page: data.page || page,
+      totalPages: data.totalPages || 0,
+      hasMore: data.hasMore || false,
+      searchTime: data.searchTime || (Date.now() - startTime),
+      source: 'proxy' // Keep as 'proxy' for UI compatibility
+    };
   }
 
   // Server-side proxy search

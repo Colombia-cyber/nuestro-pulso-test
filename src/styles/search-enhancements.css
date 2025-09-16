@@ -1,0 +1,230 @@
+/* Enhanced Search Interface Styles */
+
+/* Search result cards with improved hover effects */
+.search-result-card {
+  @apply bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-200 border border-gray-200;
+  @apply hover:border-blue-300 hover:scale-[1.02] focus-within:ring-2 focus-within:ring-blue-500;
+}
+
+/* Provider source indicators */
+.provider-badge {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.provider-badge.news {
+  @apply bg-blue-100 text-blue-800;
+}
+
+.provider-badge.social {
+  @apply bg-green-100 text-green-800;
+}
+
+.provider-badge.government {
+  @apply bg-purple-100 text-purple-800;
+}
+
+.provider-badge.wiki {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+/* Search metrics display */
+.search-metrics {
+  @apply flex items-center gap-4 text-sm text-gray-600 bg-gray-50 rounded-lg p-3 mb-4;
+}
+
+.search-metrics .metric {
+  @apply flex items-center gap-1;
+}
+
+.search-metrics .metric-icon {
+  @apply text-blue-500;
+}
+
+/* Infinite scroll indicator */
+.infinite-scroll-indicator {
+  @apply flex items-center justify-center py-8 text-gray-500;
+}
+
+.infinite-scroll-indicator.loading {
+  @apply text-blue-500;
+}
+
+/* Load more button enhancements */
+.load-more-button {
+  @apply relative overflow-hidden;
+}
+
+.load-more-button::before {
+  @apply absolute inset-0 bg-gradient-to-r from-blue-600 to-blue-700;
+  @apply transform scale-x-0 transition-transform duration-200;
+  content: '';
+  z-index: -1;
+}
+
+.load-more-button:hover::before {
+  @apply scale-x-100;
+}
+
+/* Category filter improvements */
+.category-filter {
+  @apply relative;
+}
+
+.category-filter select {
+  @apply appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8;
+  @apply focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors;
+}
+
+.category-filter::after {
+  @apply absolute right-3 top-1/2 transform -translate-y-1/2;
+  @apply pointer-events-none text-gray-400;
+  content: '▼';
+  font-size: 0.75rem;
+}
+
+/* Display mode toggle enhancements */
+.display-mode-toggle {
+  @apply bg-gray-100 rounded-lg p-1 flex gap-1;
+}
+
+.display-mode-toggle button {
+  @apply px-3 py-2 rounded-md text-sm font-medium transition-all duration-200;
+  @apply hover:bg-white hover:shadow-sm;
+}
+
+.display-mode-toggle button[aria-pressed="true"] {
+  @apply bg-white shadow-sm;
+}
+
+/* Search suggestions improvements */
+.search-suggestions {
+  @apply absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200;
+  @apply rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto;
+}
+
+.search-suggestions .suggestion-item {
+  @apply flex items-center px-4 py-3 hover:bg-gray-50 cursor-pointer;
+  @apply border-b border-gray-100 last:border-b-0 transition-colors;
+}
+
+.search-suggestions .suggestion-item:hover {
+  @apply bg-blue-50 text-blue-700;
+}
+
+.search-suggestions .suggestion-icon {
+  @apply text-gray-400 mr-3;
+}
+
+/* Relevance score styling */
+.relevance-score {
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium;
+}
+
+.relevance-score.high {
+  @apply bg-green-100 text-green-800;
+}
+
+.relevance-score.medium {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.relevance-score.low {
+  @apply bg-gray-100 text-gray-600;
+}
+
+/* Enhanced pagination */
+.pagination-container {
+  @apply flex flex-col items-center space-y-4;
+}
+
+.pagination-buttons {
+  @apply flex items-center space-x-1 bg-white rounded-lg shadow-sm border border-gray-200 p-1;
+}
+
+.pagination-buttons button {
+  @apply px-3 py-2 text-sm font-medium rounded-md transition-all duration-200;
+  @apply hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.pagination-buttons button[aria-current="page"] {
+  @apply bg-blue-500 text-white hover:bg-blue-600;
+}
+
+/* Provider statistics display */
+.provider-stats {
+  @apply grid grid-cols-2 md:grid-cols-4 gap-4 bg-gray-50 rounded-lg p-4 mb-6;
+}
+
+.provider-stat {
+  @apply text-center;
+}
+
+.provider-stat .count {
+  @apply text-2xl font-bold text-gray-800;
+}
+
+.provider-stat .label {
+  @apply text-sm text-gray-600;
+}
+
+.provider-stat .status {
+  @apply text-xs px-2 py-1 rounded-full inline-block mt-1;
+}
+
+.provider-stat .status.success {
+  @apply bg-green-100 text-green-800;
+}
+
+.provider-stat .status.error {
+  @apply bg-red-100 text-red-800;
+}
+
+/* Loading states */
+.search-loading {
+  @apply flex flex-col items-center justify-center py-12 space-y-4;
+}
+
+.search-loading .spinner {
+  @apply animate-spin h-8 w-8 text-blue-500;
+}
+
+.search-loading .message {
+  @apply text-gray-600 text-lg font-medium;
+}
+
+/* Empty state styling */
+.search-empty {
+  @apply text-center py-16 space-y-4;
+}
+
+.search-empty .icon {
+  @apply text-6xl mb-4;
+}
+
+.search-empty .title {
+  @apply text-2xl font-bold text-gray-900 mb-4;
+}
+
+.search-empty .description {
+  @apply text-gray-600 mb-6 max-w-md mx-auto;
+}
+
+.search-empty .action {
+  @apply bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600;
+  @apply transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .search-result-card {
+    @apply hover:scale-100; /* Disable scale on mobile */
+  }
+  
+  .provider-stats {
+    @apply grid-cols-2 gap-2 text-sm;
+  }
+  
+  .search-metrics {
+    @apply flex-col items-start gap-2;
+  }
+}
