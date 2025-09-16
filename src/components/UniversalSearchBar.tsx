@@ -3,6 +3,7 @@ import { activityTracker } from '../services/ActivityTracker';
 import { searchService, SearchResult, SearchResponse } from '../services/searchService';
 import { getSearchCategories, getCategoryById } from '../config/categories';
 import Pagination from './Pagination';
+import SearchResultsPage from './SearchResultsPage';
 
 interface UniversalSearchBarProps {
   initialQuery?: string;
@@ -32,6 +33,8 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
   const [expandedResults, setExpandedResults] = useState<Set<string>>(new Set());
   const [searchTime, setSearchTime] = useState(0);
   const [searchSource, setSearchSource] = useState<'proxy' | 'fallback' | 'mock'>('mock');
+  const [showUniversalResults, setShowUniversalResults] = useState(false);
+  const [searchResponse, setSearchResponse] = useState<SearchResponse | null>(null);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [infiniteScrollEnabled, setInfiniteScrollEnabled] = useState(false);
@@ -135,6 +138,10 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
       setSearchTime(response.searchTime);
       setSearchSource(response.source);
       setCurrentPage(page);
+
+      // Set search response for universal results page
+      setSearchResponse(response);
+      setShowUniversalResults(true);
 
       // Update URL
       updateURL(searchQuery, page, category);
@@ -261,8 +268,34 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
     return `Hace ${diffInDays} día${diffInDays > 1 ? 's' : ''}`;
   };
 
+  // Handle search from the universal results page
+  const handleUniversalSearch = (newQuery: string, filters?: any) => {
+    setQuery(newQuery);
+    setShowSuggestions(false);
+    performSearch(newQuery, 1, filter);
+  };
+
+  // Handle back to search form
+  const handleBackToSearch = () => {
+    setShowUniversalResults(false);
+    setSearchResponse(null);
+    setResults([]);
+    setAllResults([]);
+  };
+
   // Get popular suggestions
   const popularSuggestions = searchService.getPopularQueries();
+
+  // Show universal search results page when we have results
+  if (showUniversalResults && searchResponse) {
+    return (
+      <SearchResultsPage
+        searchResponse={searchResponse}
+        query={query}
+        onSearch={handleUniversalSearch}
+      />
+    );
+  }
 
   if (compact) {
     return (
