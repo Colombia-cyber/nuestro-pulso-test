@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import UniversalSearchBar from "./UniversalSearchBar";
+import ColombiaNavSearch from "./ColombiaNavSearch";
 
 interface NavbarProps {
   onNavigate?: (view: string) => void;
@@ -27,9 +28,12 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
 
         {/* Desktop Search Bar */}
         <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
-          <UniversalSearchBar 
+          <ColombiaNavSearch 
             compact={true}
-            onResults={() => handleNavClick('search')}
+            onSearch={(query, results) => {
+              console.log('Colombia search:', query, results);
+              handleNavClick('search');
+            }}
           />
         </div>
         
@@ -227,7 +231,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-900">🔍 Búsqueda Universal</h2>
+              <h2 className="text-2xl font-bold text-gray-900">🇨🇴 Búsqueda Colombia</h2>
               <button 
                 onClick={() => setShowSearchModal(false)}
                 className="text-gray-500 hover:text-gray-700 text-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 rounded"
@@ -237,9 +241,10 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
               </button>
             </div>
             <div className="p-6">
-              <UniversalSearchBar 
+              <ColombiaNavSearch 
                 autoFocus={true}
-                onResults={() => {
+                onSearch={(query, results) => {
+                  console.log('Colombia search:', query, results);
                   setShowSearchModal(false);
                   handleNavClick('search');
                 }}

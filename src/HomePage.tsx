@@ -1,6 +1,7 @@
 import React from 'react';
 import { getTrendingPolls } from './data/samplePolls';
 import PollCard from './components/polls/PollCard';
+import HomepageSearchBar from './components/HomepageSearchBar';
 
 const HomePage: React.FC = () => {
   const trendingPolls = getTrendingPolls().slice(0, 2); // Get top 2 trending polls
@@ -24,6 +25,18 @@ const HomePage: React.FC = () => {
         <p className="text-center text-gray-600 mb-12">
           La plataforma líder de participación cívica en Colombia
         </p>
+        
+        {/* Global Search Section */}
+        <div className="mb-16">
+          <HomepageSearchBar 
+            onSearch={(query, results) => {
+              console.log('Global search:', query, results);
+            }}
+            onNavigateToResults={() => {
+              console.log('Navigate to full search results');
+            }}
+          />
+        </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div className="bg-white rounded-lg shadow-md p-6">
