@@ -34,6 +34,9 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
   const [searchSource, setSearchSource] = useState<'proxy' | 'fallback' | 'mock'>('mock');
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [infiniteScrollEnabled, setInfiniteScrollEnabled] = useState(false);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [allResults, setAllResults] = useState<SearchResult[]>([]);
 
   const inputRef = useRef<HTMLInputElement>(null);
   const searchResultsRef = useRef<HTMLDivElement>(null);
@@ -91,16 +94,21 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
   }, [query]);
 
   // Perform search
-  const performSearch = useCallback(async (searchQuery: string, page = 1, category = filter) => {
+  const performSearch = useCallback(async (searchQuery: string, page = 1, category = filter, appendResults = false) => {
     if (!searchQuery.trim()) {
       setResults([]);
+      setAllResults([]);
       setTotalResults(0);
       setTotalPages(0);
       setHasMore(false);
       return;
     }
 
-    setLoading(true);
+    if (!appendResults) {
+      setLoading(true);
+    } else {
+      setIsLoadingMore(true);
+    }
     
     try {
       const response = await searchService.search({
@@ -110,7 +118,17 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
         sortBy: sortBy as 'relevance' | 'date' | 'category'
       });
 
-      setResults(response.results);
+      if (appendResults && infiniteScrollEnabled) {
+        // Append new results for infinite scroll
+        const combinedResults = [...allResults, ...response.results];
+        setAllResults(combinedResults);
+        setResults(combinedResults);
+      } else {
+        // Replace results for normal pagination
+        setResults(response.results);
+        setAllResults(response.results);
+      }
+      
       setTotalResults(response.totalResults);
       setTotalPages(response.totalPages);
       setHasMore(response.hasMore);
@@ -129,21 +147,23 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
         onResults(response);
       }
 
-      // Scroll to results if not on first page
-      if (page > 1 && searchResultsRef.current) {
+      // Scroll to results if not on first page and not infinite scroll
+      if (page > 1 && !infiniteScrollEnabled && searchResultsRef.current) {
         searchResultsRef.current.scrollIntoView({ behavior: 'smooth' });
       }
 
     } catch (error) {
       console.error('Search failed:', error);
       setResults([]);
+      setAllResults([]);
       setTotalResults(0);
       setTotalPages(0);
       setHasMore(false);
     } finally {
       setLoading(false);
+      setIsLoadingMore(false);
     }
-  }, [filter, sortBy, updateURL, onResults]);
+  }, [filter, sortBy, updateURL, onResults, infiniteScrollEnabled, allResults]);
 
   // Handle form submission
   const handleSearch = async (e: React.FormEvent) => {
@@ -168,15 +188,29 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
 
   // Handle page change
   const handlePageChange = (page: number) => {
-    performSearch(query, page, filter);
+    if (infiniteScrollEnabled) {
+      // For infinite scroll, load more results
+      performSearch(query, page, filter, true);
+    } else {
+      // For traditional pagination, replace results
+      performSearch(query, page, filter, false);
+    }
+  };
+
+  // Handle load more for infinite scroll
+  const handleLoadMore = () => {
+    if (hasMore && !isLoadingMore) {
+      handlePageChange(currentPage + 1);
+    }
   };
 
   // Handle filter change
   const handleFilterChange = (newFilter: string) => {
     setFilter(newFilter);
     setCurrentPage(1);
+    setAllResults([]);
     if (query) {
-      performSearch(query, 1, newFilter);
+      performSearch(query, 1, newFilter, false);
     }
   };
 
@@ -184,8 +218,9 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
   const handleSortChange = (newSort: string) => {
     setSortBy(newSort);
     setCurrentPage(1);
+    setAllResults([]);
     if (query) {
-      performSearch(query, 1, filter);
+      performSearch(query, 1, filter, false);
     }
   };
 
@@ -426,6 +461,27 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                 >
                   📄 Lista
                 </button>
+                
+                {/* Infinite scroll toggle */}
+                <button
+                  onClick={() => {
+                    setInfiniteScrollEnabled(!infiniteScrollEnabled);
+                    setCurrentPage(1);
+                    setAllResults([]);
+                    if (query) {
+                      performSearch(query, 1, filter, false);
+                    }
+                  }}
+                  className={`px-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                    infiniteScrollEnabled 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                  aria-pressed={infiniteScrollEnabled}
+                  title={infiniteScrollEnabled ? 'Desactivar scroll infinito' : 'Activar scroll infinito'}
+                >
+                  {infiniteScrollEnabled ? '∞ Infinito' : '📄 Páginas'}
+                </button>
               </div>
             </div>
           </div>
@@ -551,7 +607,9 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
               totalPages={totalPages}
               hasMore={hasMore}
               onPageChange={handlePageChange}
-              loading={loading}
+              onLoadMore={handleLoadMore}
+              showLoadMore={infiniteScrollEnabled}
+              loading={isLoadingMore}
               className="mt-8"
             />
           )}
