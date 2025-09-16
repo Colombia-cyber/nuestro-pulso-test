@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es-CO">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda - Nuestro Pulso</title>
+    <meta name="description" content="Resultados de búsqueda en la plataforma cívica líder de Colombia">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="../public/favicon.ico">
+</head>
+<body>
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+
+    <!-- Header with search bar -->
+    <header class="search-header" role="banner">
+        <div class="search-container">
+            <div class="search-box-container">
+                <form role="search" aria-label="Búsqueda principal">
+                    <div class="search-input-wrapper">
+                        <input 
+                            type="search" 
+                            id="search-input"
+                            class="search-input"
+                            placeholder="Buscar noticias, debates, propuestas..."
+                            autocomplete="off"
+                            aria-label="Campo de búsqueda"
+                        >
+                        <button type="submit" class="search-button" aria-label="Buscar">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main content -->
+    <main id="main-content" class="main-content" role="main">
+        <!-- Search query info -->
+        <div class="search-info">
+            <div class="search-stats" role="status" aria-live="polite">
+                <span class="results-count" id="results-count">Cargando resultados...</span>
+            </div>
+        </div>
+
+        <!-- Top Stories Section -->
+        <section class="top-stories" aria-labelledby="top-stories-heading">
+            <h2 id="top-stories-heading" class="section-heading">Historias destacadas</h2>
+            <div class="top-stories-container">
+                <div class="top-stories-scroll" id="top-stories-scroll" role="region" aria-label="Carrusel de historias destacadas">
+                    <!-- Top stories will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Results Section -->
+        <section class="search-results" aria-labelledby="search-results-heading">
+            <h2 id="search-results-heading" class="sr-only">Resultados de búsqueda</h2>
+            <div class="results-container" id="results-container">
+                <!-- Search results will be dynamically inserted here -->
+            </div>
+        </section>
+
+        <!-- Pagination Section -->
+        <section class="pagination-section" aria-labelledby="pagination-heading">
+            <h2 id="pagination-heading" class="sr-only">Navegación de páginas</h2>
+            <div class="pagination-container" id="pagination-container">
+                <!-- Pagination controls will be dynamically inserted here -->
+            </div>
+            
+            <!-- Load more button for infinite scroll -->
+            <div class="load-more-container">
+                <button 
+                    id="load-more-btn" 
+                    class="load-more-btn"
+                    style="display: none;"
+                    aria-label="Cargar más resultados"
+                >
+                    Cargar más resultados
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <!-- Loading indicator -->
+    <div id="loading-indicator" class="loading-indicator" style="display: none;" role="status" aria-label="Cargando">
+        <div class="loading-spinner"></div>
+        <span class="loading-text">Cargando...</span>
+    </div>
+
+    <!-- Error message container -->
+    <div id="error-container" class="error-container" style="display: none;" role="alert" aria-live="assertive">
+        <div class="error-message">
+            <h3>Error en la búsqueda</h3>
+            <p id="error-text">Ha ocurrido un error al realizar la búsqueda. Por favor, inténtalo de nuevo.</p>
+            <button id="retry-btn" class="retry-btn">Reintentar</button>
+        </div>
+    </div>
+
+    <!-- Script for functionality -->
+    <script src="script.js"></script>
+</body>
+</html>

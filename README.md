@@ -48,9 +48,22 @@ To get started with the project, follow these instructions:
 - Built with TypeScript, React, and Tailwind CSS
 - Feature parity with existing civic engagement platforms
 - Continuous Integration and Continuous Deployment (CI/CD) workflow
+- **Search UI Example**: Ready-to-integrate mobile-first search interface (see `search-ui/` folder)
 
 ## Testing
 To run tests for the project, use the following command:
 ```bash
 npm test
 ```
+
+## Search UI Example
+A mobile-first search UI example is available in the `search-ui/` directory. This provides a Google-like search interface that's ready to integrate with your preferred search backend (Algolia, Typesense, Elasticsearch, or custom API).
+
+To try it:
+```bash
+cd search-ui
+python -m http.server 8080
+# Visit http://localhost:8080/search.html?q=participación
+```
+
+See `search-ui/README.md` for complete integration documentation.
