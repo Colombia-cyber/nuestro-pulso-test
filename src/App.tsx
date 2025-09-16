@@ -5,6 +5,7 @@ import News from "./components/News";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
+import NewsFeed from "./NewsFeed";
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -17,6 +18,8 @@ function App() {
     switch (currentView) {
       case 'news':
         return <News />;
+      case 'news-feed':
+        return <NewsFeed />;
       case 'comments':
         return <Comments />;
       case 'community-hub':

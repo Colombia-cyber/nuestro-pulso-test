@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import searchRoutes from './routes/search.js';
+import newsFeedRoutes from './routes/news-feed.js';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/search', searchRoutes);
+app.use('/api/news-feed', newsFeedRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

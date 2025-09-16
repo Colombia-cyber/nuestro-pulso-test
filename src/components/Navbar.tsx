@@ -50,6 +50,13 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
             <span className="hidden xl:inline">Noticias</span>
           </button>
           <button 
+            onClick={() => handleNavClick('news-feed')}
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+          >
+            <span>🌐</span>
+            <span className="hidden xl:inline">News Feed</span>
+          </button>
+          <button 
             onClick={() => handleNavClick('community-hub')}
             className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
           >
@@ -149,6 +156,13 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
               >
                 <span className="text-xl">📰</span>
                 <span>Noticias</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('news-feed')}
+                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+              >
+                <span className="text-xl">🌐</span>
+                <span>News Feed</span>
               </button>
               <button 
                 onClick={() => handleNavClick('community-hub')}

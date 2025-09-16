@@ -41,6 +41,42 @@ To get started with the project, follow these instructions:
 4. **Security Note**
    - Never commit your real `.env` file, only `.env.example.
 
+## Combined News Feed Setup
+
+The application includes a combined news feed that merges results from Google Custom Search and NewsAPI. To set this up:
+
+1. **Get Google Custom Search API credentials:**
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select an existing one
+   - Enable the Custom Search API
+   - Create credentials (API key) for the Custom Search API
+   - Create a Custom Search Engine at [Google CSE](https://cse.google.com/)
+   - Note your Search Engine ID (CSE ID)
+
+2. **Get NewsAPI credentials:**
+   - Go to [NewsAPI.org](https://newsapi.org/)
+   - Sign up for a free account
+   - Get your API key from the dashboard
+
+3. **Configure environment variables:**
+   Add these to your `.env` file:
+   ```env
+   GOOGLE_API_KEY=your_google_api_key_here
+   GOOGLE_CSE_ID=your_google_cse_id_here
+   NEWSAPI_KEY=your_newsapi_key_here
+   ```
+
+4. **Start the backend server:**
+   ```bash
+   npm run server
+   ```
+
+5. **Access the news feed:**
+   - Navigate to the app and click "News Feed" in the navigation
+   - Or go directly to the news-feed view in the app
+
+**Note:** The news feed will show helpful error messages if API keys are not configured, guiding you through the setup process.
+
 ---
 
 ## Features
