@@ -4,6 +4,7 @@ import HeroSection from "./components/HeroSection";
 import News from "./components/News";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
+import SearchPage from "./pages/Search";
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
@@ -20,6 +21,8 @@ function App() {
         return <Comments />;
       case 'community-hub':
         return <CommunityHub />;
+      case 'search':
+        return <SearchPage />;
       case 'home':
       default:
         return <HeroSection onNavigate={handleNavigate} />;
