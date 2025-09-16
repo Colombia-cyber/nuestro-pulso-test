@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Búsqueda - Nuestro Pulso</title>
+    
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="Búsqueda de Noticias - Nuestro Pulso">
+    <meta property="og:description" content="Encuentra las últimas noticias y artículos sobre política, sociedad y actualidad en Colombia">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://nuestro-pulso-test.vercel.app/search-ui/search.html">
+    <meta property="og:image" content="https://nuestro-pulso-test.vercel.app/assets/og-image.jpg">
+    
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Búsqueda de Noticias - Nuestro Pulso">
+    <meta name="twitter:description" content="Encuentra las últimas noticias y artículos sobre política, sociedad y actualidad en Colombia">
+    <meta name="twitter:image" content="https://nuestro-pulso-test.vercel.app/assets/og-image.jpg">
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Búsqueda avanzada de noticias y artículos sobre política, sociedad y actualidad en Colombia. Encuentra información relevante y actualizada.">
+    <meta name="keywords" content="noticias, Colombia, búsqueda, política, sociedad, actualidad">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://nuestro-pulso-test.vercel.app/search-ui/search.html">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../public/favicon.ico">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- Structured Data for Search Page -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Nuestro Pulso",
+        "url": "https://nuestro-pulso-test.vercel.app",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://nuestro-pulso-test.vercel.app/search-ui/search.html?q={search_term_string}"
+            },
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+</head>
+<body>
+    <!-- Skip to content for accessibility -->
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
+    
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="header-container">
+            <div class="logo-container">
+                <a href="../index.html" class="logo-link" aria-label="Volver a la página principal">
+                    <img src="../public/logo.svg" alt="Nuestro Pulso" class="logo" width="120" height="40">
+                </a>
+            </div>
+            
+            <!-- Search Form -->
+            <form class="search-form" role="search" aria-label="Búsqueda principal">
+                <div class="search-input-container">
+                    <input 
+                        type="search" 
+                        id="search-input" 
+                        class="search-input" 
+                        placeholder="Buscar noticias, artículos..." 
+                        aria-label="Buscar contenido"
+                        autocomplete="off"
+                        spellcheck="false"
+                    >
+                    <button type="submit" class="search-button" aria-label="Buscar">
+                        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <!-- Search Filters -->
+                <div class="search-filters" role="group" aria-label="Filtros de búsqueda">
+                    <button type="button" class="filter-button active" data-filter="all">Todos</button>
+                    <button type="button" class="filter-button" data-filter="news">Noticias</button>
+                    <button type="button" class="filter-button" data-filter="articles">Artículos</button>
+                    <button type="button" class="filter-button" data-filter="videos">Videos</button>
+                </div>
+            </form>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main-content" role="main">
+        <!-- Search Results Info -->
+        <div class="search-info" aria-live="polite">
+            <span id="results-count" class="results-count">Aproximadamente 0 resultados</span>
+            <span id="search-time" class="search-time">(0.00 segundos)</span>
+        </div>
+
+        <!-- Top Stories Section -->
+        <section class="top-stories" aria-labelledby="top-stories-heading">
+            <h2 id="top-stories-heading" class="section-title">Historias destacadas</h2>
+            <div class="top-stories-container" role="region" aria-label="Carrusel de historias destacadas">
+                <div class="top-stories-scroll" id="top-stories-scroll">
+                    <!-- Top stories will be dynamically inserted here -->
+                </div>
+                <button class="scroll-button scroll-left" aria-label="Desplazar historias hacia la izquierda" id="scroll-left">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15,18 9,12 15,6"></polyline>
+                    </svg>
+                </button>
+                <button class="scroll-button scroll-right" aria-label="Desplazar historias hacia la derecha" id="scroll-right">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9,18 15,12 9,6"></polyline>
+                    </svg>
+                </button>
+            </div>
+        </section>
+
+        <!-- Search Results -->
+        <section class="search-results" aria-labelledby="search-results-heading">
+            <h2 id="search-results-heading" class="sr-only">Resultados de búsqueda</h2>
+            <div id="results-container" class="results-container">
+                <!-- Search results will be dynamically inserted here -->
+            </div>
+            
+            <!-- Loading State -->
+            <div id="loading" class="loading hidden" aria-live="polite">
+                <div class="loading-spinner"></div>
+                <span>Cargando resultados...</span>
+            </div>
+            
+            <!-- No Results State -->
+            <div id="no-results" class="no-results hidden">
+                <div class="no-results-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                </div>
+                <h3>No se encontraron resultados</h3>
+                <p>Intenta con términos diferentes o más generales</p>
+                <div class="search-suggestions">
+                    <p>Sugerencias:</p>
+                    <ul>
+                        <li>Revisa la ortografía de las palabras</li>
+                        <li>Usa términos más generales</li>
+                        <li>Prueba con sinónimos</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pagination -->
+        <nav class="pagination" aria-label="Navegación de páginas" id="pagination">
+            <button class="pagination-button pagination-prev" aria-label="Página anterior" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15,18 9,12 15,6"></polyline>
+                </svg>
+                Anterior
+            </button>
+            
+            <div class="pagination-numbers" role="list">
+                <!-- Page numbers will be dynamically inserted here -->
+            </div>
+            
+            <button class="pagination-button pagination-next" aria-label="Página siguiente">
+                Siguiente
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9,18 15,12 9,6"></polyline>
+                </svg>
+            </button>
+        </nav>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="footer-container">
+            <div class="footer-links">
+                <a href="../index.html">Inicio</a>
+                <a href="../about.html">Acerca de</a>
+                <a href="../privacy.html">Privacidad</a>
+                <a href="../terms.html">Términos</a>
+                <a href="../contact.html">Contacto</a>
+            </div>
+            <div class="footer-info">
+                <p>&copy; 2024 Nuestro Pulso. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="script.js"></script>
+</body>
+</html>
