@@ -1,6 +1,6 @@
 module.exports = {
   root: true,
-  env: { browser: true, es2020: true },
+  env: { browser: true, es2020: true, node: true },
   extends: [
     'eslint:recommended',
   ],
@@ -14,4 +14,7 @@ module.exports = {
     ],
     'no-unused-vars': 'off', // Disable for now to focus on deployment issues
   },
+  globals: {
+    process: 'readonly' // Allow process.env usage
+  }
 }
