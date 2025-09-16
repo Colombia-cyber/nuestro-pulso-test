@@ -47,7 +47,7 @@ const PulseReels: React.FC = () => {
     ...visibleCategories
   ];
 
-  // Mock reels data with more entries for testing infinite scroll
+  // Mock reels data with enhanced Terror News content and technology content excluded
   const allMockReels: Reel[] = [
     {
       id: 1,
@@ -145,10 +145,11 @@ const PulseReels: React.FC = () => {
       author: 'Canal Congreso',
       embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
+    // Enhanced Terror News content as requested in PR #102
     {
       id: 9,
       title: 'Alerta de seguridad: Amenazas terroristas en fronteras',
-      description: 'Informe especial sobre medidas de seguridad en zonas fronterizas',
+      description: 'Informe especial sobre medidas de seguridad en zonas fronterizas colombianas',
       category: 'seguridad',
       duration: '8:20',
       views: 23400,
@@ -159,19 +160,67 @@ const PulseReels: React.FC = () => {
     },
     {
       id: 10,
-      title: 'Revolución digital: Colombia 5G para todos',
-      description: 'Cómo la tecnología 5G transformará la conectividad en Colombia',
-      category: 'tecnologia',
-      duration: '4:15',
-      views: 34500,
+      title: 'Terror News: Operativo antiterrorista en Norte de Santander',
+      description: 'Fuerzas especiales neutralizan célula terrorista en zona fronteriza con Venezuela',
+      category: 'seguridad',
+      duration: '12:15',
+      views: 45600,
       likes: 2340,
-      thumbnail: '💻',
-      author: 'TechColombia',
+      thumbnail: '⚠️',
+      author: 'RCN Noticias',
       embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
-    // Additional reels for infinite scroll testing
     {
       id: 11,
+      title: 'Terror News: Análisis de amenazas nacionales 2024',
+      description: 'Expertos en seguridad evalúan los riesgos terroristas en Colombia y medidas preventivas',
+      category: 'seguridad',
+      duration: '15:30',
+      views: 67200,
+      likes: 3890,
+      thumbnail: '🔍',
+      author: 'Defensa Nacional',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+    },
+    {
+      id: 12,
+      title: 'Terror News: Cooperación internacional antiterrorista',
+      description: 'Colombia fortalece alianzas con Estados Unidos y Europa para combatir el terrorismo transnacional',
+      category: 'seguridad',
+      duration: '9:45',
+      views: 38900,
+      likes: 2156,
+      thumbnail: '🌐',
+      author: 'MinDefensa',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+    },
+    {
+      id: 13,
+      title: 'Terror News: Desarticulan plan terrorista en Bogotá',
+      description: 'Autoridades previenen atentado contra infraestructura crítica en la capital colombiana',
+      category: 'seguridad',
+      duration: '11:20',
+      views: 89400,
+      likes: 4567,
+      thumbnail: '🚫',
+      author: 'Policía Nacional',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+    },
+    {
+      id: 14,
+      title: 'Terror News: Víctimas del terrorismo comparten testimonios',
+      description: 'Historias de superación y resiliencia de familias afectadas por actos terroristas',
+      category: 'seguridad',
+      duration: '18:30',
+      views: 34200,
+      likes: 2890,
+      thumbnail: '💔',
+      author: 'Centro Nacional de Memoria',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+    },
+    // Additional reels for infinite scroll testing (no technology category)
+    {
+      id: 15,
       title: 'Justicia restaurativa: Nueva esperanza para las víctimas',
       description: 'Cómo la justicia restaurativa está sanando heridas en Colombia',
       category: 'social',
@@ -183,7 +232,7 @@ const PulseReels: React.FC = () => {
       embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
     {
-      id: 12,
+      id: 16,
       title: 'Economía circular: El futuro sostenible de Colombia',
       description: 'Empresas colombianas lideran la transición hacia la economía circular',
       category: 'ambiente',
@@ -192,6 +241,30 @@ const PulseReels: React.FC = () => {
       likes: 1687,
       thumbnail: '♻️',
       author: 'EcoInnovación',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+    },
+    {
+      id: 17,
+      title: 'Impacto económico de las políticas de seguridad',
+      description: 'Análisis del costo-beneficio de las inversiones en seguridad nacional',
+      category: 'economia',
+      duration: '13:20',
+      views: 41200,
+      likes: 2675,
+      thumbnail: '📈',
+      author: 'FEDESARROLLO',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+    },
+    {
+      id: 18,
+      title: 'Educación en derechos humanos para jóvenes',
+      description: 'Programas educativos que forman ciudadanos conscientes de sus derechos',
+      category: 'educacion',
+      duration: '8:40',
+      views: 15600,
+      likes: 987,
+      thumbnail: '📚',
+      author: 'UNICEF Colombia',
       embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     }
   ];
@@ -212,10 +285,12 @@ const PulseReels: React.FC = () => {
         throw new Error('Error al cargar los reels. Verifica tu conexión.');
       }
 
-      // Filter reels by category
-      let filteredReels = category === 'todos' 
-        ? allMockReels 
-        : allMockReels.filter(reel => reel.category === category);
+      // Filter reels by category and exclude technology content
+      let filteredReels = allMockReels.filter(reel => reel.category !== 'tecnologia'); // Exclude technology
+      
+      if (category !== 'todos') {
+        filteredReels = filteredReels.filter(reel => reel.category === category);
+      }
 
       // Paginate reels
       const startIndex = (pageNum - 1) * batchSize;
