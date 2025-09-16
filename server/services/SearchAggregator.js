@@ -2,6 +2,9 @@ import NewsProvider from '../providers/NewsProvider.js';
 import SocialMediaProvider from '../providers/SocialMediaProvider.js';
 import GovernmentProvider from '../providers/GovernmentProvider.js';
 import WikiProvider from '../providers/WikiProvider.js';
+import GoogleSearchProvider from '../providers/GoogleSearchProvider.js';
+import YouTubeProvider from '../providers/YouTubeProvider.js';
+import BingNewsProvider from '../providers/BingNewsProvider.js';
 
 class SearchAggregator {
   constructor() {
@@ -9,13 +12,17 @@ class SearchAggregator {
       news: new NewsProvider(),
       social: new SocialMediaProvider(),
       government: new GovernmentProvider(),
-      wiki: new WikiProvider()
+      wiki: new WikiProvider(),
+      google_search: new GoogleSearchProvider(),
+      youtube: new YouTubeProvider(),
+      bing_news: new BingNewsProvider()
     };
 
     // Configuration
     this.maxResultsPerProvider = 50;
     this.defaultTimeout = 5000; // 5 seconds
     this.maxTotalResults = 2000; // Respect the paging cap from frontend
+    this.prioritizeColombianContent = process.env.REACT_APP_PRIORITIZE_COLOMBIAN_NEWS !== 'false';
   }
 
   /**
@@ -26,19 +33,34 @@ class SearchAggregator {
    * @param {number} options.limit - Results per page
    * @param {string} options.category - Category filter
    * @param {string} options.sortBy - Sort method (relevance, date, category)
+   * @param {string} options.language - Language preference (es/en)
+   * @param {string} options.region - Region preference (colombia/latam/world)
    * @returns {Promise<Object>} Search response
    */
   async search(options) {
-    const { query, page = 1, limit = 12, category, sortBy = 'relevance' } = options;
+    const { 
+      query, 
+      page = 1, 
+      limit = 12, 
+      category, 
+      sortBy = 'relevance',
+      language = 'es',
+      region = 'colombia'
+    } = options;
 
     try {
+      // Enhanced provider options with region and language
+      const providerOptions = {
+        query,
+        category,
+        maxResults: this.maxResultsPerProvider,
+        language,
+        region
+      };
+
       // Get all provider results in parallel
       const providerPromises = Object.entries(this.providers).map(([name, provider]) => 
-        this.searchProvider(provider, name, {
-          query,
-          category,
-          maxResults: this.maxResultsPerProvider
-        })
+        this.searchProvider(provider, name, providerOptions)
       );
 
       // Wait for all providers with timeout
@@ -78,8 +100,13 @@ class SearchAggregator {
       // Remove duplicates based on URL or title similarity
       allResults = this.deduplicateResults(allResults);
 
-      // Sort results
-      allResults = this.sortResults(allResults, sortBy);
+      // Apply Colombian prioritization if enabled
+      if (this.prioritizeColombianContent && region === 'colombia') {
+        allResults = this.prioritizeColombianResults(allResults);
+      } else {
+        // Sort results normally
+        allResults = this.sortResults(allResults, sortBy);
+      }
 
       // Apply pagination
       const startIndex = (page - 1) * limit;
@@ -103,7 +130,10 @@ class SearchAggregator {
         metadata: {
           deduplicatedFrom: allResults.length,
           categories: this.extractCategories(allResults),
-          queryTerms: this.extractQueryTerms(query)
+          queryTerms: this.extractQueryTerms(query),
+          language,
+          region,
+          prioritizedColombian: this.prioritizeColombianContent && region === 'colombia'
         }
       };
 
@@ -173,6 +203,37 @@ class SearchAggregator {
       .replace(/[^\w\s]/g, '')
       .replace(/\s+/g, ' ')
       .trim();
+  }
+
+  /**
+   * Prioritize Colombian content in search results
+   */
+  prioritizeColombianResults(results) {
+    // Separate results by region and priority
+    const priorityColombianResults = results.filter(r => 
+      r.region === 'colombia' && (r.relevanceScore >= 85 || r.isPriorityChannel)
+    );
+    const colombianResults = results.filter(r => 
+      r.region === 'colombia' && r.relevanceScore < 85 && !r.isPriorityChannel
+    );
+    const latinResults = results.filter(r => r.region === 'latam');
+    const internationalResults = results.filter(r => 
+      r.region === 'international' || (!r.region && r.provider !== 'youtube')
+    );
+    
+    // Sort each group by relevance score
+    priorityColombianResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
+    colombianResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
+    latinResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
+    internationalResults.sort((a, b) => b.relevanceScore - a.relevanceScore);
+    
+    // Return in priority order: Colombian priority, Colombian regular, Latin American, International
+    return [
+      ...priorityColombianResults, 
+      ...colombianResults, 
+      ...latinResults, 
+      ...internationalResults
+    ];
   }
 
   /**

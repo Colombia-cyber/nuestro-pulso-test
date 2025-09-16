@@ -1,11 +1,14 @@
 /**
- * News Provider - Aggregates news content from various sources
- * This is a placeholder implementation that provides realistic mock data
- * In production, this would integrate with real news APIs
+ * News Provider - Integrates with NewsAPI.org for real news content
+ * Provides news from multiple sources with Colombian prioritization
  */
 class NewsProvider {
   constructor() {
     this.name = 'news';
+    this.apiKey = process.env.NEWSAPI_KEY;
+    this.baseUrl = 'https://newsapi.org/v2';
+    this.enabled = process.env.REACT_APP_NEWS_PROVIDER_ENABLED !== 'false';
+    
     this.sources = [
       'El Tiempo',
       'El Espectador', 
@@ -16,59 +19,280 @@ class NewsProvider {
       'La República',
       'Portafolio'
     ];
+
+    // International sources for global coverage
+    this.internationalSources = [
+      'bbc-news',
+      'cnn',
+      'reuters',
+      'associated-press',
+      'the-guardian-uk',
+      'bloomberg',
+      'al-jazeera-english'
+    ];
   }
 
   /**
-   * Search news content
+   * Search news content using NewsAPI.org
    * @param {Object} options - Search options
    * @param {string} options.query - Search query
    * @param {string} options.category - Category filter
    * @param {number} options.maxResults - Maximum results to return
+   * @param {string} options.language - Language preference (es/en)
+   * @param {string} options.region - Region preference (colombia/latam/world)
    * @returns {Promise<Array>} Array of search results
    */
   async search(options) {
-    const { query, category, maxResults = 20 } = options;
+    const { query, category, maxResults = 20, language = 'es', region = 'colombia' } = options;
+
+    if (!this.enabled) {
+      console.warn('News Provider: Disabled, returning mock data');
+      return this.getMockResults(query, category, maxResults);
+    }
+
+    if (!this.apiKey) {
+      console.warn('News Provider: API key not configured, returning mock data');
+      return this.getMockResults(query, category, maxResults);
+    }
 
     try {
-      // Simulate API delay
-      await this.delay(100 + Math.random() * 300);
+      // First search for Colombian/Spanish content
+      let colombianResults = [];
+      let internationalResults = [];
 
-      // Generate realistic news results
-      const results = [];
-      const baseResultCount = Math.min(maxResults, 15);
-      
-      for (let i = 0; i < baseResultCount; i++) {
-        const source = this.sources[Math.floor(Math.random() * this.sources.length)];
-        const newsCategory = category || this.getRandomCategory();
-        const relevanceScore = Math.max(60, 100 - (i * 3) + Math.random() * 10);
-        
-        const result = {
-          id: `news_${Date.now()}_${i}`,
-          title: this.generateNewsTitle(query, newsCategory),
-          summary: this.generateNewsSummary(query, newsCategory),
-          url: `https://noticias.example.com/article/${Date.now()}-${i}`,
-          source: source,
-          category: newsCategory,
-          timestamp: this.generateRecentTimestamp(),
-          relevanceScore: Math.round(relevanceScore),
-          image: this.getCategoryIcon(newsCategory),
-          author: this.generateAuthor(),
-          tags: this.generateTags(query, newsCategory),
-          contentType: 'article',
-          provider: 'news'
-        };
-
-        // Apply category filter if specified
-        if (!category || newsCategory === category) {
-          results.push(result);
-        }
+      if (region === 'colombia' || region === 'latam') {
+        colombianResults = await this.searchColombianNews(query, category, Math.ceil(maxResults * 0.7));
       }
 
-      return results;
+      // Then search for international content
+      if (region === 'world' || region === 'latam' || colombianResults.length < maxResults) {
+        const remainingCount = maxResults - colombianResults.length;
+        internationalResults = await this.searchInternationalNews(query, category, remainingCount, language);
+      }
+
+      // Combine and prioritize results
+      const allResults = [...colombianResults, ...internationalResults];
+      
+      // If we still don't have enough results, fill with mock data
+      if (allResults.length < maxResults / 2) {
+        const mockResults = await this.getMockResults(query, category, maxResults - allResults.length);
+        allResults.push(...mockResults);
+      }
+
+      return allResults.slice(0, maxResults);
+
     } catch (error) {
       console.error('News provider search failed:', error);
+      return this.getMockResults(query, category, maxResults);
+    }
+  }
+
+  /**
+   * Search for Colombian and Latin American news
+   */
+  async searchColombianNews(query, category, maxResults) {
+    try {
+      // Enhance query for Colombian context
+      const enhancedQuery = `${query} (Colombia OR "América Latina" OR Bogotá OR Medellín)`;
+      
+      const params = new URLSearchParams({
+        q: enhancedQuery,
+        language: 'es',
+        sortBy: 'publishedAt',
+        pageSize: Math.min(maxResults, 100),
+        apiKey: this.apiKey
+      });
+
+      const response = await fetch(`${this.baseUrl}/everything?${params}`);
+      
+      if (!response.ok) {
+        throw new Error(`NewsAPI error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (!data.articles || data.articles.length === 0) {
+        return [];
+      }
+
+      return data.articles.map((article, index) => ({
+        id: `news_col_${Date.now()}_${index}`,
+        title: article.title,
+        summary: article.description || '',
+        url: article.url,
+        source: 'NewsAPI',
+        category: this.inferCategory(article.title, article.description, category),
+        timestamp: article.publishedAt,
+        relevanceScore: this.calculateColombianRelevanceScore(article, query),
+        image: this.getCategoryIcon(this.inferCategory(article.title, article.description, category)),
+        author: article.source?.name || article.author || 'NewsAPI',
+        tags: this.generateTags(query, article.title),
+        contentType: 'article',
+        provider: 'news',
+        region: 'colombia',
+        language: 'es',
+        // NewsAPI specific data
+        urlToImage: article.urlToImage,
+        publishedAt: article.publishedAt,
+        sourceName: article.source?.name
+      }));
+
+    } catch (error) {
+      console.error('Colombian news search failed:', error);
       return [];
     }
+  }
+
+  /**
+   * Search for international news
+   */
+  async searchInternationalNews(query, category, maxResults, language) {
+    try {
+      const params = new URLSearchParams({
+        q: query,
+        sources: this.internationalSources.join(','),
+        language: language === 'es' ? 'es' : 'en',
+        sortBy: 'publishedAt',
+        pageSize: Math.min(maxResults, 100),
+        apiKey: this.apiKey
+      });
+
+      const response = await fetch(`${this.baseUrl}/everything?${params}`);
+      
+      if (!response.ok) {
+        throw new Error(`NewsAPI international error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (!data.articles || data.articles.length === 0) {
+        return [];
+      }
+
+      return data.articles.map((article, index) => ({
+        id: `news_intl_${Date.now()}_${index}`,
+        title: article.title,
+        summary: article.description || '',
+        url: article.url,
+        source: 'NewsAPI',
+        category: this.inferCategory(article.title, article.description, category),
+        timestamp: article.publishedAt,
+        relevanceScore: this.calculateRelevanceScore(article, query),
+        image: this.getCategoryIcon(this.inferCategory(article.title, article.description, category)),
+        author: article.source?.name || article.author || 'NewsAPI',
+        tags: this.generateTags(query, article.title),
+        contentType: 'article',
+        provider: 'news',
+        region: 'international',
+        language: language,
+        // NewsAPI specific data
+        urlToImage: article.urlToImage,
+        publishedAt: article.publishedAt,
+        sourceName: article.source?.name
+      }));
+
+    } catch (error) {
+      console.error('International news search failed:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Calculate relevance score for Colombian content
+   */
+  calculateColombianRelevanceScore(article, query) {
+    let score = 70; // Base score for Colombian content
+
+    const text = (article.title + ' ' + article.description + ' ' + article.url).toLowerCase();
+    
+    // Boost for Colombian indicators
+    const colombianIndicators = [
+      'colombia', 'bogotá', 'medellín', 'cali', 'barranquilla',
+      'petro', 'duque', 'uribe', 'congreso', 'senado', '.co'
+    ];
+    
+    const matches = colombianIndicators.filter(indicator => text.includes(indicator));
+    score += matches.length * 8;
+
+    // Boost for known Colombian sources
+    const colombianSources = ['tiempo', 'espectador', 'semana', 'caracol', 'rcn', 'república', 'colombiano'];
+    const sourceMatches = colombianSources.filter(source => text.includes(source));
+    score += sourceMatches.length * 15;
+
+    // Boost for recent content
+    if (article.publishedAt) {
+      const publishedDate = new Date(article.publishedAt);
+      const hoursAgo = (Date.now() - publishedDate.getTime()) / (1000 * 60 * 60);
+      
+      if (hoursAgo < 24) score += 20;
+      else if (hoursAgo < 72) score += 10;
+    }
+
+    return Math.min(100, Math.round(score));
+  }
+
+  /**
+   * Calculate relevance score for international content
+   */
+  calculateRelevanceScore(article, query) {
+    let score = 60; // Base score for international content
+
+    // Boost for recent content
+    if (article.publishedAt) {
+      const publishedDate = new Date(article.publishedAt);
+      const hoursAgo = (Date.now() - publishedDate.getTime()) / (1000 * 60 * 60);
+      
+      if (hoursAgo < 24) score += 15;
+      else if (hoursAgo < 72) score += 8;
+    }
+
+    // Boost for trusted sources
+    const trustedSources = ['bbc', 'reuters', 'associated-press', 'guardian', 'bloomberg'];
+    const sourceName = (article.source?.name || '').toLowerCase();
+    if (trustedSources.some(source => sourceName.includes(source))) {
+      score += 20;
+    }
+
+    return Math.min(100, Math.round(score));
+  }
+
+  /**
+   * Get mock results when API is not available
+   */
+  getMockResults(query, category, maxResults) {
+    const results = [];
+    const baseResultCount = Math.min(maxResults, 15);
+    
+    for (let i = 0; i < baseResultCount; i++) {
+      const source = this.sources[Math.floor(Math.random() * this.sources.length)];
+      const newsCategory = category || this.getRandomCategory();
+      const relevanceScore = Math.max(60, 100 - (i * 3) + Math.random() * 10);
+      
+      const result = {
+        id: `news_mock_${Date.now()}_${i}`,
+        title: this.generateNewsTitle(query, newsCategory),
+        summary: this.generateNewsSummary(query, newsCategory),
+        url: `https://noticias.example.com/article/${Date.now()}-${i}`,
+        source: source,
+        category: newsCategory,
+        timestamp: this.generateRecentTimestamp(),
+        relevanceScore: Math.round(relevanceScore),
+        image: this.getCategoryIcon(newsCategory),
+        author: this.generateAuthor(),
+        tags: this.generateTags(query, newsCategory),
+        contentType: 'article',
+        provider: 'news',
+        region: 'colombia',
+        language: 'es'
+      };
+
+      // Apply category filter if specified
+      if (!category || newsCategory === category) {
+        results.push(result);
+      }
+    }
+
+    return results;
   }
 
   /**

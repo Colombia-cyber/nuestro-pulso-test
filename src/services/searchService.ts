@@ -32,6 +32,8 @@ export interface SearchOptions {
   category?: string;
   sortBy?: 'relevance' | 'date' | 'category';
   includeAdvanced?: boolean;
+  language?: string;
+  region?: string;
 }
 
 // Safely get environment variable with fallback
@@ -134,7 +136,7 @@ class SearchService {
 
   // New API search method using the implemented backend
   private async searchViaAPI(options: SearchOptions): Promise<SearchResponse> {
-    const { query, page = 1, limit = this.defaultLimit, category, sortBy } = options;
+    const { query, page = 1, limit = this.defaultLimit, category, sortBy, language = 'es', region = 'colombia' } = options;
     const startTime = Date.now();
 
     // Use the new API endpoint
@@ -149,6 +151,14 @@ class SearchService {
 
     if (category && category !== 'todos') {
       params.append('category', category);
+    }
+
+    if (language) {
+      params.append('language', language);
+    }
+
+    if (region) {
+      params.append('region', region);
     }
 
     const response = await fetch(`${apiUrl}/api/search?${params}`, {

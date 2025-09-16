@@ -4,7 +4,7 @@ import SearchAggregator from '../services/SearchAggregator.js';
 const router = express.Router();
 const searchAggregator = new SearchAggregator();
 
-// Main search endpoint: GET /api/search?q=query&page=1&limit=12&category=&sort=relevance
+// Main search endpoint: GET /api/search?q=query&page=1&limit=12&category=&sort=relevance&language=es&region=colombia
 router.get('/', async (req, res) => {
   try {
     const {
@@ -12,7 +12,9 @@ router.get('/', async (req, res) => {
       page = 1,
       limit = 12,
       category,
-      sort = 'relevance'
+      sort = 'relevance',
+      language = 'es',
+      region = 'colombia'
     } = req.query;
 
     // Validate query
@@ -29,7 +31,7 @@ router.get('/', async (req, res) => {
     const sortBy = ['relevance', 'date', 'category'].includes(sort) ? sort : 'relevance';
 
     // Log search request
-    console.log(`🔍 Search request: "${query}" (page: ${pageNum}, limit: ${limitNum}, category: ${category || 'all'}, sort: ${sortBy})`);
+    console.log(`🔍 Search request: "${query}" (page: ${pageNum}, limit: ${limitNum}, category: ${category || 'all'}, sort: ${sortBy}, language: ${language}, region: ${region})`);
 
     // Perform search
     const startTime = Date.now();
@@ -38,7 +40,9 @@ router.get('/', async (req, res) => {
       page: pageNum,
       limit: limitNum,
       category: category && category !== 'todos' ? category : undefined,
-      sortBy
+      sortBy,
+      language,
+      region
     });
 
     const searchTime = Date.now() - startTime;

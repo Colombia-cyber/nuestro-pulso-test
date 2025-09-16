@@ -37,6 +37,10 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
   const [infiniteScrollEnabled, setInfiniteScrollEnabled] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [allResults, setAllResults] = useState<SearchResult[]>([]);
+  
+  // New state for region and language filtering
+  const [selectedRegion, setSelectedRegion] = useState('colombia');
+  const [selectedLanguage, setSelectedLanguage] = useState('es');
 
   const inputRef = useRef<HTMLInputElement>(null);
   const searchResultsRef = useRef<HTMLDivElement>(null);
@@ -115,7 +119,9 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
         query: searchQuery,
         page,
         category: category !== 'todos' ? category : undefined,
-        sortBy: sortBy as 'relevance' | 'date' | 'category'
+        sortBy: sortBy as 'relevance' | 'date' | 'category',
+        language: selectedLanguage,
+        region: selectedRegion
       });
 
       if (appendResults && infiniteScrollEnabled) {
@@ -163,7 +169,7 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
       setLoading(false);
       setIsLoadingMore(false);
     }
-  }, [filter, sortBy, updateURL, onResults, infiniteScrollEnabled, allResults]);
+  }, [filter, sortBy, selectedLanguage, selectedRegion, updateURL, onResults, infiniteScrollEnabled, allResults]);
 
   // Handle form submission
   const handleSearch = async (e: React.FormEvent) => {
@@ -409,79 +415,150 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                     </span>
                   )}
                 </span>
-                
-                {/* Category filter */}
-                <select
-                  value={filter}
-                  onChange={e => handleFilterChange(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  aria-label="Filtrar por categoría"
-                >
-                  {allCategories.map(category => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-                </select>
-
-                {/* Sort options */}
-                <select
-                  value={sortBy}
-                  onChange={e => handleSortChange(e.target.value)}
-                  className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  aria-label="Ordenar resultados"
-                >
-                  <option value="relevance">Por relevancia</option>
-                  <option value="date">Por fecha</option>
-                  <option value="category">Por categoría</option>
-                </select>
               </div>
 
-              {/* Display mode toggle */}
-              <div className="flex items-center gap-2" role="group" aria-label="Modo de visualización">
-                <button
-                  onClick={() => setDisplayMode('cards')}
-                  className={`px-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    displayMode === 'cards' 
-                      ? 'bg-blue-100 text-blue-800' 
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                  aria-pressed={displayMode === 'cards'}
-                >
-                  🔲 Tarjetas
-                </button>
-                <button
-                  onClick={() => setDisplayMode('list')}
-                  className={`px-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    displayMode === 'list' 
-                      ? 'bg-blue-100 text-blue-800' 
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                  aria-pressed={displayMode === 'list'}
-                >
-                  📄 Lista
-                </button>
+              {/* First row of filters */}
+              <div className="w-full flex flex-wrap items-center gap-4">
+                {/* Region filter */}
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-600">🌍 Región:</span>
+                  <select
+                    value={selectedRegion}
+                    onChange={e => {
+                      setSelectedRegion(e.target.value);
+                      setCurrentPage(1);
+                      setAllResults([]);
+                      if (query) {
+                        performSearch(query, 1, filter, false);
+                      }
+                    }}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    aria-label="Filtrar por región"
+                  >
+                    <option value="colombia">🇨🇴 Colombia</option>
+                    <option value="latam">🌎 América Latina</option>
+                    <option value="world">🌍 Mundial</option>
+                  </select>
+                </div>
+
+                {/* Language filter */}
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-600">🗣️ Idioma:</span>
+                  <select
+                    value={selectedLanguage}
+                    onChange={e => {
+                      setSelectedLanguage(e.target.value);
+                      setCurrentPage(1);
+                      setAllResults([]);
+                      if (query) {
+                        performSearch(query, 1, filter, false);
+                      }
+                    }}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    aria-label="Seleccionar idioma"
+                  >
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="en">🇺🇸 English</option>
+                  </select>
+                </div>
                 
-                {/* Infinite scroll toggle */}
-                <button
-                  onClick={() => {
-                    setInfiniteScrollEnabled(!infiniteScrollEnabled);
-                    setCurrentPage(1);
-                    setAllResults([]);
-                    if (query) {
-                      performSearch(query, 1, filter, false);
-                    }
-                  }}
-                  className={`px-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                    infiniteScrollEnabled 
-                      ? 'bg-green-100 text-green-800' 
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                  }`}
-                  aria-pressed={infiniteScrollEnabled}
-                  title={infiniteScrollEnabled ? 'Desactivar scroll infinito' : 'Activar scroll infinito'}
-                >
-                  {infiniteScrollEnabled ? '∞ Infinito' : '📄 Páginas'}
-                </button>
+                {/* Category filter */}
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-600">📂 Categoría:</span>
+                  <select
+                    value={filter}
+                    onChange={e => handleFilterChange(e.target.value)}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    aria-label="Filtrar por categoría"
+                  >
+                    {allCategories.map(category => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Sort options */}
+                <div className="flex items-center gap-2">
+                  <span className="text-sm font-medium text-gray-600">🔄 Orden:</span>
+                  <select
+                    value={sortBy}
+                    onChange={e => handleSortChange(e.target.value)}
+                    className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    aria-label="Ordenar resultados"
+                  >
+                    <option value="relevance">Por relevancia</option>
+                    <option value="date">Por fecha</option>
+                    <option value="category">Por categoría</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Second row - Display mode toggles */}
+              <div className="w-full flex items-center justify-between">
+                <div className="flex items-center gap-2" role="group" aria-label="Modo de visualización">
+                  <button
+                    onClick={() => setDisplayMode('cards')}
+                    className={`px-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      displayMode === 'cards' 
+                        ? 'bg-blue-100 text-blue-800' 
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                    aria-pressed={displayMode === 'cards'}
+                  >
+                    🔲 Tarjetas
+                  </button>
+                  <button
+                    onClick={() => setDisplayMode('list')}
+                    className={`px-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      displayMode === 'list' 
+                        ? 'bg-blue-100 text-blue-800' 
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                    aria-pressed={displayMode === 'list'}
+                  >
+                    📄 Lista
+                  </button>
+                  
+                  {/* Infinite scroll toggle */}
+                  <button
+                    onClick={() => {
+                      setInfiniteScrollEnabled(!infiniteScrollEnabled);
+                      setCurrentPage(1);
+                      setAllResults([]);
+                      if (query) {
+                        performSearch(query, 1, filter, false);
+                      }
+                    }}
+                    className={`px-3 py-2 rounded-lg text-sm transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                      infiniteScrollEnabled 
+                        ? 'bg-green-100 text-green-800' 
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                    aria-pressed={infiniteScrollEnabled}
+                    title={infiniteScrollEnabled ? 'Desactivar scroll infinito' : 'Activar scroll infinito'}
+                  >
+                    {infiniteScrollEnabled ? '∞ Infinito' : '📄 Páginas'}
+                  </button>
+                </div>
+
+                {/* Results indicator */}
+                {selectedRegion === 'colombia' && (
+                  <div className="text-sm text-green-700 bg-green-50 px-3 py-1 rounded-full">
+                    🇨🇴 Priorizando contenido colombiano
+                  </div>
+                )}
+                {selectedRegion === 'latam' && (
+                  <div className="text-sm text-blue-700 bg-blue-50 px-3 py-1 rounded-full">
+                    🌎 Incluyendo América Latina
+                  </div>
+                )}
+                {selectedRegion === 'world' && (
+                  <div className="text-sm text-purple-700 bg-purple-50 px-3 py-1 rounded-full">
+                    🌍 Búsqueda mundial
+                  </div>
+                )}
               </div>
             </div>
           </div>
