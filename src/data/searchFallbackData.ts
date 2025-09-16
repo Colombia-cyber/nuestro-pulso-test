@@ -238,3 +238,74 @@ export const getSearchResults = (query: string): SearchResult[] => {
 };
 
 export default fallbackSearchData;
+
+// Simple validation function for manual testing
+export const validateSearchData = () => {
+  const tests = [];
+  
+  try {
+    // Test 1: Facebook search returns multiple results
+    const facebookResults = getSearchResults('Facebook');
+    tests.push({
+      name: 'Facebook search returns multiple results',
+      passed: facebookResults.length > 5 && facebookResults[0].title.includes('Facebook'),
+      details: `Got ${facebookResults.length} results`
+    });
+    
+    // Test 2: Trump search returns relevant results
+    const trumpResults = getSearchResults('Trump');
+    tests.push({
+      name: 'Trump search returns relevant results', 
+      passed: trumpResults.length > 5 && trumpResults[0].title.includes('Trump'),
+      details: `Got ${trumpResults.length} results`
+    });
+    
+    // Test 3: Technology search works
+    const techResults = getSearchResults('tecnología');
+    tests.push({
+      name: 'Technology search returns results',
+      passed: techResults.length > 3,
+      details: `Got ${techResults.length} results`
+    });
+    
+    // Test 4: Unknown queries generate dynamic results
+    const unknownResults = getSearchResults('unknown_topic_xyz123');
+    tests.push({
+      name: 'Unknown queries generate dynamic results',
+      passed: unknownResults.length === 25 && unknownResults[0].title.includes('unknown_topic_xyz123'),
+      details: `Got ${unknownResults.length} dynamic results`
+    });
+    
+    // Test 5: Result structure validation
+    const sampleResult = getSearchResults('Facebook')[0];
+    const hasRequiredFields = ['id', 'title', 'summary', 'source', 'category', 'timestamp', 'relevanceScore', 'link']
+      .every(field => field in sampleResult);
+    tests.push({
+      name: 'Results have proper structure',
+      passed: hasRequiredFields,
+      details: `Required fields: ${hasRequiredFields ? 'All present' : 'Missing some'}`
+    });
+    
+    const passed = tests.filter(t => t.passed).length;
+    const total = tests.length;
+    
+    console.log('🧪 Universal Search Data Validation:');
+    tests.forEach(test => {
+      console.log(`${test.passed ? '✅' : '❌'} ${test.name} - ${test.details}`);
+    });
+    console.log(`\n📊 Results: ${passed}/${total} tests passed`);
+    
+    return { passed, total, tests };
+  } catch (error) {
+    console.error('❌ Validation failed:', error);
+    return { passed: 0, total: tests.length, tests, error };
+  }
+};
+
+// Auto-run validation in development mode
+if (typeof window !== 'undefined' && window.location?.hostname === 'localhost') {
+  // Small delay to let the module load completely
+  setTimeout(() => {
+    validateSearchData();
+  }, 100);
+}
