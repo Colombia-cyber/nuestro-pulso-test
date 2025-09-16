@@ -1,23 +1,54 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { getVisibleCategories } from '../config/categories';
+
+// Safely get environment variable with fallback
+const getEnvVar = (key: string, fallback = ''): string => {
+  if (typeof window !== 'undefined') {
+    // In browser, use import.meta.env for Vite
+    return (import.meta.env as any)[key] || fallback;
+  }
+  return fallback;
+};
+
+interface Reel {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  duration: string;
+  views: number;
+  likes: number;
+  thumbnail: string;
+  author: string;
+  videoUrl?: string;
+  embedUrl?: string;
+}
 
 const PulseReels: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('todos');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [reels, setReels] = useState<Reel[]>([]);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [allReelsLoaded, setAllReelsLoaded] = useState(false);
+  
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  
+  // Configuration
+  const infiniteScrollEnabled = getEnvVar('REACT_APP_REELS_INFINITE_SCROLL', 'true') === 'true';
+  const batchSize = parseInt(getEnvVar('REACT_APP_REELS_LOAD_BATCH_SIZE', '6'));
 
+  // Get categories with technology hidden by default
+  const visibleCategories = getVisibleCategories();
   const categories = [
     { id: 'todos', name: 'Todos', icon: '🎬' },
-    { id: 'politica', name: 'Política', icon: '🏛️' },
-    { id: 'educacion', name: 'Educación', icon: '📚' },
-    { id: 'ambiente', name: 'Ambiente', icon: '🌱' },
-    { id: 'participacion', name: 'Participación', icon: '👥' },
-    { id: 'trump', name: 'Donald Trump', icon: '🇺🇸' },
-    { id: 'congreso', name: 'Congress', icon: '🏛️' },
-    { id: 'terror', name: 'Terror', icon: '🚨' },
-    { id: 'tecnologia', name: 'Technology', icon: '💻' }
+    ...visibleCategories
   ];
 
-  const reels = [
+  // Mock reels data with more entries for testing infinite scroll
+  const allMockReels: Reel[] = [
     {
       id: 1,
       title: 'Cómo participar en el proceso electoral colombiano',
@@ -27,7 +58,8 @@ const PulseReels: React.FC = () => {
       views: 15420,
       likes: 892,
       thumbnail: '🗳️',
-      author: 'Registraduría Nacional'
+      author: 'Registraduría Nacional',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
     {
       id: 2,
@@ -38,7 +70,8 @@ const PulseReels: React.FC = () => {
       views: 23100,
       likes: 1547,
       thumbnail: '🤝',
-      author: 'Fundación Corona'
+      author: 'Fundación Corona',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
     {
       id: 3,
@@ -49,7 +82,8 @@ const PulseReels: React.FC = () => {
       views: 8950,
       likes: 673,
       thumbnail: '💰',
-      author: 'Transparencia Colombia'
+      author: 'Transparencia Colombia',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
     {
       id: 4,
@@ -60,7 +94,8 @@ const PulseReels: React.FC = () => {
       views: 31200,
       likes: 2156,
       thumbnail: '🌍',
-      author: 'WWF Colombia'
+      author: 'WWF Colombia',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
     {
       id: 5,
@@ -71,7 +106,8 @@ const PulseReels: React.FC = () => {
       views: 12340,
       likes: 789,
       thumbnail: '💻',
-      author: 'MinEducación'
+      author: 'MinEducación',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
     {
       id: 6,
@@ -82,40 +118,44 @@ const PulseReels: React.FC = () => {
       views: 19800,
       likes: 1342,
       thumbnail: '⚖️',
-      author: 'Veeduría Ciudadana'
+      author: 'Veeduría Ciudadana',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
     {
       id: 7,
       title: 'Trump: Impacto en las relaciones Colombia-Estados Unidos',
       description: 'Análisis sobre las políticas comerciales de Trump y su efecto en Colombia',
-      category: 'trump',
+      category: 'internacional',
       duration: '6:30',
       views: 45200,
       likes: 2890,
       thumbnail: '🇺🇸',
-      author: 'CNN Colombia'
+      author: 'CNN Colombia',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
     {
       id: 8,
       title: 'Sesión extraordinaria del Congreso sobre reforma tributaria',
       description: 'Cobertura en vivo del debate parlamentario más importante del año',
-      category: 'congreso',
+      category: 'politica',
       duration: '12:45',
       views: 78900,
       likes: 4560,
       thumbnail: '🏛️',
-      author: 'Canal Congreso'
+      author: 'Canal Congreso',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
     {
       id: 9,
       title: 'Alerta de seguridad: Amenazas terroristas en fronteras',
       description: 'Informe especial sobre medidas de seguridad en zonas fronterizas',
-      category: 'terror',
+      category: 'seguridad',
       duration: '8:20',
       views: 23400,
       likes: 1890,
       thumbnail: '🚨',
-      author: 'Caracol Noticias'
+      author: 'Caracol Noticias',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
     {
       id: 10,
@@ -126,40 +166,163 @@ const PulseReels: React.FC = () => {
       views: 34500,
       likes: 2340,
       thumbnail: '💻',
-      author: 'TechColombia'
+      author: 'TechColombia',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+    },
+    // Additional reels for infinite scroll testing
+    {
+      id: 11,
+      title: 'Justicia restaurativa: Nueva esperanza para las víctimas',
+      description: 'Cómo la justicia restaurativa está sanando heridas en Colombia',
+      category: 'social',
+      duration: '7:15',
+      views: 18300,
+      likes: 1205,
+      thumbnail: '⚖️',
+      author: 'Centro de Memoria',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+    },
+    {
+      id: 12,
+      title: 'Economía circular: El futuro sostenible de Colombia',
+      description: 'Empresas colombianas lideran la transición hacia la economía circular',
+      category: 'ambiente',
+      duration: '5:45',
+      views: 26800,
+      likes: 1687,
+      thumbnail: '♻️',
+      author: 'EcoInnovación',
+      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     }
   ];
 
-  // Simulate loading reels
-  useEffect(() => {
+  // Load reels with pagination
+  const loadReels = useCallback(async (pageNum: number, category: string, reset = false) => {
+    if (allReelsLoaded && !reset) return;
+    
     setIsLoading(true);
     setError(null);
     
-    // Simulate API call delay
-    const timer = setTimeout(() => {
-      try {
-        // Simulate potential error (5% chance)
-        if (Math.random() < 0.05) {
-          throw new Error('Error al cargar los reels. Verifica tu conexión.');
-        }
-        setIsLoading(false);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Error desconocido');
-        setIsLoading(false);
+    try {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Simulate potential error (5% chance)
+      if (Math.random() < 0.05) {
+        throw new Error('Error al cargar los reels. Verifica tu conexión.');
       }
-    }, 800);
 
-    return () => clearTimeout(timer);
-  }, [selectedCategory]);
+      // Filter reels by category
+      let filteredReels = category === 'todos' 
+        ? allMockReels 
+        : allMockReels.filter(reel => reel.category === category);
 
-  const filteredReels = selectedCategory === 'todos' 
-    ? reels 
-    : reels.filter(reel => reel.category === selectedCategory);
+      // Paginate reels
+      const startIndex = (pageNum - 1) * batchSize;
+      const endIndex = startIndex + batchSize;
+      const pageReels = filteredReels.slice(startIndex, endIndex);
+
+      if (reset) {
+        setReels(pageReels);
+      } else {
+        setReels(prev => [...prev, ...pageReels]);
+      }
+
+      // Check if there are more reels to load
+      const hasMoreReels = endIndex < filteredReels.length;
+      setHasMore(hasMoreReels);
+      setAllReelsLoaded(!hasMoreReels);
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+      setError(errorMessage);
+      
+      // Show fallback reels on error if no reels are loaded
+      if (reels.length === 0) {
+        setReels(allMockReels.slice(0, batchSize));
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  }, [batchSize, allReelsLoaded, reels.length]);
+
+  // Initialize reels on mount and category change
+  useEffect(() => {
+    setPage(1);
+    setAllReelsLoaded(false);
+    loadReels(1, selectedCategory, true);
+  }, [selectedCategory, loadReels]);
+
+  // Intersection Observer for infinite scroll
+  const lastReelElementRef = useCallback((node: HTMLDivElement) => {
+    if (isLoading) return;
+    if (observerRef.current) observerRef.current.disconnect();
+    
+    observerRef.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore && infiniteScrollEnabled) {
+        setPage(prevPage => {
+          const nextPage = prevPage + 1;
+          loadReels(nextPage, selectedCategory);
+          return nextPage;
+        });
+      }
+    });
+    
+    if (node) observerRef.current.observe(node);
+  }, [isLoading, hasMore, infiniteScrollEnabled, selectedCategory, loadReels]);
+
+  // Manual load more function
+  const handleLoadMore = () => {
+    if (!isLoading && hasMore) {
+      setPage(prevPage => {
+        const nextPage = prevPage + 1;
+        loadReels(nextPage, selectedCategory);
+        return nextPage;
+      });
+    }
+  };
+
+  // Retry function for error state
+  const handleRetry = () => {
+    setError(null);
+    setPage(1);
+    setAllReelsLoaded(false);
+    loadReels(1, selectedCategory, true);
+  };
+
+  // Video embed fallback function
+  const getVideoEmbedContent = (reel: Reel) => {
+    if (reel.embedUrl) {
+      return (
+        <iframe
+          src={reel.embedUrl}
+          title={reel.title}
+          className="w-full h-full"
+          frameBorder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          onError={() => {
+            console.warn(`Failed to load video embed for reel ${reel.id}`);
+          }}
+        />
+      );
+    }
+    
+    // Fallback to thumbnail
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+        <div className="text-center">
+          <div className="text-6xl mb-2">{reel.thumbnail}</div>
+          <p className="text-white text-sm">Video no disponible</p>
+        </div>
+      </div>
+    );
+  };
 
   // Loading skeleton for reels
-  const LoadingSkeletonReels = () => (
+  const LoadingSkeletonReels = ({ count = 6 }: { count?: number }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {[1, 2, 3, 4, 5, 6].map((i) => (
+      {Array.from({ length: count }, (_, i) => (
         <div key={i} className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse">
           <div className="bg-gray-300 h-64"></div>
           <div className="p-4">
@@ -189,13 +352,15 @@ const PulseReels: React.FC = () => {
       <h3 className="text-2xl font-bold text-gray-900 mb-4">Error al cargar Reels</h3>
       <p className="text-gray-600 mb-6">{error}</p>
       <button 
-        onClick={() => window.location.reload()}
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+        onClick={handleRetry}
+        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
       >
         Reintentar
       </button>
     </div>
   );
+
+  const filteredReels = reels;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -204,9 +369,10 @@ const PulseReels: React.FC = () => {
           <h1 className="text-3xl font-bold text-white mb-2">🎬 Pulse Reels</h1>
           <p className="text-white/90">Videos cortos sobre temas cívicos y participación ciudadana</p>
           <div className="mt-4 flex items-center space-x-6 text-white/80">
-            <span>🎥 24 videos esta semana</span>
+            <span>🎥 {filteredReels.length} videos cargados</span>
             <span>👁️ 150K+ visualizaciones</span>
             <span>📱 Contenido móvil</span>
+            {infiniteScrollEnabled && <span>🔄 Scroll infinito activado</span>}
           </div>
         </div>
 
@@ -217,7 +383,8 @@ const PulseReels: React.FC = () => {
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                disabled={isLoading}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   selectedCategory === category.id
                     ? 'bg-blue-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -230,71 +397,108 @@ const PulseReels: React.FC = () => {
           </div>
         </div>
 
-        {/* Reels Grid */}
-        <div className="mb-8">
-          {isLoading ? (
-            <LoadingSkeletonReels />
-          ) : error ? (
-            <ErrorStateReels />
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredReels.map((reel) => (
-            <div key={reel.id} className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer">
-              {/* Thumbnail */}
-              <div className="relative bg-gradient-to-br from-blue-500 to-purple-600 h-64 flex items-center justify-center group-hover:scale-105 transition-transform">
-                <div className="text-6xl">{reel.thumbnail}</div>
-                <div className="absolute bottom-4 right-4 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm">
-                  {reel.duration}
-                </div>
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
-                  <div className="text-white text-6xl opacity-0 group-hover:opacity-100 transition-opacity">
-                    ▶️
-                  </div>
-                </div>
-              </div>
+        {/* Error State */}
+        {error && reels.length === 0 && <ErrorStateReels />}
 
-              {/* Content */}
-              <div className="p-4">
-                <div className="flex items-center space-x-2 mb-2">
-                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                    reel.category === 'politica' ? 'bg-blue-100 text-blue-800' :
-                    reel.category === 'participacion' ? 'bg-green-100 text-green-800' :
-                    reel.category === 'ambiente' ? 'bg-emerald-100 text-emerald-800' :
-                    reel.category === 'educacion' ? 'bg-purple-100 text-purple-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {categories.find(c => c.id === reel.category)?.name}
-                  </span>
-                  <span className="text-xs text-gray-500">{reel.author}</span>
-                </div>
-                
-                <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600">
-                  {reel.title}
-                </h3>
-                
-                <p className="text-gray-600 text-sm mb-3 line-clamp-2">{reel.description}</p>
-                
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <div className="flex items-center space-x-3">
-                    <span className="flex items-center space-x-1">
-                      <span>👁️</span>
-                      <span>{reel.views.toLocaleString()}</span>
-                    </span>
-                    <span className="flex items-center space-x-1">
-                      <span>❤️</span>
-                      <span>{reel.likes.toLocaleString()}</span>
-                    </span>
+        {/* Reels Grid */}
+        {!error || reels.length > 0 ? (
+          <div className="mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredReels.map((reel, index) => (
+                <div 
+                  key={reel.id} 
+                  className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer"
+                  ref={infiniteScrollEnabled && index === filteredReels.length - 1 ? lastReelElementRef : null}
+                >
+                  {/* Video/Thumbnail */}
+                  <div className="relative h-64 group-hover:scale-105 transition-transform overflow-hidden">
+                    {getVideoEmbedContent(reel)}
+                    <div className="absolute bottom-4 right-4 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm">
+                      {reel.duration}
+                    </div>
+                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
+                      <div className="text-white text-6xl opacity-0 group-hover:opacity-100 transition-opacity">
+                        ▶️
+                      </div>
+                    </div>
                   </div>
-                  <button className="text-blue-600 hover:text-blue-800 font-medium">
-                    Ver ahora
-                  </button>
+
+                  {/* Content */}
+                  <div className="p-4">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        reel.category === 'politica' ? 'bg-blue-100 text-blue-800' :
+                        reel.category === 'participacion' ? 'bg-green-100 text-green-800' :
+                        reel.category === 'ambiente' ? 'bg-emerald-100 text-emerald-800' :
+                        reel.category === 'educacion' ? 'bg-purple-100 text-purple-800' :
+                        reel.category === 'social' ? 'bg-pink-100 text-pink-800' :
+                        reel.category === 'internacional' ? 'bg-yellow-100 text-yellow-800' :
+                        reel.category === 'seguridad' ? 'bg-red-100 text-red-800' :
+                        'bg-gray-100 text-gray-800'
+                      }`}>
+                        {categories.find(c => c.id === reel.category)?.name || reel.category}
+                      </span>
+                      <span className="text-xs text-gray-500">{reel.author}</span>
+                    </div>
+                    
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600">
+                      {reel.title}
+                    </h3>
+                    
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{reel.description}</p>
+                    
+                    <div className="flex items-center justify-between text-sm text-gray-500">
+                      <div className="flex items-center space-x-3">
+                        <span className="flex items-center space-x-1">
+                          <span>👁️</span>
+                          <span>{reel.views.toLocaleString()}</span>
+                        </span>
+                        <span className="flex items-center space-x-1">
+                          <span>❤️</span>
+                          <span>{reel.likes.toLocaleString()}</span>
+                        </span>
+                      </div>
+                      <button className="text-blue-600 hover:text-blue-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
+                        Ver ahora
+                      </button>
+                    </div>
+                  </div>
                 </div>
+              ))}
+            </div>
+
+            {/* Loading more indicator */}
+            {isLoading && reels.length > 0 && (
+              <div className="mt-6">
+                <LoadingSkeletonReels count={3} />
               </div>
-            </div>
-          ))}
-            </div>
-          )}
-        </div>
+            )}
+
+            {/* Manual Load More Button (shown when infinite scroll is disabled or on error) */}
+            {!infiniteScrollEnabled && hasMore && !isLoading && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={handleLoadMore}
+                  className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                >
+                  Cargar más reels
+                </button>
+              </div>
+            )}
+
+            {/* End of content indicator */}
+            {!hasMore && reels.length > 0 && (
+              <div className="text-center mt-8 text-gray-500">
+                <p>✨ Has visto todos los reels disponibles</p>
+              </div>
+            )}
+          </div>
+        ) : null}
+
+        {/* Initial Loading State */}
+        {isLoading && reels.length === 0 && !error && (
+          <LoadingSkeletonReels />
+        )}
 
         {/* Featured Live Stream */}
         <div className="mt-8 bg-red-50 border border-red-200 rounded-lg p-6">
@@ -314,7 +518,7 @@ const PulseReels: React.FC = () => {
                 <span>⏰ Comenzó hace 1h 23m</span>
               </div>
             </div>
-            <button className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 font-semibold">
+            <button className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
               Unirse
             </button>
           </div>
@@ -335,7 +539,9 @@ const PulseReels: React.FC = () => {
             ].map((hashtag, index) => (
               <span
                 key={index}
-                className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium cursor-pointer hover:bg-blue-200"
+                className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium cursor-pointer hover:bg-blue-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+                tabIndex={0}
+                role="button"
               >
                 {hashtag}
               </span>
