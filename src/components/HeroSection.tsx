@@ -1,17 +1,22 @@
 import React from 'react';
+import GlobalSearchBar from './GlobalSearchBar';
 
 interface HeroSectionProps {
   onNavigate: (view: string) => void;
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
+  const handleSearchResults = () => {
+    onNavigate('search');
+  };
+
   return (
     <div className="relative bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 min-h-screen flex items-center justify-center">
       {/* Glass morphism overlay */}
       <div className="absolute inset-0 bg-white bg-opacity-20 backdrop-blur-lg"></div>
       
       {/* Content */}
-      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+      <div className="relative z-10 text-center px-4 max-w-6xl mx-auto">
         <div className="bg-white bg-opacity-30 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white border-opacity-30">
           {/* Colombian Flag Colors Accent */}
           <div className="flex justify-center mb-6">
@@ -30,10 +35,19 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
             Red Cívica de Colombia - Tu Voz Cuenta
           </p>
           
-          <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-700 mb-8 max-w-3xl mx-auto">
             Únete a la conversación nacional. Participa en debates, encuestas y chat en vivo 
             para construir el futuro de Colombia juntos.
           </p>
+
+          {/* Global Search Bar */}
+          <div className="mb-8">
+            <GlobalSearchBar 
+              onResults={handleSearchResults}
+              onSearch={handleSearchResults}
+              autoFocus={false}
+            />
+          </div>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button 

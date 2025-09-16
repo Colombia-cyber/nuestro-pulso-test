@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import UniversalSearchBar from "./UniversalSearchBar";
+import LocalSearchBar from "./LocalSearchBar";
 
 interface NavbarProps {
   onNavigate?: (view: string) => void;
@@ -26,8 +26,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         </div>
 
         {/* Desktop Search Bar */}
-        <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
-          <UniversalSearchBar 
+        <div className="flex flex-1 max-w-2xl mx-8">
+          <LocalSearchBar 
             compact={true}
             onResults={() => handleNavClick('search')}
           />
@@ -66,7 +66,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
           {/* Mobile/Tablet Search Button */}
           <button 
             onClick={() => setShowSearchModal(true)}
-            className="lg:hidden text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+            className="hidden text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
           >
             <span>🔍</span>
             <span className="hidden xl:inline">Buscar</span>
@@ -227,7 +227,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center p-4">
           <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-900">🔍 Búsqueda Universal</h2>
+              <h2 className="text-2xl font-bold text-gray-900">🇨🇴 Búsqueda Colombia</h2>
               <button 
                 onClick={() => setShowSearchModal(false)}
                 className="text-gray-500 hover:text-gray-700 text-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 rounded"
@@ -237,7 +237,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
               </button>
             </div>
             <div className="p-6">
-              <UniversalSearchBar 
+              <LocalSearchBar 
                 autoFocus={true}
                 onResults={() => {
                   setShowSearchModal(false);
