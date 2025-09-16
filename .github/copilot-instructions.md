@@ -18,10 +18,10 @@ Always reference these instructions first and fallback to search or bash command
 
 ### Build and Development Times - VALIDATED
 - **NEVER CANCEL**: Firebase CLI installation takes 30+ minutes minimum. Set timeout to 60+ minutes.
-- `npm install` - 1 minute 20 seconds (validated)
-- `npm run lint` - 2 seconds (validated)
-- `npm run build` - 5 seconds including TypeScript compilation (validated)
-- `npm run dev` - starts in 200ms, runs continuously (validated)
+- `npm install` - 1 minute 26 seconds (validated: matches documented 1m 20s)
+- `npm run lint` - 1.5 seconds (validated: faster than documented 2s)
+- `npm run build` - 5.7 seconds including TypeScript compilation (validated: matches documented 5s)
+- `npm run dev` - starts in 186ms, runs continuously (validated: matches documented 200ms)
 
 ### Dependencies and Configuration
 - React 18.2.0 with TypeScript
@@ -50,6 +50,10 @@ Always reference these instructions first and fallback to search or bash command
   7. Check browser console for any Firebase-related errors
   8. Test authentication flow if modified
 - Take screenshots of any UI changes for verification
+
+### Application Screenshot - Validation
+![Nuestro Pulso Homepage](https://github.com/user-attachments/assets/d612f8e5-bb72-420d-8f74-9b3b816ebe91)
+*Validated: Application loads successfully at http://localhost:5173 showing the complete homepage with navigation, hero section, polls, and news sections*
 
 ### CI/CD Pipeline Requirements
 - **ALWAYS** run `npm run lint` before committing - CI will fail if linting errors exist
@@ -100,8 +104,8 @@ Always reference these instructions first and fallback to search or bash command
 
 #### npm install output
 ```
-added 350 packages, and audited 351 packages in 1m
-68 packages are looking for funding
+added 436 packages, and audited 437 packages in 1m
+86 packages are looking for funding
 12 moderate severity vulnerabilities
 ```
 
@@ -116,18 +120,19 @@ added 350 packages, and audited 351 packages in 1m
 ```
 > tsc && vite build
 vite v5.4.20 building for production...
-✓ 40 modules transformed.
-dist/index.html                    1.57 kB │ gzip:  0.66 kB
-dist/assets/index-BSYGTbdl.css     35.83 kB │ gzip:  6.08 kB
-dist/assets/index-BjRvGS8A.js      73.87 kB │ gzip: 18.49 kB
-dist/assets/react-vendor.js       140.87 kB │ gzip: 45.26 kB
-✓ built in 1.59s
+✓ 48 modules transformed.
+dist/index.html                         1.57 kB │ gzip:  0.67 kB
+dist/assets/index-D18Hm01C.css         42.16 kB │ gzip:  6.85 kB
+dist/assets/firebase-l0sNRNKZ.js        0.00 kB │ gzip:  0.02 kB
+dist/assets/react-vendor-nf7bT_Uh.js  140.87 kB │ gzip: 45.26 kB
+dist/assets/index-suYRjGUS.js         143.72 kB │ gzip: 38.17 kB
+✓ built in 1.83s
 ```
 
 #### npm run dev success
 ```
 > vite
-VITE v5.4.20  ready in 214 ms
+VITE v5.4.20  ready in 186 ms
 ➜  Local:   http://localhost:5173/
 ➜  Network: use --host to expose
 ```
@@ -169,17 +174,17 @@ REACT_APP_FIREBASE_MEASUREMENT_ID=your_measurement_id
 ### Build and Test Validation Commands
 ```bash
 # Complete validation sequence (run in this order):
-npm install                    # 1m 20s
-npm run lint                   # 2s - must pass
-npm run build                  # 5s - must succeed  
-npm run dev                    # starts in 200ms
+npm install                    # 1m 26s
+npm run lint                   # 1.5s - must pass
+npm run build                  # 5.7s - must succeed  
+npm run dev                    # starts in 186ms
 # Navigate to http://localhost:5173 and test functionality
 ```
 
 ### Quick Setup for New Clones
 ```bash
 # Skip Firebase CLI if not needed for your changes:
-npm install                    # Fast setup - 1m 20s
+npm install                    # Fast setup - 1m 26s
 cp .env.example .env          # Configure if needed
-npm run dev                    # Start development - 200ms
+npm run dev                    # Start development - 186ms
 ```
