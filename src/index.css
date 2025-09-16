@@ -1,9 +1,58 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Colombian-themed base styles */
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #FFF9E6 0%, #F0F8FF 50%, #FFF0F0 100%);
+  min-height: 100vh;
+}
+
+/* Colombian color utilities */
+@layer utilities {
+  .text-colombia-yellow { color: #FFED00; }
+  .text-colombia-blue { color: #003893; }
+  .text-colombia-red { color: #CE1126; }
+  .bg-colombia-yellow { background-color: #FFED00; }
+  .bg-colombia-blue { background-color: #003893; }
+  .bg-colombia-red { background-color: #CE1126; }
+  
+  .colombia-shadow {
+    box-shadow: 0 10px 25px rgba(255, 237, 0, 0.1), 
+                0 8px 20px rgba(0, 56, 147, 0.1), 
+                0 6px 15px rgba(206, 17, 38, 0.1);
+  }
+  
+  .colombia-glow {
+    box-shadow: 0 0 20px rgba(255, 237, 0, 0.3),
+                0 0 40px rgba(0, 56, 147, 0.2),
+                0 0 60px rgba(206, 17, 38, 0.1);
+  }
+}
+
+/* Colombian-themed components */
+@layer components {
+  .btn-colombia {
+    @apply bg-colombia-gradient text-white font-bold py-3 px-6 rounded-lg shadow-lg hover:scale-105 transition-all duration-300 colombia-glow;
+  }
+  
+  .card-colombia {
+    @apply bg-white/90 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 colombia-shadow;
+  }
+  
+  .navbar-colombia {
+    @apply bg-white/95 backdrop-blur-lg border-b border-white/20 colombia-shadow;
+  }
+  
+  .colombia-pattern-bg {
+    background-image: 
+      radial-gradient(circle at 1px 1px, rgba(255,237,0,0.15) 1px, transparent 0),
+      radial-gradient(circle at 20px 20px, rgba(0,56,147,0.1) 1px, transparent 0),
+      radial-gradient(circle at 40px 10px, rgba(206,17,38,0.1) 1px, transparent 0);
+    background-size: 40px 40px, 60px 60px, 80px 80px;
+  }
 }

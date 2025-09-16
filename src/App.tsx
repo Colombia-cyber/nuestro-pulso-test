@@ -30,7 +30,7 @@ function App() {
   };
 
   return (
-    <div>
+    <div className="min-h-screen colombia-pattern-bg">
       <Navbar onNavigate={handleNavigate} />
       <div className="pt-20">
         {renderCurrentView()}

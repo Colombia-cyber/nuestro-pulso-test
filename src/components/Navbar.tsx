@@ -18,14 +18,25 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
 
   return (
     <>
-      <nav className="w-full bg-white shadow-sm py-4 px-4 md:px-8 flex flex-row items-center justify-between fixed top-0 left-0 z-50">
-        {/* Logo and Brand */}
-        <div className="flex items-center gap-2">
-          <img src="/colombia-flag.png" alt="Colombia Flag" className="w-10 h-7" />
-          <span className="font-bold text-lg text-yellow-700">Nuestro Pulso</span>
+      <nav className="w-full navbar-colombia py-4 px-4 md:px-8 flex flex-row items-center justify-between fixed top-0 left-0 z-50">
+        {/* Enhanced Logo and Brand with Colombian elements */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-8 bg-colombia-yellow rounded-sm"></div>
+            <div className="w-3 h-8 bg-colombia-blue rounded-sm"></div>
+            <div className="w-3 h-8 bg-colombia-red rounded-sm"></div>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold text-xl bg-colombia-gradient bg-clip-text text-transparent">
+              🇨🇴 Nuestro Pulso
+            </span>
+            <span className="text-xs text-colombia-blue font-medium -mt-1">
+              Red Cívica de Colombia
+            </span>
+          </div>
         </div>
 
-        {/* Desktop Search Bar */}
+        {/* Desktop Search Bar with Colombian styling */}
         <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
           <UniversalSearchBar 
             compact={true}
@@ -33,42 +44,42 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
           />
         </div>
         
-        {/* Desktop Navigation */}
+        {/* Enhanced Desktop Navigation with Colombian colors */}
         <div className="hidden md:flex gap-4 xl:gap-6 items-center">
           <button 
             onClick={() => handleNavClick('home')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+            className="text-colombia-blue font-semibold hover:text-colombia-red transition-colors duration-300 flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/50 group"
           >
-            <span>🏠</span>
+            <span className="text-lg group-hover:scale-110 transition-transform">🏠</span>
             <span className="hidden xl:inline">Inicio</span>
           </button>
           <button 
             onClick={() => handleNavClick('news')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+            className="text-colombia-blue font-semibold hover:text-colombia-red transition-colors duration-300 flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/50 group"
           >
-            <span>📰</span>
+            <span className="text-lg group-hover:scale-110 transition-transform">📰</span>
             <span className="hidden xl:inline">Noticias</span>
           </button>
           <button 
             onClick={() => handleNavClick('community-hub')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+            className="text-colombia-blue font-semibold hover:text-colombia-red transition-colors duration-300 flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/50 group"
           >
-            <span>💭</span>
-            <span className="hidden xl:inline">Community Hub</span>
+            <span className="text-lg group-hover:scale-110 transition-transform">💭</span>
+            <span className="hidden xl:inline">Comunidad</span>
           </button>
           <button 
             onClick={() => handleNavClick('encuestas')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+            className="text-colombia-blue font-semibold hover:text-colombia-red transition-colors duration-300 flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/50 group"
           >
-            <span>📊</span>
+            <span className="text-lg group-hover:scale-110 transition-transform">📊</span>
             <span className="hidden xl:inline">Encuestas</span>
           </button>
           {/* Mobile/Tablet Search Button */}
           <button 
             onClick={() => setShowSearchModal(true)}
-            className="lg:hidden text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+            className="lg:hidden text-colombia-blue font-semibold hover:text-colombia-red transition-colors duration-300 flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-white/50 group"
           >
-            <span>🔍</span>
+            <span className="text-lg group-hover:scale-110 transition-transform">🔍</span>
             <span className="hidden xl:inline">Buscar</span>
           </button>
         </div>
@@ -76,7 +87,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         {/* Mobile menu button */}
         <button
           onClick={() => setShowMobileMenu(!showMobileMenu)}
-          className="md:hidden text-blue-900 p-2 rounded-lg hover:bg-blue-50"
+          className="md:hidden text-colombia-blue p-2 rounded-lg hover:bg-white/50"
           aria-label="Menú de navegación"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -84,16 +95,15 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
           </svg>
         </button>
 
-        {/* Social Icons - Desktop Only */}
+        {/* Enhanced Social Icons with Colombian styling */}
         <div className="hidden xl:flex items-center gap-4 ml-4">
-          {/* Social Icons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             <a 
               href="https://www.google.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
-              title="Google"
+              className="text-2xl hover:scale-125 transition-transform duration-300 cursor-pointer colombia-glow"
+              title="Búsqueda Google"
             >
               🌐
             </a>
@@ -101,8 +111,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
               href="https://www.youtube.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
-              title="YouTube"
+              className="text-2xl hover:scale-125 transition-transform duration-300 cursor-pointer colombia-glow"
+              title="YouTube Colombia"
             >
               📺
             </a>
@@ -110,7 +120,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
               href="https://www.facebook.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
+              className="text-2xl hover:scale-125 transition-transform duration-300 cursor-pointer colombia-glow"
               title="Facebook"
             >
               📘
@@ -119,68 +129,68 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
               href="https://www.twitter.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
+              className="text-2xl hover:scale-125 transition-transform duration-300 cursor-pointer colombia-glow"
               title="Twitter"
             >
               🐦
             </a>
           </div>
-          <button className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white px-4 py-2 rounded-lg font-bold shadow hover:scale-105 transition">
-            Ingresar
+          <button className="btn-colombia">
+            🔑 Ingresar
           </button>
         </div>
       </nav>
 
-      {/* Mobile Menu */}
+      {/* Enhanced Mobile Menu with Colombian styling */}
       {showMobileMenu && (
         <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-60 top-20">
-          <div className="bg-white w-full max-w-sm ml-auto h-full shadow-xl p-6">
+          <div className="bg-white/95 backdrop-blur-lg w-full max-w-sm ml-auto h-full shadow-xl p-6 colombia-pattern-bg">
             <div className="flex flex-col space-y-4">
               <button 
                 onClick={() => handleNavClick('home')}
-                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+                className="text-colombia-blue font-semibold hover:text-colombia-red transition-colors duration-300 flex items-center gap-3 p-4 rounded-lg hover:bg-white/70 group"
               >
-                <span className="text-xl">🏠</span>
+                <span className="text-xl group-hover:scale-110 transition-transform">🏠</span>
                 <span>Inicio</span>
               </button>
               <button 
                 onClick={() => handleNavClick('news')}
-                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+                className="text-colombia-blue font-semibold hover:text-colombia-red transition-colors duration-300 flex items-center gap-3 p-4 rounded-lg hover:bg-white/70 group"
               >
-                <span className="text-xl">📰</span>
+                <span className="text-xl group-hover:scale-110 transition-transform">📰</span>
                 <span>Noticias</span>
               </button>
               <button 
                 onClick={() => handleNavClick('community-hub')}
-                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+                className="text-colombia-blue font-semibold hover:text-colombia-red transition-colors duration-300 flex items-center gap-3 p-4 rounded-lg hover:bg-white/70 group"
               >
-                <span className="text-xl">💭</span>
-                <span>Community Hub</span>
+                <span className="text-xl group-hover:scale-110 transition-transform">💭</span>
+                <span>Comunidad</span>
               </button>
               <button 
                 onClick={() => handleNavClick('encuestas')}
-                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+                className="text-colombia-blue font-semibold hover:text-colombia-red transition-colors duration-300 flex items-center gap-3 p-4 rounded-lg hover:bg-white/70 group"
               >
-                <span className="text-xl">📊</span>
+                <span className="text-xl group-hover:scale-110 transition-transform">📊</span>
                 <span>Encuestas</span>
               </button>
               <button 
                 onClick={() => setShowSearchModal(true)}
-                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+                className="text-colombia-blue font-semibold hover:text-colombia-red transition-colors duration-300 flex items-center gap-3 p-4 rounded-lg hover:bg-white/70 group"
               >
-                <span className="text-xl">🔍</span>
+                <span className="text-xl group-hover:scale-110 transition-transform">🔍</span>
                 <span>Buscar</span>
               </button>
               
-              <div className="border-t border-gray-200 my-4"></div>
+              <div className="border-t border-colombia-blue/20 my-4"></div>
               
               {/* Social Icons in Mobile */}
-              <div className="flex items-center justify-around">
+              <div className="flex items-center justify-around py-4">
                 <a 
                   href="https://www.google.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-3xl hover:scale-110 transition-transform cursor-pointer"
+                  className="text-3xl hover:scale-125 transition-transform duration-300 cursor-pointer"
                   title="Google"
                 >
                   🌐
@@ -189,7 +199,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
                   href="https://www.youtube.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-3xl hover:scale-110 transition-transform cursor-pointer"
+                  className="text-3xl hover:scale-125 transition-transform duration-300 cursor-pointer"
                   title="YouTube"
                 >
                   📺
@@ -198,7 +208,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
                   href="https://www.facebook.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-3xl hover:scale-110 transition-transform cursor-pointer"
+                  className="text-3xl hover:scale-125 transition-transform duration-300 cursor-pointer"
                   title="Facebook"
                 >
                   📘
@@ -207,30 +217,32 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
                   href="https://www.twitter.com" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="text-3xl hover:scale-110 transition-transform cursor-pointer"
+                  className="text-3xl hover:scale-125 transition-transform duration-300 cursor-pointer"
                   title="Twitter"
                 >
                   🐦
                 </a>
               </div>
               
-              <button className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white px-6 py-3 rounded-lg font-bold shadow hover:scale-105 transition mt-4">
-                Ingresar
+              <button className="btn-colombia w-full">
+                🔑 Ingresar
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Search Modal for Mobile/Tablet */}
+      {/* Enhanced Search Modal with Colombian styling */}
       {showSearchModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-900">🔍 Búsqueda Universal</h2>
+          <div className="card-colombia max-w-4xl w-full max-h-[90vh] overflow-y-auto colombia-pattern-bg">
+            <div className="flex items-center justify-between p-6 border-b border-colombia-blue/20">
+              <h2 className="text-2xl font-bold bg-colombia-gradient bg-clip-text text-transparent">
+                🔍 Búsqueda Universal de Colombia
+              </h2>
               <button 
                 onClick={() => setShowSearchModal(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 rounded"
+                className="text-colombia-red hover:text-colombia-blue text-2xl focus:outline-none focus:ring-2 focus:ring-colombia-blue rounded transition-colors duration-300"
                 aria-label="Cerrar búsqueda"
               >
                 ✕

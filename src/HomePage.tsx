@@ -16,71 +16,89 @@ const HomePage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen colombia-pattern-bg">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          Bienvenido a Nuestro Pulso
-        </h1>
-        <p className="text-center text-gray-600 mb-12">
-          La plataforma líder de participación cívica en Colombia
-        </p>
+        {/* Enhanced Colombian Hero Text */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold mb-4 bg-colombia-gradient bg-clip-text text-transparent">
+            🇨🇴 Bienvenido a Nuestro Pulso
+          </h1>
+          <p className="text-xl text-colombia-blue font-medium mb-2">
+            La plataforma líder de participación cívica en Colombia
+          </p>
+          <div className="flex items-center justify-center gap-1 mt-4">
+            <div className="w-8 h-2 bg-colombia-yellow rounded-full"></div>
+            <div className="w-8 h-2 bg-colombia-blue rounded-full"></div>
+            <div className="w-8 h-2 bg-colombia-red rounded-full"></div>
+          </div>
+        </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-semibold mb-4 text-blue-600">Chat en Vivo</h3>
-            <p className="text-gray-600">
+        {/* Enhanced Feature Cards with Colombian styling */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="card-colombia p-6 hover:scale-105 transition-transform duration-300">
+            <div className="text-3xl mb-4 text-center">💬</div>
+            <h3 className="text-xl font-semibold mb-4 text-colombia-blue">Chat en Vivo</h3>
+            <p className="text-gray-700">
               Únete a conversaciones en tiempo real sobre temas de interés nacional.
             </p>
+            <div className="mt-4 w-full h-1 bg-colombia-gradient rounded-full"></div>
           </div>
           
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-semibold mb-4 text-green-600">Debates</h3>
-            <p className="text-gray-600">
+          <div className="card-colombia p-6 hover:scale-105 transition-transform duration-300">
+            <div className="text-3xl mb-4 text-center">🗣️</div>
+            <h3 className="text-xl font-semibold mb-4 text-colombia-blue">Debates</h3>
+            <p className="text-gray-700">
               Participa en debates estructurados sobre políticas públicas.
             </p>
+            <div className="mt-4 w-full h-1 bg-colombia-gradient rounded-full"></div>
           </div>
           
-          <div className="bg-white rounded-lg shadow-md p-6 ring-2 ring-yellow-400 relative overflow-hidden">
-            <div className="absolute top-2 right-2 bg-gradient-to-r from-yellow-400 to-red-500 text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">
+          <div className="card-colombia p-6 ring-2 ring-colombia-yellow relative overflow-hidden hover:scale-105 transition-transform duration-300">
+            <div className="absolute top-2 right-2 bg-colombia-gradient text-white text-xs font-bold px-2 py-1 rounded-full animate-pulse">
               🔥 POPULAR
             </div>
-            <h3 className="text-xl font-semibold mb-4 text-purple-600 flex items-center gap-2">
-              <span>📊</span>
+            <div className="text-3xl mb-4 text-center">📊</div>
+            <h3 className="text-xl font-semibold mb-4 text-colombia-red flex items-center gap-2">
               <span>Encuestas</span>
             </h3>
-            <p className="text-gray-600 mb-3">
+            <p className="text-gray-700 mb-3">
               Comparte tu opinión en encuestas sobre temas de actualidad y política nacional.
             </p>
-            <div className="text-sm text-purple-600 font-semibold">
+            <div className="text-sm text-colombia-red font-semibold">
               +48,000 votos esta semana
             </div>
+            <div className="mt-4 w-full h-1 bg-colombia-gradient rounded-full"></div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-xl font-semibold mb-4 text-orange-600">Noticias Conservadoras</h3>
-            <p className="text-gray-600">
-              Mantente informado sobre perspectivas conservadoras y cobertura electoral.
+          <div className="card-colombia p-6 hover:scale-105 transition-transform duration-300">
+            <div className="text-3xl mb-4 text-center">📰</div>
+            <h3 className="text-xl font-semibold mb-4 text-colombia-blue">Noticias Nacionales</h3>
+            <p className="text-gray-700">
+              Mantente informado sobre todas las perspectivas y cobertura electoral colombiana.
             </p>
+            <div className="mt-4 w-full h-1 bg-colombia-gradient rounded-full"></div>
           </div>
         </div>
 
-        {/* Featured Polls Preview Section */}
+        {/* Enhanced Polls Preview Section with Colombian styling */}
         <div className="mt-12 mb-8">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500">
-                <span className="text-white text-xl">🔥</span>
+              <div className="p-3 rounded-lg bg-colombia-gradient colombia-glow">
+                <span className="text-white text-2xl">🔥</span>
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">Encuestas Trending</h2>
-                <p className="text-gray-600 text-sm">
+                <h2 className="text-3xl font-bold bg-colombia-gradient bg-clip-text text-transparent">
+                  Encuestas Trending
+                </h2>
+                <p className="text-colombia-blue font-medium">
                   Las encuestas más populares del momento
                 </p>
               </div>
             </div>
             <a 
               href="/encuestas" 
-              className="text-blue-600 hover:text-blue-800 font-semibold text-sm transition-colors"
+              className="bg-colombia-gradient text-white px-6 py-3 rounded-lg font-bold hover:scale-105 transition-transform duration-300 colombia-glow"
             >
               Ver todas →
             </a>
@@ -88,52 +106,73 @@ const HomePage: React.FC = () => {
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {trendingPolls.map((poll) => (
-              <PollCard
-                key={poll.id}
-                poll={poll}
-                onVote={handleVote}
-                onViewDetails={handleViewDetails}
-                compact={true}
-              />
+              <div key={poll.id} className="card-colombia overflow-hidden">
+                <PollCard
+                  poll={poll}
+                  onVote={handleVote}
+                  onViewDetails={handleViewDetails}
+                  compact={true}
+                />
+              </div>
             ))}
           </div>
 
           {trendingPolls.length === 0 && (
-            <div className="text-center py-8 bg-white/50 rounded-lg border border-gray-200">
-              <span className="text-4xl mb-2 block">📊</span>
-              <p className="text-gray-600">No hay encuestas trending en este momento</p>
+            <div className="text-center py-12 card-colombia">
+              <span className="text-6xl mb-4 block">📊</span>
+              <p className="text-colombia-blue text-lg">No hay encuestas trending en este momento</p>
             </div>
           )}
         </div>
 
-        {/* Right Wing News Preview Section */}
-        <div className="mt-12 bg-gradient-to-r from-orange-400 to-red-500 rounded-lg p-6">
-          <h2 className="text-2xl font-bold text-white mb-4">🗳️ Noticias Conservadoras y Elecciones</h2>
-          <p className="text-white/90 mb-6">
-            Últimas noticias sobre política conservadora, candidatos, encuestas electorales y análisis de derecha
+        {/* Enhanced News Preview Section with Colombian styling */}
+        <div className="mt-12 bg-colombia-gradient rounded-xl p-8 colombia-glow">
+          <h2 className="text-3xl font-bold text-white mb-4 flex items-center gap-3">
+            <span>🗳️</span>
+            <span>Noticias Colombianas</span>
+            <span>🇨🇴</span>
+          </h2>
+          <p className="text-white/90 mb-8 text-lg">
+            Últimas noticias sobre política, candidatos, reformas y análisis desde todas las perspectivas
           </p>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-              <h4 className="text-white font-semibold mb-2">📊 Encuestas Electorales</h4>
-              <p className="text-white/80 text-sm">
-                Tendencias y proyecciones de candidatos conservadores en próximas elecciones
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white/20 backdrop-blur-lg rounded-xl p-6 border border-white/30 hover:bg-white/30 transition-colors duration-300">
+              <h4 className="text-white font-bold mb-3 text-lg flex items-center gap-2">
+                <span>📊</span>
+                <span>Encuestas Electorales</span>
+              </h4>
+              <p className="text-white/80">
+                Tendencias y proyecciones de todos los candidatos en próximas elecciones
               </p>
             </div>
             
-            <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-              <h4 className="text-white font-semibold mb-2">🏛️ Políticas Conservadoras</h4>
-              <p className="text-white/80 text-sm">
-                Propuestas de reducción de impuestos, seguridad y valores tradicionales
+            <div className="bg-white/20 backdrop-blur-lg rounded-xl p-6 border border-white/30 hover:bg-white/30 transition-colors duration-300">
+              <h4 className="text-white font-bold mb-3 text-lg flex items-center gap-2">
+                <span>🏛️</span>
+                <span>Políticas Públicas</span>
+              </h4>
+              <p className="text-white/80">
+                Propuestas de reformas, proyectos de ley y iniciativas gubernamentales
               </p>
             </div>
             
-            <div className="bg-white/10 backdrop-blur rounded-lg p-4">
-              <h4 className="text-white font-semibold mb-2">👥 Candidatos</h4>
-              <p className="text-white/80 text-sm">
-                Perfiles y posiciones de candidatos conservadores destacados
+            <div className="bg-white/20 backdrop-blur-lg rounded-xl p-6 border border-white/30 hover:bg-white/30 transition-colors duration-300">
+              <h4 className="text-white font-bold mb-3 text-lg flex items-center gap-2">
+                <span>👥</span>
+                <span>Candidatos</span>
+              </h4>
+              <p className="text-white/80">
+                Perfiles y posiciones de candidatos de todas las corrientes políticas
               </p>
             </div>
+          </div>
+
+          {/* Colombian identity footer */}
+          <div className="mt-8 pt-6 border-t border-white/30 text-center">
+            <p className="text-white/90 font-medium">
+              🇨🇴 Construyendo la democracia colombiana juntos 🇨🇴
+            </p>
           </div>
         </div>
       </div>

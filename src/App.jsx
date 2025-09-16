@@ -50,54 +50,94 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm py-4 px-8 flex items-center justify-between fixed top-0 left-0 right-0 z-50">
-        <div className="flex items-center gap-2">
-          <img src="/colombia-flag.png" alt="Colombia Flag" className="w-10 h-7" />
-          <span className="font-bold text-lg text-yellow-700">Nuestro Pulso</span>
+    <div className="min-h-screen colombia-pattern-bg">
+      {/* Enhanced Colombian Navigation */}
+      <nav className="navbar-colombia py-4 px-8 flex items-center justify-between fixed top-0 left-0 right-0 z-50">
+        {/* Enhanced Logo with Colombian flag */}
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
+            <div className="w-3 h-8 bg-colombia-yellow rounded-sm"></div>
+            <div className="w-3 h-8 bg-colombia-blue rounded-sm"></div>
+            <div className="w-3 h-8 bg-colombia-red rounded-sm"></div>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold text-xl bg-colombia-gradient bg-clip-text text-transparent">
+              🇨🇴 Nuestro Pulso
+            </span>
+            <span className="text-xs text-colombia-blue font-medium -mt-1">
+              Red Cívica de Colombia
+            </span>
+          </div>
         </div>
+
+        {/* Enhanced Navigation with Colombian colors */}
         <div className="flex gap-6">
           <button 
             onClick={() => setCurrentView('home')}
-            className={`font-medium transition ${currentView === 'home' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+            className={`font-semibold transition-colors duration-300 ${
+              currentView === 'home' 
+                ? 'text-colombia-red' 
+                : 'text-colombia-blue hover:text-colombia-red'
+            }`}
           >
             🏠 Inicio
           </button>
           <button 
             onClick={() => setCurrentView('news')}
-            className={`font-medium transition ${currentView === 'news' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+            className={`font-semibold transition-colors duration-300 ${
+              currentView === 'news' 
+                ? 'text-colombia-red' 
+                : 'text-colombia-blue hover:text-colombia-red'
+            }`}
           >
             📰 Noticias
           </button>
           <button 
             onClick={() => setCurrentView('search')}
-            className={`font-medium transition ${currentView === 'search' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+            className={`font-semibold transition-colors duration-300 ${
+              currentView === 'search' 
+                ? 'text-colombia-red' 
+                : 'text-colombia-blue hover:text-colombia-red'
+            }`}
           >
             🔍 Buscar
           </button>
           <button 
             onClick={() => setCurrentView('community-hub')}
-            className={`font-medium transition ${currentView === 'community-hub' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+            className={`font-semibold transition-colors duration-300 ${
+              currentView === 'community-hub' 
+                ? 'text-colombia-red' 
+                : 'text-colombia-blue hover:text-colombia-red'
+            }`}
           >
-            💭 Community Hub
+            💭 Comunidad
           </button>
           <button 
             onClick={() => setCurrentView('polls')}
-            className={`font-medium transition ${currentView === 'polls' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+            className={`font-semibold transition-colors duration-300 ${
+              currentView === 'polls' 
+                ? 'text-colombia-red' 
+                : 'text-colombia-blue hover:text-colombia-red'
+            }`}
           >
             📊 Encuestas
           </button>
           <button 
             onClick={() => setCurrentView('debates')}
-            className={`font-medium transition ${currentView === 'debates' ? 'text-blue-600' : 'text-blue-900 hover:text-blue-600'}`}
+            className={`font-semibold transition-colors duration-300 ${
+              currentView === 'debates' 
+                ? 'text-colombia-red' 
+                : 'text-colombia-blue hover:text-colombia-red'
+            }`}
           >
             🗣️ Debates
           </button>
         </div>
+
+        {/* Enhanced Login Button */}
         <div>
-          <button className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white px-4 py-2 rounded-lg font-bold shadow hover:scale-105 transition">
-            Ingresar
+          <button className="btn-colombia">
+            🔑 Ingresar
           </button>
         </div>
       </nav>
@@ -107,13 +147,21 @@ function App() {
         {renderCurrentView()}
       </div>
       
-      {/* Footer */}
-      <footer className="bg-gray-800 text-white py-8 mt-16">
+      {/* Enhanced Colombian Footer */}
+      <footer className="bg-gradient-to-r from-colombia-blue to-colombia-red text-white py-8 mt-16">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-lg font-semibold mb-2">🇨🇴 Nuestro Pulso</p>
-          <p className="text-gray-400">Red Cívica de Colombia - Construyendo el futuro juntos</p>
-          <div className="mt-4 text-sm text-gray-500">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <div className="flex items-center gap-1">
+              <div className="w-2 h-6 bg-colombia-yellow rounded-sm"></div>
+              <div className="w-2 h-6 bg-white rounded-sm"></div>
+              <div className="w-2 h-6 bg-colombia-red rounded-sm"></div>
+            </div>
+            <p className="text-lg font-semibold">🇨🇴 Nuestro Pulso</p>
+          </div>
+          <p className="text-white/90 mb-2">Red Cívica de Colombia - Construyendo el futuro juntos</p>
+          <div className="mt-4 text-sm text-white/70">
             <p>© 2024 Nuestro Pulso. Todos los derechos reservados.</p>
+            <p className="mt-1">🇨🇴 Orgullosamente colombiano 🇨🇴</p>
           </div>
         </div>
       </footer>
