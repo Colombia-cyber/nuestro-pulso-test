@@ -1,0 +1,129 @@
+{
+  "query": "facebook",
+  "lastUpdated": "2024-01-15T12:00:00Z",
+  "totalResults": 24,
+  "results": [
+    {
+      "id": "fb-1",
+      "title": "Facebook implementa nuevas políticas de verificación en Colombia",
+      "summary": "La plataforma de Meta anuncia medidas especiales para combatir la desinformación durante las próximas elecciones regionales en Colombia.",
+      "url": "https://example.com/facebook-verificacion-colombia",
+      "source": "TechCrunch Colombia",
+      "category": "tecnologia",
+      "timestamp": "2024-01-15T10:30:00Z",
+      "relevanceScore": 95,
+      "image": "🔍",
+      "author": "Maria Rodriguez",
+      "tags": ["facebook", "verificacion", "elecciones", "colombia"]
+    },
+    {
+      "id": "fb-2",
+      "title": "Congresistas colombianos utilizan Facebook para mayor transparencia",
+      "summary": "Varios representantes del Congreso han adoptado Facebook Live para transmitir sesiones y debatir con ciudadanos directamente.",
+      "url": "https://example.com/congreso-facebook-transparencia",
+      "source": "El Tiempo Digital",
+      "category": "politica",
+      "timestamp": "2024-01-14T16:45:00Z",
+      "relevanceScore": 88,
+      "image": "🏛️",
+      "author": "Carlos Mendez",
+      "tags": ["congreso", "facebook", "transparencia", "ciudadanos"]
+    },
+    {
+      "id": "fb-3",
+      "title": "Facebook Marketplace: Nueva economía digital en Colombia",
+      "summary": "El comercio electrónico a través de Facebook Marketplace ha crecido un 150% en Colombia durante 2024, transformando la economía local.",
+      "url": "https://example.com/facebook-marketplace-colombia",
+      "source": "Portafolio Tech",
+      "category": "economia",
+      "timestamp": "2024-01-14T14:20:00Z",
+      "relevanceScore": 82,
+      "image": "💰",
+      "author": "Ana Sofia Gutierrez",
+      "tags": ["facebook", "marketplace", "economia", "digital"]
+    },
+    {
+      "id": "fb-4",
+      "title": "Campaña en Facebook contra la desinformación electoral",
+      "summary": "El gobierno colombiano y Facebook lanzan una iniciativa conjunta para educar a los ciudadanos sobre noticias falsas antes de las elecciones.",
+      "url": "https://example.com/facebook-desinformacion-campana",
+      "source": "CNN Colombia",
+      "category": "educacion",
+      "timestamp": "2024-01-13T11:15:00Z",
+      "relevanceScore": 90,
+      "image": "📚",
+      "author": "Roberto Silva",
+      "tags": ["facebook", "desinformacion", "educacion", "elecciones"]
+    },
+    {
+      "id": "fb-5",
+      "title": "Grupos de Facebook fortalecen participación ciudadana local",
+      "summary": "Comunidades locales utilizan grupos de Facebook para organizar iniciativas cívicas y mejorar la participación en decisiones municipales.",
+      "url": "https://example.com/facebook-grupos-participacion",
+      "source": "La Silla Vacía",
+      "category": "participacion",
+      "timestamp": "2024-01-13T09:30:00Z",
+      "relevanceScore": 85,
+      "image": "👥",
+      "author": "Claudia Torres",
+      "tags": ["facebook", "grupos", "participacion", "ciudadana"]
+    },
+    {
+      "id": "fb-6",
+      "title": "Facebook Gaming: Nueva plataforma para creadores colombianos",
+      "summary": "Meta lanza programas especiales para apoyar a creadores de contenido gaming en Colombia, incluyendo monetización y herramientas educativas.",
+      "url": "https://example.com/facebook-gaming-colombia",
+      "source": "Hipertextual",
+      "category": "tecnologia",
+      "timestamp": "2024-01-12T15:45:00Z",
+      "relevanceScore": 75,
+      "image": "🎮",
+      "author": "Diego Ramirez",
+      "tags": ["facebook", "gaming", "creadores", "colombia"]
+    },
+    {
+      "id": "fb-7",
+      "title": "Privacy concerns: Facebook data usage in Colombian politics",
+      "summary": "Organizaciones de derechos digitales expresan preocupación sobre el uso de datos de Facebook en campañas políticas colombianas.",
+      "url": "https://example.com/facebook-privacy-politica",
+      "source": "Fundación Karisma",
+      "category": "seguridad",
+      "timestamp": "2024-01-12T13:20:00Z",
+      "relevanceScore": 87,
+      "image": "🔒",
+      "author": "Laura Martinez",
+      "tags": ["facebook", "privacidad", "datos", "politica"]
+    },
+    {
+      "id": "fb-8",
+      "title": "Facebook Climate Science Hub llega a universidades colombianas",
+      "summary": "Meta anuncia alianza con universidades colombianas para combatir la desinformación sobre cambio climático en su plataforma.",
+      "url": "https://example.com/facebook-clima-universidades",
+      "source": "El Espectador Tech",
+      "category": "ambiente",
+      "timestamp": "2024-01-11T10:00:00Z",
+      "relevanceScore": 80,
+      "image": "🌱",
+      "author": "Pedro Morales",
+      "tags": ["facebook", "clima", "universidades", "ambiente"]
+    }
+  ],
+  "relatedQueries": [
+    "meta colombia",
+    "redes sociales politica",
+    "desinformacion elecciones",
+    "facebook marketplace",
+    "grupos ciudadanos",
+    "verificacion noticias"
+  ],
+  "popularTags": [
+    "facebook",
+    "meta",
+    "colombia",
+    "politica",
+    "tecnologia",
+    "elecciones",
+    "participacion",
+    "ciudadana"
+  ]
+}
