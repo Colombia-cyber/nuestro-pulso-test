@@ -1,4 +1,6 @@
-// Category configuration for the application
+// Category configuration for Colombian News Platform
+import { CategoryConfig, NewsCategory } from '../types/news';
+
 export interface Category {
   id: string;
   name: string;
@@ -17,6 +19,121 @@ const getEnvVar = (key: string, fallback = ''): string => {
   return fallback;
 };
 
+export const NEWS_CATEGORIES: CategoryConfig[] = [
+  {
+    id: 'congress_legislation',
+    name: 'Congreso & Legislación',
+    icon: '🏛️',
+    color: 'bg-blue-600',
+    description: 'Actividad legislativa, proyectos de ley y decisiones del Congreso colombiano'
+  },
+  {
+    id: 'terror_crime_drugs',
+    name: 'Terror, Crimen & Drogas',
+    icon: '⚠️',
+    color: 'bg-red-600',
+    description: 'Seguridad nacional, narcotráfico y actividad criminal'
+  },
+  {
+    id: 'employment_health',
+    name: 'Empleo & Salud',
+    icon: '💼',
+    color: 'bg-green-600',
+    description: 'Mercado laboral, salud pública y políticas sociales'
+  },
+  {
+    id: 'gustavo_petro',
+    name: 'Gustavo Petro',
+    icon: '🎯',
+    color: 'bg-yellow-600',
+    description: 'Noticias y declaraciones del presidente Gustavo Petro'
+  },
+  {
+    id: 'donald_trump',
+    name: 'Donald Trump',
+    icon: '🇺🇸',
+    color: 'bg-orange-600',
+    description: 'Impacto de políticas estadounidenses en Colombia'
+  },
+  {
+    id: 'right_wing',
+    name: 'Derecha',
+    icon: '➡️',
+    color: 'bg-blue-800',
+    description: 'Perspectiva y análisis desde la derecha política'
+  },
+  {
+    id: 'left_wing',
+    name: 'Izquierda',
+    icon: '⬅️',
+    color: 'bg-red-800',
+    description: 'Perspectiva y análisis desde la izquierda política'
+  },
+  {
+    id: 'world_news',
+    name: 'Noticias Mundiales',
+    icon: '🌍',
+    color: 'bg-purple-600',
+    description: 'Noticias internacionales relevantes para Colombia'
+  },
+  {
+    id: 'local_news',
+    name: 'Noticias Locales',
+    icon: '🏠',
+    color: 'bg-emerald-600',
+    description: 'Noticias locales de ciudades y regiones de Colombia'
+  }
+];
+
+export const getCategoryConfig = (categoryId: NewsCategory): CategoryConfig => {
+  return NEWS_CATEGORIES.find(cat => cat.id === categoryId) || NEWS_CATEGORIES[0];
+};
+
+export const SOCIAL_PLATFORMS = {
+  youtube: {
+    name: 'YouTube',
+    icon: '📺',
+    color: 'bg-red-600',
+    baseUrl: 'https://www.youtube.com'
+  },
+  facebook: {
+    name: 'Facebook',
+    icon: '📘',
+    color: 'bg-blue-600',
+    baseUrl: 'https://www.facebook.com'
+  },
+  twitter: {
+    name: 'Twitter',
+    icon: '🐦',
+    color: 'bg-sky-500',
+    baseUrl: 'https://twitter.com'
+  },
+  whatsapp: {
+    name: 'WhatsApp',
+    icon: '💬',
+    color: 'bg-green-500',
+    baseUrl: 'https://wa.me'
+  },
+  local: {
+    name: 'Local',
+    icon: '📱',
+    color: 'bg-gray-600',
+    baseUrl: ''
+  }
+};
+
+// Colombian flag colors for theming
+export const COLOMBIA_COLORS = {
+  yellow: '#FDE047', // Colombia flag yellow
+  blue: '#1D4ED8',   // Colombia flag blue  
+  red: '#DC2626',    // Colombia flag red
+  white: '#FFFFFF'
+};
+
+export const COLOMBIA_GRADIENT = 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500';
+export const COLOMBIA_GRADIENT_LIGHT = 'bg-gradient-to-r from-yellow-200 via-blue-300 to-red-300';
+
+// Legacy categories for backward compatibility
 export const categories: Category[] = [
   {
     id: 'todos',

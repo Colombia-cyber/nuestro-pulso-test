@@ -1,7 +1,7 @@
 import React, { useState, Suspense } from "react";
 import Navbar from "./components/Navbar";
-import HeroSection from "./components/HeroSection";
-import CustomNewsFeed from "./components/CustomNewsFeed";
+import ColombianHomepage from "./components/ColombianHomepage";
+import ColombianNewsFeed from "./components/ColombianNewsFeed";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
@@ -11,6 +11,7 @@ import ElectionHub from "./components/ElectionHub";
 import LiveChat from "./components/LiveChat";
 import Debate from "./components/Debate";
 import Survey from "./components/Survey";
+import { NewsCategory } from "./types/news";
 
 // Loading component for better UX
 const LoadingSpinner: React.FC<{ message?: string }> = ({ message = "Cargando..." }) => (
@@ -47,6 +48,7 @@ const ErrorFallback: React.FC<{ error?: string; onRetry?: () => void }> = ({
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
+  const [selectedCategory, setSelectedCategory] = useState<NewsCategory | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,11 +56,30 @@ function App() {
     setIsLoading(true);
     setError(null);
     
+    // Reset category selection when navigating away from news
+    if (view !== 'feeds' && view !== 'news') {
+      setSelectedCategory(null);
+    }
+    
     // Simulate loading delay for better UX
     setTimeout(() => {
       setCurrentView(view);
       setIsLoading(false);
     }, 300);
+  };
+
+  const handleCategorySelect = (category: NewsCategory) => {
+    setSelectedCategory(category);
+  };
+
+  const handleCommentClick = (articleId: string, politicalLean: 'left' | 'right') => {
+    // Store the comment context and navigate to comments
+    localStorage.setItem('commentContext', JSON.stringify({
+      articleId,
+      politicalLean,
+      timestamp: Date.now()
+    }));
+    handleNavigate('comments');
   };
 
   const handleRetry = () => {
@@ -84,7 +105,12 @@ function App() {
           return <PulseReels />;
         case 'feeds':
         case 'news':
-          return <CustomNewsFeed />;
+          return (
+            <ColombianNewsFeed 
+              selectedCategory={selectedCategory || undefined}
+              onCommentClick={handleCommentClick}
+            />
+          );
         case 'congress':
           return <CongressTracker />;
         case 'elections':
@@ -104,7 +130,12 @@ function App() {
           return <SearchPage />;
         case 'home':
         default:
-          return <HeroSection onNavigate={handleNavigate} />;
+          return (
+            <ColombianHomepage 
+              onNavigate={handleNavigate}
+              onCategorySelect={handleCategorySelect}
+            />
+          );
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
