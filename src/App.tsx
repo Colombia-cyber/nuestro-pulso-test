@@ -133,7 +133,7 @@ function App() {
   return (
     <div>
       <Navbar onNavigate={handleNavigate} currentView={currentView} />
-      <div className="pt-20">
+      <div className="pt-16">
         <Suspense fallback={<LoadingSpinner />}>
           {renderCurrentView()}
         </Suspense>
