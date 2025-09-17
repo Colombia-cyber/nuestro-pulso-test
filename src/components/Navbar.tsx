@@ -3,9 +3,10 @@ import UniversalSearchBar from "./UniversalSearchBar";
 
 interface NavbarProps {
   onNavigate?: (view: string) => void;
+  currentView?: string;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
+const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => {
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
@@ -34,34 +35,87 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         </div>
         
         {/* Desktop Navigation */}
-        <div className="hidden md:flex gap-4 xl:gap-6 items-center">
+        <div className="hidden md:flex gap-2 xl:gap-4 items-center">
           <button 
             onClick={() => handleNavClick('home')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+              currentView === 'home' ? 'bg-blue-100 text-blue-700' : ''
+            }`}
           >
             <span>🏠</span>
             <span className="hidden xl:inline">Inicio</span>
           </button>
           <button 
-            onClick={() => handleNavClick('news')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+            onClick={() => handleNavClick('reels')}
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+              currentView === 'reels' ? 'bg-blue-100 text-blue-700' : ''
+            }`}
+          >
+            <span>🎬</span>
+            <span className="hidden xl:inline">Reels</span>
+          </button>
+          <button 
+            onClick={() => handleNavClick('feeds')}
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+              currentView === 'feeds' || currentView === 'news' ? 'bg-blue-100 text-blue-700' : ''
+            }`}
           >
             <span>📰</span>
-            <span className="hidden xl:inline">Noticias</span>
+            <span className="hidden xl:inline">Feeds</span>
           </button>
           <button 
-            onClick={() => handleNavClick('community-hub')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+            onClick={() => handleNavClick('congress')}
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+              currentView === 'congress' ? 'bg-blue-100 text-blue-700' : ''
+            }`}
           >
-            <span>💭</span>
-            <span className="hidden xl:inline">Community Hub</span>
+            <span>🏛️</span>
+            <span className="hidden xl:inline">Congreso</span>
           </button>
           <button 
-            onClick={() => handleNavClick('encuestas')}
-            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+            onClick={() => handleNavClick('elections')}
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+              currentView === 'elections' ? 'bg-blue-100 text-blue-700' : ''
+            }`}
+          >
+            <span>🗳️</span>
+            <span className="hidden xl:inline">Elecciones</span>
+          </button>
+          <button 
+            onClick={() => handleNavClick('chat')}
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+              currentView === 'chat' ? 'bg-blue-100 text-blue-700' : ''
+            }`}
+          >
+            <span>💬</span>
+            <span className="hidden xl:inline">Chat</span>
+          </button>
+          <button 
+            onClick={() => handleNavClick('debates')}
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+              currentView === 'debates' ? 'bg-blue-100 text-blue-700' : ''
+            }`}
+          >
+            <span>🗣️</span>
+            <span className="hidden xl:inline">Debates</span>
+          </button>
+          <button 
+            onClick={() => handleNavClick('surveys')}
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+              currentView === 'surveys' || currentView === 'encuestas' ? 'bg-blue-100 text-blue-700' : ''
+            }`}
           >
             <span>📊</span>
             <span className="hidden xl:inline">Encuestas</span>
+          </button>
+          <button 
+            onClick={() => handleNavClick('community-hub')}
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+              currentView === 'community-hub' ? 'bg-blue-100 text-blue-700' : ''
+            }`}
+          >
+            <span>💭</span>
+            <span className="hidden xl:inline">Hub</span>
           </button>
           {/* Mobile/Tablet Search Button */}
           <button 
@@ -138,31 +192,84 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
             <div className="flex flex-col space-y-4">
               <button 
                 onClick={() => handleNavClick('home')}
-                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
+                  currentView === 'home' ? 'bg-blue-100 text-blue-700' : ''
+                }`}
               >
                 <span className="text-xl">🏠</span>
                 <span>Inicio</span>
               </button>
               <button 
-                onClick={() => handleNavClick('news')}
-                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+                onClick={() => handleNavClick('reels')}
+                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
+                  currentView === 'reels' ? 'bg-blue-100 text-blue-700' : ''
+                }`}
+              >
+                <span className="text-xl">🎬</span>
+                <span>Reels</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('feeds')}
+                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
+                  currentView === 'feeds' || currentView === 'news' ? 'bg-blue-100 text-blue-700' : ''
+                }`}
               >
                 <span className="text-xl">📰</span>
-                <span>Noticias</span>
+                <span>Feeds</span>
               </button>
               <button 
-                onClick={() => handleNavClick('community-hub')}
-                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+                onClick={() => handleNavClick('congress')}
+                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
+                  currentView === 'congress' ? 'bg-blue-100 text-blue-700' : ''
+                }`}
               >
-                <span className="text-xl">💭</span>
-                <span>Community Hub</span>
+                <span className="text-xl">🏛️</span>
+                <span>Congreso</span>
               </button>
               <button 
-                onClick={() => handleNavClick('encuestas')}
-                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+                onClick={() => handleNavClick('elections')}
+                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
+                  currentView === 'elections' ? 'bg-blue-100 text-blue-700' : ''
+                }`}
+              >
+                <span className="text-xl">🗳️</span>
+                <span>Elecciones</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('chat')}
+                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
+                  currentView === 'chat' ? 'bg-blue-100 text-blue-700' : ''
+                }`}
+              >
+                <span className="text-xl">💬</span>
+                <span>Chat en Vivo</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('debates')}
+                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
+                  currentView === 'debates' ? 'bg-blue-100 text-blue-700' : ''
+                }`}
+              >
+                <span className="text-xl">🗣️</span>
+                <span>Debates</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('surveys')}
+                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
+                  currentView === 'surveys' || currentView === 'encuestas' ? 'bg-blue-100 text-blue-700' : ''
+                }`}
               >
                 <span className="text-xl">📊</span>
                 <span>Encuestas</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('community-hub')}
+                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
+                  currentView === 'community-hub' ? 'bg-blue-100 text-blue-700' : ''
+                }`}
+              >
+                <span className="text-xl">💭</span>
+                <span>Community Hub</span>
               </button>
               <button 
                 onClick={() => setShowSearchModal(true)}
