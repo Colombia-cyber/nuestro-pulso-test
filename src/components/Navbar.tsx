@@ -39,19 +39,19 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
           </div>
 
           {/* Desktop Search Bar - Always visible and prominent */}
-          <div className="hidden md:flex flex-1 max-w-xl mx-4">
+          <div className="flex flex-1 max-w-xl mx-4">
             <form onSubmit={(e) => { e.preventDefault(); handleSearchSubmit(); }} className="flex gap-2 w-full">
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="🔍 Buscar noticias, políticas, candidatos..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white"
+                className="flex-1 px-4 py-2 border-2 border-blue-500 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-600 focus:outline-none bg-white shadow-sm"
                 aria-label="Campo de búsqueda"
               />
               <button
                 type="submit"
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 shadow-sm"
                 aria-label="Buscar"
               >
                 🔍
