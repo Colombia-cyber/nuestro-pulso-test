@@ -9,6 +9,7 @@ interface NavbarProps {
 const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => {
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const handleNavClick = (view: string) => {
     if (onNavigate) {
@@ -17,171 +18,171 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
     setShowMobileMenu(false);
   };
 
+  const handleSearchSubmit = () => {
+    if (searchQuery.trim()) {
+      // Set URL with search query
+      const searchUrl = `/search?q=${encodeURIComponent(searchQuery.trim())}`;
+      window.history.pushState(null, '', searchUrl);
+      handleNavClick('search');
+    }
+  };
+
   return (
     <>
-      <nav className="w-full bg-white shadow-lg py-4 px-4 md:px-8 flex flex-row items-center justify-between fixed top-0 left-0 z-50 border-b border-gray-200">
-        {/* Logo and Brand */}
-        <div className="flex items-center gap-2">
-          <img src="/colombia-flag.png" alt="Colombia Flag" className="w-10 h-7" />
-          <span className="font-bold text-lg text-yellow-700">Nuestro Pulso</span>
+      <nav className="w-full bg-white shadow-lg py-3 px-4 md:px-6 fixed top-0 left-0 z-50 border-b border-gray-200">
+        {/* Top row with logo, search, and login */}
+        <div className="flex items-center justify-between gap-4">
+          {/* Logo and Brand */}
+          <div className="flex items-center gap-2 shrink-0">
+            <img src="/colombia-flag.png" alt="Colombia Flag" className="w-8 h-6" />
+            <span className="font-bold text-base text-yellow-700">Nuestro Pulso</span>
+          </div>
+
+          {/* Desktop Search Bar - Always visible and prominent */}
+          <div className="hidden md:flex flex-1 max-w-xl mx-4">
+            <form onSubmit={(e) => { e.preventDefault(); handleSearchSubmit(); }} className="flex gap-2 w-full">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="🔍 Buscar noticias, políticas, candidatos..."
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white"
+                aria-label="Campo de búsqueda"
+              />
+              <button
+                type="submit"
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                aria-label="Buscar"
+              >
+                🔍
+              </button>
+            </form>
+          </div>
+
+          {/* Login button */}
+          <div className="hidden md:flex shrink-0">
+            <button className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white px-4 py-2 rounded-lg font-bold shadow hover:scale-105 transition">
+              Ingresar
+            </button>
+          </div>
+
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setShowMobileMenu(!showMobileMenu)}
+            className="md:hidden text-blue-900 p-2 rounded-lg hover:bg-blue-50"
+            aria-label="Menú de navegación"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
         </div>
 
-        {/* Desktop Search Bar - Always visible and prominent */}
-        <div className="hidden md:flex flex-1 max-w-3xl mx-8">
-          <UniversalSearchBar 
-            compact={true}
-            onResults={() => handleNavClick('search')}
-          />
-        </div>
-        
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex gap-2 xl:gap-4 items-center">
+        {/* Navigation row */}
+        <div className="hidden md:flex items-center justify-center gap-1 lg:gap-2 mt-3 pt-3 border-t border-gray-100">
+          {/* Desktop Navigation */}
           <button 
             onClick={() => handleNavClick('home')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-2 py-2 rounded-lg hover:bg-blue-50 ${
               currentView === 'home' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>🏠</span>
-            <span className="hidden xl:inline">Inicio</span>
+            <span className="hidden lg:inline text-sm">Inicio</span>
           </button>
           <button 
             onClick={() => handleNavClick('reels')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-2 py-2 rounded-lg hover:bg-blue-50 ${
               currentView === 'reels' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>🎬</span>
-            <span className="hidden xl:inline">Reels</span>
+            <span className="hidden lg:inline text-sm">Reels</span>
           </button>
           <button 
             onClick={() => handleNavClick('feeds')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-2 py-2 rounded-lg hover:bg-blue-50 ${
               currentView === 'feeds' || currentView === 'news' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>📰</span>
-            <span className="hidden xl:inline">Feeds</span>
+            <span className="hidden lg:inline text-sm">Feeds</span>
           </button>
           <button 
             onClick={() => handleNavClick('congress')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-2 py-2 rounded-lg hover:bg-blue-50 ${
               currentView === 'congress' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>🏛️</span>
-            <span className="hidden xl:inline">Congreso</span>
+            <span className="hidden lg:inline text-sm">Congreso</span>
           </button>
           <button 
             onClick={() => handleNavClick('elections')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-2 py-2 rounded-lg hover:bg-blue-50 ${
               currentView === 'elections' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>🗳️</span>
-            <span className="hidden xl:inline">Elecciones</span>
+            <span className="hidden lg:inline text-sm">Elecciones</span>
           </button>
           <button 
             onClick={() => handleNavClick('chat')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-2 py-2 rounded-lg hover:bg-blue-50 ${
               currentView === 'chat' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>💬</span>
-            <span className="hidden xl:inline">Chat</span>
+            <span className="hidden lg:inline text-sm">Chat</span>
           </button>
           <button 
             onClick={() => handleNavClick('debates')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-2 py-2 rounded-lg hover:bg-blue-50 ${
               currentView === 'debates' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>🗣️</span>
-            <span className="hidden xl:inline">Debates</span>
+            <span className="hidden lg:inline text-sm">Debates</span>
           </button>
           <button 
             onClick={() => handleNavClick('surveys')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-2 py-2 rounded-lg hover:bg-blue-50 ${
               currentView === 'surveys' || currentView === 'encuestas' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>📊</span>
-            <span className="hidden xl:inline">Encuestas</span>
+            <span className="hidden lg:inline text-sm">Encuestas</span>
           </button>
           <button 
             onClick={() => handleNavClick('community-hub')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-2 py-2 rounded-lg hover:bg-blue-50 ${
               currentView === 'community-hub' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>💭</span>
-            <span className="hidden xl:inline">Hub</span>
-          </button>
-          {/* Mobile/Tablet Search Button */}
-          <button 
-            onClick={() => setShowSearchModal(true)}
-            className="lg:hidden text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
-          >
-            <span>🔍</span>
-            <span className="hidden xl:inline">Buscar</span>
+            <span className="hidden lg:inline text-sm">Hub</span>
           </button>
         </div>
 
-        {/* Mobile menu button */}
-        <button
-          onClick={() => setShowMobileMenu(!showMobileMenu)}
-          className="md:hidden text-blue-900 p-2 rounded-lg hover:bg-blue-50"
-          aria-label="Menú de navegación"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-
-        {/* Social Icons - Desktop Only */}
-        <div className="hidden xl:flex items-center gap-4 ml-4">
-          {/* Social Icons */}
-          <div className="flex items-center gap-2">
-            <a 
-              href="https://www.google.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
-              title="Google"
+        {/* Mobile Search Bar - Always visible on mobile */}
+        <div className="md:hidden mt-3 pt-3 border-t border-gray-100">
+          <form onSubmit={(e) => { e.preventDefault(); handleSearchSubmit(); }} className="flex gap-2">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="🔍 Buscar noticias, políticas..."
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:outline-none bg-white"
+              aria-label="Campo de búsqueda móvil"
+            />
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-3 py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+              aria-label="Buscar"
             >
-              🌐
-            </a>
-            <a 
-              href="https://www.youtube.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
-              title="YouTube"
-            >
-              📺
-            </a>
-            <a 
-              href="https://www.facebook.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
-              title="Facebook"
-            >
-              📘
-            </a>
-            <a 
-              href="https://www.twitter.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
-              title="Twitter"
-            >
-              🐦
-            </a>
-          </div>
-          <button className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white px-4 py-2 rounded-lg font-bold shadow hover:scale-105 transition">
-            Ingresar
-          </button>
+              🔍
+            </button>
+          </form>
         </div>
       </nav>
 
