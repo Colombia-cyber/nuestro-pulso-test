@@ -91,9 +91,37 @@ const Comments: React.FC<CommentsProps> = ({ articleId, articleTitle, isHub = fa
       if (articleId && !isHub) {
         filteredComments = mockComments.filter(comment => comment.articleId === articleId);
       }
+      
+      // Load comments from localStorage for persistence
+      const savedComments = JSON.parse(localStorage.getItem('comments') || '[]');
+      const allComments = [...mockComments, ...savedComments];
+      
+      if (articleId && !isHub) {
+        filteredComments = allComments.filter(comment => comment.articleId === articleId);
+      } else if (isHub) {
+        filteredComments = allComments;
+      }
+      
       setComments(filteredComments);
       setIsLoading(false);
     }, 500);
+
+    // Set up real-time updates listener
+    const handleCommentUpdate = (event: any) => {
+      const newComment = event.detail;
+      setComments(prevComments => {
+        const updatedComments = [newComment, ...prevComments];
+        return updatedComments.filter((comment, index, self) => 
+          index === self.findIndex(c => c.id === comment.id)
+        );
+      });
+    };
+
+    window.addEventListener('commentAdded', handleCommentUpdate);
+    
+    return () => {
+      window.removeEventListener('commentAdded', handleCommentUpdate);
+    };
   }, [articleId, isHub]);
 
   const handleSubmitComment = (e: React.FormEvent) => {
@@ -119,6 +147,14 @@ const Comments: React.FC<CommentsProps> = ({ articleId, articleTitle, isHub = fa
     const allComments = JSON.parse(localStorage.getItem('comments') || '[]');
     allComments.push(comment);
     localStorage.setItem('comments', JSON.stringify(allComments));
+
+    // Immediately sync with Community Hub
+    const hubComments = JSON.parse(localStorage.getItem('hub-comments') || '[]');
+    hubComments.push(comment);
+    localStorage.setItem('hub-comments', JSON.stringify(hubComments));
+
+    // Trigger custom event for real-time updates
+    window.dispatchEvent(new CustomEvent('commentAdded', { detail: comment }));
   };
 
   const handleSubmitReply = (e: React.FormEvent, parentId: number) => {
