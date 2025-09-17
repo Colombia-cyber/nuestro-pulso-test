@@ -40,14 +40,21 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
             className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
           >
             <span>🏠</span>
-            <span className="hidden xl:inline">Inicio</span>
+            <span className="hidden xl:inline">Home</span>
           </button>
           <button 
             onClick={() => handleNavClick('news')}
             className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
           >
             <span>📰</span>
-            <span className="hidden xl:inline">Noticias</span>
+            <span className="hidden xl:inline">News</span>
+          </button>
+          <button 
+            onClick={() => handleNavClick('search')}
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+          >
+            <span>🔍</span>
+            <span className="hidden xl:inline">Search</span>
           </button>
           <button 
             onClick={() => handleNavClick('community-hub')}
@@ -57,11 +64,18 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
             <span className="hidden xl:inline">Community Hub</span>
           </button>
           <button 
-            onClick={() => handleNavClick('encuestas')}
+            onClick={() => handleNavClick('surveys')}
             className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
           >
             <span>📊</span>
-            <span className="hidden xl:inline">Encuestas</span>
+            <span className="hidden xl:inline">Surveys</span>
+          </button>
+          <button 
+            onClick={() => handleNavClick('debates')}
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+          >
+            <span>🗣️</span>
+            <span className="hidden xl:inline">Debates</span>
           </button>
           {/* Mobile/Tablet Search Button */}
           <button 
@@ -141,14 +155,21 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
                 className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
               >
                 <span className="text-xl">🏠</span>
-                <span>Inicio</span>
+                <span>Home</span>
               </button>
               <button 
                 onClick={() => handleNavClick('news')}
                 className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
               >
                 <span className="text-xl">📰</span>
-                <span>Noticias</span>
+                <span>News</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('search')}
+                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+              >
+                <span className="text-xl">🔍</span>
+                <span>Search</span>
               </button>
               <button 
                 onClick={() => handleNavClick('community-hub')}
@@ -158,11 +179,18 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
                 <span>Community Hub</span>
               </button>
               <button 
-                onClick={() => handleNavClick('encuestas')}
+                onClick={() => handleNavClick('surveys')}
                 className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
               >
                 <span className="text-xl">📊</span>
-                <span>Encuestas</span>
+                <span>Surveys</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('debates')}
+                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+              >
+                <span className="text-xl">🗣️</span>
+                <span>Debates</span>
               </button>
               <button 
                 onClick={() => setShowSearchModal(true)}
