@@ -1,18 +1,14 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import UniversalSearchBar from "./UniversalSearchBar";
 
-interface NavbarProps {
-  onNavigate?: (view: string) => void;
-}
-
-const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
+const Navbar: React.FC = () => {
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const navigate = useNavigate();
 
-  const handleNavClick = (view: string) => {
-    if (onNavigate) {
-      onNavigate(view);
-    }
+  const handleNavClick = (path: string) => {
+    navigate(path);
     setShowMobileMenu(false);
   };
 
@@ -29,39 +25,60 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
         <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
           <UniversalSearchBar 
             compact={true}
-            onResults={() => handleNavClick('search')}
+            onResults={() => handleNavClick('/search')}
           />
         </div>
         
         {/* Desktop Navigation */}
         <div className="hidden md:flex gap-4 xl:gap-6 items-center">
           <button 
-            onClick={() => handleNavClick('home')}
+            onClick={() => handleNavClick('/')}
             className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
           >
             <span>🏠</span>
             <span className="hidden xl:inline">Inicio</span>
           </button>
           <button 
-            onClick={() => handleNavClick('news')}
+            onClick={() => handleNavClick('/congress')}
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+          >
+            <span>🏛️</span>
+            <span className="hidden xl:inline">Congreso</span>
+          </button>
+          <button 
+            onClick={() => handleNavClick('/elections')}
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+          >
+            <span>📈</span>
+            <span className="hidden xl:inline">Elecciones</span>
+          </button>
+          <button 
+            onClick={() => handleNavClick('/news')}
             className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
           >
             <span>📰</span>
             <span className="hidden xl:inline">Noticias</span>
           </button>
           <button 
-            onClick={() => handleNavClick('community-hub')}
+            onClick={() => handleNavClick('/community-hub')}
             className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
           >
             <span>💭</span>
             <span className="hidden xl:inline">Community Hub</span>
           </button>
           <button 
-            onClick={() => handleNavClick('encuestas')}
+            onClick={() => handleNavClick('/surveys')}
             className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
           >
             <span>📊</span>
             <span className="hidden xl:inline">Encuestas</span>
+          </button>
+          <button 
+            onClick={() => handleNavClick('/debates')}
+            className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+          >
+            <span>🗣️</span>
+            <span className="hidden xl:inline">Debates</span>
           </button>
           {/* Mobile/Tablet Search Button */}
           <button 
@@ -137,32 +154,60 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
           <div className="bg-white w-full max-w-sm ml-auto h-full shadow-xl p-6">
             <div className="flex flex-col space-y-4">
               <button 
-                onClick={() => handleNavClick('home')}
+                onClick={() => handleNavClick('/')}
                 className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
               >
                 <span className="text-xl">🏠</span>
                 <span>Inicio</span>
               </button>
               <button 
-                onClick={() => handleNavClick('news')}
+                onClick={() => handleNavClick('/congress')}
+                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+              >
+                <span className="text-xl">🏛️</span>
+                <span>Congreso</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('/elections')}
+                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+              >
+                <span className="text-xl">📈</span>
+                <span>Elecciones</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('/news')}
                 className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
               >
                 <span className="text-xl">📰</span>
                 <span>Noticias</span>
               </button>
               <button 
-                onClick={() => handleNavClick('community-hub')}
+                onClick={() => handleNavClick('/chat')}
                 className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
               >
-                <span className="text-xl">💭</span>
-                <span>Community Hub</span>
+                <span className="text-xl">💬</span>
+                <span>Chat en Vivo</span>
               </button>
               <button 
-                onClick={() => handleNavClick('encuestas')}
+                onClick={() => handleNavClick('/debates')}
+                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+              >
+                <span className="text-xl">🗣️</span>
+                <span>Debates</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('/surveys')}
                 className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
               >
                 <span className="text-xl">📊</span>
                 <span>Encuestas</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('/community-hub')}
+                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+              >
+                <span className="text-xl">💭</span>
+                <span>Community Hub</span>
               </button>
               <button 
                 onClick={() => setShowSearchModal(true)}
@@ -241,7 +286,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate }) => {
                 autoFocus={true}
                 onResults={() => {
                   setShowSearchModal(false);
-                  handleNavClick('search');
+                  handleNavClick('/search');
                 }}
               />
             </div>

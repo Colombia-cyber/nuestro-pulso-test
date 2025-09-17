@@ -1,41 +1,40 @@
-import React, { useState } from "react";
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
+import Congress from "./pages/Congress";
+import Elections from "./pages/Elections";
+import LiveChat from "./pages/LiveChat";
+import Debates from "./pages/Debates";
+import Surveys from "./pages/Surveys";
+import SearchResultPage from "./pages/SearchResultPage";
 
 function App() {
-  const [currentView, setCurrentView] = useState('home');
-
-  const handleNavigate = (view: string) => {
-    setCurrentView(view);
-  };
-
-  const renderCurrentView = () => {
-    switch (currentView) {
-      case 'news':
-        return <CustomNewsFeed />;
-      case 'comments':
-        return <Comments />;
-      case 'community-hub':
-        return <CommunityHub />;
-      case 'search':
-        return <SearchPage />;
-      case 'home':
-      default:
-        return <HeroSection onNavigate={handleNavigate} />;
-    }
-  };
-
   return (
-    <div>
-      <Navbar onNavigate={handleNavigate} />
-      <div className="pt-20">
-        {renderCurrentView()}
+    <Router>
+      <div>
+        <Navbar />
+        <div className="pt-20">
+          <Routes>
+            <Route path="/" element={<HeroSection />} />
+            <Route path="/congress" element={<Congress />} />
+            <Route path="/elections" element={<Elections />} />
+            <Route path="/news" element={<CustomNewsFeed />} />
+            <Route path="/chat" element={<LiveChat />} />
+            <Route path="/debates" element={<Debates />} />
+            <Route path="/surveys" element={<Surveys />} />
+            <Route path="/community-hub" element={<CommunityHub />} />
+            <Route path="/search" element={<SearchPage />} />
+            <Route path="/search-result/:id" element={<SearchResultPage />} />
+            <Route path="/comments" element={<Comments />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </Router>
   );
 }
 

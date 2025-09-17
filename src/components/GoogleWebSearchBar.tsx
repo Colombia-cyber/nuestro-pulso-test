@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const GOOGLE_API_KEY = "AIzaSyB1wdNIgV2qUdJ8lUzjhKoRnYHpwi_QAWQ"; // Placeholder API key
 const GOOGLE_CX = "b1da68d0c729b40ae"; // Placeholder Custom Search Engine ID
@@ -34,6 +35,7 @@ const GoogleWebSearchBar: React.FC = () => {
   const [discussId, setDiscussId] = useState<string | null>(null);
   const [threads, setThreads] = useState<{[key: string]: { user: string, text: string }[] }>({});
   const [comment, setComment] = useState('');
+  const navigate = useNavigate();
 
   async function handleSearch(e: React.FormEvent) {
     e.preventDefault();
@@ -50,6 +52,17 @@ const GoogleWebSearchBar: React.FC = () => {
       setError("Error al buscar en Google. Intenta nuevamente.");
     }
     setLoading(false);
+  }
+
+  function handleResultClick(item: any, index: number) {
+    // Generate a unique ID for the search result
+    const resultId = `${encodeURIComponent(query)}-${index}`;
+    navigate(`/search-result/${resultId}`, { 
+      state: { 
+        result: item, 
+        query: query 
+      } 
+    });
   }
 
   function handleDiscuss(link: string) {
@@ -185,6 +198,12 @@ const GoogleWebSearchBar: React.FC = () => {
                     >
                       🔗 Visitar sitio
                     </a>
+                    <button
+                      onClick={() => handleResultClick(item, index)}
+                      className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+                    >
+                      📖 Ver detalles
+                    </button>
                     <button
                       onClick={() => handleDiscuss(item.link)}
                       className="bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-yellow-600 transition-colors"

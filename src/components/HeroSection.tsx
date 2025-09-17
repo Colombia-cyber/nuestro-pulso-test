@@ -1,10 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
-interface HeroSectionProps {
-  onNavigate: (view: string) => void;
-}
+const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
 
-const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
   return (
     <div className="relative bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 min-h-screen flex items-center justify-center">
       {/* Glass morphism overlay */}
@@ -37,19 +36,19 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
           
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <button 
-              onClick={() => onNavigate('reels')}
+              onClick={() => navigate('/chat')}
               className="px-8 py-4 bg-blue-600 text-white rounded-xl shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-200 font-semibold"
             >
               💬 Chat en Vivo
             </button>
             <button 
-              onClick={() => onNavigate('debates')}
+              onClick={() => navigate('/debates')}
               className="px-8 py-4 bg-green-600 text-white rounded-xl shadow-lg hover:bg-green-700 transform hover:scale-105 transition-all duration-200 font-semibold"
             >
               🗣️ Debates
             </button>
             <button 
-              onClick={() => onNavigate('polls')}
+              onClick={() => navigate('/surveys')}
               className="px-8 py-4 bg-purple-600 text-white rounded-xl shadow-lg hover:bg-purple-700 transform hover:scale-105 transition-all duration-200 font-semibold"
             >
               📊 Encuestas
@@ -59,19 +58,28 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
         
         {/* Feature highlights */}
         <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30">
+          <div 
+            className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30 cursor-pointer hover:bg-opacity-30 transition-all duration-200 transform hover:scale-105"
+            onClick={() => navigate('/congress')}
+          >
             <div className="text-3xl mb-4">🏛️</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">Congreso</h3>
             <p className="text-gray-700">Sigue la actividad legislativa en tiempo real</p>
           </div>
           
-          <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30">
+          <div 
+            className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30 cursor-pointer hover:bg-opacity-30 transition-all duration-200 transform hover:scale-105"
+            onClick={() => navigate('/elections')}
+          >
             <div className="text-3xl mb-4">📈</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">Elecciones</h3>
             <p className="text-gray-700">Centro de información electoral actualizada</p>
           </div>
           
-          <div className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30">
+          <div 
+            className="bg-white bg-opacity-20 backdrop-blur-lg rounded-xl p-6 border border-white border-opacity-30 cursor-pointer hover:bg-opacity-30 transition-all duration-200 transform hover:scale-105"
+            onClick={() => navigate('/news')}
+          >
             <div className="text-3xl mb-4">📰</div>
             <h3 className="text-xl font-semibold text-gray-800 mb-2">Noticias</h3>
             <p className="text-gray-700">Análisis y cobertura de eventos cívicos</p>
