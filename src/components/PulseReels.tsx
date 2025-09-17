@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { getVisibleCategories } from '../config/categories';
+import { PulseReel } from '../types/pulseReel';
+import { pulseReels as samplePulseReels } from '../data/pulseReels';
 
 // Safely get environment variable with fallback
 const getEnvVar = (key: string, fallback = ''): string => {
@@ -10,6 +12,7 @@ const getEnvVar = (key: string, fallback = ''): string => {
   return fallback;
 };
 
+// Legacy interface for backward compatibility with existing UI
 interface Reel {
   id: number;
   title: string;
@@ -23,6 +26,43 @@ interface Reel {
   videoUrl?: string;
   embedUrl?: string;
 }
+
+// Function to convert PulseReel to legacy Reel format for UI compatibility
+const convertPulseReelToReel = (pulseReel: PulseReel, index: number): Reel => {
+  // Map topics to categories used by the UI
+  const topicToCategoryMap: Record<string, string> = {
+    'Politics': 'politica',
+    'Participation': 'participacion',
+    'Environment': 'ambiente',
+    'Education': 'educacion',
+    'Technology': 'tecnologia',
+    'Social': 'social'
+  };
+
+  // Map topics to emojis for thumbnails
+  const topicToEmojiMap: Record<string, string> = {
+    'Politics': '🗳️',
+    'Participation': '🤝',
+    'Environment': '🌍',
+    'Education': '💻',
+    'Technology': '📱',
+    'Social': '⚖️'
+  };
+
+  return {
+    id: index + 1,
+    title: pulseReel.title,
+    description: pulseReel.summary,
+    category: topicToCategoryMap[pulseReel.topic] || 'general',
+    duration: pulseReel.duration,
+    views: pulseReel.views,
+    likes: pulseReel.likes,
+    thumbnail: topicToEmojiMap[pulseReel.topic] || '📺',
+    author: pulseReel.organization,
+    videoUrl: pulseReel.videoUrl,
+    embedUrl: pulseReel.videoUrl ? `https://www.youtube.com/embed/dQw4w9WgXcQ` : undefined
+  };
+};
 
 const PulseReels: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('todos');
@@ -41,87 +81,17 @@ const PulseReels: React.FC = () => {
   const infiniteScrollEnabled = getEnvVar('REACT_APP_REELS_INFINITE_SCROLL', 'true') === 'true';
   const batchSize = parseInt(getEnvVar('REACT_APP_REELS_LOAD_BATCH_SIZE', '6'));
 
-  // Get categories with technology hidden by default
+  // Get categories from configuration
   const visibleCategories = getVisibleCategories();
-  const categories = [
-    { id: 'todos', name: 'Todos', icon: '🎬' },
-    ...visibleCategories
-  ];
+  const categories = visibleCategories;
 
-  // Mock reels data with more entries for testing infinite scroll
-  const allMockReels: Reel[] = [
-    {
-      id: 1,
-      title: 'Cómo participar en el proceso electoral colombiano',
-      description: 'Guía rápida sobre tu derecho al voto y los requisitos para participar',
-      category: 'politica',
-      duration: '2:30',
-      views: 15420,
-      likes: 892,
-      thumbnail: '🗳️',
-      author: 'Registraduría Nacional',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    },
-    {
-      id: 2,
-      title: 'El poder de la participación ciudadana en tu municipio',
-      description: 'Conoce cómo puedes influir en las decisiones locales de tu comunidad',
-      category: 'participacion',
-      duration: '3:15',
-      views: 23100,
-      likes: 1547,
-      thumbnail: '🤝',
-      author: 'Fundación Corona',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    },
-    {
-      id: 3,
-      title: 'Presupuestos participativos: Tu voz en las finanzas públicas',
-      description: 'Aprende cómo los ciudadanos pueden decidir en qué se invierte el presupuesto',
-      category: 'participacion',
-      duration: '4:20',
-      views: 8950,
-      likes: 673,
-      thumbnail: '💰',
-      author: 'Transparencia Colombia',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    },
-    {
-      id: 4,
-      title: 'Cambio climático y acción ciudadana en Colombia',
-      description: 'Iniciativas locales que están marcando la diferencia ambiental',
-      category: 'ambiente',
-      duration: '5:10',
-      views: 31200,
-      likes: 2156,
-      thumbnail: '🌍',
-      author: 'WWF Colombia',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    },
-    {
-      id: 5,
-      title: 'Educación digital: Cerrando la brecha tecnológica',
-      description: 'Programas gubernamentales para mejorar el acceso a la educación digital',
-      category: 'educacion',
-      duration: '3:45',
-      views: 12340,
-      likes: 789,
-      thumbnail: '💻',
-      author: 'MinEducación',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    },
-    {
-      id: 6,
-      title: 'Control ciudadano a la corrupción',
-      description: 'Herramientas y mecanismos para denunciar actos de corrupción',
-      category: 'politica',
-      duration: '4:00',
-      views: 19800,
-      likes: 1342,
-      thumbnail: '⚖️',
-      author: 'Veeduría Ciudadana',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    },
+  // Convert sample pulse reels to legacy format for UI compatibility
+  const convertedSampleReels = samplePulseReels.map((pulseReel, index) => 
+    convertPulseReelToReel(pulseReel, index)
+  );
+
+  // Additional mock reels data for infinite scroll testing (keeping original mock data)
+  const additionalMockReels: Reel[] = [
     {
       id: 7,
       title: 'Trump: Impacto en las relaciones Colombia-Estados Unidos',
@@ -170,7 +140,6 @@ const PulseReels: React.FC = () => {
       author: 'TechColombia',
       embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     },
-    // Additional reels for infinite scroll testing
     {
       id: 11,
       title: 'Justicia restaurativa: Nueva esperanza para las víctimas',
@@ -196,6 +165,9 @@ const PulseReels: React.FC = () => {
       embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
     }
   ];
+
+  // Combine converted sample reels with additional mock reels
+  const allMockReels: Reel[] = [...convertedSampleReels, ...additionalMockReels];
 
   // Load reels with pagination and enhanced error handling
   const loadReels = useCallback(async (pageNum: number, category: string, reset = false) => {
