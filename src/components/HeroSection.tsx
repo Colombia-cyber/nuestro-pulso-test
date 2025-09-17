@@ -1,4 +1,5 @@
 import React from 'react';
+import GoogleCSESearchBox from './GoogleCSESearchBox';
 
 interface HeroSectionProps {
   onNavigate: (view: string) => void;
@@ -12,6 +13,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
       
       {/* Content */}
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
+        {/* Google Search Box - placed before the main banner */}
+        <GoogleCSESearchBox />
+        
         <div className="bg-white bg-opacity-30 backdrop-blur-lg rounded-2xl p-8 shadow-2xl border border-white border-opacity-30">
           {/* Colombian Flag Colors Accent */}
           <div className="flex justify-center mb-6">
