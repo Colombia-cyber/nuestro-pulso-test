@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import HeroSection from './components/HeroSection.tsx';
 import HomePage from './HomePage.tsx';
-import NewsFeed from './NewsFeed.tsx';
-import News from './components/News.tsx';
+
+import CustomNewsFeed from './components/CustomNewsFeed.tsx';
 import Debate from './components/Debate.tsx';
 import Survey from './components/Survey.tsx';
 import UniversalSearchBar from './components/UniversalSearchBar.tsx';
@@ -14,7 +14,7 @@ function App() {
   const renderCurrentView = () => {
     switch (currentView) {
       case 'news':
-        return <News />;
+        return <CustomNewsFeed />;
       case 'debates':
         return <Debate />;
       case 'polls':
@@ -39,9 +39,9 @@ function App() {
               {/* Home Page Content */}
               <HomePage />
               
-              {/* News Feed */}
+              {/* Custom News Feed */}
               <section className="mt-12">
-                <NewsFeed />
+                <CustomNewsFeed />
               </section>
             </main>
           </>

@@ -1,4 +1,3 @@
-import NewsProvider from '../providers/NewsProvider.js';
 import SocialMediaProvider from '../providers/SocialMediaProvider.js';
 import GovernmentProvider from '../providers/GovernmentProvider.js';
 import WikiProvider from '../providers/WikiProvider.js';
@@ -6,7 +5,6 @@ import WikiProvider from '../providers/WikiProvider.js';
 class SearchAggregator {
   constructor() {
     this.providers = {
-      news: new NewsProvider(),
       social: new SocialMediaProvider(),
       government: new GovernmentProvider(),
       wiki: new WikiProvider()

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
-import News from "./components/News";
+import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
@@ -16,7 +16,7 @@ function App() {
   const renderCurrentView = () => {
     switch (currentView) {
       case 'news':
-        return <News />;
+        return <CustomNewsFeed />;
       case 'comments':
         return <Comments />;
       case 'community-hub':
