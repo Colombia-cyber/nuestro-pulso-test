@@ -196,54 +196,76 @@ const PulseReels: React.FC = () => {
     }
   ];
 
-  // Load reels with pagination
+  // Load reels with pagination and enhanced error handling
   const loadReels = useCallback(async (pageNum: number, category: string, reset = false) => {
     if (allReelsLoaded && !reset) return;
     
     setIsLoading(true);
     setError(null);
     
-    try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Simulate potential error (5% chance)
-      if (Math.random() < 0.05) {
-        throw new Error('Error al cargar los reels. Verifica tu conexión.');
+    let retryCount = 0;
+    const maxRetries = 3;
+    
+    while (retryCount < maxRetries) {
+      try {
+        // Simulate API delay with progressive backoff
+        const delay = retryCount === 0 ? 500 : Math.min(1000 * Math.pow(2, retryCount), 5000);
+        await new Promise(resolve => setTimeout(resolve, delay));
+        
+        // Simulate network conditions - only 2% chance of error now (more reliable)
+        if (Math.random() < 0.02) {
+          throw new Error('Error de red temporal. Reintentando...');
+        }
+
+        // Filter reels by category
+        let filteredReels = category === 'todos' 
+          ? allMockReels 
+          : allMockReels.filter(reel => reel.category === category);
+
+        // Paginate reels
+        const startIndex = (pageNum - 1) * batchSize;
+        const endIndex = startIndex + batchSize;
+        const pageReels = filteredReels.slice(startIndex, endIndex);
+
+        if (reset) {
+          setReels(pageReels);
+        } else {
+          setReels(prev => [...prev, ...pageReels]);
+        }
+
+        // Check if there are more reels to load
+        const hasMoreReels = endIndex < filteredReels.length;
+        setHasMore(hasMoreReels);
+        setAllReelsLoaded(!hasMoreReels);
+        
+        // Success - break out of retry loop
+        break;
+
+      } catch (err) {
+        retryCount++;
+        const errorMessage = err instanceof Error ? err.message : 'Error de conexión';
+        
+        if (retryCount >= maxRetries) {
+          // Final attempt failed - show error but still provide fallback content
+          console.error('Failed to load reels after multiple attempts:', err);
+          setError(`${errorMessage} (${retryCount} intentos)`);
+          
+          // Always show fallback reels to maintain functionality
+          if (reset || reels.length === 0) {
+            setReels(allMockReels.slice(0, batchSize));
+            setHasMore(batchSize < allMockReels.length);
+            setAllReelsLoaded(false);
+          }
+          break;
+        } else {
+          // Retry with exponential backoff
+          console.warn(`Retry attempt ${retryCount} for loading reels:`, errorMessage);
+          await new Promise(resolve => setTimeout(resolve, 500 * retryCount));
+        }
       }
-
-      // Filter reels by category
-      let filteredReels = category === 'todos' 
-        ? allMockReels 
-        : allMockReels.filter(reel => reel.category === category);
-
-      // Paginate reels
-      const startIndex = (pageNum - 1) * batchSize;
-      const endIndex = startIndex + batchSize;
-      const pageReels = filteredReels.slice(startIndex, endIndex);
-
-      if (reset) {
-        setReels(pageReels);
-      } else {
-        setReels(prev => [...prev, ...pageReels]);
-      }
-
-      // Check if there are more reels to load
-      const hasMoreReels = endIndex < filteredReels.length;
-      setHasMore(hasMoreReels);
-      setAllReelsLoaded(!hasMoreReels);
-
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
-      setError(errorMessage);
-      
-      // Show fallback reels on error if no reels are loaded
-      if (reels.length === 0) {
-        setReels(allMockReels.slice(0, batchSize));
-      }
-    } finally {
-      setIsLoading(false);
     }
+    
+    setIsLoading(false);
   }, [batchSize, allReelsLoaded, reels.length]);
 
   // Initialize reels on mount and category change
@@ -290,30 +312,65 @@ const PulseReels: React.FC = () => {
     loadReels(1, selectedCategory, true);
   };
 
-  // Video embed fallback function
-  const getVideoEmbedContent = (reel: Reel) => {
-    if (reel.embedUrl) {
+  // Enhanced video embed component with multiple fallback levels
+  const VideoEmbedContent: React.FC<{ reel: Reel }> = ({ reel }) => {
+    const [embedError, setEmbedError] = useState(false);
+    const [imageLoaded, setImageLoaded] = useState(false);
+    
+    // If there's an embed URL and no previous error, try to load it
+    if (reel.embedUrl && !embedError) {
       return (
-        <iframe
-          src={reel.embedUrl}
-          title={reel.title}
-          className="w-full h-full"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          onError={() => {
-            console.warn(`Failed to load video embed for reel ${reel.id}`);
-          }}
-        />
+        <div className="relative w-full h-full">
+          <iframe
+            src={reel.embedUrl}
+            title={reel.title}
+            className="w-full h-full"
+            frameBorder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            onLoad={() => setImageLoaded(true)}
+            onError={() => {
+              console.warn(`Failed to load video embed for reel ${reel.id}, falling back to placeholder`);
+              setEmbedError(true);
+            }}
+          />
+          {/* Loading overlay while iframe loads */}
+          {!imageLoaded && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
+              <div className="text-center">
+                <div className="animate-spin text-4xl mb-2">🔄</div>
+                <p className="text-gray-600 text-sm">Cargando video...</p>
+              </div>
+            </div>
+          )}
+        </div>
       );
     }
     
-    // Fallback to thumbnail
+    // Fallback with enhanced visual design
     return (
-      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
-        <div className="text-center">
-          <div className="text-6xl mb-2">{reel.thumbnail}</div>
-          <p className="text-white text-sm">Video no disponible</p>
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 via-purple-600 to-red-500 relative overflow-hidden">
+        {/* Background pattern */}
+        <div className="absolute inset-0 opacity-10">
+          <div className="grid grid-cols-6 gap-2 h-full">
+            {Array.from({ length: 24 }, (_, i) => (
+              <div key={i} className="bg-white rounded-full animate-pulse" style={{ animationDelay: `${i * 0.1}s` }}></div>
+            ))}
+          </div>
+        </div>
+        
+        <div className="text-center relative z-10">
+          <div className="text-6xl mb-3 animate-bounce">{reel.thumbnail}</div>
+          <div className="bg-black/20 backdrop-blur-sm rounded-lg px-4 py-2">
+            <p className="text-white text-sm font-medium mb-1">Contenido no disponible</p>
+            <p className="text-white/80 text-xs">Inténtalo más tarde</p>
+          </div>
+          <button 
+            onClick={() => setEmbedError(false)}
+            className="mt-3 bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-xs transition-colors"
+          >
+            🔄 Reintentar
+          </button>
         </div>
       </div>
     );
@@ -412,7 +469,7 @@ const PulseReels: React.FC = () => {
                 >
                   {/* Video/Thumbnail */}
                   <div className="relative h-64 group-hover:scale-105 transition-transform overflow-hidden">
-                    {getVideoEmbedContent(reel)}
+                    <VideoEmbedContent reel={reel} />
                     <div className="absolute bottom-4 right-4 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm">
                       {reel.duration}
                     </div>

@@ -3,10 +3,11 @@ import UniversalSearchBar from "./UniversalSearchBar";
 
 interface NavbarProps {
   onNavigate?: (view: string) => void;
+  onSearch?: (query: string) => void;
   currentView?: string;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => {
+const Navbar: React.FC<NavbarProps> = ({ onNavigate, onSearch, currentView = 'home' }) => {
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
@@ -30,7 +31,13 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
         <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
           <UniversalSearchBar 
             compact={true}
-            onResults={() => handleNavClick('search')}
+            onResults={(response) => {
+              if (onSearch) {
+                onSearch(response.query);
+              } else {
+                handleNavClick('search');
+              }
+            }}
           />
         </div>
         
@@ -346,9 +353,13 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
             <div className="p-6">
               <UniversalSearchBar 
                 autoFocus={true}
-                onResults={() => {
+                onResults={(response) => {
                   setShowSearchModal(false);
-                  handleNavClick('search');
+                  if (onSearch) {
+                    onSearch(response.query);
+                  } else {
+                    handleNavClick('search');
+                  }
                 }}
               />
             </div>

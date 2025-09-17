@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { activityTracker } from '../services/ActivityTracker';
 import { searchService, SearchResult, SearchResponse } from '../services/searchService';
+import { commentService } from '../services/CommentService';
 import { getSearchCategories, getCategoryById } from '../config/categories';
 import Pagination from './Pagination';
 
@@ -37,6 +38,8 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
   const [infiniteScrollEnabled, setInfiniteScrollEnabled] = useState(false);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [allResults, setAllResults] = useState<SearchResult[]>([]);
+  const [commentingOnResult, setCommentingOnResult] = useState<string | null>(null);
+  const [commentText, setCommentText] = useState('');
 
   const inputRef = useRef<HTMLInputElement>(null);
   const searchResultsRef = useRef<HTMLDivElement>(null);
@@ -263,6 +266,37 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
 
   // Get popular suggestions
   const popularSuggestions = searchService.getPopularQueries();
+
+  // Handle comment submission
+  const handleCommentSubmit = (result: SearchResult) => {
+    if (!commentText.trim()) return;
+    
+    try {
+      commentService.addCommentFromSearchResult(
+        result.title,
+        result.url,
+        commentText,
+        'Usuario Actual',
+        query,
+        result.category
+      );
+      
+      setCommentText('');
+      setCommentingOnResult(null);
+      
+      // Show success feedback
+      alert('¡Comentario publicado en Community Hub!');
+    } catch (error) {
+      console.error('Error posting comment:', error);
+      alert('Error al publicar comentario. Inténtalo de nuevo.');
+    }
+  };
+
+  // Toggle comment form
+  const toggleCommentForm = (resultId: string) => {
+    setCommentingOnResult(commentingOnResult === resultId ? null : resultId);
+    setCommentText('');
+  };
 
   if (compact) {
     return (
@@ -564,6 +598,13 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                             {expandedResults.has(result.id) ? '▲ Menos' : '▼ Más'}
                           </button>
                           <span className="text-gray-300" aria-hidden="true">•</span>
+                          <button
+                            onClick={() => toggleCommentForm(result.id)}
+                            className="text-green-600 hover:text-green-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-green-500 rounded"
+                          >
+                            💬 Comentar
+                          </button>
+                          <span className="text-gray-300" aria-hidden="true">•</span>
                           <span className="text-sm text-gray-500">{result.source}</span>
                           {result.author && (
                             <>
@@ -577,6 +618,44 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                           <span className="text-xs font-medium text-blue-600">{result.relevanceScore}%</span>
                         </div>
                       </div>
+
+                      {/* Comment form */}
+                      {commentingOnResult === result.id && (
+                        <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                          <h4 className="font-medium text-gray-900 mb-3">💬 Agregar Comentario</h4>
+                          <textarea
+                            value={commentText}
+                            onChange={(e) => setCommentText(e.target.value)}
+                            placeholder="Escribe tu comentario sobre este artículo..."
+                            className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                            rows={3}
+                            maxLength={500}
+                          />
+                          <div className="flex items-center justify-between mt-3">
+                            <span className="text-xs text-gray-500">
+                              {commentText.length}/500 caracteres
+                            </span>
+                            <div className="flex gap-2">
+                              <button
+                                onClick={() => setCommentingOnResult(null)}
+                                className="px-3 py-1 text-sm text-gray-600 hover:text-gray-800 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-500"
+                              >
+                                Cancelar
+                              </button>
+                              <button
+                                onClick={() => handleCommentSubmit(result)}
+                                disabled={!commentText.trim()}
+                                className="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              >
+                                📝 Publicar en Hub
+                              </button>
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-500 mt-2">
+                            ℹ️ Tu comentario se publicará automáticamente en el Community Hub con referencia a este artículo.
+                          </p>
+                        </div>
+                      )}
 
                       {/* Tags if expanded */}
                       {expandedResults.has(result.id) && result.tags && result.tags.length > 0 && (

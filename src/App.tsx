@@ -49,16 +49,46 @@ function App() {
   const [currentView, setCurrentView] = useState('home');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState(''); // Persistent search state
 
   const handleNavigate = (view: string) => {
     setIsLoading(true);
     setError(null);
     
-    // Simulate loading delay for better UX
-    setTimeout(() => {
-      setCurrentView(view);
-      setIsLoading(false);
-    }, 300);
+    try {
+      // Simulate loading delay for better UX with retry logic
+      const attemptNavigation = async (retries = 2) => {
+        try {
+          await new Promise(resolve => setTimeout(resolve, 200));
+          setCurrentView(view);
+          setIsLoading(false);
+        } catch (navError) {
+          if (retries > 0) {
+            console.warn('Navigation retry attempt:', retries);
+            await attemptNavigation(retries - 1);
+          } else {
+            throw navError;
+          }
+        }
+      };
+      
+      attemptNavigation();
+    } catch (navError) {
+      console.error('Navigation failed:', navError);
+      setError('Error de navegación. Intentando de nuevo...');
+      // Still attempt to navigate even on error
+      setTimeout(() => {
+        setCurrentView(view);
+        setIsLoading(false);
+        setError(null);
+      }, 1000);
+    }
+  };
+
+  // Enhanced search handler that maintains search state
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    handleNavigate('search');
   };
 
   const handleRetry = () => {
@@ -101,7 +131,7 @@ function App() {
         case 'community-hub':
           return <CommunityHub />;
         case 'search':
-          return <SearchPage />;
+          return <SearchPage initialQuery={searchQuery} />;
         case 'home':
         default:
           return <HeroSection onNavigate={handleNavigate} />;
@@ -132,7 +162,7 @@ function App() {
 
   return (
     <div>
-      <Navbar onNavigate={handleNavigate} currentView={currentView} />
+      <Navbar onNavigate={handleNavigate} onSearch={handleSearch} currentView={currentView} />
       <div className="pt-20">
         <Suspense fallback={<LoadingSpinner />}>
           {renderCurrentView()}
