@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FiShare2, FiCopy, FiExternalLink, FiClock, FiTrendingUp, FiUser } from 'react-icons/fi';
 
 interface NewsArticle {
   id: string;
@@ -11,6 +12,10 @@ interface NewsArticle {
   category: string;
   perspective: 'left' | 'right';
   url?: string;
+  authorName?: string;
+  authorAvatar?: string;
+  trending?: boolean;
+  locality?: string;
 }
 
 interface BalancedNewsViewProps {
@@ -22,6 +27,7 @@ const BalancedNewsView: React.FC<BalancedNewsViewProps> = ({ topic, onBack }) =>
   const [viewMode, setViewMode] = useState<'side-by-side' | 'tabs'>('side-by-side');
   const [activeTab, setActiveTab] = useState<'left' | 'right'>('left');
   const [showSubmissionForm, setShowSubmissionForm] = useState(false);
+  const [copiedLink, setCopiedLink] = useState<string | null>(null);
 
   // Mock news data - in real implementation this would come from an API
   const mockNews: NewsArticle[] = [
@@ -34,7 +40,12 @@ const BalancedNewsView: React.FC<BalancedNewsViewProps> = ({ topic, onBack }) =>
       readTime: '4 min',
       category: 'Política Fiscal',
       perspective: 'left',
-      url: '#'
+      url: '#',
+      authorName: 'María Rodríguez',
+      authorAvatar: 'https://ui-avatars.com/api/?name=María+Rodríguez&background=3b82f6&color=fff',
+      trending: true,
+      locality: 'Bogotá',
+      imageUrl: 'https://picsum.photos/400/250?random=1'
     },
     {
       id: '1-right',
@@ -45,7 +56,12 @@ const BalancedNewsView: React.FC<BalancedNewsViewProps> = ({ topic, onBack }) =>
       readTime: '5 min',
       category: 'Política Fiscal',
       perspective: 'right',
-      url: '#'
+      url: '#',
+      authorName: 'Carlos Mendoza',
+      authorAvatar: 'https://ui-avatars.com/api/?name=Carlos+Mendoza&background=ef4444&color=fff',
+      trending: false,
+      locality: 'Medellín',
+      imageUrl: 'https://picsum.photos/400/250?random=2'
     },
     {
       id: '2-left',
@@ -56,7 +72,12 @@ const BalancedNewsView: React.FC<BalancedNewsViewProps> = ({ topic, onBack }) =>
       readTime: '6 min',
       category: 'Medio Ambiente',
       perspective: 'left',
-      url: '#'
+      url: '#',
+      authorName: 'Ana García',
+      authorAvatar: 'https://ui-avatars.com/api/?name=Ana+García&background=10b981&color=fff',
+      trending: false,
+      locality: 'Cali',
+      imageUrl: 'https://picsum.photos/400/250?random=3'
     },
     {
       id: '2-right',
@@ -67,7 +88,12 @@ const BalancedNewsView: React.FC<BalancedNewsViewProps> = ({ topic, onBack }) =>
       readTime: '5 min',
       category: 'Medio Ambiente',
       perspective: 'right',
-      url: '#'
+      url: '#',
+      authorName: 'Luis Hernández',
+      authorAvatar: 'https://ui-avatars.com/api/?name=Luis+Hernández&background=f59e0b&color=fff',
+      trending: true,
+      locality: 'Barranquilla',
+      imageUrl: 'https://picsum.photos/400/250?random=4'
     },
     {
       id: '3-left',
@@ -78,7 +104,12 @@ const BalancedNewsView: React.FC<BalancedNewsViewProps> = ({ topic, onBack }) =>
       readTime: '4 min',
       category: 'Política Social',
       perspective: 'left',
-      url: '#'
+      url: '#',
+      authorName: 'Patricia Morales',
+      authorAvatar: 'https://ui-avatars.com/api/?name=Patricia+Morales&background=8b5cf6&color=fff',
+      trending: false,
+      locality: 'Cartagena',
+      imageUrl: 'https://picsum.photos/400/250?random=5'
     },
     {
       id: '3-right',
@@ -89,7 +120,12 @@ const BalancedNewsView: React.FC<BalancedNewsViewProps> = ({ topic, onBack }) =>
       readTime: '4 min',
       category: 'Política Social',
       perspective: 'right',
-      url: '#'
+      url: '#',
+      authorName: 'Roberto Silva',
+      authorAvatar: 'https://ui-avatars.com/api/?name=Roberto+Silva&background=ec4899&color=fff',
+      trending: false,
+      locality: 'Bucaramanga',
+      imageUrl: 'https://picsum.photos/400/250?random=6'
     }
   ];
 
@@ -106,41 +142,139 @@ const BalancedNewsView: React.FC<BalancedNewsViewProps> = ({ topic, onBack }) =>
     });
   };
 
+  const handleCopyLink = async (article: NewsArticle) => {
+    try {
+      await navigator.clipboard.writeText(window.location.origin + article.url);
+      setCopiedLink(article.id);
+      setTimeout(() => setCopiedLink(null), 2000);
+    } catch (error) {
+      console.error('Error copying link:', error);
+    }
+  };
+
+  const handleShare = async (article: NewsArticle) => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: article.title,
+          text: article.summary,
+          url: window.location.origin + article.url,
+        });
+      } catch (error) {
+        console.error('Error sharing:', error);
+      }
+    } else {
+      handleCopyLink(article);
+    }
+  };
+
   const NewsCard: React.FC<{ article: NewsArticle; perspective: 'left' | 'right' }> = ({ 
     article, 
     perspective 
   }) => (
-    <div className={`bg-white rounded-lg shadow-lg p-6 border-l-4 ${
+    <div className={`bg-white rounded-xl shadow-lg p-6 border-l-4 hover:shadow-xl transition-all duration-300 ${
       perspective === 'left' ? 'border-blue-500' : 'border-red-500'
     }`}>
-      <div className="flex items-center justify-between mb-3">
-        <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-          perspective === 'left' 
-            ? 'bg-blue-100 text-blue-800' 
-            : 'bg-red-100 text-red-800'
-        }`}>
-          {perspective === 'left' ? 'Perspectiva Progresista' : 'Perspectiva Conservadora'}
+      {/* Article Image */}
+      {article.imageUrl && (
+        <div className="mb-4">
+          <img 
+            src={article.imageUrl} 
+            alt={article.title}
+            className="w-full h-48 object-cover rounded-lg"
+          />
+        </div>
+      )}
+
+      {/* Header with tags and author */}
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+            perspective === 'left' 
+              ? 'bg-blue-100 text-blue-800' 
+              : 'bg-red-100 text-red-800'
+          }`}>
+            {perspective === 'left' ? '🔵 Perspectiva Progresista' : '🔴 Perspectiva Conservadora'}
+          </span>
+          {article.trending && (
+            <span className="bg-orange-100 text-orange-800 px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1">
+              <FiTrendingUp size={10} />
+              Trending
+            </span>
+          )}
+          {article.locality && (
+            <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
+              📍 {article.locality}
+            </span>
+          )}
+        </div>
+        <span className="text-xs text-gray-500 flex items-center gap-1">
+          <FiClock size={12} />
+          {article.readTime}
         </span>
-        <span className="text-xs text-gray-500">{article.readTime}</span>
       </div>
+
+      {/* Author info */}
+      {article.authorName && (
+        <div className="flex items-center gap-3 mb-4">
+          <img 
+            src={article.authorAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(article.authorName)}&background=gray&color=fff`} 
+            alt={article.authorName}
+            className="w-10 h-10 rounded-full"
+          />
+          <div>
+            <p className="text-sm font-medium text-gray-900">{article.authorName}</p>
+            <p className="text-xs text-gray-500">{article.source}</p>
+          </div>
+        </div>
+      )}
       
-      <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2">
+      {/* Title and summary */}
+      <h3 className="text-lg font-bold text-gray-900 mb-3 line-clamp-2 hover:text-blue-600 cursor-pointer transition-colors">
         {article.title}
       </h3>
       
-      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+      <p className="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">
         {article.summary}
       </p>
       
-      <div className="flex items-center justify-between text-xs text-gray-500">
-        <div className="flex items-center space-x-2">
-          <span className="font-medium">{article.source}</span>
-          <span>•</span>
+      {/* Footer with metadata and actions */}
+      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+        <div className="flex items-center text-xs text-gray-500 gap-1">
+          {!article.authorName && (
+            <>
+              <span className="font-medium">{article.source}</span>
+              <span>•</span>
+            </>
+          )}
           <span>{formatDate(article.publishedAt)}</span>
         </div>
-        <button className="text-blue-600 hover:text-blue-800 font-medium">
-          Leer más →
-        </button>
+        
+        {/* Action buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => handleShare(article)}
+            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-full transition-colors"
+            title="Compartir"
+          >
+            <FiShare2 size={16} />
+          </button>
+          <button
+            onClick={() => handleCopyLink(article)}
+            className={`p-2 rounded-full transition-colors ${
+              copiedLink === article.id
+                ? 'text-green-600 bg-green-50'
+                : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50'
+            }`}
+            title="Copiar enlace"
+          >
+            <FiCopy size={16} />
+          </button>
+          <button className="flex items-center gap-1 text-blue-600 hover:text-blue-800 font-medium text-sm transition-colors">
+            <FiExternalLink size={14} />
+            Leer más
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -237,19 +371,43 @@ const BalancedNewsView: React.FC<BalancedNewsViewProps> = ({ topic, onBack }) =>
           {onBack && (
             <button 
               onClick={onBack}
-              className="mb-4 flex items-center text-blue-600 hover:text-blue-800"
+              className="mb-4 flex items-center text-blue-600 hover:text-blue-800 transition-colors"
             >
               ← Volver
             </button>
           )}
           
-          <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 p-6 rounded-lg">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              📰 Perspectivas Balanceadas: {topic}
-            </h1>
-            <p className="text-white/90">
-              Ve múltiples perspectivas del mismo tema para formar tu propia opinión
-            </p>
+          <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 p-8 rounded-xl shadow-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-4xl font-bold text-white mb-3">
+                  📰 Perspectivas Balanceadas: {topic}
+                </h1>
+                <p className="text-white/90 text-lg mb-4">
+                  Ve múltiples perspectivas del mismo tema para formar tu propia opinión
+                </p>
+                <div className="flex items-center gap-6 text-white/80">
+                  <span className="flex items-center gap-2">
+                    <FiUser size={16} />
+                    {leftNews.length + rightNews.length} artículos
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <FiTrendingUp size={16} />
+                    {mockNews.filter(a => a.trending).length} trending
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <FiClock size={16} />
+                    Actualizado recientemente
+                  </span>
+                </div>
+              </div>
+              <div className="hidden md:block">
+                <div className="bg-white/20 backdrop-blur-sm rounded-lg p-6 text-center">
+                  <div className="text-3xl font-bold text-white">⚖️</div>
+                  <div className="text-white/90 text-sm mt-2">Balance</div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -382,6 +540,36 @@ const BalancedNewsView: React.FC<BalancedNewsViewProps> = ({ topic, onBack }) =>
             </div>
           </div>
         )}
+
+        {/* Related Articles Section */}
+        <div className="mt-8 bg-gray-50 border border-gray-200 rounded-xl p-6">
+          <div className="flex items-center mb-4">
+            <div className="text-2xl mr-3">🔗</div>
+            <div>
+              <h3 className="font-semibold text-gray-900 mb-2">Artículos Relacionados</h3>
+              <p className="text-gray-600 text-sm">
+                Otros temas que podrían interesarte basados en esta perspectiva balanceada
+              </p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {[
+              { title: "Análisis Económico 2024", category: "Economía", readTime: "3 min" },
+              { title: "Política de Salud Pública", category: "Salud", readTime: "5 min" },
+              { title: "Educación y Tecnología", category: "Educación", readTime: "4 min" }
+            ].map((related, index) => (
+              <div key={index} className="bg-white rounded-lg p-4 border border-gray-200 hover:shadow-md transition-shadow cursor-pointer">
+                <div className="text-sm text-blue-600 font-medium mb-1">{related.category}</div>
+                <h4 className="font-semibold text-gray-900 mb-2 text-sm">{related.title}</h4>
+                <div className="flex items-center justify-between text-xs text-gray-500">
+                  <span>{related.readTime}</span>
+                  <span className="text-blue-600">Leer →</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
 
         {/* Educational Note */}
         <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
