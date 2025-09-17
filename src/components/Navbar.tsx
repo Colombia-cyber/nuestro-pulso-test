@@ -17,112 +17,86 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
     setShowMobileMenu(false);
   };
 
+  const navItems = [
+    { id: 'home', label: 'Inicio', icon: '🏠', fullLabel: 'Inicio' },
+    { id: 'reels', label: 'Reels', icon: '🎬', fullLabel: 'Reels' },
+    { id: 'feeds', label: 'Feeds', icon: '📰', fullLabel: 'Feeds' },
+    { id: 'congress', label: 'Congreso', icon: '🏛️', fullLabel: 'Congreso' },
+    { id: 'elections', label: 'Elecciones', icon: '🗳️', fullLabel: 'Elecciones' },
+    { id: 'chat', label: 'Chat', icon: '💬', fullLabel: 'Chat en Vivo' },
+    { id: 'debates', label: 'Debates', icon: '🗣️', fullLabel: 'Debates' },
+    { id: 'surveys', label: 'Encuestas', icon: '📊', fullLabel: 'Encuestas' },
+    { id: 'community-hub', label: 'Hub', icon: '💭', fullLabel: 'Community Hub' },
+  ];
+
   return (
     <>
-      <nav className="w-full bg-white shadow-sm py-4 px-4 md:px-8 flex flex-row items-center justify-between fixed top-0 left-0 z-50">
+      <nav className="w-full bg-white/95 backdrop-blur-lg shadow-soft py-3 px-4 md:px-6 lg:px-8 flex flex-row items-center justify-between fixed top-0 left-0 z-50 border-b border-neutral-200/50">
         {/* Logo and Brand */}
-        <div className="flex items-center gap-2">
-          <img src="/colombia-flag.png" alt="Colombia Flag" className="w-10 h-7" />
-          <span className="font-bold text-lg text-yellow-700">Nuestro Pulso</span>
+        <div className="flex items-center gap-3 min-w-0 flex-shrink-0">
+          <div className="relative">
+            <img 
+              src="/colombia-flag.png" 
+              alt="Colombia Flag" 
+              className="w-10 h-7 rounded-sm shadow-sm" 
+            />
+            <div className="absolute -inset-0.5 rounded-sm opacity-30 bg-gradient-to-r from-secondary-400 via-primary-500 to-accent-500 blur-sm"></div>
+          </div>
+          <div className="flex flex-col">
+            <span className="font-display font-bold text-lg text-gradient-colombia leading-none">
+              Nuestro Pulso
+            </span>
+            <span className="text-xs text-neutral-500 font-medium tracking-wide hidden sm:block">
+              Red Cívica de Colombia
+            </span>
+          </div>
         </div>
 
         {/* Desktop Search Bar */}
         <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
-          <UniversalSearchBar 
-            compact={true}
-            onResults={() => handleNavClick('search')}
-          />
+          <div className="w-full">
+            <UniversalSearchBar 
+              compact={true}
+              onResults={() => handleNavClick('search')}
+            />
+          </div>
         </div>
         
         {/* Desktop Navigation */}
-        <div className="hidden md:flex gap-2 xl:gap-4 items-center">
-          <button 
-            onClick={() => handleNavClick('home')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'home' ? 'bg-blue-100 text-blue-700' : ''
-            }`}
-          >
-            <span>🏠</span>
-            <span className="hidden xl:inline">Inicio</span>
-          </button>
-          <button 
-            onClick={() => handleNavClick('reels')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'reels' ? 'bg-blue-100 text-blue-700' : ''
-            }`}
-          >
-            <span>🎬</span>
-            <span className="hidden xl:inline">Reels</span>
-          </button>
-          <button 
-            onClick={() => handleNavClick('feeds')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'feeds' || currentView === 'news' ? 'bg-blue-100 text-blue-700' : ''
-            }`}
-          >
-            <span>📰</span>
-            <span className="hidden xl:inline">Feeds</span>
-          </button>
-          <button 
-            onClick={() => handleNavClick('congress')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'congress' ? 'bg-blue-100 text-blue-700' : ''
-            }`}
-          >
-            <span>🏛️</span>
-            <span className="hidden xl:inline">Congreso</span>
-          </button>
-          <button 
-            onClick={() => handleNavClick('elections')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'elections' ? 'bg-blue-100 text-blue-700' : ''
-            }`}
-          >
-            <span>🗳️</span>
-            <span className="hidden xl:inline">Elecciones</span>
-          </button>
-          <button 
-            onClick={() => handleNavClick('chat')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'chat' ? 'bg-blue-100 text-blue-700' : ''
-            }`}
-          >
-            <span>💬</span>
-            <span className="hidden xl:inline">Chat</span>
-          </button>
-          <button 
-            onClick={() => handleNavClick('debates')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'debates' ? 'bg-blue-100 text-blue-700' : ''
-            }`}
-          >
-            <span>🗣️</span>
-            <span className="hidden xl:inline">Debates</span>
-          </button>
-          <button 
-            onClick={() => handleNavClick('surveys')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'surveys' || currentView === 'encuestas' ? 'bg-blue-100 text-blue-700' : ''
-            }`}
-          >
-            <span>📊</span>
-            <span className="hidden xl:inline">Encuestas</span>
-          </button>
-          <button 
-            onClick={() => handleNavClick('community-hub')}
-            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'community-hub' ? 'bg-blue-100 text-blue-700' : ''
-            }`}
-          >
-            <span>💭</span>
-            <span className="hidden xl:inline">Hub</span>
-          </button>
+        <div className="hidden md:flex gap-1 xl:gap-2 items-center flex-shrink-0">
+          {navItems.map((item) => {
+            const isActive = currentView === item.id || 
+              (item.id === 'feeds' && currentView === 'news') ||
+              (item.id === 'surveys' && currentView === 'encuestas');
+            
+            return (
+              <button 
+                key={item.id}
+                onClick={() => handleNavClick(item.id)}
+                className={`${isActive ? 'nav-link-active' : 'nav-link-inactive'} 
+                  relative group min-w-0 px-2 xl:px-3 py-2 text-sm font-medium transition-all duration-200`}
+                title={item.fullLabel}
+              >
+                <span className="text-lg group-hover:scale-110 transition-transform duration-200">
+                  {item.icon}
+                </span>
+                <span className="hidden xl:inline truncate">
+                  {item.label}
+                </span>
+                {isActive && (
+                  <div className="absolute inset-0 bg-primary-500 rounded-lg opacity-10 scale-105"></div>
+                )}
+              </button>
+            );
+          })}
+          
           {/* Mobile/Tablet Search Button */}
           <button 
             onClick={() => setShowSearchModal(true)}
-            className="lg:hidden text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50"
+            className="lg:hidden nav-link-inactive px-2 xl:px-3 py-2"
+            title="Buscar"
           >
-            <span>🔍</span>
+            <span className="text-lg">🔍</span>
             <span className="hidden xl:inline">Buscar</span>
           </button>
         </div>
@@ -130,199 +104,100 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
         {/* Mobile menu button */}
         <button
           onClick={() => setShowMobileMenu(!showMobileMenu)}
-          className="md:hidden text-blue-900 p-2 rounded-lg hover:bg-blue-50"
+          className="md:hidden p-2 rounded-xl text-neutral-700 hover:bg-neutral-100 transition-colors duration-200 group"
           aria-label="Menú de navegación"
         >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          <svg 
+            className={`w-6 h-6 transition-transform duration-300 ${showMobileMenu ? 'rotate-90' : ''}`} 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M4 6h16M4 12h16M4 18h16" 
+            />
           </svg>
         </button>
 
-        {/* Social Icons - Desktop Only */}
-        <div className="hidden xl:flex items-center gap-4 ml-4">
-          {/* Social Icons */}
-          <div className="flex items-center gap-2">
-            <a 
-              href="https://www.google.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
-              title="Google"
-            >
-              🌐
-            </a>
-            <a 
-              href="https://www.youtube.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
-              title="YouTube"
-            >
-              📺
-            </a>
-            <a 
-              href="https://www.facebook.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
-              title="Facebook"
-            >
-              📘
-            </a>
-            <a 
-              href="https://www.twitter.com" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-2xl hover:scale-110 transition-transform cursor-pointer"
-              title="Twitter"
-            >
-              🐦
-            </a>
-          </div>
-          <button className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white px-4 py-2 rounded-lg font-bold shadow hover:scale-105 transition">
-            Ingresar
+        {/* Auth Button - Desktop */}
+        <div className="hidden xl:flex items-center ml-4 flex-shrink-0">
+          <button className="btn-lg gradient-colombia text-white font-bold shadow-medium hover:shadow-large hover:scale-105 transform transition-all duration-300">
+            <span className="flex items-center gap-2">
+              <span>🇨🇴</span>
+              <span>Ingresar</span>
+            </span>
           </button>
         </div>
       </nav>
 
       {/* Mobile Menu */}
       {showMobileMenu && (
-        <div className="md:hidden fixed inset-0 bg-black bg-opacity-50 z-60 top-20">
-          <div className="bg-white w-full max-w-sm ml-auto h-full shadow-xl p-6">
-            <div className="flex flex-col space-y-4">
-              <button 
-                onClick={() => handleNavClick('home')}
-                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'home' ? 'bg-blue-100 text-blue-700' : ''
-                }`}
-              >
-                <span className="text-xl">🏠</span>
-                <span>Inicio</span>
-              </button>
-              <button 
-                onClick={() => handleNavClick('reels')}
-                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'reels' ? 'bg-blue-100 text-blue-700' : ''
-                }`}
-              >
-                <span className="text-xl">🎬</span>
-                <span>Reels</span>
-              </button>
-              <button 
-                onClick={() => handleNavClick('feeds')}
-                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'feeds' || currentView === 'news' ? 'bg-blue-100 text-blue-700' : ''
-                }`}
-              >
-                <span className="text-xl">📰</span>
-                <span>Feeds</span>
-              </button>
-              <button 
-                onClick={() => handleNavClick('congress')}
-                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'congress' ? 'bg-blue-100 text-blue-700' : ''
-                }`}
-              >
-                <span className="text-xl">🏛️</span>
-                <span>Congreso</span>
-              </button>
-              <button 
-                onClick={() => handleNavClick('elections')}
-                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'elections' ? 'bg-blue-100 text-blue-700' : ''
-                }`}
-              >
-                <span className="text-xl">🗳️</span>
-                <span>Elecciones</span>
-              </button>
-              <button 
-                onClick={() => handleNavClick('chat')}
-                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'chat' ? 'bg-blue-100 text-blue-700' : ''
-                }`}
-              >
-                <span className="text-xl">💬</span>
-                <span>Chat en Vivo</span>
-              </button>
-              <button 
-                onClick={() => handleNavClick('debates')}
-                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'debates' ? 'bg-blue-100 text-blue-700' : ''
-                }`}
-              >
-                <span className="text-xl">🗣️</span>
-                <span>Debates</span>
-              </button>
-              <button 
-                onClick={() => handleNavClick('surveys')}
-                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'surveys' || currentView === 'encuestas' ? 'bg-blue-100 text-blue-700' : ''
-                }`}
-              >
-                <span className="text-xl">📊</span>
-                <span>Encuestas</span>
-              </button>
-              <button 
-                onClick={() => handleNavClick('community-hub')}
-                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'community-hub' ? 'bg-blue-100 text-blue-700' : ''
-                }`}
-              >
-                <span className="text-xl">💭</span>
-                <span>Community Hub</span>
-              </button>
+        <div className="md:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-60 top-20 animate-fade-in">
+          <div className="bg-white/95 backdrop-blur-xl w-full max-w-sm ml-auto h-full shadow-large p-6 animate-slide-down border-l border-neutral-200">
+            <div className="flex flex-col space-y-2">
+              {navItems.map((item, index) => {
+                const isActive = currentView === item.id || 
+                  (item.id === 'feeds' && currentView === 'news') ||
+                  (item.id === 'surveys' && currentView === 'encuestas');
+                
+                return (
+                  <button 
+                    key={item.id}
+                    onClick={() => handleNavClick(item.id)}
+                    className={`${isActive ? 'nav-link-active' : 'nav-link-inactive'} 
+                      p-3 text-left animate-slide-up`}
+                    style={{ animationDelay: `${index * 50}ms` }}
+                  >
+                    <span className="text-xl mr-3 inline-block w-6 text-center">
+                      {item.icon}
+                    </span>
+                    <span className="font-medium">{item.fullLabel}</span>
+                  </button>
+                );
+              })}
+              
               <button 
                 onClick={() => setShowSearchModal(true)}
-                className="text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50"
+                className="nav-link-inactive p-3 text-left animate-slide-up"
+                style={{ animationDelay: `${navItems.length * 50}ms` }}
               >
-                <span className="text-xl">🔍</span>
-                <span>Buscar</span>
+                <span className="text-xl mr-3 inline-block w-6 text-center">🔍</span>
+                <span className="font-medium">Buscar</span>
               </button>
               
-              <div className="border-t border-gray-200 my-4"></div>
+              <div className="border-t border-neutral-200 my-4"></div>
               
               {/* Social Icons in Mobile */}
-              <div className="flex items-center justify-around">
-                <a 
-                  href="https://www.google.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-3xl hover:scale-110 transition-transform cursor-pointer"
-                  title="Google"
-                >
-                  🌐
-                </a>
-                <a 
-                  href="https://www.youtube.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-3xl hover:scale-110 transition-transform cursor-pointer"
-                  title="YouTube"
-                >
-                  📺
-                </a>
-                <a 
-                  href="https://www.facebook.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-3xl hover:scale-110 transition-transform cursor-pointer"
-                  title="Facebook"
-                >
-                  📘
-                </a>
-                <a 
-                  href="https://www.twitter.com" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="text-3xl hover:scale-110 transition-transform cursor-pointer"
-                  title="Twitter"
-                >
-                  🐦
-                </a>
+              <div className="flex items-center justify-around py-4 animate-slide-up" 
+                style={{ animationDelay: `${(navItems.length + 1) * 50}ms` }}>
+                {[
+                  { href: "https://www.google.com", icon: "🌐", title: "Google" },
+                  { href: "https://www.youtube.com", icon: "📺", title: "YouTube" },
+                  { href: "https://www.facebook.com", icon: "📘", title: "Facebook" },
+                  { href: "https://www.twitter.com", icon: "🐦", title: "Twitter" },
+                ].map((social) => (
+                  <a 
+                    key={social.title}
+                    href={social.href}
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-2xl hover:scale-110 transition-transform duration-200 p-2 rounded-lg hover:bg-neutral-100"
+                    title={social.title}
+                  >
+                    {social.icon}
+                  </a>
+                ))}
               </div>
               
-              <button className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white px-6 py-3 rounded-lg font-bold shadow hover:scale-105 transition mt-4">
-                Ingresar
+              <button className="btn-lg gradient-colombia text-white font-bold shadow-medium hover:shadow-large w-full animate-slide-up"
+                style={{ animationDelay: `${(navItems.length + 2) * 50}ms` }}>
+                <span className="flex items-center justify-center gap-2">
+                  <span>🇨🇴</span>
+                  <span>Ingresar</span>
+                </span>
               </button>
             </div>
           </div>
@@ -331,16 +206,21 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
 
       {/* Search Modal for Mobile/Tablet */}
       {showSearchModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-60 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-2xl font-bold text-gray-900">🔍 Búsqueda Universal</h2>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-60 flex items-start justify-center p-4 pt-20 animate-fade-in">
+          <div className="bg-white/95 backdrop-blur-xl rounded-2xl shadow-large max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
+            <div className="flex items-center justify-between p-6 border-b border-neutral-200">
+              <h2 className="text-2xl font-bold text-neutral-900 flex items-center gap-3">
+                <span className="text-3xl">🔍</span>
+                <span>Búsqueda Universal</span>
+              </h2>
               <button 
                 onClick={() => setShowSearchModal(false)}
-                className="text-gray-500 hover:text-gray-700 text-2xl focus:outline-none focus:ring-2 focus:ring-gray-500 rounded"
+                className="text-neutral-500 hover:text-neutral-700 p-2 rounded-lg hover:bg-neutral-100 transition-colors duration-200"
                 aria-label="Cerrar búsqueda"
               >
-                ✕
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
             <div className="p-6">
