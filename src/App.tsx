@@ -6,6 +6,8 @@ import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
 import PulseReels from "./components/PulseReels";
+import UniversalReels from "./components/UniversalReels";
+import BalancedNewsView from "./components/BalancedNewsView";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
 import LiveChat from "./components/LiveChat";
@@ -47,12 +49,20 @@ const ErrorFallback: React.FC<{ error?: string; onRetry?: () => void }> = ({
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
+  const [currentTopic, setCurrentTopic] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleNavigate = (view: string) => {
+  const handleNavigate = (view: string, topic?: string) => {
     setIsLoading(true);
     setError(null);
+    
+    // Handle topic-specific navigation
+    if (topic) {
+      setCurrentTopic(topic);
+    } else {
+      setCurrentTopic('');
+    }
     
     // Simulate loading delay for better UX
     setTimeout(() => {
@@ -69,6 +79,25 @@ function App() {
     }, 300);
   };
 
+  // Handle topic-specific routing
+  const getTopicView = (topicId: string) => {
+    const topicMapping: Record<string, { view: string; topic: string }> = {
+      'petro': { view: 'balanced-news', topic: 'Petro' },
+      'trump': { view: 'balanced-news', topic: 'Trump' },
+      'crime': { view: 'balanced-news', topic: 'Crimen' },
+      'employment': { view: 'balanced-news', topic: 'Empleo' },
+      'terror': { view: 'balanced-news', topic: 'Terror' },
+      'right-wing': { view: 'balanced-news', topic: 'Política de Derecha' },
+      'left-wing': { view: 'balanced-news', topic: 'Política de Izquierda' },
+      'legislation': { view: 'balanced-news', topic: 'Legislación' },
+      'healthcare': { view: 'balanced-news', topic: 'Salud' },
+      'education': { view: 'balanced-news', topic: 'Educación' },
+      'environment': { view: 'balanced-news', topic: 'Medio Ambiente' }
+    };
+
+    return topicMapping[topicId] || { view: 'feeds', topic: topicId };
+  };
+
   const renderCurrentView = () => {
     if (isLoading) {
       return <LoadingSpinner message={getLoadingMessage(currentView)} />;
@@ -79,12 +108,32 @@ function App() {
     }
 
     try {
+      // Handle topic-specific views first
+      if (['petro', 'trump', 'crime', 'employment', 'terror', 'right-wing', 'left-wing', 'legislation', 'healthcare', 'education', 'environment'].includes(currentView)) {
+        const topicConfig = getTopicView(currentView);
+        return (
+          <BalancedNewsView 
+            topic={topicConfig.topic} 
+            onBack={() => handleNavigate('home')} 
+          />
+        );
+      }
+
       switch (currentView) {
         case 'reels':
           return <PulseReels />;
+        case 'universal-reels':
+          return <UniversalReels />;
         case 'feeds':
         case 'news':
           return <CustomNewsFeed />;
+        case 'balanced-news':
+          return (
+            <BalancedNewsView 
+              topic={currentTopic || 'Actualidad'} 
+              onBack={() => handleNavigate('home')} 
+            />
+          );
         case 'congress':
           return <CongressTracker />;
         case 'elections':
@@ -114,9 +163,11 @@ function App() {
 
   const getLoadingMessage = (view: string): string => {
     const messages: Record<string, string> = {
-      'reels': 'Cargando Reels...',
+      'reels': 'Cargando Pulse Reels...',
+      'universal-reels': 'Cargando Universal Reels...',
       'feeds': 'Cargando noticias...',
       'news': 'Cargando noticias...',
+      'balanced-news': 'Cargando perspectivas balanceadas...',
       'congress': 'Cargando actividad del Congreso...',
       'elections': 'Cargando información electoral...',
       'chat': 'Conectando al chat en vivo...',
@@ -126,6 +177,17 @@ function App() {
       'comments': 'Cargando comentarios...',
       'community-hub': 'Cargando Community Hub...',
       'search': 'Preparando búsqueda...',
+      'petro': 'Cargando noticias sobre Petro...',
+      'trump': 'Cargando noticias sobre Trump...',
+      'crime': 'Cargando noticias sobre criminalidad...',
+      'employment': 'Cargando noticias sobre empleo...',
+      'terror': 'Cargando noticias sobre seguridad...',
+      'right-wing': 'Cargando perspectiva conservadora...',
+      'left-wing': 'Cargando perspectiva progresista...',
+      'legislation': 'Cargando información legislativa...',
+      'healthcare': 'Cargando noticias de salud...',
+      'education': 'Cargando noticias de educación...',
+      'environment': 'Cargando noticias ambientales...',
     };
     return messages[view] || 'Cargando contenido...';
   };

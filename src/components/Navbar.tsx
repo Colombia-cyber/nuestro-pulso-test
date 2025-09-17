@@ -52,7 +52,16 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
             }`}
           >
             <span>🎬</span>
-            <span className="hidden xl:inline">Reels</span>
+            <span className="hidden xl:inline">Pulse</span>
+          </button>
+          <button 
+            onClick={() => handleNavClick('universal-reels')}
+            className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
+              currentView === 'universal-reels' ? 'bg-blue-100 text-blue-700' : ''
+            }`}
+          >
+            <span>🌟</span>
+            <span className="hidden xl:inline">Universal</span>
           </button>
           <button 
             onClick={() => handleNavClick('feeds')}
@@ -206,7 +215,16 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
                 }`}
               >
                 <span className="text-xl">🎬</span>
-                <span>Reels</span>
+                <span>Pulse Reels</span>
+              </button>
+              <button 
+                onClick={() => handleNavClick('universal-reels')}
+                className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
+                  currentView === 'universal-reels' ? 'bg-blue-100 text-blue-700' : ''
+                }`}
+              >
+                <span className="text-xl">🌟</span>
+                <span>Universal Reels</span>
               </button>
               <button 
                 onClick={() => handleNavClick('feeds')}
