@@ -167,18 +167,27 @@ const Comments: React.FC<CommentsProps> = ({ articleId, articleTitle, isHub = fa
   };
 
   const LoadingSkeleton = () => (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {[1, 2, 3].map((i) => (
-        <div key={i} className="bg-white rounded-lg p-4 animate-pulse">
-          <div className="flex items-start space-x-3">
-            <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
-            <div className="flex-1">
-              <div className="flex items-center space-x-2 mb-2">
-                <div className="w-24 h-4 bg-gray-300 rounded"></div>
-                <div className="w-16 h-3 bg-gray-300 rounded"></div>
+        <div key={i} className="card animate-pulse">
+          <div className="p-6">
+            <div className="flex items-start space-x-4">
+              <div className="w-12 h-12 bg-neutral-300 rounded-full"></div>
+              <div className="flex-1">
+                <div className="flex items-center space-x-3 mb-3">
+                  <div className="w-32 h-4 bg-neutral-300 rounded"></div>
+                  <div className="w-20 h-3 bg-neutral-300 rounded"></div>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="w-full h-4 bg-neutral-300 rounded"></div>
+                  <div className="w-4/5 h-4 bg-neutral-300 rounded"></div>
+                  <div className="w-3/5 h-4 bg-neutral-300 rounded"></div>
+                </div>
+                <div className="flex space-x-4">
+                  <div className="w-16 h-8 bg-neutral-300 rounded-lg"></div>
+                  <div className="w-20 h-8 bg-neutral-300 rounded-lg"></div>
+                </div>
               </div>
-              <div className="w-full h-4 bg-gray-300 rounded mb-2"></div>
-              <div className="w-3/4 h-4 bg-gray-300 rounded"></div>
             </div>
           </div>
         </div>
@@ -188,15 +197,24 @@ const Comments: React.FC<CommentsProps> = ({ articleId, articleTitle, isHub = fa
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 p-6 rounded-lg mb-6">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              {isHub ? '💭 Community Hub' : '💬 Comentarios'}
-            </h1>
-            <p className="text-white/90">
-              {isHub ? 'Todas las conversaciones de la comunidad' : 'Únete a la conversación'}
-            </p>
+      <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100">
+        <div className="max-w-4xl mx-auto px-4 py-8">
+          <div className="card overflow-hidden mb-8 animate-slide-up">
+            <div className="gradient-colombia p-8 text-white">
+              <div className="flex items-center gap-4 mb-4">
+                <span className="text-4xl">
+                  {isHub ? '💭' : '💬'}
+                </span>
+                <div>
+                  <h1 className="text-3xl md:text-4xl font-bold">
+                    {isHub ? 'Community Hub' : 'Comentarios'}
+                  </h1>
+                  <p className="text-white/90 text-lg">
+                    {isHub ? 'Todas las conversaciones de la comunidad' : 'Únete a la conversación'}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
           <LoadingSkeleton />
         </div>
@@ -205,170 +223,214 @@ const Comments: React.FC<CommentsProps> = ({ articleId, articleTitle, isHub = fa
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 p-6 rounded-lg mb-6">
-          <h1 className="text-3xl font-bold text-white mb-2">
-            {isHub ? '💭 Community Hub' : '💬 Comentarios'}
-          </h1>
-          <p className="text-white/90">
-            {isHub 
-              ? 'Todas las conversaciones de la comunidad en un solo lugar' 
-              : 'Comparte tu opinión y únete al debate cívico'
-            }
-          </p>
-          {isHub && (
-            <div className="mt-4 flex items-center space-x-6 text-white/80">
-              <span>💬 {comments.length} comentarios totales</span>
-              <span>👥 Comunidad activa</span>
-              <span>🔄 Actualizado en tiempo real</span>
+    <div className="min-h-screen bg-gradient-to-br from-neutral-50 via-white to-neutral-100">
+      <div className="max-w-4xl mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="card overflow-hidden mb-8 animate-fade-in">
+          <div className="gradient-colombia p-8 text-white">
+            <div className="flex items-center gap-4 mb-4">
+              <span className="text-4xl animate-float">
+                {isHub ? '💭' : '💬'}
+              </span>
+              <div>
+                <h1 className="text-3xl md:text-4xl font-bold">
+                  {isHub ? 'Community Hub' : 'Comentarios'}
+                </h1>
+                <p className="text-white/90 text-lg">
+                  {isHub 
+                    ? 'Todas las conversaciones de la comunidad en un solo lugar' 
+                    : 'Comparte tu opinión y únete al debate cívico'
+                  }
+                </p>
+              </div>
             </div>
-          )}
+            {isHub && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                <div className="glass rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold">{comments.length}</div>
+                  <div className="text-sm text-white/80">Comentarios totales</div>
+                </div>
+                <div className="glass rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold">👥</div>
+                  <div className="text-sm text-white/80">Comunidad activa</div>
+                </div>
+                <div className="glass rounded-xl p-4 text-center">
+                  <div className="text-2xl font-bold">🔄</div>
+                  <div className="text-sm text-white/80">Tiempo real</div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Comment Form */}
         {!isHub && (
-          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Agregar comentario</h3>
-            <form onSubmit={handleSubmitComment}>
-              <div className="flex items-start space-x-3">
-                <div className="text-2xl">👤</div>
-                <div className="flex-1">
-                  <textarea
-                    value={newComment}
-                    onChange={(e) => setNewComment(e.target.value)}
-                    placeholder="Comparte tu opinión sobre este artículo..."
-                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                    rows={3}
-                  />
-                  <div className="mt-3 flex justify-between items-center">
-                    <span className="text-sm text-gray-500">
-                      Mantén un tono respetuoso y constructivo
-                    </span>
-                    <button
-                      type="submit"
-                      disabled={!newComment.trim()}
-                      className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-                    >
-                      Comentar
-                    </button>
+          <div className="card mb-8 animate-slide-up animation-delay-150">
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-neutral-900 mb-4 flex items-center gap-2">
+                <span>✍️</span>
+                <span>Agregar comentario</span>
+              </h3>
+              <form onSubmit={handleSubmitComment}>
+                <div className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-2xl">
+                    👤
+                  </div>
+                  <div className="flex-1">
+                    <textarea
+                      value={newComment}
+                      onChange={(e) => setNewComment(e.target.value)}
+                      placeholder="Comparte tu opinión sobre este artículo..."
+                      className="form-input min-h-[100px] resize-none"
+                      rows={4}
+                    />
+                    <div className="mt-4 flex justify-between items-center">
+                      <span className="text-sm text-neutral-500 flex items-center gap-2">
+                        <span>💡</span>
+                        <span>Mantén un tono respetuoso y constructivo</span>
+                      </span>
+                      <button
+                        type="submit"
+                        disabled={!newComment.trim()}
+                        className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <span className="flex items-center gap-2">
+                          <span>💬</span>
+                          <span>Comentar</span>
+                        </span>
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         )}
 
         {/* Comments List */}
         <div className="space-y-6">
           {comments.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-              <div className="text-6xl mb-4">💬</div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+            <div className="card p-12 text-center animate-scale-in">
+              <div className="text-6xl mb-6 animate-float">💬</div>
+              <h3 className="text-2xl font-bold text-neutral-900 mb-4">
                 {isHub ? 'No hay comentarios aún' : 'Sé el primero en comentar'}
               </h3>
-              <p className="text-gray-600">
+              <p className="text-neutral-600 text-lg leading-relaxed max-w-md mx-auto">
                 {isHub 
-                  ? 'La comunidad aún no ha iniciado conversaciones.' 
-                  : 'Comparte tu perspectiva sobre este artículo.'
+                  ? 'La comunidad aún no ha iniciado conversaciones. ¡Sé parte del cambio!' 
+                  : 'Comparte tu perspectiva sobre este artículo y enriquece el debate.'
                 }
               </p>
             </div>
           ) : (
-            comments.map((comment) => (
-              <div key={comment.id} className="bg-white rounded-lg shadow-lg p-6">
-                {/* Main Comment */}
-                <div className="flex items-start space-x-3">
-                  <div className="text-2xl">{comment.avatar}</div>
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className="font-semibold text-gray-900">{comment.author}</span>
-                      <span className="text-sm text-gray-500">{comment.timestamp}</span>
-                      {isHub && comment.articleTitle && (
-                        <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                          📰 {comment.articleTitle.substring(0, 50)}...
-                        </span>
-                      )}
+            comments.map((comment, index) => (
+              <div 
+                key={comment.id} 
+                className="card-hover animate-slide-up" 
+                style={{ animationDelay: `${200 + (index * 100)}ms` }}
+              >
+                <div className="p-6">
+                  {/* Main Comment */}
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-2xl flex-shrink-0">
+                      {comment.avatar}
                     </div>
-                    <p className="text-gray-700 mb-3">{comment.content}</p>
-                    <div className="flex items-center space-x-4">
-                      <button
-                        onClick={() => handleLike(comment.id)}
-                        className="flex items-center space-x-1 text-gray-500 hover:text-blue-600 transition-colors"
-                      >
-                        <span>👍</span>
-                        <span>{comment.likes}</span>
-                      </button>
-                      {!isHub && (
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center space-x-3 mb-3 flex-wrap">
+                        <span className="font-bold text-neutral-900">{comment.author}</span>
+                        <span className="text-sm text-neutral-500">{comment.timestamp}</span>
+                        {isHub && comment.articleTitle && (
+                          <span className="text-xs bg-primary-100 text-primary-700 px-3 py-1 rounded-full flex items-center gap-1">
+                            <span>📰</span>
+                            <span className="truncate max-w-xs">{comment.articleTitle}</span>
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-neutral-700 mb-4 leading-relaxed">{comment.content}</p>
+                      <div className="flex items-center space-x-6">
                         <button
-                          onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
-                          className="text-gray-500 hover:text-blue-600 transition-colors"
+                          onClick={() => handleLike(comment.id)}
+                          className="flex items-center space-x-2 text-neutral-500 hover:text-primary-600 transition-colors group"
                         >
-                          💬 Responder
+                          <span className="group-hover:scale-110 transition-transform">👍</span>
+                          <span className="text-sm font-medium">{comment.likes}</span>
                         </button>
+                        {!isHub && (
+                          <button
+                            onClick={() => setReplyTo(replyTo === comment.id ? null : comment.id)}
+                            className="flex items-center space-x-2 text-neutral-500 hover:text-primary-600 transition-colors group"
+                          >
+                            <span className="group-hover:scale-110 transition-transform">💬</span>
+                            <span className="text-sm font-medium">Responder</span>
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Reply Form */}
+                      {replyTo === comment.id && (
+                        <div className="mt-6 p-4 glass rounded-xl animate-slide-down">
+                          <form onSubmit={(e) => handleSubmitReply(e, comment.id)}>
+                            <div className="flex items-start space-x-3">
+                              <div className="w-10 h-10 bg-secondary-100 rounded-full flex items-center justify-center text-lg">
+                                👤
+                              </div>
+                              <div className="flex-1">
+                                <textarea
+                                  value={newReply}
+                                  onChange={(e) => setNewReply(e.target.value)}
+                                  placeholder="Escribe tu respuesta..."
+                                  className="form-input resize-none"
+                                  rows={3}
+                                />
+                                <div className="mt-3 flex justify-end space-x-3">
+                                  <button
+                                    type="button"
+                                    onClick={() => setReplyTo(null)}
+                                    className="btn-ghost text-sm"
+                                  >
+                                    Cancelar
+                                  </button>
+                                  <button
+                                    type="submit"
+                                    disabled={!newReply.trim()}
+                                    className="btn-primary text-sm disabled:opacity-50"
+                                  >
+                                    Responder
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+                      )}
+
+                      {/* Replies */}
+                      {comment.replies.length > 0 && (
+                        <div className="mt-6 space-y-4 pl-6 border-l-2 border-primary-200">
+                          {comment.replies.map((reply) => (
+                            <div key={reply.id} className="flex items-start space-x-3 animate-slide-up">
+                              <div className="w-10 h-10 bg-secondary-100 rounded-full flex items-center justify-center text-lg flex-shrink-0">
+                                {reply.avatar}
+                              </div>
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-2">
+                                  <span className="font-semibold text-neutral-900 text-sm">{reply.author}</span>
+                                  <span className="text-xs text-neutral-500">{reply.timestamp}</span>
+                                </div>
+                                <p className="text-neutral-700 text-sm mb-3 leading-relaxed">{reply.content}</p>
+                                <button
+                                  onClick={() => handleLike(reply.id, true, comment.id)}
+                                  className="flex items-center space-x-1 text-neutral-500 hover:text-primary-600 transition-colors text-sm group"
+                                >
+                                  <span className="group-hover:scale-110 transition-transform">👍</span>
+                                  <span>{reply.likes}</span>
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       )}
                     </div>
-
-                    {/* Reply Form */}
-                    {replyTo === comment.id && (
-                      <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                        <form onSubmit={(e) => handleSubmitReply(e, comment.id)}>
-                          <div className="flex items-start space-x-3">
-                            <div className="text-lg">👤</div>
-                            <div className="flex-1">
-                              <textarea
-                                value={newReply}
-                                onChange={(e) => setNewReply(e.target.value)}
-                                placeholder="Escribe tu respuesta..."
-                                className="w-full p-2 border border-gray-300 rounded focus:ring-1 focus:ring-blue-500 focus:border-transparent resize-none"
-                                rows={2}
-                              />
-                              <div className="mt-2 flex justify-end space-x-2">
-                                <button
-                                  type="button"
-                                  onClick={() => setReplyTo(null)}
-                                  className="text-gray-500 hover:text-gray-700 px-3 py-1 text-sm"
-                                >
-                                  Cancelar
-                                </button>
-                                <button
-                                  type="submit"
-                                  disabled={!newReply.trim()}
-                                  className="bg-blue-600 text-white px-4 py-1 rounded text-sm hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed"
-                                >
-                                  Responder
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                    )}
-
-                    {/* Replies */}
-                    {comment.replies.length > 0 && (
-                      <div className="mt-4 space-y-3 pl-6 border-l-2 border-gray-200">
-                        {comment.replies.map((reply) => (
-                          <div key={reply.id} className="flex items-start space-x-3">
-                            <div className="text-lg">{reply.avatar}</div>
-                            <div className="flex-1">
-                              <div className="flex items-center space-x-2 mb-1">
-                                <span className="font-medium text-gray-900 text-sm">{reply.author}</span>
-                                <span className="text-xs text-gray-500">{reply.timestamp}</span>
-                              </div>
-                              <p className="text-gray-700 text-sm mb-2">{reply.content}</p>
-                              <button
-                                onClick={() => handleLike(reply.id, true, comment.id)}
-                                className="flex items-center space-x-1 text-gray-500 hover:text-blue-600 transition-colors text-sm"
-                              >
-                                <span>👍</span>
-                                <span>{reply.likes}</span>
-                              </button>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 </div>
               </div>
@@ -378,24 +440,29 @@ const Comments: React.FC<CommentsProps> = ({ articleId, articleTitle, isHub = fa
 
         {/* Community Stats (only for hub) */}
         {isHub && comments.length > 0 && (
-          <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">📊 Estadísticas de la Comunidad</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="text-center p-4 bg-blue-50 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">{comments.length}</div>
-                <div className="text-sm text-gray-600">Comentarios Totales</div>
-              </div>
-              <div className="text-center p-4 bg-green-50 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">
-                  {comments.reduce((acc, comment) => acc + comment.replies.length, 0)}
+          <div className="card mt-8 animate-slide-up animation-delay-500">
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-neutral-900 mb-6 flex items-center gap-2">
+                <span>📊</span>
+                <span>Estadísticas de la Comunidad</span>
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="text-center p-6 bg-primary-50 rounded-xl">
+                  <div className="text-3xl font-bold text-primary-600 mb-2">{comments.length}</div>
+                  <div className="text-sm text-neutral-600 font-medium">Comentarios Totales</div>
                 </div>
-                <div className="text-sm text-gray-600">Respuestas</div>
-              </div>
-              <div className="text-center p-4 bg-purple-50 rounded-lg">
-                <div className="text-2xl font-bold text-purple-600">
-                  {comments.reduce((acc, comment) => acc + comment.likes + comment.replies.reduce((acc2, reply) => acc2 + reply.likes, 0), 0)}
+                <div className="text-center p-6 bg-emerald-50 rounded-xl">
+                  <div className="text-3xl font-bold text-emerald-600 mb-2">
+                    {comments.reduce((acc, comment) => acc + comment.replies.length, 0)}
+                  </div>
+                  <div className="text-sm text-neutral-600 font-medium">Respuestas</div>
                 </div>
-                <div className="text-sm text-gray-600">Likes Totales</div>
+                <div className="text-center p-6 bg-purple-50 rounded-xl">
+                  <div className="text-3xl font-bold text-purple-600 mb-2">
+                    {comments.reduce((acc, comment) => acc + comment.likes + comment.replies.reduce((acc2, reply) => acc2 + reply.likes, 0), 0)}
+                  </div>
+                  <div className="text-sm text-neutral-600 font-medium">Likes Totales</div>
+                </div>
               </div>
             </div>
           </div>
