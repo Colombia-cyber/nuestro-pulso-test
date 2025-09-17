@@ -1,5 +1,140 @@
 import React, { useState, useEffect } from 'react';
 
+interface GoogleSearchBarProps {
+  onNavigate: (view: string) => void;
+}
+
+const GoogleSearchBar: React.FC<GoogleSearchBarProps> = ({ onNavigate }) => {
+  const [query, setQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [suggestions] = useState([
+    'Gustavo Petro',
+    'Centro Democrático', 
+    'Reforma tributaria',
+    'Congreso sesiones',
+    'Participación ciudadana'
+  ]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!query.trim()) return;
+
+    setIsLoading(true);
+    
+    // Navigate to search page with query
+    try {
+      const searchUrl = `/search?q=${encodeURIComponent(query)}&source=homepage`;
+      window.history.pushState(null, '', searchUrl);
+      onNavigate('search');
+    } catch (error) {
+      console.error('Search navigation error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setQuery(suggestion);
+    setShowSuggestions(false);
+    // Auto-submit the search
+    const searchUrl = `/search?q=${encodeURIComponent(suggestion)}&source=homepage`;
+    window.history.pushState(null, '', searchUrl);
+    onNavigate('search');
+  };
+
+  return (
+    <div className="w-full max-w-4xl mx-auto mb-8">
+      {/* Google Search Header */}
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold text-white mb-2 flex items-center justify-center gap-3">
+          <span>🔍</span>
+          <span>Búsqueda Google</span>
+          <span>🇨🇴</span>
+        </h2>
+        <p className="text-white/90">Encuentra información confiable sobre política y participación ciudadana</p>
+      </div>
+
+      {/* Search Form */}
+      <form onSubmit={handleSearch} className="relative">
+        <div className="flex gap-3">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setShowSuggestions(e.target.value.length > 1);
+              }}
+              onFocus={() => setShowSuggestions(query.length > 1)}
+              onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+              placeholder="Buscar noticias políticas, candidatos, reformas..."
+              className="w-full p-4 rounded-xl text-gray-900 placeholder-gray-500 text-lg shadow-lg focus:ring-4 focus:ring-white/30 focus:outline-none border-2 border-white/20"
+              aria-label="Campo de búsqueda de Google"
+              disabled={isLoading}
+            />
+            
+            {/* Search Suggestions */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-gray-200 rounded-xl shadow-lg z-50 max-h-64 overflow-y-auto">
+                {suggestions
+                  .filter(s => s.toLowerCase().includes(query.toLowerCase()))
+                  .map((suggestion, index) => (
+                    <button
+                      key={index}
+                      type="button"
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className="w-full text-left px-4 py-3 hover:bg-gray-50 border-b border-gray-100 last:border-b-0 text-sm text-gray-700 focus:bg-gray-50 focus:outline-none flex items-center gap-2"
+                    >
+                      <span className="text-gray-400">🔍</span>
+                      <span>{suggestion}</span>
+                    </button>
+                  ))}
+              </div>
+            )}
+          </div>
+          
+          <button
+            type="submit"
+            disabled={isLoading || !query.trim()}
+            className="bg-white text-blue-600 px-8 py-4 rounded-xl font-bold hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-500 min-w-[120px]"
+            aria-label="Buscar en Google"
+          >
+            {isLoading ? (
+              <div className="flex items-center gap-2">
+                <div className="animate-spin w-5 h-5 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+                <span>Buscando...</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <span>🔍</span>
+                <span>Buscar</span>
+              </div>
+            )}
+          </button>
+        </div>
+      </form>
+
+      {/* Quick Search Suggestions */}
+      <div className="mt-4">
+        <p className="text-sm text-white/80 mb-2 text-center">Búsquedas populares:</p>
+        <div className="flex flex-wrap gap-2 justify-center">
+          {suggestions.map((suggestion) => (
+            <button
+              key={suggestion}
+              onClick={() => handleSuggestionClick(suggestion)}
+              className="bg-white/20 hover:bg-white/30 text-white px-3 py-1 rounded-full text-sm transition-colors backdrop-blur focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-blue-500"
+              type="button"
+            >
+              {suggestion}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 interface HeroSectionProps {
   onNavigate: (view: string) => void;
 }
@@ -249,7 +384,15 @@ const HeroSection: React.FC<HeroSectionProps> = ({ onNavigate }) => {
           <p className="text-lg text-gray-700 mb-8 max-w-2xl mx-auto">
             {content?.description || fallbackContent.description}
           </p>
-          
+        </div>
+
+        {/* Prominent Google Search Bar */}
+        <div className="mt-8">
+          <GoogleSearchBar onNavigate={handleNavigation} />
+        </div>
+
+        {/* Main Action Buttons */}
+        <div className="mt-8 bg-white bg-opacity-30 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-white border-opacity-30">
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             {(content?.mainActions || fallbackContent.mainActions).map((action) => (
               <button 
