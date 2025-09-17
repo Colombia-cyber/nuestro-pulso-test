@@ -21,7 +21,7 @@ interface Reel {
   thumbnail: string;
   author: string;
   videoUrl?: string;
-  embedUrl?: string;
+  isAvailable?: boolean;
 }
 
 const PulseReels: React.FC = () => {
@@ -45,118 +45,118 @@ const PulseReels: React.FC = () => {
   const visibleCategories = getVisibleCategories();
   const categories = [
     { id: 'todos', name: 'Todos', icon: '🎬' },
-    ...visibleCategories
+    ...visibleCategories.filter(cat => cat.id !== 'todos') // Avoid duplicate 'todos'
   ];
 
-  // Mock reels data with more entries for testing infinite scroll
+  // Mock reels data with unique content for testing
   const allMockReels: Reel[] = [
     {
       id: 1,
       title: 'Cómo participar en el proceso electoral colombiano',
-      description: 'Guía rápida sobre tu derecho al voto y los requisitos para participar',
+      description: 'Guía rápida sobre tu derecho al voto y los requisitos para participar en las elecciones',
       category: 'politica',
       duration: '2:30',
       views: 15420,
       likes: 892,
       thumbnail: '🗳️',
       author: 'Registraduría Nacional',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      videoUrl: '/videos/electoral-process.mp4' // Mock local video
     },
     {
       id: 2,
       title: 'El poder de la participación ciudadana en tu municipio',
-      description: 'Conoce cómo puedes influir en las decisiones locales de tu comunidad',
+      description: 'Conoce cómo puedes influir en las decisiones locales de tu comunidad y hacer la diferencia',
       category: 'participacion',
       duration: '3:15',
       views: 23100,
       likes: 1547,
       thumbnail: '🤝',
       author: 'Fundación Corona',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      videoUrl: '/videos/civic-participation.mp4'
     },
     {
       id: 3,
       title: 'Presupuestos participativos: Tu voz en las finanzas públicas',
-      description: 'Aprende cómo los ciudadanos pueden decidir en qué se invierte el presupuesto',
+      description: 'Aprende cómo los ciudadanos pueden decidir en qué se invierte el presupuesto municipal',
       category: 'participacion',
       duration: '4:20',
       views: 8950,
       likes: 673,
       thumbnail: '💰',
       author: 'Transparencia Colombia',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      videoUrl: '/videos/participatory-budgets.mp4'
     },
     {
       id: 4,
       title: 'Cambio climático y acción ciudadana en Colombia',
-      description: 'Iniciativas locales que están marcando la diferencia ambiental',
+      description: 'Iniciativas locales que están marcando la diferencia ambiental en nuestro país',
       category: 'ambiente',
       duration: '5:10',
       views: 31200,
       likes: 2156,
       thumbnail: '🌍',
       author: 'WWF Colombia',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      videoUrl: '/videos/climate-action.mp4'
     },
     {
       id: 5,
       title: 'Educación digital: Cerrando la brecha tecnológica',
-      description: 'Programas gubernamentales para mejorar el acceso a la educación digital',
+      description: 'Programas gubernamentales para mejorar el acceso a la educación digital en zonas rurales',
       category: 'educacion',
       duration: '3:45',
       views: 12340,
       likes: 789,
       thumbnail: '💻',
       author: 'MinEducación',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      videoUrl: '/videos/digital-education.mp4'
     },
     {
       id: 6,
       title: 'Control ciudadano a la corrupción',
-      description: 'Herramientas y mecanismos para denunciar actos de corrupción',
+      description: 'Herramientas y mecanismos para denunciar actos de corrupción de manera segura',
       category: 'politica',
       duration: '4:00',
       views: 19800,
       likes: 1342,
       thumbnail: '⚖️',
       author: 'Veeduría Ciudadana',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      videoUrl: '/videos/anti-corruption.mp4'
     },
     {
       id: 7,
-      title: 'Trump: Impacto en las relaciones Colombia-Estados Unidos',
-      description: 'Análisis sobre las políticas comerciales de Trump y su efecto en Colombia',
+      title: 'Impacto de las políticas internacionales en Colombia',
+      description: 'Análisis sobre políticas internacionales y su efecto en la economía colombiana',
       category: 'internacional',
       duration: '6:30',
       views: 45200,
       likes: 2890,
-      thumbnail: '🇺🇸',
+      thumbnail: '🌍',
       author: 'CNN Colombia',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      videoUrl: '/videos/international-impact.mp4'
     },
     {
       id: 8,
       title: 'Sesión extraordinaria del Congreso sobre reforma tributaria',
-      description: 'Cobertura en vivo del debate parlamentario más importante del año',
+      description: 'Cobertura en vivo del debate parlamentario más importante del año fiscal',
       category: 'politica',
       duration: '12:45',
       views: 78900,
       likes: 4560,
       thumbnail: '🏛️',
       author: 'Canal Congreso',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      videoUrl: '/videos/congress-session.mp4'
     },
     {
       id: 9,
-      title: 'Alerta de seguridad: Amenazas terroristas en fronteras',
-      description: 'Informe especial sobre medidas de seguridad en zonas fronterizas',
+      title: 'Medidas de seguridad en zonas fronterizas',
+      description: 'Informe especial sobre nuevas medidas de seguridad implementadas en fronteras',
       category: 'seguridad',
       duration: '8:20',
       views: 23400,
       likes: 1890,
       thumbnail: '🚨',
       author: 'Caracol Noticias',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      videoUrl: '/videos/border-security.mp4'
     },
     {
       id: 10,
@@ -166,22 +166,22 @@ const PulseReels: React.FC = () => {
       duration: '4:15',
       views: 34500,
       likes: 2340,
-      thumbnail: '💻',
+      thumbnail: '📡',
       author: 'TechColombia',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      videoUrl: '/videos/5g-revolution.mp4'
     },
-    // Additional reels for infinite scroll testing
+    // Additional unique reels for infinite scroll testing
     {
       id: 11,
       title: 'Justicia restaurativa: Nueva esperanza para las víctimas',
-      description: 'Cómo la justicia restaurativa está sanando heridas en Colombia',
+      description: 'Cómo la justicia restaurativa está sanando heridas del conflicto en Colombia',
       category: 'social',
       duration: '7:15',
       views: 18300,
       likes: 1205,
       thumbnail: '⚖️',
       author: 'Centro de Memoria',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      videoUrl: '/videos/restorative-justice.mp4'
     },
     {
       id: 12,
@@ -193,7 +193,43 @@ const PulseReels: React.FC = () => {
       likes: 1687,
       thumbnail: '♻️',
       author: 'EcoInnovación',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      videoUrl: '/videos/circular-economy.mp4'
+    },
+    {
+      id: 13,
+      title: 'Ciberseguridad nacional: Protegiendo nuestra infraestructura',
+      description: 'Estrategias del gobierno para proteger la infraestructura digital nacional',
+      category: 'seguridad',
+      duration: '6:00',
+      views: 15600,
+      likes: 987,
+      thumbnail: '🔒',
+      author: 'MinDefensa',
+      videoUrl: '/videos/cybersecurity.mp4'
+    },
+    {
+      id: 14,
+      title: 'Innovación en educación rural colombiana',
+      description: 'Programas exitosos que están transformando la educación en zonas rurales',
+      category: 'educacion',
+      duration: '4:30',
+      views: 11200,
+      likes: 756,
+      thumbnail: '🌾',
+      author: 'Ministerio de Educación',
+      videoUrl: '/videos/rural-education.mp4'
+    },
+    {
+      id: 15,
+      title: 'Emprendimiento social: Cambiando comunidades',
+      description: 'Historias de emprendedores sociales que están transformando sus comunidades',
+      category: 'social',
+      duration: '5:20',
+      views: 9800,
+      likes: 612,
+      thumbnail: '💡',
+      author: 'Ashoka Colombia',
+      videoUrl: '/videos/social-entrepreneurship.mp4'
     }
   ];
 
@@ -296,30 +332,29 @@ const PulseReels: React.FC = () => {
     loadReels(1, selectedCategory, true);
   };
 
-  // Video embed fallback function
+  // Video embed content with mock player
   const getVideoEmbedContent = (reel: Reel) => {
-    if (reel.embedUrl) {
-      return (
-        <iframe
-          src={reel.embedUrl}
-          title={reel.title}
-          className="w-full h-full"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          onError={() => {
-            console.warn(`Failed to load video embed for reel ${reel.id}`);
-          }}
-        />
-      );
-    }
-    
-    // Fallback to thumbnail
+    // Create a mock video player for demonstration purposes
     return (
-      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
+      <div className="w-full h-full relative bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+        {/* Mock video player UI */}
         <div className="text-center">
-          <div className="text-6xl mb-2">{reel.thumbnail}</div>
-          <p className="text-white text-sm">Video no disponible</p>
+          <div className="text-6xl mb-4 animate-pulse">{reel.thumbnail}</div>
+          <div className="text-white mb-2">
+            <h4 className="font-semibold text-lg truncate px-4">{reel.title}</h4>
+            <p className="text-sm opacity-90 px-4">{reel.author}</p>
+          </div>
+          <div className="bg-black bg-opacity-30 rounded-lg px-3 py-1 text-white text-sm inline-block">
+            ▶️ {reel.duration}
+          </div>
+        </div>
+        
+        {/* Mock video controls overlay */}
+        <div className="absolute bottom-2 left-2 right-2">
+          <div className="bg-black bg-opacity-50 rounded p-2 flex items-center justify-between text-white text-xs">
+            <span>🎥 Video mockeado</span>
+            <span>{reel.views.toLocaleString()} vistas</span>
+          </div>
         </div>
       </div>
     );

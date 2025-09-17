@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import UniversalSearchBar from "../components/UniversalSearchBar";
+import GoogleSearch from "../components/GoogleSearch";
 import Comments from "../components/Comments";
 import { SearchResponse } from "../services/searchService";
 
@@ -8,6 +9,7 @@ const SearchPage: React.FC = () => {
   const urlParams = new URLSearchParams(window.location.search);
   const initialQuery = urlParams.get('q') || '';
   const initialCategory = urlParams.get('category') || 'todos';
+  const searchSource = urlParams.get('source') || 'universal';
 
   const [searchResults, setSearchResults] = useState<SearchResponse | null>(null);
   const [selectedArticle, setSelectedArticle] = useState<any>(null);
@@ -43,6 +45,33 @@ const SearchPage: React.FC = () => {
     communityComments.push(newComment);
     localStorage.setItem('communityComments', JSON.stringify(communityComments));
   };
+
+  // If coming from homepage, show Google Search
+  if (searchSource === 'homepage' && initialQuery) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <GoogleSearch 
+            initialQuery={initialQuery} 
+            autoSearch={true}
+          />
+          
+          {/* Back to Universal Search */}
+          <div className="mt-8 text-center">
+            <button
+              onClick={() => {
+                window.history.pushState(null, '', '/search');
+                window.location.reload();
+              }}
+              className="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              🔄 Cambiar a búsqueda universal
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
