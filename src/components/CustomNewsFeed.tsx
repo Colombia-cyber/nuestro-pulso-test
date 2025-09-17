@@ -144,15 +144,22 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
   };
 
   const handleNewsClick = (newsItem: NewsItem) => {
+    console.log('Article clicked:', newsItem.title, 'onNavigate:', typeof onNavigate);
     if (newsItem.hasBalancedCoverage) {
       // Navigate to the dedicated article page instead of balanced view
       if (onNavigate) {
+        console.log('Navigating to article page with ID:', newsItem.id);
         onNavigate('article', newsItem.id);
+      } else {
+        console.log('onNavigate is not available');
       }
     } else {
       // For news without balanced coverage, still open article page
       if (onNavigate) {
+        console.log('Navigating to article page with ID:', newsItem.id);
         onNavigate('article', newsItem.id);
+      } else {
+        console.log('onNavigate is not available');
       }
     }
   };
