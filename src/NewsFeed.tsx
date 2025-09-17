@@ -8,7 +8,15 @@ type Article = {
   url: string;
 };
 
-const NEWS_API_KEY = import.meta.env.VITE_NEWS_API_KEY || '27aa99ad66064f04b9ef515c312a78eb';
+// Validate required News API key
+const NEWS_API_KEY = import.meta.env.VITE_NEWSAPI_KEY;
+
+if (!NEWS_API_KEY) {
+  throw new Error(
+    'Missing required environment variable: VITE_NEWSAPI_KEY. ' +
+    'Please add your News API key to the .env file.'
+  );
+}
 
 const fetchNews = async (params: string) => {
   const res = await fetch(

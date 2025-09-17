@@ -3,15 +3,30 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyArgNxd4GAew9WwzX6irlsWJ3-xGI7T-jM",
-  authDomain: "nuestro-pulso-chat.firebaseapp.com",
-  projectId: "nuestro-pulso-chat",
-  storageBucket: "nuestro-pulso-chat.appspot.com",
-  messagingSenderId: "268702824909",
-  appId: "1:268702824909:web:0b4f2f849201abc94cac84",
-  measurementId: "G-74ZBHG8TF4"
+// Validate required environment variables
+const requiredEnvVars = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
 };
+
+// Check for missing Firebase environment variables
+const missingVars = Object.entries(requiredEnvVars)
+  .filter(([key, value]) => !value)
+  .map(([key]) => `VITE_FIREBASE_${key.toUpperCase()}`);
+
+if (missingVars.length > 0) {
+  throw new Error(
+    `Missing required Firebase environment variables: ${missingVars.join(', ')}. ` +
+    'Please check your .env file and ensure all Firebase configuration variables are set.'
+  );
+}
+
+const firebaseConfig = requiredEnvVars;
 
 const app = initializeApp(firebaseConfig);
 export const analytics = getAnalytics(app);

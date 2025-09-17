@@ -1,29 +1,74 @@
 import React, { useState } from 'react';
 
-const GOOGLE_API_KEY = "AIzaSyB1wdNIgV2qUdJ8lUzjhKoRnYHpwi_QAWQ"; // Placeholder API key
-const GOOGLE_CX = "b1da68d0c729b40ae"; // Placeholder Custom Search Engine ID
+// Validate required Google API credentials
+const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
+const GOOGLE_CX = import.meta.env.VITE_GOOGLE_CSE_ID;
+
+// Check for missing Google API environment variables
+const missingGoogleVars = [];
+if (!GOOGLE_API_KEY) missingGoogleVars.push('VITE_GOOGLE_API_KEY');
+if (!GOOGLE_CX) missingGoogleVars.push('VITE_GOOGLE_CSE_ID');
+
+if (missingGoogleVars.length > 0) {
+  console.warn(
+    `Missing Google API environment variables: ${missingGoogleVars.join(', ')}. ` +
+    'Google search functionality will use mock data. Please add these variables to your .env file for real API integration.'
+  );
+}
 
 async function searchGoogleAPI(query: string) {
-  // Mock search results for demo purposes since we're using placeholder keys
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-  
-  return [
-    {
-      title: `Resultados sobre "${query}" - Noticias Colombia`,
-      link: 'https://example.com/colombia-news',
-      snippet: `Últimas noticias sobre ${query} en Colombia. Análisis, reportes y cobertura actualizada de los eventos más importantes del país.`
-    },
-    {
-      title: `${query} - Wikipedia`,
-      link: 'https://es.wikipedia.org/wiki/' + encodeURIComponent(query),
-      snippet: `Información enciclopédica sobre ${query}. Historia, contexto y datos relevantes de fuentes confiables.`
-    },
-    {
-      title: `Análisis: ${query} en el contexto colombiano`,
-      link: 'https://example.com/analysis',
-      snippet: `Análisis profundo sobre ${query} y su impacto en la sociedad colombiana. Perspectivas de expertos y datos actualizados.`
+  // If API credentials are missing, return mock data
+  if (!GOOGLE_API_KEY || !GOOGLE_CX) {
+    // Mock search results for demo purposes when API keys are not configured
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
+    
+    return [
+      {
+        title: `Resultados sobre "${query}" - Noticias Colombia`,
+        link: 'https://example.com/colombia-news',
+        snippet: `Últimas noticias sobre ${query} en Colombia. Análisis, reportes y cobertura actualizada de los eventos más importantes del país.`
+      },
+      {
+        title: `${query} - Wikipedia`,
+        link: 'https://es.wikipedia.org/wiki/' + encodeURIComponent(query),
+        snippet: `Información enciclopédica sobre ${query}. Historia, contexto y datos relevantes de fuentes confiables.`
+      },
+      {
+        title: `Análisis: ${query} en el contexto colombiano`,
+        link: 'https://example.com/analysis',
+        snippet: `Análisis profundo sobre ${query} y su impacto en la sociedad colombiana. Perspectivas de expertos y datos actualizados.`
+      }
+    ];
+  }
+
+  // Real Google Custom Search API implementation
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CX}&q=${encodeURIComponent(query)}`
+    );
+    
+    if (!response.ok) {
+      throw new Error(`Google API request failed: ${response.status}`);
     }
-  ];
+    
+    const data = await response.json();
+    
+    return (data.items || []).map((item: any) => ({
+      title: item.title,
+      link: item.link,
+      snippet: item.snippet
+    }));
+  } catch (error) {
+    console.error('Google API search failed:', error);
+    // Fall back to mock data on API error
+    return [
+      {
+        title: `Error en búsqueda: ${query}`,
+        link: '#',
+        snippet: 'Hubo un problema con la búsqueda en Google. Por favor intenta nuevamente más tarde.'
+      }
+    ];
+  }
 }
 
 const GoogleWebSearchBar: React.FC = () => {
