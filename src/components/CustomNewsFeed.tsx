@@ -5,7 +5,7 @@ import { NewsItem, NewsFilter, CategoryCard } from '../types/news';
 import { newsService } from '../services/newsService';
 
 interface CustomNewsFeedProps {
-  onNavigate?: (view: string, articleId?: string) => void;
+  onNavigate?: (view: string, data?: any) => void;
 }
 
 const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
@@ -127,7 +127,7 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
 
   const handleNewsClick = (newsItem: NewsItem) => {
     if (onNavigate) {
-      onNavigate('article', newsItem.id);
+      onNavigate('article-detail', { articleId: newsItem.id });
     }
   };
 
