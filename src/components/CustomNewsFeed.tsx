@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import BalancedNewsView from './BalancedNewsView';
 
 interface CategoryCard {
   id: string;
@@ -20,10 +19,12 @@ interface NewsItem {
   trending: boolean;
 }
 
-const CustomNewsFeed: React.FC = () => {
+interface CustomNewsFeedProps {
+  onNavigate?: (view: string, articleId?: string) => void;
+}
+
+const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [showBalancedView, setShowBalancedView] = useState(false);
-  const [selectedTopic, setSelectedTopic] = useState<string>('');
   const [viewMode, setViewMode] = useState<'categories' | 'feed'>('feed');
 
   const categories: CategoryCard[] = [
@@ -143,12 +144,23 @@ const CustomNewsFeed: React.FC = () => {
   };
 
   const handleNewsClick = (newsItem: NewsItem) => {
+    console.log('Article clicked:', newsItem.title, 'onNavigate:', typeof onNavigate);
     if (newsItem.hasBalancedCoverage) {
-      setSelectedTopic(newsItem.title);
-      setShowBalancedView(true);
+      // Navigate to the dedicated article page instead of balanced view
+      if (onNavigate) {
+        console.log('Navigating to article page with ID:', newsItem.id);
+        onNavigate('article', newsItem.id);
+      } else {
+        console.log('onNavigate is not available');
+      }
     } else {
-      // For news without balanced coverage, could open regular article view
-      console.log(`Opening article: ${newsItem.title}`);
+      // For news without balanced coverage, still open article page
+      if (onNavigate) {
+        console.log('Navigating to article page with ID:', newsItem.id);
+        onNavigate('article', newsItem.id);
+      } else {
+        console.log('onNavigate is not available');
+      }
     }
   };
 
@@ -161,15 +173,6 @@ const CustomNewsFeed: React.FC = () => {
       minute: '2-digit'
     });
   };
-
-  if (showBalancedView) {
-    return (
-      <BalancedNewsView 
-        topic={selectedTopic}
-        onBack={() => setShowBalancedView(false)}
-      />
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">

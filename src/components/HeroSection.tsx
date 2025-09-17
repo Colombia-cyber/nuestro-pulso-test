@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 interface HeroSectionProps {
-  onNavigate: (view: string) => void;
+  onNavigate: (view: string, articleId?: string) => void;
 }
 
 interface HomePageContent {

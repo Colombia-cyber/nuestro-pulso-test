@@ -5,6 +5,7 @@ import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
+import ArticlePage from "./pages/ArticlePage";
 import PulseReels from "./components/PulseReels";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
@@ -47,22 +48,25 @@ const ErrorFallback: React.FC<{ error?: string; onRetry?: () => void }> = ({
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
+  const [currentArticleId, setCurrentArticleId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleNavigate = (view: string) => {
+  const handleNavigate = (view: string, articleId?: string) => {
     setIsLoading(true);
     setError(null);
     
     // Simulate loading delay for better UX
     setTimeout(() => {
       setCurrentView(view);
+      setCurrentArticleId(articleId || null);
       setIsLoading(false);
     }, 300);
   };
 
   const handleRetry = () => {
     setError(null);
+    setCurrentArticleId(null);
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
@@ -80,11 +84,20 @@ function App() {
 
     try {
       switch (currentView) {
+        case 'article':
+          return currentArticleId ? (
+            <ArticlePage 
+              articleId={currentArticleId} 
+              onBack={() => handleNavigate('feeds')}
+            />
+          ) : (
+            <div>Article ID not found</div>
+          );
         case 'reels':
           return <PulseReels />;
         case 'feeds':
         case 'news':
-          return <CustomNewsFeed />;
+          return <CustomNewsFeed onNavigate={handleNavigate} />;
         case 'congress':
           return <CongressTracker />;
         case 'elections':
