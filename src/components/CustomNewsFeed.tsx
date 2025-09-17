@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BalancedNewsView from './BalancedNewsView';
+import EnhancedNewsFeed from './EnhancedNewsFeed';
 
 interface CategoryCard {
   id: string;
@@ -20,11 +21,15 @@ interface NewsItem {
   trending: boolean;
 }
 
-const CustomNewsFeed: React.FC = () => {
+interface CustomNewsFeedProps {
+  onNavigate?: (view: string, articleId?: string) => void;
+}
+
+const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showBalancedView, setShowBalancedView] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<string>('');
-  const [viewMode, setViewMode] = useState<'categories' | 'feed'>('feed');
+  const [viewMode, setViewMode] = useState<'categories' | 'feed' | 'enhanced'>('enhanced');
 
   const categories: CategoryCard[] = [
     {
@@ -143,12 +148,23 @@ const CustomNewsFeed: React.FC = () => {
   };
 
   const handleNewsClick = (newsItem: NewsItem) => {
+    console.log('Article clicked:', newsItem.title, 'onNavigate:', typeof onNavigate);
     if (newsItem.hasBalancedCoverage) {
-      setSelectedTopic(newsItem.title);
-      setShowBalancedView(true);
+      // Navigate to the dedicated article page instead of balanced view
+      if (onNavigate) {
+        console.log('Navigating to article page with ID:', newsItem.id);
+        onNavigate('article', newsItem.id);
+      } else {
+        console.log('onNavigate is not available');
+      }
     } else {
-      // For news without balanced coverage, could open regular article view
-      console.log(`Opening article: ${newsItem.title}`);
+      // For news without balanced coverage, still open article page
+      if (onNavigate) {
+        console.log('Navigating to article page with ID:', newsItem.id);
+        onNavigate('article', newsItem.id);
+      } else {
+        console.log('onNavigate is not available');
+      }
     }
   };
 
@@ -195,6 +211,16 @@ const CustomNewsFeed: React.FC = () => {
                 <h3 className="text-lg font-semibold text-gray-900">Vista</h3>
                 <div className="flex bg-gray-100 rounded-lg p-1">
                   <button
+                    onClick={() => setViewMode('enhanced')}
+                    className={`px-4 py-2 rounded text-sm font-medium transition ${
+                      viewMode === 'enhanced'
+                        ? 'bg-white text-blue-600 shadow'
+                        : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    🚀 En Vivo
+                  </button>
+                  <button
                     onClick={() => setViewMode('feed')}
                     className={`px-4 py-2 rounded text-sm font-medium transition ${
                       viewMode === 'feed'
@@ -219,7 +245,13 @@ const CustomNewsFeed: React.FC = () => {
             </div>
           </div>
 
-          {viewMode === 'feed' ? (
+          {viewMode === 'enhanced' ? (
+            /* Enhanced Live News Feed */
+            <EnhancedNewsFeed 
+              topic={selectedCategory || ''} 
+              onNavigate={onNavigate}
+            />
+          ) : viewMode === 'feed' ? (
             /* Main News Feed */
             <div className="space-y-6">
               {/* Trending Section */}
