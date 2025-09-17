@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import BalancedNewsView from './BalancedNewsView';
+import EnhancedNewsTimeline from './EnhancedNewsTimeline';
 
 interface CategoryCard {
   id: string;
@@ -24,7 +25,7 @@ const CustomNewsFeed: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [showBalancedView, setShowBalancedView] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<string>('');
-  const [viewMode, setViewMode] = useState<'categories' | 'feed'>('feed');
+  const [viewMode, setViewMode] = useState<'categories' | 'feed' | 'timeline'>('timeline');
 
   const categories: CategoryCard[] = [
     {
@@ -138,8 +139,9 @@ const CustomNewsFeed: React.FC = () => {
 
   const handleCategoryClick = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    // This could be extended to navigate to a specific news feed for this category
-    console.log(`Category clicked: ${categoryId}`);
+    setSelectedTopic(categories.find(c => c.id === categoryId)?.title || '');
+    setViewMode('timeline');
+    console.log(`Category clicked: ${categoryId}, switching to timeline view`);
   };
 
   const handleNewsClick = (newsItem: NewsItem) => {
@@ -177,14 +179,30 @@ const CustomNewsFeed: React.FC = () => {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 p-6 rounded-lg mb-6">
-            <h1 className="text-3xl font-bold text-white mb-2">📰 Feeds & Noticias</h1>
-            <p className="text-white/90">
-              Mantente informado con perspectivas balanceadas y análisis en profundidad
-            </p>
-            <div className="mt-4 flex items-center space-x-6 text-white/80">
-              <span>🔴 Actualización en tiempo real</span>
-              <span>⚖️ Perspectivas balanceadas</span>
-              <span>📊 Análisis de tendencias</span>
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="text-3xl font-bold text-white mb-2">📰 Feeds & Noticias</h1>
+                <p className="text-white/90">
+                  Mantente informado con perspectivas balanceadas y análisis en profundidad
+                </p>
+                <div className="mt-4 flex items-center space-x-6 text-white/80">
+                  <span>🔴 Actualización en tiempo real</span>
+                  <span>⚖️ Perspectivas balanceadas</span>
+                  <span>📊 Análisis de tendencias</span>
+                </div>
+              </div>
+              {selectedCategory && viewMode === 'timeline' && (
+                <button 
+                  onClick={() => {
+                    setSelectedCategory(null);
+                    setSelectedTopic('');
+                    setViewMode('categories');
+                  }}
+                  className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg transition-colors"
+                >
+                  ← Volver a categorías
+                </button>
+              )}
             </div>
           </div>
 
@@ -194,6 +212,16 @@ const CustomNewsFeed: React.FC = () => {
               <div className="flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-gray-900">Vista</h3>
                 <div className="flex bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => setViewMode('timeline')}
+                    className={`px-4 py-2 rounded text-sm font-medium transition ${
+                      viewMode === 'timeline'
+                        ? 'bg-white text-blue-600 shadow'
+                        : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    ⏰ Timeline
+                  </button>
                   <button
                     onClick={() => setViewMode('feed')}
                     className={`px-4 py-2 rounded text-sm font-medium transition ${
@@ -219,7 +247,14 @@ const CustomNewsFeed: React.FC = () => {
             </div>
           </div>
 
-          {viewMode === 'feed' ? (
+          {viewMode === 'timeline' ? (
+            /* Enhanced Timeline View */
+            <EnhancedNewsTimeline 
+              topic={selectedTopic || ''}
+              autoRefresh={true}
+              refreshInterval={30000}
+            />
+          ) : viewMode === 'feed' ? (
             /* Main News Feed */
             <div className="space-y-6">
               {/* Trending Section */}
