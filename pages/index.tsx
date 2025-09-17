@@ -1,53 +1,43 @@
-import { useState } from 'react';
-import HeroSection from '../HeroSection';
-import Navigation from '../src/components/Navigation';
-import { AuthProvider } from '../src/components/AuthContext';
-import LiveChat from '../src/components/LiveChat';
-import Debate from '../src/components/Debate';
-import Survey from '../src/components/Survey';
-import News from '../src/components/News';
-import Comments from '../src/components/Comments';
-import Care from '../src/components/Care';
-import CongressTracker from '../src/components/CongressTracker';
-import PulseReels from '../src/components/PulseReels';
-import Marketplace from '../src/components/Marketplace';
-import Search from '../src/components/Search';
-import Alerts from '../src/components/Alerts';
-import ElectionHub from '../src/components/ElectionHub';
-import CopilotAssistant from '../src/components/CopilotAssistant';
+import React, { useEffect, useState } from "react";
+// Replace these imports with actual component paths if needed
+// import SectionTabs from "../components/SectionTabs";
+// import ReelsFeed from "../components/ReelsFeed";
+// import ArticleCard from "../components/ArticleCard";
+// import ArticleModal from "../components/ArticleModal";
+// import { fetchGoogleNews } from "../lib/googleNews";
+// import "../styles/tailwind.css";
 
-const Home = () => {
-  const [activeModule, setActiveModule] = useState('home');
+const fakeArticles = [
+  {
+    title: "Bienvenido a Nuestro Pulso",
+    description: "Esta es una página de noticias moderna para Colombia.",
+    url: "#",
+  },
+  {
+    title: "Ejemplo de titular de noticia",
+    description: "¡Aquí verás las noticias más importantes de Colombia y el mundo!",
+    url: "#",
+  },
+];
 
-  const renderActiveModule = () => {
-    switch (activeModule) {
-      case 'chat': return <LiveChat />;
-      case 'debate': return <Debate />;
-      case 'survey': return <Survey />;
-      case 'news': return <News />;
-      case 'comments': return <Comments />;
-      case 'care': return <Care />;
-      case 'congress': return <CongressTracker />;
-      case 'reels': return <PulseReels />;
-      case 'marketplace': return <Marketplace />;
-      case 'search': return <Search />;
-      case 'alerts': return <Alerts />;
-      case 'elections': return <ElectionHub />;
-      case 'copilot': return <CopilotAssistant />;
-      default: return <HeroSection />;
-    }
-  };
+export default function HomePage() {
+  // For now, just show fake articles to make sure it works
+  const [articles] = useState(fakeArticles);
 
   return (
-    <AuthProvider>
-      <div className="min-h-screen bg-gray-50">
-        <Navigation activeModule={activeModule} setActiveModule={setActiveModule} />
-        <main className="pt-16">
-          {renderActiveModule()}
-        </main>
-      </div>
-    </AuthProvider>
+    <div style={{ background: "linear-gradient(135deg, #ffecb3 0%, #ffd54f 100%)", minHeight: "100vh" }}>
+      <header style={{ padding: 24, background: "linear-gradient(90deg,#ffe082,#ffb300)", color: "#333", fontWeight: 700, fontSize: 32, display: "flex", alignItems: "center", gap: 16 }}>
+        <span role="img" aria-label="flag">🇨🇴</span> Nuestro Pulso
+      </header>
+      <main style={{ padding: 24 }}>
+        {articles.map((article, i) => (
+          <div key={i} style={{ background: "#fffde7", marginBottom: 16, padding: 16, borderRadius: 8, boxShadow: "0 2px 6px #fff8e1" }}>
+            <h2 style={{ margin: 0, fontSize: 20 }}>{article.title}</h2>
+            <p style={{ margin: "8px 0" }}>{article.description}</p>
+            <a href={article.url} style={{ color: "#039be5" }}>Leer más</a>
+          </div>
+        ))}
+      </main>
+    </div>
   );
-};
-
-export default Home;
+}
