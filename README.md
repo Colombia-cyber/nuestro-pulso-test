@@ -38,8 +38,57 @@ To get started with the project, follow these instructions:
        // Handle Errors
      });
    ```
+
+## Google Search Integration Setup
+
+For the search functionality to work with real Google results, you need to configure Google Custom Search API:
+
+1. **Get Google API Credentials**:
+   - Go to [Google Cloud Console](https://console.cloud.google.com/)
+   - Create a new project or select an existing one
+   - Enable the "Custom Search API"
+   - Go to "APIs & Services > Credentials" and create an API key
+   - Restrict the API key to only allow Custom Search API
+
+2. **Create Custom Search Engine**:
+   - Go to [Google Custom Search](https://cse.google.com/)
+   - Create a new search engine
+   - Add websites to search (or use "*" for the entire web)
+   - Get your Search Engine ID from the control panel
+
+3. **Configure Environment Variables**:
+   In your `.env` file, add:
+   ```bash
+   GOOGLE_API_KEY=your_actual_google_api_key
+   GOOGLE_SEARCH_ENGINE_ID=your_actual_search_engine_id
+   ```
+
+4. **Security Note**:
+   - API keys are handled securely on the backend only
+   - Never commit real API keys to version control
+   - The frontend calls the backend `/api/search` endpoint, which handles Google API requests
+   - Without API keys, the system uses intelligent fallback results
+
+## Development
+
+1. **Start the backend server**:
+   ```bash
+   npm run server
+   ```
+
+2. **Start the frontend development server** (in a new terminal):
+   ```bash
+   npm run dev
+   ```
+
+3. **Or run both together**:
+   ```bash
+   npm run dev:full
+   ```
+
 4. **Security Note**
-   - Never commit your real `.env` file, only `.env.example.
+   - Never commit your real `.env` file, only `.env.example`.
+   - Google API keys are only used on the backend for security
 
 ---
 

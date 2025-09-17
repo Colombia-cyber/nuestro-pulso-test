@@ -5,6 +5,7 @@ import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
+import GoogleSearchTest from "./pages/GoogleSearchTest";
 import PulseReels from "./components/PulseReels";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
@@ -102,6 +103,8 @@ function App() {
           return <CommunityHub />;
         case 'search':
           return <SearchPage />;
+        case 'google-search-test':
+          return <GoogleSearchTest />;
         case 'home':
         default:
           return <HeroSection onNavigate={handleNavigate} />;

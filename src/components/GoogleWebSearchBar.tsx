@@ -1,29 +1,43 @@
 import React, { useState } from 'react';
 
-const GOOGLE_API_KEY = "AIzaSyB1wdNIgV2qUdJ8lUzjhKoRnYHpwi_QAWQ"; // Placeholder API key
-const GOOGLE_CX = "b1da68d0c729b40ae"; // Placeholder Custom Search Engine ID
+// Import the search service to use backend API
+async function searchViaBackend(query: string) {
+  try {
+    const apiUrl = import.meta.env.REACT_APP_SEARCH_PROXY_URL || 'http://localhost:3001/api/search';
+    
+    const params = new URLSearchParams({
+      q: query,
+      page: '1',
+      limit: '10',
+      sort: 'relevance'
+    });
 
-async function searchGoogleAPI(query: string) {
-  // Mock search results for demo purposes since we're using placeholder keys
-  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API delay
-  
-  return [
-    {
-      title: `Resultados sobre "${query}" - Noticias Colombia`,
-      link: 'https://example.com/colombia-news',
-      snippet: `Últimas noticias sobre ${query} en Colombia. Análisis, reportes y cobertura actualizada de los eventos más importantes del país.`
-    },
-    {
-      title: `${query} - Wikipedia`,
-      link: 'https://es.wikipedia.org/wiki/' + encodeURIComponent(query),
-      snippet: `Información enciclopédica sobre ${query}. Historia, contexto y datos relevantes de fuentes confiables.`
-    },
-    {
-      title: `Análisis: ${query} en el contexto colombiano`,
-      link: 'https://example.com/analysis',
-      snippet: `Análisis profundo sobre ${query} y su impacto en la sociedad colombiana. Perspectivas de expertos y datos actualizados.`
+    const response = await fetch(`${apiUrl}?${params}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'NuestroPulso/1.0'
+      },
+      signal: AbortSignal.timeout(10000)
+    });
+
+    if (!response.ok) {
+      throw new Error(`Search failed: ${response.status} ${response.statusText}`);
     }
-  ];
+
+    const data = await response.json();
+    
+    // Transform backend results to match component's expected format
+    return (data.results || []).map((result: any) => ({
+      title: result.title,
+      link: result.url,
+      snippet: result.summary
+    }));
+
+  } catch (error) {
+    console.error('Backend search failed:', error);
+    throw error;
+  }
 }
 
 const GoogleWebSearchBar: React.FC = () => {
@@ -44,10 +58,10 @@ const GoogleWebSearchBar: React.FC = () => {
     setDiscussId(null);
     
     try {
-      const googleResults = await searchGoogleAPI(query);
+      const googleResults = await searchViaBackend(query);
       setResults(googleResults);
     } catch (err: any) {
-      setError("Error al buscar en Google. Intenta nuevamente.");
+      setError("Error al buscar. Intenta nuevamente. El servidor puede estar iniciando.");
     }
     setLoading(false);
   }

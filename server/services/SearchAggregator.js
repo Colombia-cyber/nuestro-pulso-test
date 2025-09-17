@@ -1,13 +1,15 @@
 import SocialMediaProvider from '../providers/SocialMediaProvider.js';
 import GovernmentProvider from '../providers/GovernmentProvider.js';
 import WikiProvider from '../providers/WikiProvider.js';
+import GoogleSearchProvider from '../providers/GoogleSearchProvider.js';
 
 class SearchAggregator {
   constructor() {
     this.providers = {
       social: new SocialMediaProvider(),
       government: new GovernmentProvider(),
-      wiki: new WikiProvider()
+      wiki: new WikiProvider(),
+      google: new GoogleSearchProvider()
     };
 
     // Configuration
