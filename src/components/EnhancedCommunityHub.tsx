@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Activity, activityTracker } from '../services/ActivityTracker';
+import Comments from './Comments';
 
 const EnhancedCommunityHub: React.FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
@@ -8,9 +9,21 @@ const EnhancedCommunityHub: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<any>(null);
   const [showAdminControls, setShowAdminControls] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const [communityComments, setCommunityComments] = useState<any[]>([]);
 
   useEffect(() => {
     setLoading(true);
+    
+    // Load community comments from localStorage
+    const loadCommunityComments = () => {
+      const storedComments = JSON.parse(localStorage.getItem('communityComments') || '[]');
+      const regularComments = JSON.parse(localStorage.getItem('comments') || '[]');
+      
+      // Combine all comments
+      const allComments = [...storedComments, ...regularComments];
+      setCommunityComments(allComments);
+    };
     
     // Load initial activities
     const loadActivities = () => {
@@ -37,10 +50,12 @@ const EnhancedCommunityHub: React.FC = () => {
     };
 
     loadActivities();
+    loadCommunityComments();
 
     // Subscribe to activity updates
     const unsubscribe = activityTracker.subscribe(() => {
       loadActivities();
+      loadCommunityComments();
     });
 
     return unsubscribe;
@@ -178,6 +193,141 @@ const EnhancedCommunityHub: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* View Mode Toggle */}
+        <div className="mb-6">
+          <div className="bg-white rounded-lg shadow-sm p-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold text-gray-900">Vista del Community Hub</h3>
+              <div className="flex bg-gray-100 rounded-lg p-1">
+                <button
+                  onClick={() => setShowComments(false)}
+                  className={`px-4 py-2 rounded text-sm font-medium transition ${
+                    !showComments
+                      ? 'bg-white text-blue-600 shadow'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  📊 Actividades
+                </button>
+                <button
+                  onClick={() => setShowComments(true)}
+                  className={`px-4 py-2 rounded text-sm font-medium transition ${
+                    showComments
+                      ? 'bg-white text-blue-600 shadow'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                >
+                  💬 Comentarios ({communityComments.length})
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {showComments ? (
+          /* Community Comments View */
+          <div className="space-y-6">
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                💬 Comentarios de la Comunidad por Categoría
+              </h3>
+              <p className="text-gray-600 mb-6">
+                Todos los comentarios se organizan automáticamente por categoría según el artículo comentado.
+              </p>
+              
+              {/* Category-wise Comments */}
+              {communityComments.length > 0 ? (
+                <div className="space-y-6">
+                  {/* Group comments by category */}
+                  {Object.entries(
+                    communityComments.reduce((acc: any, comment) => {
+                      const category = comment.category || 'Sin categoría';
+                      if (!acc[category]) acc[category] = [];
+                      acc[category].push(comment);
+                      return acc;
+                    }, {})
+                  ).map(([category, comments]: [string, any]) => (
+                    <div key={category} className="bg-gray-50 rounded-lg p-4">
+                      <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                        <span className="mr-2">📂</span>
+                        {category} ({(comments as any[]).length} comentarios)
+                      </h4>
+                      
+                      <div className="space-y-4">
+                        {(comments as any[]).map((comment, index) => (
+                          <div key={index} className="bg-white rounded-lg p-4 border border-gray-200">
+                            <div className="flex items-start space-x-3">
+                              <div className="text-2xl">{comment.avatar || '👤'}</div>
+                              <div className="flex-1">
+                                <div className="flex items-center space-x-2 mb-2">
+                                  <span className="font-semibold text-gray-900">
+                                    {comment.author || 'Usuario Anónimo'}
+                                  </span>
+                                  <span className="text-sm text-gray-500">
+                                    {comment.timestamp ? 
+                                      new Date(comment.timestamp).toLocaleDateString('es-CO', {
+                                        day: 'numeric',
+                                        month: 'short',
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                      }) : 
+                                      'Fecha desconocida'
+                                    }
+                                  </span>
+                                </div>
+                                
+                                {comment.articleTitle && (
+                                  <div className="mb-2">
+                                    <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                                      📰 {comment.articleTitle.length > 80 ? 
+                                        `${comment.articleTitle.substring(0, 80)}...` : 
+                                        comment.articleTitle
+                                      }
+                                    </span>
+                                  </div>
+                                )}
+                                
+                                <p className="text-gray-700 mb-3">{comment.content}</p>
+                                
+                                <div className="flex items-center space-x-4 text-sm text-gray-500">
+                                  <button className="flex items-center space-x-1 hover:text-blue-600">
+                                    <span>👍</span>
+                                    <span>{comment.likes || 0}</span>
+                                  </button>
+                                  <button className="hover:text-blue-600">
+                                    💬 Responder
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <div className="text-6xl mb-4">💬</div>
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    No hay comentarios aún
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Los comentarios de artículos y búsquedas aparecerán aquí organizados por categoría.
+                  </p>
+                  <button
+                    onClick={() => setShowComments(false)}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+                  >
+                    Ver actividades
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <>
 
         {/* Controls */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
@@ -341,6 +491,8 @@ const EnhancedCommunityHub: React.FC = () => {
               Cargar más actividades
             </button>
           </div>
+        )}
+          </>
         )}
       </div>
     </div>

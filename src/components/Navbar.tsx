@@ -19,15 +19,15 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
 
   return (
     <>
-      <nav className="w-full bg-white shadow-sm py-4 px-4 md:px-8 flex flex-row items-center justify-between fixed top-0 left-0 z-50">
+      <nav className="w-full bg-white shadow-lg py-4 px-4 md:px-8 flex flex-row items-center justify-between fixed top-0 left-0 z-50 border-b border-gray-200">
         {/* Logo and Brand */}
         <div className="flex items-center gap-2">
           <img src="/colombia-flag.png" alt="Colombia Flag" className="w-10 h-7" />
           <span className="font-bold text-lg text-yellow-700">Nuestro Pulso</span>
         </div>
 
-        {/* Desktop Search Bar */}
-        <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
+        {/* Desktop Search Bar - Always visible and prominent */}
+        <div className="hidden md:flex flex-1 max-w-3xl mx-8">
           <UniversalSearchBar 
             compact={true}
             onResults={() => handleNavClick('search')}

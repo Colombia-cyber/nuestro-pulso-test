@@ -32,6 +32,7 @@ const PulseReels: React.FC = () => {
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const [allReelsLoaded, setAllReelsLoaded] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -196,7 +197,7 @@ const PulseReels: React.FC = () => {
     }
   ];
 
-  // Load reels with pagination
+  // Load reels with pagination and enhanced error handling
   const loadReels = useCallback(async (pageNum: number, category: string, reset = false) => {
     if (allReelsLoaded && !reset) return;
     
@@ -204,12 +205,13 @@ const PulseReels: React.FC = () => {
     setError(null);
     
     try {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Simulate network conditions and API delay
+      const delay = Math.random() * 1000 + 300; // 300ms to 1.3s
+      await new Promise(resolve => setTimeout(resolve, delay));
       
-      // Simulate potential error (5% chance)
-      if (Math.random() < 0.05) {
-        throw new Error('Error al cargar los reels. Verifica tu conexión.');
+      // Simulate network errors (reduced chance for better UX)
+      if (Math.random() < 0.02 && retryCount < 2) {
+        throw new Error('Error de conexión. Verificando conectividad...');
       }
 
       // Filter reels by category
@@ -234,17 +236,20 @@ const PulseReels: React.FC = () => {
       setAllReelsLoaded(!hasMoreReels);
 
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error desconocido';
+      const errorMessage = err instanceof Error ? err.message : 'Error de conexión desconocido';
       setError(errorMessage);
       
-      // Show fallback reels on error if no reels are loaded
+      // Progressive fallback strategy
       if (reels.length === 0) {
-        setReels(allMockReels.slice(0, batchSize));
+        // If no reels loaded, show some basic fallback content
+        const fallbackReels = allMockReels.slice(0, Math.min(batchSize, 3));
+        setReels(fallbackReels);
+        console.warn('Using fallback reels due to loading error:', errorMessage);
       }
     } finally {
       setIsLoading(false);
     }
-  }, [batchSize, allReelsLoaded, reels.length]);
+  }, [batchSize, allReelsLoaded, reels.length, retryCount]);
 
   // Initialize reels on mount and category change
   useEffect(() => {
@@ -286,6 +291,7 @@ const PulseReels: React.FC = () => {
   const handleRetry = () => {
     setError(null);
     setPage(1);
+    setRetryCount(prev => prev + 1);
     setAllReelsLoaded(false);
     loadReels(1, selectedCategory, true);
   };

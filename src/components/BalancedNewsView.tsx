@@ -57,6 +57,39 @@ const BalancedNewsView: React.FC<BalancedNewsViewProps> = ({ topic, onBack }) =>
       category: 'Medio Ambiente',
       perspective: 'left',
       url: '#'
+    },
+    {
+      id: '2-right',
+      title: 'Políticas Ambientales: Balance entre Conservación y Desarrollo',
+      summary: 'Aunque las medidas ambientales son importantes, es crucial encontrar un equilibrio que no limite el crecimiento económico y la generación de empleo en sectores productivos.',
+      source: 'La República',
+      publishedAt: '2024-01-14T16:15:00Z',
+      readTime: '5 min',
+      category: 'Medio Ambiente',
+      perspective: 'right',
+      url: '#'
+    },
+    {
+      id: '3-left',
+      title: 'Programas Sociales: Invirtiendo en el Futuro de Colombia',
+      summary: 'La expansión de programas sociales representa una inversión estratégica en capital humano que generará beneficios económicos y sociales a largo plazo para el país.',
+      source: 'El Tiempo',
+      publishedAt: '2024-01-13T09:45:00Z',
+      readTime: '4 min',
+      category: 'Política Social',
+      perspective: 'left',
+      url: '#'
+    },
+    {
+      id: '3-right',
+      title: 'Programas Sociales: Sostenibilidad Fiscal y Eficiencia',
+      summary: 'Es fundamental evaluar la sostenibilidad fiscal de los programas sociales y asegurar que los recursos se utilicen de manera eficiente para maximizar su impacto.',
+      source: 'Dinero',
+      publishedAt: '2024-01-13T11:20:00Z',
+      readTime: '4 min',
+      category: 'Política Social',
+      perspective: 'right',
+      url: '#'
     }
   ];
 
