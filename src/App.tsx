@@ -4,6 +4,7 @@ import HeroSection from "./components/HeroSection";
 import ColombianHomepage from "./components/ColombianHomepage";
 import EnhancedPulseReels from "./components/EnhancedPulseReels";
 import ArticleDetail from "./components/ArticleDetail";
+import NewsSearch from "./components/NewsSearch";
 import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
@@ -101,6 +102,12 @@ function App() {
           return <EnhancedPulseReels onNavigate={handleNavigate} />;
         case 'reel-comments':
           return <Comments />;
+        case 'news-search':
+          return <NewsSearch 
+            searchType={viewData?.type || 'news'} 
+            initialQuery={viewData?.query || ''}
+            onNavigate={handleNavigate}
+          />;
         case 'news-section':
           return <CustomNewsFeed onNavigate={handleNavigate} />;
         case 'feeds':
@@ -140,6 +147,7 @@ function App() {
       'article-detail': 'Cargando artículo...',
       'reel-detail': 'Cargando video...',
       'reel-comments': 'Cargando comentarios...',
+      'news-search': 'Preparando búsqueda de noticias...',
       'news-section': 'Cargando sección de noticias...',
       'feeds': 'Cargando noticias...',
       'news': 'Cargando noticias...',

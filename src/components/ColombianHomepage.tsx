@@ -221,7 +221,7 @@ const ColombianHomepage: React.FC<ColombianHomepageProps> = ({ onNavigate }) => 
 
   const handleSearch = (type: 'news' | 'reels') => {
     const query = type === 'news' ? searchQuery : reelsSearchQuery;
-    onNavigate('search', { type, query });
+    onNavigate('news-search', { type, query });
   };
 
   if (isLoading) {
@@ -377,7 +377,7 @@ const ColombianHomepage: React.FC<ColombianHomepageProps> = ({ onNavigate }) => 
                   Reels & Videos Trending
                 </h2>
                 <button 
-                  onClick={() => onNavigate('reels')}
+                  onClick={() => onNavigate('enhanced-reels')}
                   className="bg-red-500 text-white px-6 py-3 rounded-xl hover:bg-red-600 transition-colors flex items-center"
                 >
                   Ver todos los reels
@@ -451,7 +451,7 @@ const ColombianHomepage: React.FC<ColombianHomepageProps> = ({ onNavigate }) => 
               {/* View All Button */}
               <div className="text-center mt-8">
                 <button 
-                  onClick={() => onNavigate('reels')}
+                  onClick={() => onNavigate('enhanced-reels')}
                   className="bg-gradient-to-r from-yellow-500 to-red-500 text-white px-8 py-4 rounded-xl hover:from-yellow-600 hover:to-red-600 transition-all font-semibold text-lg"
                 >
                   🎬 Explorar todos los Reels
