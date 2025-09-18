@@ -5,7 +5,7 @@ import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
-import PulseReels from "./components/PulseReels";
+import EnhancedPulseReels from "./components/EnhancedPulseReels";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
 import LiveChat from "./components/LiveChat";
@@ -81,7 +81,7 @@ function App() {
     try {
       switch (currentView) {
         case 'reels':
-          return <PulseReels />;
+          return <EnhancedPulseReels />;
         case 'feeds':
         case 'news':
           return <CustomNewsFeed />;
