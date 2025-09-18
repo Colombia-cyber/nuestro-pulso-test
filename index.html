@@ -2,30 +2,127 @@
 <html lang="es-CO">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nuestro Pulso - Red Cívica de Colombia</title>
-    <meta name="description" content="La plataforma líder de participación cívica en Colombia. Únete a debates, encuestas, chat en vivo y más." />
-    <meta name="keywords" content="Colombia, cívico, participación ciudadana, debates, encuestas, congreso, elecciones" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Nuestro Pulso - La Plataforma Cívica Líder de Colombia</title>
+    <meta name="description" content="Únete a la plataforma cívica más avanzada de Colombia. Participa en debates, encuestas, chat en vivo y mantente informado con noticias balanceadas y análisis en profundidad." />
+    <meta name="keywords" content="Colombia, cívico, participación ciudadana, debates, encuestas, congreso, elecciones, noticias, política, democracia, ciudadanía" />
+    <meta name="author" content="Nuestro Pulso - Red Cívica de Colombia" />
+    <meta name="robots" content="index, follow" />
+    <meta name="language" content="Spanish" />
+    <meta name="geo.region" content="CO" />
+    <meta name="geo.country" content="Colombia" />
     
-    <!-- PWA Manifest -->
+    <!-- Enhanced PWA Manifest -->
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#3B82F6" />
+    <meta name="theme-color" content="#003087" />
+    <meta name="background-color" content="#FFFFFF" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="Nuestro Pulso" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="msapplication-TileColor" content="#003087" />
+    <meta name="msapplication-TileImage" content="/icons/mstile-144x144.png" />
     
-    <!-- Social Meta Tags -->
-    <meta property="og:title" content="Nuestro Pulso - Red Cívica de Colombia" />
-    <meta property="og:description" content="La plataforma líder de participación cívica en Colombia" />
+    <!-- Favicons and Icons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#003087" />
+    
+    <!-- Enhanced Social Meta Tags -->
+    <meta property="og:title" content="Nuestro Pulso - La Plataforma Cívica Líder de Colombia" />
+    <meta property="og:description" content="Únete a la plataforma cívica más avanzada de Colombia. Participa en debates, encuestas y mantente informado con noticias balanceadas." />
     <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nuestro-pulso.vercel.app" />
+    <meta property="og:image" content="https://nuestro-pulso.vercel.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="es_CO" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <meta property="og:site_name" content="Nuestro Pulso" />
     
-    <!-- Favicon -->
-    <link rel="icon" href="/favicon.ico" />
+    <!-- Twitter Card Meta -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@NuestroPulso" />
+    <meta name="twitter:creator" content="@NuestroPulso" />
+    <meta name="twitter:title" content="Nuestro Pulso - La Plataforma Cívica Líder de Colombia" />
+    <meta name="twitter:description" content="Únete a la plataforma cívica más avanzada de Colombia. Participa en debates, encuestas y mantente informado." />
+    <meta name="twitter:image" content="https://nuestro-pulso.vercel.app/og-image.png" />
+    
+    <!-- WhatsApp Meta -->
+    <meta property="og:image:alt" content="Nuestro Pulso - Plataforma Cívica de Colombia" />
+    
+    <!-- LinkedIn Meta -->
+    <meta property="og:image:type" content="image/png" />
+    
+    <!-- Structured Data for SEO -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Nuestro Pulso",
+      "alternateName": "Red Cívica de Colombia",
+      "url": "https://nuestro-pulso.vercel.app",
+      "description": "La plataforma cívica más avanzada de Colombia para participación ciudadana, debates, encuestas y noticias balanceadas.",
+      "inLanguage": "es-CO",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://nuestro-pulso.vercel.app/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Nuestro Pulso",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://nuestro-pulso.vercel.app/logo.png"
+        }
+      },
+      "sameAs": [
+        "https://facebook.com/nuestropulso",
+        "https://twitter.com/nuestropulso",
+        "https://youtube.com/nuestropulso"
+      ]
+    }
+    </script>
+    
+    <!-- DNS Prefetch for better performance -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://nuestro-pulso.vercel.app" />
+    
+    <!-- Accessibility improvements -->
+    <meta name="color-scheme" content="light dark" />
+    
+    <!-- Performance hints -->
+    <link rel="preload" href="/src/main.jsx" as="script" />
+    
+    <!-- Security headers -->
+    <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+    <meta http-equiv="X-Frame-Options" content="DENY" />
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block" />
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+          navigator.serviceWorker.register('/sw.js')
+            .then(function(registration) {
+              console.log('SW registered: ', registration);
+            }, function(registrationError) {
+              console.log('SW registration failed: ', registrationError);
+            });
+        });
+      }
+    </script>
   </body>
 </html>

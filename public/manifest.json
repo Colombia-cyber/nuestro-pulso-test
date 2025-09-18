@@ -1,49 +1,124 @@
 {
   "name": "Nuestro Pulso - Red Cívica de Colombia",
   "short_name": "Nuestro Pulso",
-  "description": "La plataforma líder de participación cívica en Colombia",
+  "description": "La plataforma cívica más avanzada de Colombia para participación ciudadana, debates, encuestas y noticias balanceadas.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#3B82F6",
   "orientation": "portrait-primary",
+  "theme_color": "#003087",
+  "background_color": "#FFFFFF",
+  "lang": "es-CO",
+  "scope": "/",
+  "categories": ["news", "government", "politics", "social"],
   "icons": [
     {
       "src": "/icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
       "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192-maskable.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "categories": ["government", "social", "news", "education"],
-  "lang": "es-CO",
-  "scope": "/",
-  "prefer_related_applications": false,
   "shortcuts": [
     {
-      "name": "Chat en Vivo",
-      "short_name": "Chat",
-      "description": "Únete a conversaciones cívicas en tiempo real",
-      "url": "/?module=chat",
-      "icons": [{ "src": "/chat-icon.png", "sizes": "96x96" }]
+      "name": "Noticias",
+      "short_name": "Feeds",
+      "description": "Ver las últimas noticias y feeds",
+      "url": "/feeds",
+      "icons": [
+        {
+          "src": "/icons/shortcut-news.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Debates",
       "short_name": "Debates",
-      "description": "Participa en debates estructurados",
-      "url": "/?module=debate",
-      "icons": [{ "src": "/debate-icon.png", "sizes": "96x96" }]
+      "description": "Participar en debates políticos",
+      "url": "/debates",
+      "icons": [
+        {
+          "src": "/icons/shortcut-debates.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
     },
     {
-      "name": "Congreso",
-      "short_name": "Congreso",
-      "description": "Sigue la actividad legislativa",
-      "url": "/?module=congress",
-      "icons": [{ "src": "/congress-icon.png", "sizes": "96x96" }]
+      "name": "Encuestas",
+      "short_name": "Encuestas",
+      "description": "Votar en encuestas ciudadanas",
+      "url": "/encuestas",
+      "icons": [
+        {
+          "src": "/icons/shortcut-polls.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Reels",
+      "short_name": "Reels",
+      "description": "Ver videos cortos de noticias",
+      "url": "/reels",
+      "icons": [
+        {
+          "src": "/icons/shortcut-reels.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Chat en Vivo",
+      "short_name": "Chat",
+      "description": "Únete a conversaciones cívicas en tiempo real",
+      "url": "/chat",
+      "icons": [
+        {
+          "src": "/icons/shortcut-chat.png",
+          "sizes": "96x96",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "share_target": {
+    "action": "/share",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+nuestropulso",
+      "url": "/open?type=%s"
     }
   ]
 }
