@@ -51,10 +51,10 @@ class SearchService {
   private debounceTimers: Map<string, number> = new Map();
 
   constructor() {
-    this.proxyUrl = getEnvVar('REACT_APP_SEARCH_PROXY_URL', '/api/search');
-    this.pagingCap = parseInt(getEnvVar('REACT_APP_PAGING_CAP', '2000'));
-    this.defaultLimit = parseInt(getEnvVar('REACT_APP_SEARCH_RESULTS_PER_PAGE', '12'));
-    this.debounceMs = parseInt(getEnvVar('REACT_APP_SEARCH_DEBOUNCE_MS', '300'));
+    this.proxyUrl = getEnvVar('VITE_SEARCH_PROXY_URL', '/api/search');
+    this.pagingCap = parseInt(getEnvVar('VITE_PAGING_CAP', '2000'));
+    this.defaultLimit = parseInt(getEnvVar('VITE_SEARCH_RESULTS_PER_PAGE', '12'));
+    this.debounceMs = parseInt(getEnvVar('VITE_SEARCH_DEBOUNCE_MS', '300'));
   }
 
   // Public search method with debouncing

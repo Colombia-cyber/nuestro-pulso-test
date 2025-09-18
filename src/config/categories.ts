@@ -77,7 +77,7 @@ export const categories: Category[] = [
     name: 'Tecnología',
     icon: '💻',
     description: 'Tecnología y transformación digital',
-    hidden: getEnvVar('REACT_APP_HIDE_TECHNOLOGY_CATEGORY') === 'true'
+    hidden: getEnvVar('VITE_HIDE_TECHNOLOGY_CATEGORY') === 'true'
   },
   {
     id: 'congreso',
@@ -97,7 +97,7 @@ export const categories: Category[] = [
 
 // Get visible categories based on configuration
 export const getVisibleCategories = (includeAdvanced = false): Category[] => {
-  const showAdvanced = includeAdvanced || getEnvVar('REACT_APP_SHOW_ADVANCED_CATEGORIES') === 'true';
+  const showAdvanced = includeAdvanced || getEnvVar('VITE_SHOW_ADVANCED_CATEGORIES') === 'true';
   
   return categories.filter(category => {
     if (category.hidden) return false;

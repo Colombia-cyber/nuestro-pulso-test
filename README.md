@@ -16,11 +16,18 @@ To get started with the project, follow these instructions:
    npm install
    ```
 
-## Firebase Authentication Setup
+## Configuration Setup
 
-1. Create a `.env` file in the project root and add your Firebase credentials. Use `.env.example` as a template.
+1. **Environment Configuration**  
+   Create a `.env` file in the project root and configure your API keys and integrations. Use `.env.example` as a comprehensive template that includes:
+   - **Firebase Authentication** (required for user authentication)
+   - **Google News API** (for news aggregation)
+   - **Supabase** (database and real-time features)
+   - **Social Media APIs** (YouTube, Facebook, Twitter integrations)
+   - **Search and Performance** settings
+   - **App Environment** and feature flags
 
-2. **Enable Auth Providers**  
+2. **Firebase Authentication Setup**  
    Go to [Firebase Console > Authentication > Sign-in method](https://console.firebase.google.com/) and enable Email/Password (and other providers if needed).
 
 3. **Usage Example**  
