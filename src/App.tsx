@@ -5,6 +5,8 @@ import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
+import EnhancedSearchPage from "./pages/EnhancedSearch";
+import SuperchargedCommunityHub from "./components/SuperchargedCommunityHub";
 import PulseReels from "./components/PulseReels";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
@@ -99,8 +101,10 @@ function App() {
         case 'comments':
           return <Comments />;
         case 'community-hub':
-          return <CommunityHub />;
+          return <SuperchargedCommunityHub />;
         case 'search':
+          return <EnhancedSearchPage />;
+        case 'search-legacy':
           return <SearchPage />;
         case 'home':
         default:
@@ -124,8 +128,9 @@ function App() {
       'surveys': 'Cargando encuestas...',
       'encuestas': 'Cargando encuestas...',
       'comments': 'Cargando comentarios...',
-      'community-hub': 'Cargando Community Hub...',
-      'search': 'Preparando búsqueda...',
+      'community-hub': 'Cargando Community Hub Mejorado...',
+      'search': 'Preparando Búsqueda Universal...',
+      'search-legacy': 'Cargando búsqueda clásica...',
     };
     return messages[view] || 'Cargando contenido...';
   };

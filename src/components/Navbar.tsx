@@ -36,6 +36,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
     { id: 'chat', icon: '💬', label: 'Chat en Vivo', shortLabel: 'Chat' },
     { id: 'debates', icon: '🗣️', label: 'Debates', shortLabel: 'Debates' },
     { id: 'surveys', icon: '📊', label: 'Encuestas', shortLabel: 'Encuestas' },
+    { id: 'search', icon: '🔍', label: 'Búsqueda Universal', shortLabel: 'Buscar' },
     { id: 'community-hub', icon: '💭', label: 'Community Hub', shortLabel: 'Hub' }
   ];
 
