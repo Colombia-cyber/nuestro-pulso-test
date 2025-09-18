@@ -3,6 +3,7 @@ import { NewsItem } from '../types/news';
 import enhancedNewsService from '../services/enhancedNewsService';
 import EnhancedNewsCard from './EnhancedNewsCard';
 import FreshnessIndicator from './FreshnessIndicator';
+import useInfiniteScroll from '../hooks/useInfiniteScroll';
 
 interface NewsDashboardProps {
   onArticleClick?: (article: NewsItem) => void;
@@ -27,6 +28,43 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
   const [isLiveUpdating, setIsLiveUpdating] = useState(false);
   const [lastUpdateTime, setLastUpdateTime] = useState<Date>(new Date());
   const [likedArticles, setLikedArticles] = useState<Set<string>>(new Set());
+  const [page, setPage] = useState(1);
+  const [hasMoreNews, setHasMoreNews] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+
+  // Load more news for infinite scroll
+  const loadMoreNews = useCallback(async () => {
+    if (loadingMore || !hasMoreNews) return;
+    
+    setLoadingMore(true);
+    try {
+      // Simulate loading more news (in real app, this would fetch next page)
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const moreNews = await enhancedNewsService.getAllNews();
+      
+      // In a real implementation, you'd append new results
+      // For demo, we'll just show current results
+      if (moreNews.length === 0) {
+        setHasMoreNews(false);
+      } else {
+        setPage(prev => prev + 1);
+        // In real app: setFilteredNews(prev => [...prev, ...newResults]);
+      }
+    } catch (error) {
+      console.error('Error loading more news:', error);
+    } finally {
+      setLoadingMore(false);
+    }
+  }, [loadingMore, hasMoreNews]);
+
+  // Infinite scroll hook
+  const { isFetching } = useInfiniteScroll({
+    hasMore: hasMoreNews,
+    loading: loading || loadingMore,
+    onLoadMore: loadMoreNews,
+    threshold: 0.8
+  });
 
   // Categories with Colombian flag styling
   const categories = [
@@ -373,19 +411,44 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
 
         {/* News Grid */}
         {filteredNews.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredNews.map((article) => (
-              <EnhancedNewsCard
-                key={article.id}
-                article={article}
-                onArticleClick={onArticleClick}
-                onLike={handleLike}
-                isLiked={likedArticles.has(article.id)}
-                showPerspectiveBadge={true}
-                compact={false}
-              />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredNews.map((article) => (
+                <EnhancedNewsCard
+                  key={article.id}
+                  article={article}
+                  onArticleClick={onArticleClick}
+                  onLike={handleLike}
+                  isLiked={likedArticles.has(article.id)}
+                  showPerspectiveBadge={true}
+                  compact={false}
+                />
+              ))}
+            </div>
+
+            {/* Infinite Scroll Loading Indicator */}
+            {(loadingMore || isFetching) && hasMoreNews && (
+              <div className="flex justify-center py-8">
+                <div className="bg-white rounded-xl p-6 shadow-lg border border-gray-200">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-6 h-6 border-4 border-yellow-400 border-t-blue-500 border-r-red-500 rounded-full animate-spin"></div>
+                    <span className="text-gray-600 font-medium">Cargando más noticias...</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* End of Content Indicator */}
+            {!hasMoreNews && filteredNews.length > 0 && (
+              <div className="text-center py-8">
+                <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 rounded-xl p-6 text-white shadow-lg">
+                  <div className="text-2xl mb-2">🇨🇴</div>
+                  <div className="font-semibold mb-1">¡Has visto todas las noticias!</div>
+                  <div className="text-sm opacity-90">Regresa pronto para más actualizaciones</div>
+                </div>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-12">
             <div className="text-6xl mb-4">🔍</div>
