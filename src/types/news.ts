@@ -7,7 +7,15 @@ export enum NewsCategory {
   HEALTH = 'Salud',
   INFRASTRUCTURE = 'Infraestructura',
   AGRICULTURE = 'Agricultura',
-  BREAKING = 'Última Hora'
+  BREAKING = 'Última Hora',
+  LOCAL = 'Local',
+  WORLD = 'Internacional',
+  CONGRESS = 'Congreso',
+  LEGISLATION = 'Legislación',
+  OPINION = 'Opinión',
+  SPORTS = 'Deportes',
+  CULTURE = 'Cultura',
+  TECHNOLOGY = 'Tecnología'
 }
 
 export interface NewsSource {
@@ -31,6 +39,13 @@ export interface NewsItem {
   tags?: string[];
   shareUrl?: string;
   relatedArticles?: string[];
+  url?: string; // External URL to full article
+  freshnessIndicator?: string; // "Updated X seconds ago"
+  isBreaking?: boolean; // For breaking news alerts
+  priority?: 'high' | 'medium' | 'low'; // News priority
+  viewCount?: number; // Article view count
+  likeCount?: number; // Article likes
+  commentCount?: number; // Number of comments
 }
 
 export interface NewsArticle {
