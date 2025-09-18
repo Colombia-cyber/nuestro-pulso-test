@@ -1,4 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { FaHeart, FaComment, FaShare, FaBookmark, FaPlay, FaPause, FaVolumeUp, FaVolumeMute, FaExpand, FaEllipsisV } from 'react-icons/fa';
+import { BiTrendingUp, BiHash } from 'react-icons/bi';
+import { MdVerified, MdLiveTv } from 'react-icons/md';
+import { IoMdTime, IoMdEye } from 'react-icons/io';
 import { getVisibleCategories } from '../config/categories';
 import { PulseReel } from '../types/pulseReel';
 import { pulseReels as samplePulseReels } from '../data/pulseReels';
@@ -6,40 +10,48 @@ import { pulseReels as samplePulseReels } from '../data/pulseReels';
 // Safely get environment variable with fallback
 const getEnvVar = (key: string, fallback = ''): string => {
   if (typeof window !== 'undefined') {
-    // In browser, use import.meta.env for Vite
     return (import.meta.env as any)[key] || fallback;
   }
   return fallback;
 };
 
-// Legacy interface for backward compatibility with existing UI
-interface Reel {
-  id: number;
+// Enhanced interface for vertical reels
+interface VerticalReel {
+  id: string;
   title: string;
   description: string;
   category: string;
   duration: string;
   views: number;
   likes: number;
+  comments: number;
+  shares: number;
   thumbnail: string;
-  author: string;
+  author: {
+    name: string;
+    avatar: string;
+    verified: boolean;
+    followers: number;
+  };
   videoUrl?: string;
-  embedUrl?: string;
+  hashtags: string[];
+  isLive?: boolean;
+  location?: string;
+  timestamp: Date;
+  perspective: 'progressive' | 'conservative' | 'balanced';
 }
 
-// Function to convert PulseReel to legacy Reel format for UI compatibility
-const convertPulseReelToReel = (pulseReel: PulseReel, index: number): Reel => {
-  // Map topics to categories used by the UI
+// Function to convert PulseReel to VerticalReel format
+const convertToVerticalReel = (pulseReel: PulseReel, index: number): VerticalReel => {
   const topicToCategoryMap: Record<string, string> = {
-    'Politics': 'politica',
-    'Participation': 'participacion',
+    'Politics': 'política',
+    'Participation': 'participación',
     'Environment': 'ambiente',
-    'Education': 'educacion',
-    'Technology': 'tecnologia',
+    'Education': 'educación',
+    'Technology': 'tecnología',
     'Social': 'social'
   };
 
-  // Map topics to emojis for thumbnails
   const topicToEmojiMap: Record<string, string> = {
     'Politics': '🗳️',
     'Participation': '🤝',
@@ -50,482 +62,503 @@ const convertPulseReelToReel = (pulseReel: PulseReel, index: number): Reel => {
   };
 
   return {
-    id: index + 1,
+    id: `reel-${index}`,
     title: pulseReel.title,
     description: pulseReel.summary,
     category: topicToCategoryMap[pulseReel.topic] || 'general',
     duration: pulseReel.duration,
     views: pulseReel.views,
     likes: pulseReel.likes,
+    comments: Math.floor(pulseReel.likes * 0.1),
+    shares: Math.floor(pulseReel.likes * 0.05),
     thumbnail: topicToEmojiMap[pulseReel.topic] || '📺',
-    author: pulseReel.organization,
+    author: {
+      name: pulseReel.organization,
+      avatar: topicToEmojiMap[pulseReel.topic] || '📺',
+      verified: Math.random() > 0.5,
+      followers: Math.floor(Math.random() * 50000) + 10000
+    },
     videoUrl: pulseReel.videoUrl,
-    embedUrl: pulseReel.videoUrl ? `https://www.youtube.com/embed/dQw4w9WgXcQ` : undefined
+    hashtags: [`#${pulseReel.topic}`, '#Colombia', '#CivicEngagement'],
+    isLive: Math.random() > 0.8,
+    location: 'Colombia',
+    timestamp: new Date(Date.now() - Math.random() * 86400000 * 7), // Last 7 days
+    perspective: ['progressive', 'conservative', 'balanced'][Math.floor(Math.random() * 3)] as any
   };
 };
 
 const PulseReels: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState('todos');
+  const [currentReelIndex, setCurrentReelIndex] = useState(0);
+  const [reels, setReels] = useState<VerticalReel[]>([]);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [reels, setReels] = useState<Reel[]>([]);
-  const [hasMore, setHasMore] = useState(true);
-  const [page, setPage] = useState(1);
-  const [allReelsLoaded, setAllReelsLoaded] = useState(false);
-  const [retryCount, setRetryCount] = useState(0);
-  
-  const observerRef = useRef<IntersectionObserver | null>(null);
-  const loadMoreRef = useRef<HTMLDivElement | null>(null);
-  
-  // Configuration
-  const infiniteScrollEnabled = getEnvVar('REACT_APP_REELS_INFINITE_SCROLL', 'true') === 'true';
-  const batchSize = parseInt(getEnvVar('REACT_APP_REELS_LOAD_BATCH_SIZE', '6'));
+  const [showActions, setShowActions] = useState(true);
+  const [selectedHashtag, setSelectedHashtag] = useState<string | null>(null);
+  const [followedUsers, setFollowedUsers] = useState<Set<string>>(new Set());
+  const [likedReels, setLikedReels] = useState<Set<string>>(new Set());
+  const [bookmarkedReels, setBookmarkedReels] = useState<Set<string>>(new Set());
 
-  // Get categories from configuration
-  const visibleCategories = getVisibleCategories();
-  const categories = visibleCategories;
+  const containerRef = useRef<HTMLDivElement>(null);
+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
-  // Convert sample pulse reels to legacy format for UI compatibility
-  const convertedSampleReels = samplePulseReels.map((pulseReel, index) => 
-    convertPulseReelToReel(pulseReel, index)
-  );
-
-  // Additional mock reels data for infinite scroll testing (keeping original mock data)
-  const additionalMockReels: Reel[] = [
+  // Mock additional reels data
+  const additionalReels: Partial<VerticalReel>[] = [
     {
-      id: 7,
-      title: 'Trump: Impacto en las relaciones Colombia-Estados Unidos',
-      description: 'Análisis sobre las políticas comerciales de Trump y su efecto en Colombia',
-      category: 'internacional',
-      duration: '6:30',
-      views: 45200,
-      likes: 2890,
-      thumbnail: '🇺🇸',
-      author: 'CNN Colombia',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    },
-    {
-      id: 8,
-      title: 'Sesión extraordinaria del Congreso sobre reforma tributaria',
-      description: 'Cobertura en vivo del debate parlamentario más importante del año',
-      category: 'politica',
-      duration: '12:45',
-      views: 78900,
-      likes: 4560,
-      thumbnail: '🏛️',
-      author: 'Canal Congreso',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    },
-    {
-      id: 9,
-      title: 'Alerta de seguridad: Amenazas terroristas en fronteras',
-      description: 'Informe especial sobre medidas de seguridad en zonas fronterizas',
-      category: 'seguridad',
-      duration: '8:20',
-      views: 23400,
-      likes: 1890,
-      thumbnail: '🚨',
-      author: 'Caracol Noticias',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    },
-    {
-      id: 10,
-      title: 'Revolución digital: Colombia 5G para todos',
-      description: 'Cómo la tecnología 5G transformará la conectividad en Colombia',
-      category: 'tecnologia',
-      duration: '4:15',
-      views: 34500,
-      likes: 2340,
-      thumbnail: '💻',
-      author: 'TechColombia',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    },
-    {
-      id: 11,
-      title: 'Justicia restaurativa: Nueva esperanza para las víctimas',
-      description: 'Cómo la justicia restaurativa está sanando heridas en Colombia',
-      category: 'social',
-      duration: '7:15',
-      views: 18300,
-      likes: 1205,
-      thumbnail: '⚖️',
-      author: 'Centro de Memoria',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
-    },
-    {
-      id: 12,
-      title: 'Economía circular: El futuro sostenible de Colombia',
-      description: 'Empresas colombianas lideran la transición hacia la economía circular',
+      title: 'Jóvenes lideran cambio climático en Bogotá',
+      description: 'Estudiantes universitarios organizan marcha masiva por el medio ambiente',
       category: 'ambiente',
-      duration: '5:45',
-      views: 26800,
-      likes: 1687,
-      thumbnail: '♻️',
-      author: 'EcoInnovación',
-      embedUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+      author: { name: 'EcoJóvenes', avatar: '🌱', verified: true, followers: 45000 },
+      hashtags: ['#CambioClimático', '#JóvenesActivistas', '#Bogotá'],
+      perspective: 'progressive'
+    },
+    {
+      title: 'Debate presidencial: Propuestas económicas',
+      description: 'Análisis de las propuestas económicas de los candidatos presidenciales',
+      category: 'política',
+      author: { name: 'Canal Política', avatar: '🗳️', verified: true, followers: 120000 },
+      hashtags: ['#Elecciones2026', '#Economía', '#Debate'],
+      perspective: 'balanced'
+    },
+    {
+      title: 'Innovación tecnológica en el agro colombiano',
+      description: 'Drones y IoT revolucionan la agricultura en el Valle del Cauca',
+      category: 'tecnología',
+      author: { name: 'AgroTech Colombia', avatar: '💻', verified: false, followers: 28000 },
+      hashtags: ['#AgTech', '#Innovación', '#Valle'],
+      perspective: 'progressive'
+    },
+    {
+      title: 'Seguridad fronteriza: Nuevas estrategias',
+      description: 'Fuerzas militares implementan tecnología de vigilancia avanzada',
+      category: 'seguridad',
+      author: { name: 'Seguridad Nacional', avatar: '🚨', verified: true, followers: 85000 },
+      hashtags: ['#Seguridad', '#Fronteras', '#Tecnología'],
+      perspective: 'conservative'
     }
   ];
 
-  // Combine converted sample reels with additional mock reels
-  const allMockReels: Reel[] = [...convertedSampleReels, ...additionalMockReels];
-
-  // Load reels with pagination and enhanced error handling
-  const loadReels = useCallback(async (pageNum: number, category: string, reset = false) => {
-    if (allReelsLoaded && !reset) return;
-    
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      // Simulate network conditions and API delay
-      const delay = Math.random() * 1000 + 300; // 300ms to 1.3s
-      await new Promise(resolve => setTimeout(resolve, delay));
-      
-      // Simulate network errors (reduced chance for better UX)
-      if (Math.random() < 0.02 && retryCount < 2) {
-        throw new Error('Error de conexión. Verificando conectividad...');
-      }
-
-      // Filter reels by category
-      let filteredReels = category === 'todos' 
-        ? allMockReels 
-        : allMockReels.filter(reel => reel.category === category);
-
-      // Paginate reels
-      const startIndex = (pageNum - 1) * batchSize;
-      const endIndex = startIndex + batchSize;
-      const pageReels = filteredReels.slice(startIndex, endIndex);
-
-      if (reset) {
-        setReels(pageReels);
-      } else {
-        setReels(prev => [...prev, ...pageReels]);
-      }
-
-      // Check if there are more reels to load
-      const hasMoreReels = endIndex < filteredReels.length;
-      setHasMore(hasMoreReels);
-      setAllReelsLoaded(!hasMoreReels);
-
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error de conexión desconocido';
-      setError(errorMessage);
-      
-      // Progressive fallback strategy
-      if (reels.length === 0) {
-        // If no reels loaded, show some basic fallback content
-        const fallbackReels = allMockReels.slice(0, Math.min(batchSize, 3));
-        setReels(fallbackReels);
-        console.warn('Using fallback reels due to loading error:', errorMessage);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [batchSize, allReelsLoaded, reels.length, retryCount]);
-
-  // Initialize reels on mount and category change
+  // Initialize reels
   useEffect(() => {
-    setPage(1);
-    setAllReelsLoaded(false);
-    loadReels(1, selectedCategory, true);
-  }, [selectedCategory, loadReels]);
+    const loadReels = async () => {
+      setIsLoading(true);
+      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate loading
 
-  // Intersection Observer for infinite scroll
-  const lastReelElementRef = useCallback((node: HTMLDivElement) => {
-    if (isLoading) return;
-    if (observerRef.current) observerRef.current.disconnect();
-    
-    observerRef.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore && infiniteScrollEnabled) {
-        setPage(prevPage => {
-          const nextPage = prevPage + 1;
-          loadReels(nextPage, selectedCategory);
-          return nextPage;
-        });
+      const convertedReels = samplePulseReels.map(convertToVerticalReel);
+      
+      // Add additional mock reels
+      const enhancedReels = additionalReels.map((partial, index) => ({
+        id: `enhanced-${index}`,
+        title: partial.title || 'Contenido Cívico',
+        description: partial.description || 'Participación ciudadana en Colombia',
+        category: partial.category || 'general',
+        duration: `${Math.floor(Math.random() * 3) + 1}:${Math.floor(Math.random() * 59).toString().padStart(2, '0')}`,
+        views: Math.floor(Math.random() * 100000) + 1000,
+        likes: Math.floor(Math.random() * 10000) + 100,
+        comments: Math.floor(Math.random() * 1000) + 10,
+        shares: Math.floor(Math.random() * 500) + 5,
+        thumbnail: ['🗳️', '🌍', '💻', '🚨', '🤝'][Math.floor(Math.random() * 5)],
+        author: {
+          name: partial.author?.name || 'Usuario Verificado',
+          avatar: ['🗳️', '🌍', '💻', '🚨', '🤝'][Math.floor(Math.random() * 5)],
+          verified: partial.author?.verified || false,
+          followers: partial.author?.followers || Math.floor(Math.random() * 50000) + 1000
+        },
+        hashtags: partial.hashtags || ['#Colombia', '#Civic'],
+        isLive: Math.random() > 0.9,
+        location: 'Colombia',
+        timestamp: new Date(Date.now() - Math.random() * 86400000 * 3),
+        perspective: partial.perspective || 'balanced'
+      }));
+
+      setReels([...convertedReels, ...enhancedReels]);
+      setIsLoading(false);
+    };
+
+    loadReels();
+  }, []);
+
+  // Handle vertical scroll/swipe navigation
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowUp' && currentReelIndex > 0) {
+        setCurrentReelIndex(prev => prev - 1);
+      } else if (e.key === 'ArrowDown' && currentReelIndex < reels.length - 1) {
+        setCurrentReelIndex(prev => prev + 1);
+      } else if (e.key === ' ') {
+        e.preventDefault();
+        setIsPlaying(prev => !prev);
+      } else if (e.key === 'm') {
+        setIsMuted(prev => !prev);
       }
+    };
+
+    const handleScroll = (e: WheelEvent) => {
+      e.preventDefault();
+      if (e.deltaY > 0 && currentReelIndex < reels.length - 1) {
+        setCurrentReelIndex(prev => prev + 1);
+      } else if (e.deltaY < 0 && currentReelIndex > 0) {
+        setCurrentReelIndex(prev => prev - 1);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyPress);
+    if (containerRef.current) {
+      containerRef.current.addEventListener('wheel', handleScroll, { passive: false });
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyPress);
+      if (containerRef.current) {
+        containerRef.current.removeEventListener('wheel', handleScroll);
+      }
+    };
+  }, [currentReelIndex, reels.length]);
+
+  // Auto-hide UI after inactivity
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    const resetTimeout = () => {
+      clearTimeout(timeout);
+      setShowActions(true);
+      timeout = setTimeout(() => setShowActions(false), 3000);
+    };
+
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('mousemove', resetTimeout);
+      container.addEventListener('touchstart', resetTimeout);
+      resetTimeout();
+    }
+
+    return () => {
+      clearTimeout(timeout);
+      if (container) {
+        container.removeEventListener('mousemove', resetTimeout);
+        container.removeEventListener('touchstart', resetTimeout);
+      }
+    };
+  }, []);
+
+  const currentReel = reels[currentReelIndex];
+
+  const handleLike = (reelId: string) => {
+    setLikedReels(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(reelId)) {
+        newSet.delete(reelId);
+      } else {
+        newSet.add(reelId);
+      }
+      return newSet;
     });
-    
-    if (node) observerRef.current.observe(node);
-  }, [isLoading, hasMore, infiniteScrollEnabled, selectedCategory, loadReels]);
-
-  // Manual load more function
-  const handleLoadMore = () => {
-    if (!isLoading && hasMore) {
-      setPage(prevPage => {
-        const nextPage = prevPage + 1;
-        loadReels(nextPage, selectedCategory);
-        return nextPage;
-      });
-    }
   };
 
-  // Retry function for error state
-  const handleRetry = () => {
-    setError(null);
-    setPage(1);
-    setRetryCount(prev => prev + 1);
-    setAllReelsLoaded(false);
-    loadReels(1, selectedCategory, true);
+  const handleFollow = (authorName: string) => {
+    setFollowedUsers(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(authorName)) {
+        newSet.delete(authorName);
+      } else {
+        newSet.add(authorName);
+      }
+      return newSet;
+    });
   };
 
-  // Video embed fallback function
-  const getVideoEmbedContent = (reel: Reel) => {
-    if (reel.embedUrl) {
-      return (
-        <iframe
-          src={reel.embedUrl}
-          title={reel.title}
-          className="w-full h-full"
-          frameBorder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowFullScreen
-          onError={() => {
-            console.warn(`Failed to load video embed for reel ${reel.id}`);
-          }}
-        />
-      );
-    }
+  const handleBookmark = (reelId: string) => {
+    setBookmarkedReels(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(reelId)) {
+        newSet.delete(reelId);
+      } else {
+        newSet.add(reelId);
+      }
+      return newSet;
+    });
+  };
+
+  const formatTimeAgo = (timestamp: Date) => {
+    const now = new Date();
+    const diff = now.getTime() - timestamp.getTime();
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const days = Math.floor(hours / 24);
     
-    // Fallback to thumbnail
+    if (days > 0) return `${days}d`;
+    if (hours > 0) return `${hours}h`;
+    return 'Ahora';
+  };
+
+  const formatCount = (count: number) => {
+    if (count >= 1000000) {
+      return `${(count / 1000000).toFixed(1)}M`;
+    } else if (count >= 1000) {
+      return `${(count / 1000).toFixed(1)}K`;
+    }
+    return count.toString();
+  };
+
+  if (isLoading) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
-        <div className="text-center">
-          <div className="text-6xl mb-2">{reel.thumbnail}</div>
-          <p className="text-white text-sm">Video no disponible</p>
+      <div className="fixed inset-0 bg-black flex items-center justify-center">
+        <div className="text-center text-white">
+          <div className="w-16 h-16 border-4 border-colombia-yellow border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold">Cargando Reels...</h2>
+          <p className="text-gray-300">Preparando contenido cívico</p>
         </div>
       </div>
     );
-  };
+  }
 
-  // Loading skeleton for reels
-  const LoadingSkeletonReels = ({ count = 6 }: { count?: number }) => (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {Array.from({ length: count }, (_, i) => (
-        <div key={i} className="bg-white rounded-lg shadow-lg overflow-hidden animate-pulse">
-          <div className="bg-gray-300 h-64"></div>
-          <div className="p-4">
-            <div className="flex items-center space-x-2 mb-2">
-              <div className="w-16 h-4 bg-gray-300 rounded-full"></div>
-              <div className="w-20 h-3 bg-gray-300 rounded"></div>
-            </div>
-            <div className="w-3/4 h-5 bg-gray-300 rounded mb-2"></div>
-            <div className="w-full h-4 bg-gray-300 rounded mb-3"></div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-3">
-                <div className="w-12 h-3 bg-gray-300 rounded"></div>
-                <div className="w-12 h-3 bg-gray-300 rounded"></div>
-              </div>
-              <div className="w-16 h-3 bg-gray-300 rounded"></div>
-            </div>
-          </div>
+  if (!currentReel) {
+    return (
+      <div className="fixed inset-0 bg-black flex items-center justify-center text-white">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold mb-4">Sin contenido disponible</h2>
+          <p className="text-gray-300">No hay reels para mostrar en este momento</p>
         </div>
-      ))}
-    </div>
-  );
-
-  // Error state for reels
-  const ErrorStateReels = () => (
-    <div className="bg-white rounded-lg shadow-lg p-8 text-center">
-      <div className="text-6xl mb-4">📱</div>
-      <h3 className="text-2xl font-bold text-gray-900 mb-4">Error al cargar Reels</h3>
-      <p className="text-gray-600 mb-6">{error}</p>
-      <button 
-        onClick={handleRetry}
-        className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-      >
-        Reintentar
-      </button>
-    </div>
-  );
-
-  const filteredReels = reels;
+      </div>
+    );
+  }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 p-6 rounded-lg mb-6">
-          <h1 className="text-3xl font-bold text-white mb-2">🎬 Pulse Reels</h1>
-          <p className="text-white/90">Videos cortos sobre temas cívicos y participación ciudadana</p>
-          <div className="mt-4 flex items-center space-x-6 text-white/80">
-            <span>🎥 {filteredReels.length} videos cargados</span>
-            <span>👁️ 150K+ visualizaciones</span>
-            <span>📱 Contenido móvil</span>
-            {infiniteScrollEnabled && <span>🔄 Scroll infinito activado</span>}
-          </div>
-        </div>
-
-        {/* Categories */}
-        <div className="bg-white rounded-lg shadow-lg p-4 mb-6">
-          <div className="flex flex-wrap gap-2">
-            {categories.map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
-                disabled={isLoading}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-                  selectedCategory === category.id
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                <span className="mr-1">{category.icon}</span>
-                {category.name}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Error State */}
-        {error && reels.length === 0 && <ErrorStateReels />}
-
-        {/* Reels Grid */}
-        {!error || reels.length > 0 ? (
-          <div className="mb-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredReels.map((reel, index) => (
-                <div 
-                  key={reel.id} 
-                  className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow group cursor-pointer"
-                  ref={infiniteScrollEnabled && index === filteredReels.length - 1 ? lastReelElementRef : null}
-                >
-                  {/* Video/Thumbnail */}
-                  <div className="relative h-64 group-hover:scale-105 transition-transform overflow-hidden">
-                    {getVideoEmbedContent(reel)}
-                    <div className="absolute bottom-4 right-4 bg-black bg-opacity-70 text-white px-2 py-1 rounded text-sm">
-                      {reel.duration}
-                    </div>
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
-                      <div className="text-white text-6xl opacity-0 group-hover:opacity-100 transition-opacity">
-                        ▶️
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Content */}
-                  <div className="p-4">
-                    <div className="flex items-center space-x-2 mb-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        reel.category === 'politica' ? 'bg-blue-100 text-blue-800' :
-                        reel.category === 'participacion' ? 'bg-green-100 text-green-800' :
-                        reel.category === 'ambiente' ? 'bg-emerald-100 text-emerald-800' :
-                        reel.category === 'educacion' ? 'bg-purple-100 text-purple-800' :
-                        reel.category === 'social' ? 'bg-pink-100 text-pink-800' :
-                        reel.category === 'internacional' ? 'bg-yellow-100 text-yellow-800' :
-                        reel.category === 'seguridad' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
-                      }`}>
-                        {categories.find(c => c.id === reel.category)?.name || reel.category}
-                      </span>
-                      <span className="text-xs text-gray-500">{reel.author}</span>
-                    </div>
-                    
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 line-clamp-2 group-hover:text-blue-600">
-                      {reel.title}
-                    </h3>
-                    
-                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">{reel.description}</p>
-                    
-                    <div className="flex items-center justify-between text-sm text-gray-500">
-                      <div className="flex items-center space-x-3">
-                        <span className="flex items-center space-x-1">
-                          <span>👁️</span>
-                          <span>{reel.views.toLocaleString()}</span>
-                        </span>
-                        <span className="flex items-center space-x-1">
-                          <span>❤️</span>
-                          <span>{reel.likes.toLocaleString()}</span>
-                        </span>
-                      </div>
-                      <button className="text-blue-600 hover:text-blue-800 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 rounded">
-                        Ver ahora
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+    <div
+      ref={containerRef}
+      className="fixed inset-0 bg-black overflow-hidden select-none"
+      style={{ height: '100vh', width: '100vw' }}
+    >
+      {/* Video Background */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="relative w-full h-full max-w-md mx-auto bg-gradient-to-br from-purple-900 via-blue-900 to-green-900">
+          {/* Video Placeholder with Thumbnail */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-center">
+              <div className="text-9xl mb-4 animate-pulse">{currentReel.thumbnail}</div>
+              <h3 className="text-white text-xl font-bold mb-2">{currentReel.title}</h3>
+              <p className="text-gray-300 text-sm px-4">{currentReel.description}</p>
             </div>
+          </div>
 
-            {/* Loading more indicator */}
-            {isLoading && reels.length > 0 && (
-              <div className="mt-6">
-                <LoadingSkeletonReels count={3} />
+          {/* Play/Pause Overlay */}
+          <div
+            className="absolute inset-0 flex items-center justify-center cursor-pointer"
+            onClick={() => setIsPlaying(prev => !prev)}
+          >
+            {!isPlaying && (
+              <div className="bg-black/50 rounded-full p-6">
+                <FaPlay className="w-12 h-12 text-white ml-2" />
               </div>
             )}
+          </div>
 
-            {/* Manual Load More Button (shown when infinite scroll is disabled or on error) */}
-            {!infiniteScrollEnabled && hasMore && !isLoading && (
-              <div className="text-center mt-8">
+          {/* Live Indicator */}
+          {currentReel.isLive && (
+            <div className="absolute top-4 left-4 bg-red-500 text-white px-3 py-1 rounded-full flex items-center gap-2 z-30">
+              <MdLiveTv className="w-4 h-4" />
+              <span className="text-sm font-bold">EN VIVO</span>
+            </div>
+          )}
+
+          {/* Perspective Badge */}
+          <div className="absolute top-4 right-4 z-30">
+            <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+              currentReel.perspective === 'progressive' ? 'bg-blue-500 text-white' :
+              currentReel.perspective === 'conservative' ? 'bg-red-500 text-white' :
+              'bg-green-500 text-white'
+            }`}>
+              {currentReel.perspective === 'progressive' ? '🔵 Progresista' :
+               currentReel.perspective === 'conservative' ? '🔴 Conservador' :
+               '⚖️ Balanceado'}
+            </div>
+          </div>
+
+          {/* Bottom Gradient */}
+          <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/80 to-transparent z-10"></div>
+        </div>
+      </div>
+
+      {/* UI Controls */}
+      <div className={`absolute inset-0 z-20 transition-opacity duration-300 ${showActions ? 'opacity-100' : 'opacity-0'}`}>
+        {/* Top Controls */}
+        <div className="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/50 to-transparent">
+          <div className="flex items-center justify-between text-white">
+            <div className="text-sm">
+              Reels Cívicos
+            </div>
+            <div className="text-sm">
+              {currentReelIndex + 1} / {reels.length}
+            </div>
+          </div>
+        </div>
+
+        {/* Side Actions */}
+        <div className="absolute right-4 bottom-24 space-y-6 z-30">
+          {/* Author Profile */}
+          <div className="text-center">
+            <div className="relative">
+              <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-xl mb-2">
+                {currentReel.author.avatar}
+              </div>
+              {!followedUsers.has(currentReel.author.name) && (
                 <button
-                  onClick={handleLoadMore}
-                  className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                  onClick={() => handleFollow(currentReel.author.name)}
+                  className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-6 h-6 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold"
                 >
-                  Cargar más reels
+                  +
                 </button>
-              </div>
-            )}
-
-            {/* End of content indicator */}
-            {!hasMore && reels.length > 0 && (
-              <div className="text-center mt-8 text-gray-500">
-                <p>✨ Has visto todos los reels disponibles</p>
-              </div>
-            )}
+              )}
+            </div>
+            <div className="text-white text-xs">{currentReel.author.name}</div>
           </div>
-        ) : null}
 
-        {/* Initial Loading State */}
-        {isLoading && reels.length === 0 && !error && (
-          <LoadingSkeletonReels />
-        )}
+          {/* Like */}
+          <div className="text-center">
+            <button
+              onClick={() => handleLike(currentReel.id)}
+              className="block mx-auto mb-1"
+            >
+              <FaHeart 
+                className={`w-7 h-7 ${likedReels.has(currentReel.id) ? 'text-red-500' : 'text-white'}`} 
+              />
+            </button>
+            <div className="text-white text-xs">{formatCount(currentReel.likes)}</div>
+          </div>
 
-        {/* Featured Live Stream */}
-        <div className="mt-8 bg-red-50 border border-red-200 rounded-lg p-6">
-          <div className="flex items-start space-x-4">
-            <div className="bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold animate-pulse">
-              🔴 EN VIVO
-            </div>
-            <div className="flex-1">
-              <h3 className="text-xl font-bold text-gray-900 mb-2">
-                Sesión del Congreso: Debate sobre Reforma Tributaria
-              </h3>
-              <p className="text-gray-600 mb-3">
-                Transmisión en vivo del debate en el Senado sobre las modificaciones a la reforma tributaria 2024
-              </p>
-              <div className="flex items-center space-x-4 text-sm text-gray-500">
-                <span>👥 5,847 espectadores</span>
-                <span>⏰ Comenzó hace 1h 23m</span>
-              </div>
-            </div>
-            <button className="bg-red-500 text-white px-6 py-3 rounded-lg hover:bg-red-600 font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
-              Unirse
+          {/* Comment */}
+          <div className="text-center">
+            <button className="block mx-auto mb-1">
+              <FaComment className="w-7 h-7 text-white" />
+            </button>
+            <div className="text-white text-xs">{formatCount(currentReel.comments)}</div>
+          </div>
+
+          {/* Share */}
+          <div className="text-center">
+            <button className="block mx-auto mb-1">
+              <FaShare className="w-7 h-7 text-white" />
+            </button>
+            <div className="text-white text-xs">{formatCount(currentReel.shares)}</div>
+          </div>
+
+          {/* Bookmark */}
+          <div className="text-center">
+            <button
+              onClick={() => handleBookmark(currentReel.id)}
+              className="block mx-auto"
+            >
+              <FaBookmark 
+                className={`w-6 h-6 ${bookmarkedReels.has(currentReel.id) ? 'text-colombia-yellow' : 'text-white'}`} 
+              />
+            </button>
+          </div>
+
+          {/* More Options */}
+          <div className="text-center">
+            <button className="block mx-auto">
+              <FaEllipsisV className="w-5 h-5 text-white" />
             </button>
           </div>
         </div>
 
-        {/* Trending Topics */}
-        <div className="mt-8 bg-white rounded-lg shadow-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-900 mb-4">🔥 Trending en Reels</h3>
-          <div className="flex flex-wrap gap-2">
-            {[
-              '#ParticipacionCiudadana',
-              '#TransparenciaGobierno',
-              '#VotoJoven',
-              '#CambioClimatico',
-              '#EducacionDigital',
-              '#ControlCorrupcion',
-              '#ReformaTributaria'
-            ].map((hashtag, index) => (
-              <span
-                key={index}
-                className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium cursor-pointer hover:bg-blue-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
-                tabIndex={0}
-                role="button"
-              >
-                {hashtag}
+        {/* Bottom Info */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 text-white">
+          <div className="max-w-md">
+            {/* Author Info */}
+            <div className="flex items-center gap-2 mb-3">
+              <span className="font-semibold">@{currentReel.author.name}</span>
+              {currentReel.author.verified && (
+                <MdVerified className="w-4 h-4 text-blue-400" />
+              )}
+              <span className="text-gray-300 text-sm">• {formatTimeAgo(currentReel.timestamp)}</span>
+            </div>
+
+            {/* Description */}
+            <p className="text-sm mb-3 leading-relaxed">
+              {currentReel.description}
+            </p>
+
+            {/* Hashtags */}
+            <div className="flex flex-wrap gap-2 mb-3">
+              {currentReel.hashtags.map((hashtag, index) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedHashtag(hashtag)}
+                  className="text-colombia-yellow text-sm hover:text-colombia-yellow-light transition-colors"
+                >
+                  {hashtag}
+                </button>
+              ))}
+            </div>
+
+            {/* Stats */}
+            <div className="flex items-center gap-4 text-xs text-gray-300">
+              <span className="flex items-center gap-1">
+                <IoMdEye className="w-4 h-4" />
+                {formatCount(currentReel.views)}
               </span>
-            ))}
+              <span className="flex items-center gap-1">
+                <IoMdTime className="w-4 h-4" />
+                {currentReel.duration}
+              </span>
+              {currentReel.location && (
+                <span>📍 {currentReel.location}</span>
+              )}
+            </div>
           </div>
         </div>
+
+        {/* Navigation Controls */}
+        <div className="absolute right-4 top-1/2 transform -translate-y-1/2 space-y-4">
+          <button
+            onClick={() => currentReelIndex > 0 && setCurrentReelIndex(prev => prev - 1)}
+            className={`block p-3 rounded-full ${
+              currentReelIndex === 0 ? 'bg-gray-600 cursor-not-allowed' : 'bg-black/50 hover:bg-black/70'
+            } text-white transition-colors`}
+            disabled={currentReelIndex === 0}
+          >
+            ↑
+          </button>
+          <button
+            onClick={() => currentReelIndex < reels.length - 1 && setCurrentReelIndex(prev => prev + 1)}
+            className={`block p-3 rounded-full ${
+              currentReelIndex === reels.length - 1 ? 'bg-gray-600 cursor-not-allowed' : 'bg-black/50 hover:bg-black/70'
+            } text-white transition-colors`}
+            disabled={currentReelIndex === reels.length - 1}
+          >
+            ↓
+          </button>
+        </div>
+
+        {/* Media Controls */}
+        <div className="absolute left-4 bottom-4 space-y-4">
+          <button
+            onClick={() => setIsPlaying(prev => !prev)}
+            className="block p-3 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
+          >
+            {isPlaying ? <FaPause className="w-4 h-4" /> : <FaPlay className="w-4 h-4" />}
+          </button>
+          <button
+            onClick={() => setIsMuted(prev => !prev)}
+            className="block p-3 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
+          >
+            {isMuted ? <FaVolumeMute className="w-4 h-4" /> : <FaVolumeUp className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Progress Indicator */}
+      <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/30 z-30">
+        <div
+          className="h-full bg-colombia-yellow transition-all duration-300"
+          style={{ width: `${((currentReelIndex + 1) / reels.length) * 100}%` }}
+        />
+      </div>
+
+      {/* Help Overlay */}
+      <div className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white text-xs space-y-1 opacity-50">
+        <div>↑↓ Navegar</div>
+        <div>Espacio: Play/Pause</div>
+        <div>M: Silenciar</div>
       </div>
     </div>
   );
