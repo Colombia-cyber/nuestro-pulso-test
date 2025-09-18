@@ -1,9 +1,26 @@
+export enum NewsCategory {
+  POLITICS = 'Política',
+  ENVIRONMENT = 'Ambiente', 
+  ECONOMY = 'Economía',
+  SECURITY = 'Seguridad',
+  EDUCATION = 'Educación',
+  HEALTH = 'Salud',
+  INFRASTRUCTURE = 'Infraestructura',
+  AGRICULTURE = 'Agricultura',
+  BREAKING = 'Última Hora'
+}
+
+export interface NewsSource {
+  id: string | null;
+  name: string;
+}
+
 export interface NewsItem {
   id: string;
   title: string;
   summary: string;
-  source: string;
-  category: string;
+  source: NewsSource | string; // Allow both for backward compatibility
+  category: NewsCategory | string; // Allow both for backward compatibility  
   publishedAt: string;
   hasBalancedCoverage: boolean;
   trending: boolean;
@@ -21,11 +38,11 @@ export interface NewsArticle {
   title: string;
   summary: string;
   fullContent: string;
-  source: string;
+  source: NewsSource | string; // Allow both for backward compatibility
   publishedAt: string;
   imageUrl?: string;
   readTime: string;
-  category: string;
+  category: NewsCategory | string; // Allow both for backward compatibility
   perspective: 'progressive' | 'conservative';
   url?: string;
 }

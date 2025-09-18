@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NewsItem } from '../types/news';
+import { NewsItem, NewsSource } from '../types/news';
 
 interface EnhancedNewsCardProps {
   article: NewsItem;
@@ -36,7 +36,8 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
     }
   };
 
-  const getSourceIcon = (source: string) => {
+  const getSourceIcon = (source: string | NewsSource) => {
+    const sourceName = typeof source === 'string' ? source : source.name;
     const sourceIcons: Record<string, string> = {
       'El Tiempo': '📰',
       'El Espectador': '📊',
@@ -50,7 +51,11 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
       'Redacción': '⚡'
     };
     
-    return sourceIcons[source] || '📰';
+    return sourceIcons[sourceName] || '📰';
+  };
+
+  const getSourceName = (source: string | NewsSource): string => {
+    return typeof source === 'string' ? source : source.name;
   };
 
   const getPerspectiveColor = (perspective: string) => {
@@ -136,7 +141,7 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2 mb-2">
               <span className="text-lg">{getSourceIcon(article.source)}</span>
-              <span className="text-xs font-medium text-gray-600">{article.source}</span>
+              <span className="text-xs font-medium text-gray-600">{getSourceName(article.source)}</span>
               <span className="text-xs text-gray-400">•</span>
               <span className="text-xs text-gray-500">{formatDate(article.publishedAt)}</span>
               {article.trending && (
@@ -198,7 +203,7 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
           {/* Overlay badges */}
           <div className="absolute top-3 left-3 flex space-x-2">
             <span className="bg-white/90 backdrop-blur-sm text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
-              {getSourceIcon(article.source)} {article.source}
+              {getSourceIcon(article.source)} {getSourceName(article.source)}
             </span>
             
             {article.trending && (
@@ -229,7 +234,7 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
             {imageError && (
               <>
                 <span className="text-lg">{getSourceIcon(article.source)}</span>
-                <span className="font-medium">{article.source}</span>
+                <span className="font-medium">{getSourceName(article.source)}</span>
                 <span>•</span>
               </>
             )}

@@ -1,4 +1,4 @@
-import { NewsItem, NewsArticle, NewsTimelineData } from '../types/news';
+import { NewsItem, NewsArticle, NewsTimelineData, NewsCategory, NewsSource } from '../types/news';
 
 export interface NewsFilter {
   topic?: string;
@@ -19,8 +19,8 @@ class NewsService {
       id: '2024-01',
       title: 'Senado Aprueba Reforma Tributaria con Modificaciones Clave',
       summary: 'El Senado de la República aprobó en primer debate la reforma tributaria tras intensas negociaciones.',
-      source: 'El Tiempo',
-      category: 'Política',
+      source: { id: 'et-001', name: 'El Tiempo' },
+      category: NewsCategory.POLITICS,
       publishedAt: '2024-01-15T14:30:00Z',
       hasBalancedCoverage: true,
       trending: true,
@@ -36,8 +36,8 @@ class NewsService {
       id: '2024-02',
       title: 'Colombia Anuncia Nueva Estrategia de Transición Energética',
       summary: 'El gobierno presenta un plan ambicioso para reducir la dependencia de combustibles fósiles.',
-      source: 'Portafolio',
-      category: 'Ambiente',
+      source: { id: 'pf-001', name: 'Portafolio' },
+      category: NewsCategory.ENVIRONMENT,
       publishedAt: '2024-01-15T12:15:00Z',
       hasBalancedCoverage: true,
       trending: false,
@@ -53,8 +53,8 @@ class NewsService {
       id: '2024-03',
       title: 'Aumenta Inversión Extranjera en Sector Tecnológico',
       summary: 'Empresas multinacionales tecnológicas muestran creciente interés en Colombia.',
-      source: 'Semana',
-      category: 'Economía',
+      source: { id: 'sm-001', name: 'Semana' },
+      category: NewsCategory.ECONOMY,
       publishedAt: '2024-01-10T10:45:00Z',
       hasBalancedCoverage: false,
       trending: true,
@@ -72,8 +72,8 @@ class NewsService {
       id: '2023-12-tax',
       title: 'Debate sobre Reforma Tributaria Divide Opiniones',
       summary: 'Expertos analizan los posibles impactos de la propuesta de reforma tributaria.',
-      source: 'La República',
-      category: 'Política',
+      source: { id: 'lr-001', name: 'La República' },
+      category: NewsCategory.POLITICS,
       publishedAt: '2023-12-20T16:20:00Z',
       hasBalancedCoverage: true,
       trending: false,
@@ -279,9 +279,10 @@ class NewsService {
 
     // Filter by category
     if (filter.category) {
-      filtered = filtered.filter(item => 
-        item.category.toLowerCase().includes(filter.category!.toLowerCase())
-      );
+      filtered = filtered.filter(item => {
+        const categoryValue = typeof item.category === 'string' ? item.category : item.category;
+        return categoryValue.toLowerCase().includes(filter.category!.toLowerCase());
+      });
     }
 
     // Filter by perspective
@@ -293,9 +294,10 @@ class NewsService {
 
     // Filter by source
     if (filter.source) {
-      filtered = filtered.filter(item => 
-        item.source.toLowerCase().includes(filter.source!.toLowerCase())
-      );
+      filtered = filtered.filter(item => {
+        const sourceName = typeof item.source === 'string' ? item.source : item.source.name;
+        return sourceName.toLowerCase().includes(filter.source!.toLowerCase());
+      });
     }
 
     // Sort by date (most recent first)
@@ -313,9 +315,10 @@ class NewsService {
 
   // Get news by category with balanced perspectives
   getNewsByCategory(category: string): { progressive: NewsItem[], conservative: NewsItem[] } {
-    const categoryNews = this.newsData.filter(item => 
-      item.category.toLowerCase() === category.toLowerCase()
-    );
+    const categoryNews = this.newsData.filter(item => {
+      const categoryValue = typeof item.category === 'string' ? item.category : item.category;
+      return categoryValue.toLowerCase() === category.toLowerCase();
+    });
 
     return {
       progressive: categoryNews.filter(item => 
@@ -379,8 +382,8 @@ class NewsService {
         id: `breaking-${Date.now()}`,
         title: 'ÚLTIMA HORA: Actualización en Desarrollo',
         summary: 'Información de última hora que se está desarrollando en este momento.',
-        source: 'Redacción',
-        category: 'Última Hora',
+        source: { id: null, name: 'Redacción' },
+        category: NewsCategory.BREAKING,
         publishedAt: now,
         hasBalancedCoverage: false,
         trending: true,
@@ -434,7 +437,7 @@ class NewsService {
         source: baseArticle.source,
         publishedAt: baseArticle.publishedAt,
         imageUrl: baseArticle.imageUrl,
-        readTime: baseArticle.readTime || '5 min',
+        readTime: baseArticle.readTime ?? '5 min',
         category: baseArticle.category,
         perspective: 'progressive',
         url: baseArticle.shareUrl
@@ -451,7 +454,7 @@ class NewsService {
         source: baseArticle.source,
         publishedAt: baseArticle.publishedAt,
         imageUrl: baseArticle.imageUrl,
-        readTime: baseArticle.readTime || '5 min',
+        readTime: baseArticle.readTime ?? '5 min',
         category: baseArticle.category,
         perspective: 'conservative',
         url: baseArticle.shareUrl
