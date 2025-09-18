@@ -142,9 +142,12 @@ export default {
       boxShadow: {
         'soft': '0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)',
         'colombia': '0 10px 40px -10px rgba(255, 206, 0, 0.3)',
+        'colombian-flag': '0 15px 35px 0 rgba(255, 206, 0, 0.3), 0 5px 15px 0 rgba(0, 48, 135, 0.2), 0 0 0 1px rgba(200, 16, 46, 0.1)',
         'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
         'news-card': '0 4px 20px -2px rgba(0, 0, 0, 0.1)',
         'floating': '0 20px 40px -10px rgba(0, 0, 0, 0.15)',
+        'breaking': '0 0 30px rgba(239, 68, 68, 0.5), 0 0 60px rgba(239, 68, 68, 0.3)',
+        'trending': '0 0 20px rgba(251, 146, 60, 0.4), 0 0 40px rgba(251, 146, 60, 0.2)',
       },
       zIndex: {
         '60': '60',
