@@ -25,14 +25,16 @@ const TimelineView: React.FC<TimelineViewProps> = ({
     .sort((a, b) => b - a); // Most recent first
 
   useEffect(() => {
-    // Auto-expand current year
-    const currentYear = new Date().getFullYear();
-    if (timelineData[currentYear]) {
-      setExpandedYears(new Set([currentYear]));
-    } else if (years.length > 0) {
-      setExpandedYears(new Set([years[0]]));
+    // Auto-expand current year only once
+    if (Object.keys(expandedYears).length === 0) {
+      const currentYear = new Date().getFullYear();
+      if (timelineData[currentYear]) {
+        setExpandedYears(new Set([currentYear]));
+      } else if (years.length > 0) {
+        setExpandedYears(new Set([years[0]]));
+      }
     }
-  }, [timelineData, years]);
+  }, [timelineData]); // Only depend on timelineData
 
   const toggleYear = (year: number) => {
     const newExpanded = new Set(expandedYears);

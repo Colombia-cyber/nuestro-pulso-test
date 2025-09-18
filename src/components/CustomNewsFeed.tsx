@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import EnhancedNewsCard from './EnhancedNewsCard';
 import TimelineView from './TimelineView';
+import NewsArticleDetail from './NewsArticleDetail';
 import { NewsItem, NewsFilter, CategoryCard } from '../types/news';
 import { newsService } from '../services/newsService';
 
@@ -19,6 +20,9 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
     timeRange: 'all',
     perspective: 'both'
   });
+
+  const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null);
+  const [showArticleDetail, setShowArticleDetail] = useState(false);
 
   const categories: CategoryCard[] = [
     {
@@ -88,47 +92,70 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
 
   // Load data and set up live updates
   useEffect(() => {
+    let isMounted = true;
+    
     const loadData = () => {
+      if (!isMounted) return;
+      
       setIsLoading(true);
       
-      // Load filtered news
-      const filteredNews = newsService.getFilteredNews(filter);
-      setNewsData(filteredNews);
-      
-      // Load timeline data
-      const timeline = newsService.generateTimelineData();
-      setTimelineData(timeline);
-      
-      setLastUpdated(new Date());
-      setIsLoading(false);
+      try {
+        // Load filtered news
+        const filteredNews = newsService.getFilteredNews(filter);
+        if (isMounted) {
+          setNewsData(filteredNews);
+        }
+        
+        // Load timeline data
+        const timeline = newsService.generateTimelineData();
+        if (isMounted) {
+          setTimelineData(timeline);
+          setLastUpdated(new Date());
+          setIsLoading(false);
+        }
+      } catch (error) {
+        console.error('Error loading news data:', error);
+        if (isMounted) {
+          setIsLoading(false);
+        }
+      }
     };
 
     loadData();
 
-    // Set up live updates
-    newsService.startLiveUpdates();
-    
-    const updateListener = () => {
-      loadData();
-    };
-    
-    newsService.addUpdateListener(updateListener);
-
     return () => {
-      newsService.removeUpdateListener(updateListener);
-      newsService.stopLiveUpdates();
+      isMounted = false;
     };
-  }, [filter.timeRange, filter.perspective, filter.category]); // Only depend on primitive values
+  }, [filter.timeRange, filter.perspective, filter.category]);
 
   const handleCategoryClick = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    setFilter(prev => ({ ...prev, category: categoryId }));
+    // Filter news by the selected category
+    const categoryMapping: { [key: string]: string } = {
+      'gustavo-petro': 'Política',
+      'donald-trump': 'Política', 
+      'crime-drugs': 'Seguridad',
+      'employment': 'Economía',
+      'terror': 'Seguridad',
+      'rightwing': 'Política',
+      'leftwing': 'Política',
+      'legislation': 'Política',
+      'congress-colombia': 'Política'
+    };
+    
+    const categoryName = categoryMapping[categoryId] || 'Política';
+    setFilter(prev => ({ ...prev, category: categoryName }));
+    setViewMode('feed'); // Switch to feed view to show filtered results
   };
 
   const handleNewsClick = (newsItem: NewsItem) => {
-    if (onNavigate) {
-      onNavigate('article', newsItem.id);
-    }
+    setSelectedArticleId(newsItem.id);
+    setShowArticleDetail(true);
+  };
+
+  const handleCloseArticleDetail = () => {
+    setShowArticleDetail(false);
+    setSelectedArticleId(null);
   };
 
   const handleFilterChange = (newFilter: Partial<NewsFilter>) => {
@@ -414,7 +441,7 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
                         <div
                           key={category.id}
                           onClick={() => handleCategoryClick(category.id)}
-                          className={`${category.color} rounded-lg p-6 text-white cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-xl`}
+                          className={`${category.color} rounded-lg p-6 text-white cursor-pointer transform hover:scale-105 transition-all duration-300 hover:shadow-xl hover:shadow-black/20 active:scale-95`}
                         >
                           <div className="flex items-center justify-between mb-4">
                             <span className="text-3xl">{category.icon}</span>
@@ -452,6 +479,15 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
           )}
         </div>
       </div>
+      
+      {/* Article Detail Modal */}
+      {showArticleDetail && selectedArticleId && (
+        <NewsArticleDetail
+          articleId={selectedArticleId}
+          onClose={handleCloseArticleDetail}
+          isModal={true}
+        />
+      )}
     </div>
   );
 };

@@ -124,7 +124,7 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
     return (
       <div 
         onClick={handleCardClick}
-        className="bg-white rounded-lg shadow hover:shadow-md transition-all duration-200 p-4 cursor-pointer border border-gray-100 hover:border-gray-200"
+        className="bg-white rounded-lg shadow hover:shadow-md transition-all duration-200 p-4 cursor-pointer border border-gray-100 hover:border-blue-300 hover:scale-[1.02] transform"
       >
         <div className="flex items-start space-x-3">
           {!imageError && article.imageUrl && (
@@ -188,7 +188,7 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
   return (
     <div 
       onClick={handleCardClick}
-      className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border border-gray-100 hover:border-gray-200 group"
+      className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border border-gray-100 hover:border-blue-300 group transform hover:scale-[1.02]"
     >
       {/* Image Header */}
       {!imageError && article.imageUrl && (
