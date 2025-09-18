@@ -1,8 +1,8 @@
 import React from "react";
-import EnhancedCommunityHub from "../components/EnhancedCommunityHub";
+import SocialCommunityHub from "../components/SocialCommunityHub";
 
 const CommunityHub: React.FC = () => {
-  return <EnhancedCommunityHub />;
+  return <SocialCommunityHub />;
 };
 
 export default CommunityHub;
