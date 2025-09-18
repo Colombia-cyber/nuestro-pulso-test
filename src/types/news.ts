@@ -59,6 +59,7 @@ export interface CategoryCard {
   description: string;
   color: string;
   icon: string;
+  count?: number;
 }
 
 export interface NewsFilter {
