@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import UniversalSearchBar from "./UniversalSearchBar";
 
 interface NavbarProps {
@@ -7,10 +8,41 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [showSearchModal, setShowSearchModal] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
 
+  // Get current view from URL path
+  const getCurrentView = () => {
+    const path = location.pathname;
+    if (path.startsWith('/articles/')) return 'article';
+    if (path === '/news' || path === '/feeds') return 'feeds';
+    if (path === '/reels') return 'reels';
+    if (path === '/congress') return 'congress';
+    if (path === '/elections') return 'elections';
+    if (path === '/chat') return 'chat';
+    if (path === '/debates') return 'debates';
+    if (path === '/surveys' || path === '/encuestas') return 'surveys';
+    if (path === '/comments') return 'comments';
+    if (path === '/community-hub') return 'community-hub';
+    if (path === '/search') return 'search';
+    return 'home';
+  };
+
+  const currentActiveView = getCurrentView();
+
   const handleNavClick = (view: string) => {
+    // Use React Router navigation
+    if (view === 'home') {
+      navigate('/');
+    } else if (view === 'feeds' || view === 'news') {
+      navigate('/news');
+    } else {
+      navigate(`/${view}`);
+    }
+    
+    // Keep the old callback for backward compatibility
     if (onNavigate) {
       onNavigate(view);
     }
@@ -39,7 +71,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
           <button 
             onClick={() => handleNavClick('home')}
             className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'home' ? 'bg-blue-100 text-blue-700' : ''
+              currentActiveView === 'home' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>🏠</span>
@@ -48,7 +80,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
           <button 
             onClick={() => handleNavClick('reels')}
             className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'reels' ? 'bg-blue-100 text-blue-700' : ''
+              currentActiveView === 'reels' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>🎬</span>
@@ -57,7 +89,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
           <button 
             onClick={() => handleNavClick('feeds')}
             className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'feeds' || currentView === 'news' ? 'bg-blue-100 text-blue-700' : ''
+              currentActiveView === 'feeds' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>📰</span>
@@ -66,7 +98,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
           <button 
             onClick={() => handleNavClick('congress')}
             className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'congress' ? 'bg-blue-100 text-blue-700' : ''
+              currentActiveView === 'congress' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>🏛️</span>
@@ -75,7 +107,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
           <button 
             onClick={() => handleNavClick('elections')}
             className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'elections' ? 'bg-blue-100 text-blue-700' : ''
+              currentActiveView === 'elections' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>🗳️</span>
@@ -84,7 +116,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
           <button 
             onClick={() => handleNavClick('chat')}
             className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'chat' ? 'bg-blue-100 text-blue-700' : ''
+              currentActiveView === 'chat' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>💬</span>
@@ -93,7 +125,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
           <button 
             onClick={() => handleNavClick('debates')}
             className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'debates' ? 'bg-blue-100 text-blue-700' : ''
+              currentActiveView === 'debates' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>🗣️</span>
@@ -102,7 +134,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
           <button 
             onClick={() => handleNavClick('surveys')}
             className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'surveys' || currentView === 'encuestas' ? 'bg-blue-100 text-blue-700' : ''
+              currentActiveView === 'surveys' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>📊</span>
@@ -111,7 +143,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
           <button 
             onClick={() => handleNavClick('community-hub')}
             className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-1 px-3 py-2 rounded-lg hover:bg-blue-50 ${
-              currentView === 'community-hub' ? 'bg-blue-100 text-blue-700' : ''
+              currentActiveView === 'community-hub' ? 'bg-blue-100 text-blue-700' : ''
             }`}
           >
             <span>💭</span>
@@ -193,7 +225,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               <button 
                 onClick={() => handleNavClick('home')}
                 className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'home' ? 'bg-blue-100 text-blue-700' : ''
+                  currentActiveView === 'home' ? 'bg-blue-100 text-blue-700' : ''
                 }`}
               >
                 <span className="text-xl">🏠</span>
@@ -202,7 +234,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               <button 
                 onClick={() => handleNavClick('reels')}
                 className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'reels' ? 'bg-blue-100 text-blue-700' : ''
+                  currentActiveView === 'reels' ? 'bg-blue-100 text-blue-700' : ''
                 }`}
               >
                 <span className="text-xl">🎬</span>
@@ -211,7 +243,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               <button 
                 onClick={() => handleNavClick('feeds')}
                 className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'feeds' || currentView === 'news' ? 'bg-blue-100 text-blue-700' : ''
+                  currentActiveView === 'feeds' ? 'bg-blue-100 text-blue-700' : ''
                 }`}
               >
                 <span className="text-xl">📰</span>
@@ -220,7 +252,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               <button 
                 onClick={() => handleNavClick('congress')}
                 className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'congress' ? 'bg-blue-100 text-blue-700' : ''
+                  currentActiveView === 'congress' ? 'bg-blue-100 text-blue-700' : ''
                 }`}
               >
                 <span className="text-xl">🏛️</span>
@@ -229,7 +261,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               <button 
                 onClick={() => handleNavClick('elections')}
                 className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'elections' ? 'bg-blue-100 text-blue-700' : ''
+                  currentActiveView === 'elections' ? 'bg-blue-100 text-blue-700' : ''
                 }`}
               >
                 <span className="text-xl">🗳️</span>
@@ -238,7 +270,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               <button 
                 onClick={() => handleNavClick('chat')}
                 className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'chat' ? 'bg-blue-100 text-blue-700' : ''
+                  currentActiveView === 'chat' ? 'bg-blue-100 text-blue-700' : ''
                 }`}
               >
                 <span className="text-xl">💬</span>
@@ -247,7 +279,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               <button 
                 onClick={() => handleNavClick('debates')}
                 className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'debates' ? 'bg-blue-100 text-blue-700' : ''
+                  currentActiveView === 'debates' ? 'bg-blue-100 text-blue-700' : ''
                 }`}
               >
                 <span className="text-xl">🗣️</span>
@@ -256,7 +288,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               <button 
                 onClick={() => handleNavClick('surveys')}
                 className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'surveys' || currentView === 'encuestas' ? 'bg-blue-100 text-blue-700' : ''
+                  currentActiveView === 'surveys' ? 'bg-blue-100 text-blue-700' : ''
                 }`}
               >
                 <span className="text-xl">📊</span>
@@ -265,7 +297,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               <button 
                 onClick={() => handleNavClick('community-hub')}
                 className={`text-blue-900 font-medium hover:text-blue-600 transition flex items-center gap-3 p-3 rounded-lg hover:bg-blue-50 ${
-                  currentView === 'community-hub' ? 'bg-blue-100 text-blue-700' : ''
+                  currentActiveView === 'community-hub' ? 'bg-blue-100 text-blue-700' : ''
                 }`}
               >
                 <span className="text-xl">💭</span>

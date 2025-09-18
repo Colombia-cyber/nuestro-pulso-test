@@ -405,6 +405,11 @@ class NewsService {
     }
   }
 
+  // Get article by ID
+  getArticleById(articleId: string): NewsItem | null {
+    return this.newsData.find(item => item.id === articleId) || null;
+  }
+
   // Get related articles
   getRelatedArticles(articleId: string): NewsItem[] {
     const article = this.newsData.find(item => item.id === articleId);
