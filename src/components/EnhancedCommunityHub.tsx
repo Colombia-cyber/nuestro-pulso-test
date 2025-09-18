@@ -2,6 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Activity, activityTracker } from '../services/ActivityTracker';
 import Comments from './Comments';
 
+interface SocialComment {
+  id: string;
+  text: string;
+  author: string;
+  timestamp: string;
+  platform: 'facebook' | 'twitter' | 'whatsapp' | 'youtube' | 'app';
+  articleId?: string;
+  articleTitle?: string;
+  politicalWing?: 'left' | 'right' | 'center';
+  likes: number;
+  replies: SocialComment[];
+  tags: string[];
+}
+
 const EnhancedCommunityHub: React.FC = () => {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [filter, setFilter] = useState('all');
@@ -10,7 +24,45 @@ const EnhancedCommunityHub: React.FC = () => {
   const [stats, setStats] = useState<any>(null);
   const [showAdminControls, setShowAdminControls] = useState(false);
   const [showComments, setShowComments] = useState(false);
-  const [communityComments, setCommunityComments] = useState<any[]>([]);
+  const [communityComments, setCommunityComments] = useState<SocialComment[]>([]);
+  const [liveUpdatesEnabled, setLiveUpdatesEnabled] = useState(true);
+  const [newComment, setNewComment] = useState('');
+  const [selectedPlatform, setSelectedPlatform] = useState<SocialComment['platform']>('app');
+  const [politicalFilter, setPoliticalFilter] = useState<'all' | 'left' | 'right' | 'center'>('all');
+
+  // Mock social media comment generation
+  const generateMockSocialComment = (): SocialComment => {
+    const platforms: SocialComment['platform'][] = ['facebook', 'twitter', 'whatsapp', 'youtube', 'app'];
+    const wings: SocialComment['politicalWing'][] = ['left', 'right', 'center'];
+    const authors = [
+      'María González', 'Carlos Rodríguez', 'Ana Martínez', 'Pedro López', 'Laura Díaz',
+      'Jorge Silva', 'Isabel Torres', 'Miguel Hernández', 'Sofía Castro', 'Daniel Moreno'
+    ];
+    const sampleTexts = [
+      'Este tema es muy importante para el futuro de Colombia.',
+      'Necesitamos más transparencia en estos procesos.',
+      'Excelente análisis, muy informativo.',
+      'No estoy de acuerdo con esta perspectiva.',
+      'Gracias por compartir esta información.',
+      'Esto afecta directamente a nuestras comunidades.',
+      'Esperemos que se tomen las medidas correctas.',
+      'Es hora de actuar con responsabilidad.',
+      'La participación ciudadana es clave.',
+      'Necesitamos más debates como este.'
+    ];
+
+    return {
+      id: `social-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      text: sampleTexts[Math.floor(Math.random() * sampleTexts.length)],
+      author: authors[Math.floor(Math.random() * authors.length)],
+      timestamp: new Date(Date.now() - Math.random() * 2 * 60 * 60 * 1000).toISOString(), // Last 2 hours
+      platform: platforms[Math.floor(Math.random() * platforms.length)],
+      politicalWing: wings[Math.floor(Math.random() * wings.length)],
+      likes: Math.floor(Math.random() * 50),
+      replies: [],
+      tags: ['política', 'colombia', 'participación'].slice(0, Math.floor(Math.random() * 3) + 1)
+    };
+  };
 
   useEffect(() => {
     setLoading(true);
@@ -20,9 +72,28 @@ const EnhancedCommunityHub: React.FC = () => {
       const storedComments = JSON.parse(localStorage.getItem('communityComments') || '[]');
       const regularComments = JSON.parse(localStorage.getItem('comments') || '[]');
       
-      // Combine all comments
-      const allComments = [...storedComments, ...regularComments];
-      setCommunityComments(allComments);
+      // Convert regular comments to social comments format
+      const convertedComments: SocialComment[] = regularComments.map((comment: any) => ({
+        id: comment.id || `comment-${Date.now()}-${Math.random()}`,
+        text: comment.content || comment.text || '',
+        author: comment.author || 'Usuario Anónimo',
+        timestamp: comment.timestamp || new Date().toISOString(),
+        platform: 'app' as const,
+        politicalWing: Math.random() > 0.5 ? 'left' : 'right' as const,
+        likes: Math.floor(Math.random() * 20),
+        replies: [],
+        tags: comment.tags || []
+      }));
+
+      // Combine with stored social comments
+      const allComments = [...storedComments, ...convertedComments];
+      
+      // Add some mock social media comments for demo
+      const mockComments = Array.from({ length: 8 }, generateMockSocialComment);
+      
+      setCommunityComments([...allComments, ...mockComments].sort((a, b) => 
+        new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      ));
     };
     
     // Load initial activities
@@ -49,17 +120,79 @@ const EnhancedCommunityHub: React.FC = () => {
       setLoading(false);
     };
 
-    loadActivities();
     loadCommunityComments();
+    loadActivities();
 
-    // Subscribe to activity updates
-    const unsubscribe = activityTracker.subscribe(() => {
-      loadActivities();
-      loadCommunityComments();
-    });
+    // Set up live updates
+    if (liveUpdatesEnabled) {
+      const interval = setInterval(() => {
+        loadCommunityComments();
+        loadActivities();
+        
+        // Occasionally add new mock social media comments
+        if (Math.random() < 0.3) { // 30% chance every 10 seconds
+          const newMockComment = generateMockSocialComment();
+          setCommunityComments(prev => [newMockComment, ...prev].slice(0, 50)); // Keep latest 50
+        }
+      }, 10000); // Update every 10 seconds
 
-    return unsubscribe;
-  }, [filter, timeFilter]);
+      return () => clearInterval(interval);
+    }
+  }, [filter, timeFilter, liveUpdatesEnabled]);
+
+  // Handle new comment submission
+  const handleCommentSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+
+    const comment: SocialComment = {
+      id: `user-${Date.now()}`,
+      text: newComment,
+      author: 'Usuario Actual',
+      timestamp: new Date().toISOString(),
+      platform: selectedPlatform,
+      politicalWing: 'center',
+      likes: 0,
+      replies: [],
+      tags: []
+    };
+
+    // Add to community comments
+    setCommunityComments(prev => [comment, ...prev]);
+    
+    // Save to localStorage
+    const storedComments = JSON.parse(localStorage.getItem('communityComments') || '[]');
+    storedComments.unshift(comment);
+    localStorage.setItem('communityComments', JSON.stringify(storedComments));
+
+    setNewComment('');
+  };
+
+  // Get platform icon
+  const getPlatformIcon = (platform: SocialComment['platform']) => {
+    switch (platform) {
+      case 'facebook': return '📘';
+      case 'twitter': return '🐦';
+      case 'whatsapp': return '💚';
+      case 'youtube': return '📺';
+      default: return '💬';
+    }
+  };
+
+  // Get political wing indicator
+  const getPoliticalWingColor = (wing?: SocialComment['politicalWing']) => {
+    switch (wing) {
+      case 'left': return 'bg-blue-100 text-blue-800';
+      case 'right': return 'bg-red-100 text-red-800';
+      case 'center': return 'bg-purple-100 text-purple-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Filter comments by political wing
+  const filteredComments = communityComments.filter(comment => 
+    politicalFilter === 'all' || comment.politicalWing === politicalFilter
+  );
 
   const formatTimeAgo = (timestamp: string) => {
     const now = new Date();
@@ -194,144 +327,250 @@ const EnhancedCommunityHub: React.FC = () => {
           </div>
         </div>
 
-        {/* View Mode Toggle */}
+        {/* Enhanced View Mode Toggle with Live Updates */}
         <div className="mb-6">
           <div className="bg-white rounded-lg shadow-sm p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-semibold text-gray-900">Vista del Community Hub</h3>
-              <div className="flex bg-gray-100 rounded-lg p-1">
+              <div className="flex items-center space-x-4">
+                {/* Live updates toggle */}
                 <button
-                  onClick={() => setShowComments(false)}
-                  className={`px-4 py-2 rounded text-sm font-medium transition ${
-                    !showComments
-                      ? 'bg-white text-blue-600 shadow'
-                      : 'text-gray-600 hover:text-gray-800'
+                  onClick={() => setLiveUpdatesEnabled(!liveUpdatesEnabled)}
+                  className={`px-3 py-1 rounded-lg text-sm font-medium transition-colors ${
+                    liveUpdatesEnabled 
+                      ? 'bg-green-100 text-green-800' 
+                      : 'bg-gray-100 text-gray-600'
                   }`}
                 >
-                  📊 Actividades
+                  {liveUpdatesEnabled ? '🔴 EN VIVO' : '⏸️ PAUSADO'}
                 </button>
-                <button
-                  onClick={() => setShowComments(true)}
-                  className={`px-4 py-2 rounded text-sm font-medium transition ${
-                    showComments
-                      ? 'bg-white text-blue-600 shadow'
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
-                >
-                  💬 Comentarios ({communityComments.length})
-                </button>
+                
+                <div className="flex bg-gray-100 rounded-lg p-1">
+                  <button
+                    onClick={() => setShowComments(false)}
+                    className={`px-4 py-2 rounded text-sm font-medium transition ${
+                      !showComments
+                        ? 'bg-white text-blue-600 shadow'
+                        : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    📊 Actividades
+                  </button>
+                  <button
+                    onClick={() => setShowComments(true)}
+                    className={`px-4 py-2 rounded text-sm font-medium transition ${
+                      showComments
+                        ? 'bg-white text-blue-600 shadow'
+                        : 'text-gray-600 hover:text-gray-800'
+                    }`}
+                  >
+                    💬 Feed Social ({filteredComments.length})
+                  </button>
+                </div>
               </div>
             </div>
+
+            {/* Social Platform Stats */}
+            {showComments && (
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                {(['facebook', 'twitter', 'whatsapp', 'youtube', 'app'] as const).map(platform => {
+                  const count = communityComments.filter(c => c.platform === platform).length;
+                  return (
+                    <div key={platform} className="bg-gray-50 rounded-lg p-3 text-center">
+                      <div className="text-lg">{getPlatformIcon(platform)}</div>
+                      <div className="text-sm font-medium text-gray-900">{count}</div>
+                      <div className="text-xs text-gray-600 capitalize">{platform}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
         {showComments ? (
-          /* Community Comments View */
+          /* Enhanced Social Community Comments View */
           <div className="space-y-6">
+            {/* Comment Submission Form */}
             <div className="bg-white rounded-lg shadow-lg p-6">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                💬 Comentarios de la Comunidad por Categoría
+                💬 Comenta Instantáneamente
               </h3>
-              <p className="text-gray-600 mb-6">
-                Todos los comentarios se organizan automáticamente por categoría según el artículo comentado.
+              <p className="text-gray-600 mb-4">
+                Tus comentarios se envían automáticamente al Community Hub y se categorizan políticamente
               </p>
               
-              {/* Category-wise Comments */}
-              {communityComments.length > 0 ? (
-                <div className="space-y-6">
-                  {/* Group comments by category */}
-                  {Object.entries(
-                    communityComments.reduce((acc: any, comment) => {
-                      const category = comment.category || 'Sin categoría';
-                      if (!acc[category]) acc[category] = [];
-                      acc[category].push(comment);
-                      return acc;
-                    }, {})
-                  ).map(([category, comments]: [string, any]) => (
-                    <div key={category} className="bg-gray-50 rounded-lg p-4">
-                      <h4 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <span className="mr-2">📂</span>
-                        {category} ({(comments as any[]).length} comentarios)
-                      </h4>
-                      
-                      <div className="space-y-4">
-                        {(comments as any[]).map((comment, index) => (
-                          <div key={index} className="bg-white rounded-lg p-4 border border-gray-200">
-                            <div className="flex items-start space-x-3">
-                              <div className="text-2xl">{comment.avatar || '👤'}</div>
-                              <div className="flex-1">
-                                <div className="flex items-center space-x-2 mb-2">
-                                  <span className="font-semibold text-gray-900">
-                                    {comment.author || 'Usuario Anónimo'}
-                                  </span>
-                                  <span className="text-sm text-gray-500">
-                                    {comment.timestamp ? 
-                                      new Date(comment.timestamp).toLocaleDateString('es-CO', {
-                                        day: 'numeric',
-                                        month: 'short',
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                      }) : 
-                                      'Fecha desconocida'
-                                    }
-                                  </span>
-                                </div>
-                                
-                                {comment.articleTitle && (
-                                  <div className="mb-2">
-                                    <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded">
-                                      📰 {comment.articleTitle.length > 80 ? 
-                                        `${comment.articleTitle.substring(0, 80)}...` : 
-                                        comment.articleTitle
-                                      }
-                                    </span>
-                                  </div>
-                                )}
-                                
-                                <p className="text-gray-700 mb-3">{comment.content}</p>
-                                
-                                <div className="flex items-center space-x-4 text-sm text-gray-500">
-                                  <button className="flex items-center space-x-1 hover:text-blue-600">
-                                    <span>👍</span>
-                                    <span>{comment.likes || 0}</span>
-                                  </button>
-                                  <button className="hover:text-blue-600">
-                                    💬 Responder
-                                  </button>
-                                </div>
-                              </div>
-                            </div>
+              <form onSubmit={handleCommentSubmit} className="space-y-4">
+                <div className="flex items-center space-x-4 mb-3">
+                  <label className="text-sm font-medium text-gray-700">Plataforma:</label>
+                  <div className="flex space-x-2">
+                    {(['facebook', 'twitter', 'whatsapp', 'youtube', 'app'] as const).map(platform => (
+                      <button
+                        key={platform}
+                        type="button"
+                        onClick={() => setSelectedPlatform(platform)}
+                        className={`px-3 py-1 rounded-lg text-sm transition-colors ${
+                          selectedPlatform === platform 
+                            ? 'bg-blue-100 text-blue-800' 
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                        }`}
+                      >
+                        {getPlatformIcon(platform)} {platform}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                
+                <div className="flex space-x-3">
+                  <textarea
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Comparte tu opinión sobre cualquier tema político o social..."
+                    className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"
+                    rows={3}
+                  />
+                  <button
+                    type="submit"
+                    disabled={!newComment.trim()}
+                    className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                  >
+                    Enviar
+                  </button>
+                </div>
+              </form>
+            </div>
+
+            {/* Political Filter */}
+            <div className="bg-white rounded-lg shadow-sm p-4">
+              <div className="flex items-center justify-between">
+                <h4 className="text-lg font-semibold text-gray-900">🏛️ Filtro Político</h4>
+                <div className="flex bg-gray-100 rounded-lg p-1">
+                  {(['all', 'left', 'center', 'right'] as const).map(wing => (
+                    <button
+                      key={wing}
+                      onClick={() => setPoliticalFilter(wing)}
+                      className={`px-3 py-1 rounded text-sm font-medium transition ${
+                        politicalFilter === wing
+                          ? 'bg-white shadow'
+                          : 'text-gray-600 hover:text-gray-800'
+                      } ${wing === 'left' ? 'text-blue-600' : wing === 'right' ? 'text-red-600' : wing === 'center' ? 'text-purple-600' : ''}`}
+                    >
+                      {wing === 'all' ? '🌐 Todos' : 
+                       wing === 'left' ? '🔵 Izquierda' : 
+                       wing === 'right' ? '🔴 Derecha' : 
+                       '🟣 Centro'}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Live Social Feed */}
+            <div className="bg-white rounded-lg shadow-lg p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-xl font-semibold text-gray-900">
+                  🌐 Feed Social en Tiempo Real
+                </h3>
+                {liveUpdatesEnabled && (
+                  <div className="flex items-center text-green-600 text-sm">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                    Actualizaciones automáticas
+                  </div>
+                )}
+              </div>
+              
+              {filteredComments.length > 0 ? (
+                <div className="space-y-4 max-h-[600px] overflow-y-auto">
+                  {filteredComments.map((comment) => (
+                    <div key={comment.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex items-start space-x-3">
+                        <div className="text-2xl">{getPlatformIcon(comment.platform)}</div>
+                        <div className="flex-1">
+                          <div className="flex items-center space-x-2 mb-2">
+                            <span className="font-semibold text-gray-900">{comment.author}</span>
+                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPlatformIcon(comment.platform) === '💬' ? 'bg-gray-100 text-gray-800' : 'bg-blue-100 text-blue-800'}`}>
+                              {comment.platform}
+                            </span>
+                            {comment.politicalWing && (
+                              <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPoliticalWingColor(comment.politicalWing)}`}>
+                                {comment.politicalWing === 'left' ? '🔵 Izquierda' : 
+                                 comment.politicalWing === 'right' ? '🔴 Derecha' : 
+                                 '🟣 Centro'}
+                              </span>
+                            )}
+                            <span className="text-sm text-gray-500">
+                              {formatTimeAgo(comment.timestamp)}
+                            </span>
                           </div>
-                        ))}
+                          
+                          {comment.articleTitle && (
+                            <div className="mb-2">
+                              <span className="text-sm text-blue-600 bg-blue-50 px-2 py-1 rounded">
+                                📰 {comment.articleTitle.length > 60 ? 
+                                  `${comment.articleTitle.substring(0, 60)}...` : 
+                                  comment.articleTitle
+                                }
+                              </span>
+                            </div>
+                          )}
+                          
+                          <p className="text-gray-700 mb-3">{comment.text}</p>
+                          
+                          {comment.tags && comment.tags.length > 0 && (
+                            <div className="flex flex-wrap gap-1 mb-3">
+                              {comment.tags.map((tag, index) => (
+                                <span key={index} className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs">
+                                  #{tag}
+                                </span>
+                              ))}
+                            </div>
+                          )}
+                          
+                          <div className="flex items-center space-x-4 text-sm text-gray-500">
+                            <button className="flex items-center space-x-1 hover:text-blue-600 transition-colors">
+                              <span>👍</span>
+                              <span>{comment.likes}</span>
+                            </button>
+                            <button className="flex items-center space-x-1 hover:text-green-600 transition-colors">
+                              <span>💬</span>
+                              <span>{comment.replies.length}</span>
+                            </button>
+                            <button className="flex items-center space-x-1 hover:text-yellow-600 transition-colors">
+                              <span>📤</span>
+                              <span>Compartir</span>
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="text-center py-12">
-                  <div className="text-6xl mb-4">💬</div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    No hay comentarios aún
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    Los comentarios de artículos y búsquedas aparecerán aquí organizados por categoría.
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-4">💭</div>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-2">No hay comentarios disponibles</h4>
+                  <p className="text-gray-600 mb-4">
+                    {politicalFilter !== 'all' 
+                      ? `No hay comentarios de perspectiva ${politicalFilter} en este momento.`
+                      : 'Sé el primero en comentar y comienza la conversación.'
+                    }
                   </p>
                   <button
-                    onClick={() => setShowComments(false)}
-                    className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700"
+                    onClick={() => setPoliticalFilter('all')}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    Ver actividades
+                    Ver todos los comentarios
                   </button>
                 </div>
               )}
             </div>
           </div>
         ) : (
-          <>
-
-        {/* Controls */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          /* Activities View */
+          <div className="space-y-6">
+            {/* Controls */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               {/* Activity filter */}
               <select
@@ -492,7 +731,7 @@ const EnhancedCommunityHub: React.FC = () => {
             </button>
           </div>
         )}
-          </>
+          </div>
         )}
       </div>
     </div>

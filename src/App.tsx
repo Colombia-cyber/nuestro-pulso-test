@@ -1,6 +1,7 @@
 import React, { useState, Suspense } from "react";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
+import AdvancedSearchHomepage from "./components/AdvancedSearchHomepage";
 import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
@@ -104,7 +105,7 @@ function App() {
           return <SearchPage />;
         case 'home':
         default:
-          return <HeroSection onNavigate={handleNavigate} />;
+          return <AdvancedSearchHomepage onNavigate={handleNavigate} />;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');

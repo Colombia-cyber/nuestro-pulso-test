@@ -1,6 +1,7 @@
 import React, { useState, Suspense } from 'react';
 import HeroSection from './components/HeroSection.tsx';
 import HomePage from './HomePage.tsx';
+import AdvancedSearchHomepage from './components/AdvancedSearchHomepage.tsx';
 
 import CustomNewsFeed from './components/CustomNewsFeed.tsx';
 import Debate from './components/Debate.tsx';
@@ -120,23 +121,7 @@ function App() {
           return <CommunityHub />;
         case 'home':
         default:
-          return (
-            <>
-              {/* Hero Section */}
-              <HeroSection onNavigate={handleNavigate} />
-              
-              {/* Main Content */}
-              <main className="container mx-auto px-4 py-8">
-                {/* Home Page Content */}
-                <HomePage />
-                
-                {/* Custom News Feed */}
-                <section className="mt-12">
-                  <CustomNewsFeed />
-                </section>
-              </main>
-            </>
-          );
+          return <AdvancedSearchHomepage onNavigate={handleNavigate} />;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
