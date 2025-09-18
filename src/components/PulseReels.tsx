@@ -78,8 +78,8 @@ const PulseReels: React.FC = () => {
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
   
   // Configuration
-  const infiniteScrollEnabled = getEnvVar('REACT_APP_REELS_INFINITE_SCROLL', 'true') === 'true';
-  const batchSize = parseInt(getEnvVar('REACT_APP_REELS_LOAD_BATCH_SIZE', '6'));
+  const infiniteScrollEnabled = getEnvVar('VITE_REELS_INFINITE_SCROLL', 'true') === 'true';
+  const batchSize = parseInt(getEnvVar('VITE_REELS_LOAD_BATCH_SIZE', '6'));
 
   // Get categories from configuration
   const visibleCategories = getVisibleCategories();
