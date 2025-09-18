@@ -217,7 +217,7 @@ const PulseReels: React.FC = () => {
 
   // Auto-hide UI after inactivity
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
     const resetTimeout = () => {
       clearTimeout(timeout);
       setShowActions(true);
