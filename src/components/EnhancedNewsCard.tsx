@@ -1,31 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NewsItem, NewsSource } from '../types/news';
+import { FaClock, FaEye, FaShare, FaBookmark, FaComment, FaFire, FaBolt } from 'react-icons/fa';
+import { BiTrendingUp } from 'react-icons/bi';
+import { MdVerified, MdUpdate, MdNewReleases } from 'react-icons/md';
+import { realTimeNewsService } from '../services/realTimeNewsService';
 
 interface EnhancedNewsCardProps {
   article: NewsItem;
   onArticleClick?: (article: NewsItem) => void;
   showPerspectiveBadge?: boolean;
   compact?: boolean;
+  showFreshnessIndicator?: boolean;
+  priority?: 'breaking' | 'trending' | 'normal';
 }
 
 const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({ 
   article, 
   onArticleClick,
   showPerspectiveBadge = true,
-  compact = false
+  compact = false,
+  showFreshnessIndicator = true,
+  priority = 'normal'
 }) => {
   const [imageError, setImageError] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [viewCount, setViewCount] = useState(Math.floor(Math.random() * 5000) + 100);
+  const [isHovered, setIsHovered] = useState(false);
+
+  useEffect(() => {
+    // Simulate view count updates for active articles
+    if (article.trending) {
+      const interval = setInterval(() => {
+        setViewCount(prev => prev + Math.floor(Math.random() * 3));
+      }, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [article.trending]);
+
+  const freshnessInfo = realTimeNewsService.getFreshnessIndicator(article.publishedAt);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const now = new Date();
-    const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60));
+    const diffInMinutes = Math.floor((now.getTime() - date.getTime()) / (1000 * 60));
     
-    if (diffInHours < 1) {
-      return 'Hace unos minutos';
-    } else if (diffInHours < 24) {
-      return `Hace ${diffInHours} hora${diffInHours > 1 ? 's' : ''}`;
+    if (diffInMinutes < 1) {
+      return 'Ahora mismo';
+    } else if (diffInMinutes < 60) {
+      return `Hace ${diffInMinutes} min`;
+    } else if (diffInMinutes < 1440) {
+      return `Hace ${Math.floor(diffInMinutes / 60)}h`;
     } else {
       return date.toLocaleDateString('es-CO', {
         day: 'numeric',
@@ -48,227 +73,328 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
       'Contexto Ganadero': '🐄',
       'DANE': '📈',
       'Ministerio de Salud': '🏥',
-      'Redacción': '⚡'
+      'Fuerzas Militares': '🛡️',
+      'Congreso República': '🏛️',
+      'TransMilenio': '🚌',
+      'Cancillería': '🌍',
+      'Nuestro Pulso': '💫'
     };
+    return sourceIcons[sourceName] || '📄';
+  };
+
+  const getPerspectiveBadge = () => {
+    if (!showPerspectiveBadge) return null;
     
-    return sourceIcons[sourceName] || '📰';
-  };
-
-  const getSourceName = (source: string | NewsSource): string => {
-    return typeof source === 'string' ? source : source.name;
-  };
-
-  const getPerspectiveColor = (perspective: string) => {
-    switch (perspective) {
+    switch (article.perspective) {
       case 'progressive':
-        return 'bg-blue-100 text-blue-800 border-blue-300';
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800 border border-red-200">
+            <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+            Progresista
+          </span>
+        );
       case 'conservative':
-        return 'bg-red-100 text-red-800 border-red-300';
-      case 'both':
-        return 'bg-purple-100 text-purple-800 border-purple-300';
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            Conservador
+          </span>
+        );
       default:
-        return 'bg-gray-100 text-gray-800 border-gray-300';
+        return (
+          <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
+            <MdVerified className="w-3 h-3" />
+            Balanceado
+          </span>
+        );
     }
   };
 
-  const getPerspectiveLabel = (perspective: string) => {
-    switch (perspective) {
-      case 'progressive':
-        return '🔵 Progresista';
-      case 'conservative':
-        return '🔴 Conservadora';
-      case 'both':
-        return '⚖️ Perspectivas Balanceadas';
+  const getPriorityIndicator = () => {
+    switch (priority) {
+      case 'breaking':
+        return (
+          <div className="absolute top-3 left-3 z-10">
+            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-red-600 text-white text-xs font-bold animate-pulse">
+              <FaBolt className="w-3 h-3" />
+              ÚLTIMA HORA
+            </div>
+          </div>
+        );
+      case 'trending':
+        return (
+          <div className="absolute top-3 left-3 z-10">
+            <div className="flex items-center gap-1 px-2 py-1 rounded-full bg-orange-500 text-white text-xs font-bold">
+              <FaFire className="w-3 h-3" />
+              TRENDING
+            </div>
+          </div>
+        );
       default:
-        return '📰 Neutral';
+        return null;
     }
   };
 
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
-    
-    if (navigator.share) {
-      try {
+    try {
+      if (navigator.share) {
         await navigator.share({
           title: article.title,
           text: article.summary,
           url: article.shareUrl || window.location.href
         });
-      } catch (err) {
-        console.log('Error sharing:', err);
+      } else {
+        await navigator.clipboard.writeText(article.shareUrl || window.location.href);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
       }
-    } else {
-      handleCopyLink(e);
+    } catch (error) {
+      console.error('Error sharing:', error);
     }
   };
 
-  const handleCopyLink = async (e: React.MouseEvent) => {
+  const handleBookmark = (e: React.MouseEvent) => {
     e.stopPropagation();
-    
-    try {
-      await navigator.clipboard.writeText(article.shareUrl || window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      console.log('Error copying to clipboard:', err);
-    }
+    setIsBookmarked(!isBookmarked);
   };
 
-  const handleCardClick = () => {
-    if (onArticleClick) {
-      onArticleClick(article);
-    }
+  const getCategoryColor = (category: string | any) => {
+    const categoryStr = typeof category === 'string' ? category : category;
+    const colors: Record<string, string> = {
+      'Política': 'bg-blue-500',
+      'Economía': 'bg-green-500',
+      'Seguridad': 'bg-red-500',
+      'Ambiente': 'bg-emerald-500',
+      'Educación': 'bg-purple-500',
+      'Salud': 'bg-pink-500',
+      'Congreso': 'bg-indigo-500',
+      'Legislación': 'bg-violet-500',
+      'Terror/Crimen/Drogas': 'bg-red-600',
+      'El Pulso': 'bg-yellow-500',
+      'Local': 'bg-green-400',
+      'Mundial': 'bg-blue-400',
+      'Última Hora': 'bg-red-600'
+    };
+    return colors[categoryStr] || 'bg-gray-500';
   };
 
   if (compact) {
     return (
       <div 
-        onClick={handleCardClick}
-        className="bg-white rounded-lg shadow hover:shadow-md transition-all duration-200 p-4 cursor-pointer border border-gray-100 hover:border-gray-200"
+        className={`group cursor-pointer transition-all duration-300 transform hover:scale-[1.02] ${
+          isHovered ? 'shadow-xl shadow-black/10' : 'shadow-md'
+        }`}
+        onClick={() => onArticleClick?.(article)}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="flex items-start space-x-3">
-          {!imageError && article.imageUrl && (
-            <div className="flex-shrink-0">
-              <img 
-                src={article.imageUrl}
-                alt={article.title}
-                className="w-16 h-16 rounded-lg object-cover"
-                onError={() => setImageError(true)}
-              />
-            </div>
-          )}
+        <div className="bg-white/90 backdrop-blur-sm rounded-xl border border-white/20 overflow-hidden relative">
+          {getPriorityIndicator()}
           
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center space-x-2 mb-2">
-              <span className="text-lg">{getSourceIcon(article.source)}</span>
-              <span className="text-xs font-medium text-gray-600">{getSourceName(article.source)}</span>
-              <span className="text-xs text-gray-400">•</span>
-              <span className="text-xs text-gray-500">{formatDate(article.publishedAt)}</span>
-              {article.trending && (
-                <>
-                  <span className="text-xs text-gray-400">•</span>
-                  <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
-                    🔥 Trending
-                  </span>
-                </>
+          <div className="p-4 space-y-3">
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-gray-900 line-clamp-2 text-sm leading-tight group-hover:text-colombia-blue transition-colors">
+                  {article.title}
+                </h3>
+              </div>
+              
+              {!imageError && article.imageUrl && (
+                <div className="flex-shrink-0 w-16 h-12 rounded-lg overflow-hidden">
+                  <img
+                    src={article.imageUrl}
+                    alt={article.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                    onError={() => setImageError(true)}
+                  />
+                </div>
               )}
             </div>
-            
-            <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-2">
-              {article.title}
-            </h3>
-            
-            <div className="flex items-center justify-between">
-              {showPerspectiveBadge && (
-                <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPerspectiveColor(article.perspective)}`}>
-                  {getPerspectiveLabel(article.perspective)}
+
+            {/* Meta info */}
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-2">
+                <span className="flex items-center gap-1 text-gray-600">
+                  {getSourceIcon(article.source)}
+                  {typeof article.source === 'string' ? article.source : article.source.name}
+                </span>
+                
+                {showFreshnessIndicator && (
+                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs ${freshnessInfo.color}`}>
+                    <span>{freshnessInfo.icon}</span>
+                    {formatDate(article.publishedAt)}
+                  </span>
+                )}
+              </div>
+              
+              {article.readTime && (
+                <span className="text-gray-500 flex items-center gap-1">
+                  <FaClock className="w-3 h-3" />
+                  {article.readTime}
                 </span>
               )}
+            </div>
+
+            {/* Badges */}
+            <div className="flex items-center gap-2">
+              {getPerspectiveBadge()}
               
-              <div className="flex items-center space-x-2">
-                {article.readTime && (
-                  <span className="text-xs text-gray-500">{article.readTime}</span>
-                )}
-                
-                <button
-                  onClick={handleShare}
-                  className="text-gray-400 hover:text-blue-600 transition-colors"
-                  title="Compartir"
-                >
-                  📤
-                </button>
-              </div>
+              <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium text-white ${getCategoryColor(article.category)}`}>
+                {typeof article.category === 'string' ? article.category : article.category}
+              </span>
             </div>
           </div>
         </div>
       </div>
     );
   }
-
+  // Full card layout
   return (
     <div 
-      onClick={handleCardClick}
-      className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border border-gray-100 hover:border-gray-200 group"
+      className={`group cursor-pointer transition-all duration-500 transform hover:scale-[1.02] ${
+        isHovered ? 'shadow-2xl shadow-black/20' : 'shadow-lg'
+      } bg-white/95 backdrop-blur-sm rounded-2xl border border-white/30 overflow-hidden relative`}
+      onClick={() => onArticleClick?.(article)}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image Header */}
+      {/* Priority indicator */}
+      {getPriorityIndicator()}
+      
+      {/* Image header with gradient overlay */}
       {!imageError && article.imageUrl && (
         <div className="relative h-48 overflow-hidden">
           <img 
             src={article.imageUrl}
             alt={article.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
             onError={() => setImageError(true)}
           />
           
-          {/* Overlay badges */}
-          <div className="absolute top-3 left-3 flex space-x-2">
-            <span className="bg-white/90 backdrop-blur-sm text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
-              {getSourceIcon(article.source)} {getSourceName(article.source)}
+          {/* Gradient overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
+          
+          {/* Top badges */}
+          <div className="absolute top-4 left-4 flex gap-2">
+            <span className="glass-morphism px-3 py-1 rounded-full text-xs font-medium text-white backdrop-blur-md border border-white/20">
+              {getSourceIcon(article.source)} {typeof article.source === 'string' ? article.source : article.source.name}
             </span>
             
             {article.trending && (
-              <span className="bg-red-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
-                🔥 Trending
+              <span className="glass-morphism bg-orange-500/80 px-3 py-1 rounded-full text-xs font-bold text-white backdrop-blur-md border border-orange-300/20 animate-pulse">
+                <FaFire className="inline w-3 h-3 mr-1" />
+                TRENDING
               </span>
             )}
           </div>
           
-          {/* Share button overlay */}
-          <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          {/* Action buttons */}
+          <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <button
+              onClick={handleBookmark}
+              className={`glass-morphism p-2 rounded-full backdrop-blur-md border border-white/20 transition-all ${
+                isBookmarked 
+                  ? 'bg-yellow-500/80 text-white' 
+                  : 'text-white hover:bg-white/20'
+              }`}
+              title="Guardar"
+            >
+              <FaBookmark className="w-3 h-3" />
+            </button>
+            
             <button
               onClick={handleShare}
-              className="bg-white/90 backdrop-blur-sm text-gray-700 hover:text-blue-600 p-2 rounded-full shadow-lg transition-colors"
+              className="glass-morphism p-2 rounded-full text-white hover:bg-white/20 backdrop-blur-md border border-white/20 transition-all"
               title="Compartir"
             >
-              📤
+              <FaShare className="w-3 h-3" />
             </button>
+          </div>
+
+          {/* Bottom info on image */}
+          <div className="absolute bottom-4 left-4 right-4">
+            <div className="flex items-end justify-between">
+              <div className="flex-1">
+                {showFreshnessIndicator && (
+                  <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium backdrop-blur-md border border-white/20 ${freshnessInfo.color} bg-white/90`}>
+                    <span>{freshnessInfo.icon}</span>
+                    {formatDate(article.publishedAt)}
+                  </div>
+                )}
+              </div>
+              
+              {article.readTime && (
+                <div className="glass-morphism px-3 py-1 rounded-full text-xs font-medium text-white backdrop-blur-md border border-white/20">
+                  <FaClock className="inline w-3 h-3 mr-1" />
+                  {article.readTime}
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
       
       {/* Content */}
-      <div className="p-6">
-        {/* Header info */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
-            {imageError && (
-              <>
-                <span className="text-lg">{getSourceIcon(article.source)}</span>
-                <span className="font-medium">{getSourceName(article.source)}</span>
-                <span>•</span>
-              </>
-            )}
-            <span>{formatDate(article.publishedAt)}</span>
-            {article.readTime && (
-              <>
-                <span>•</span>
-                <span>{article.readTime}</span>
-              </>
-            )}
+      <div className="p-6 space-y-4">
+        {/* No image fallback header */}
+        {(imageError || !article.imageUrl) && (
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <span className="text-2xl">{getSourceIcon(article.source)}</span>
+              <div>
+                <div className="font-medium text-gray-900">
+                  {typeof article.source === 'string' ? article.source : article.source.name}
+                </div>
+                {showFreshnessIndicator && (
+                  <div className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs ${freshnessInfo.color} mt-1`}>
+                    <span>{freshnessInfo.icon}</span>
+                    {formatDate(article.publishedAt)}
+                  </div>
+                )}
+              </div>
+            </div>
+            
+            <div className="flex gap-2">
+              <button
+                onClick={handleBookmark}
+                className={`p-2 rounded-full transition-all ${
+                  isBookmarked 
+                    ? 'bg-yellow-500 text-white' 
+                    : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-50'
+                }`}
+              >
+                <FaBookmark className="w-4 h-4" />
+              </button>
+              
+              <button
+                onClick={handleShare}
+                className="p-2 rounded-full text-gray-400 hover:text-blue-500 hover:bg-blue-50 transition-all"
+              >
+                <FaShare className="w-4 h-4" />
+              </button>
+            </div>
           </div>
-          
-          <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
-            {article.category}
-          </span>
-        </div>
+        )}
         
         {/* Title */}
-        <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-900 transition-colors">
+        <h3 className="text-xl font-bold text-gray-900 line-clamp-2 group-hover:text-colombia-blue transition-colors duration-300">
           {article.title}
         </h3>
         
         {/* Summary */}
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+        <p className="text-gray-600 line-clamp-3 leading-relaxed">
           {article.summary}
         </p>
         
         {/* Tags */}
         {article.tags && article.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
-            {article.tags.slice(0, 3).map((tag, index) => (
+          <div className="flex flex-wrap gap-2">
+            {article.tags.slice(0, 4).map((tag, index) => (
               <span 
                 key={index}
-                className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
+                className="glass-morphism px-3 py-1 rounded-full text-xs font-medium bg-gray-50/80 text-gray-700 border border-gray-200/50 hover:bg-gray-100/80 transition-colors"
               >
                 #{tag}
               </span>
@@ -276,55 +402,51 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
           </div>
         )}
         
-        {/* Footer */}
+        {/* Badges and meta */}
         <div className="flex items-center justify-between">
-          {showPerspectiveBadge && (
-            <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getPerspectiveColor(article.perspective)}`}>
-              {getPerspectiveLabel(article.perspective)}
+          <div className="flex items-center gap-2 flex-wrap">
+            {getPerspectiveBadge()}
+            
+            <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium text-white ${getCategoryColor(article.category)}`}>
+              {typeof article.category === 'string' ? article.category : article.category}
             </span>
-          )}
+          </div>
           
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center gap-3 text-xs text-gray-500">
+            <div className="flex items-center gap-1">
+              <FaEye className="w-3 h-3" />
+              {viewCount.toLocaleString()}
+            </div>
+            
             {article.author && (
-              <div className="flex items-center space-x-2 text-xs text-gray-500">
-                <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="flex items-center gap-2">
+                <div className="w-6 h-6 bg-gradient-to-br from-colombia-blue to-colombia-yellow rounded-full flex items-center justify-center text-white font-bold text-xs">
                   {article.author.charAt(0).toUpperCase()}
                 </div>
-                <span>{article.author}</span>
+                <span className="hidden sm:inline">{article.author}</span>
               </div>
             )}
-            
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={handleCopyLink}
-                className={`text-gray-400 hover:text-blue-600 transition-colors text-sm ${
-                  copied ? 'text-green-600' : ''
-                }`}
-                title="Copiar enlace"
-              >
-                {copied ? '✅' : '🔗'}
-              </button>
-              
-              <button
-                onClick={handleShare}
-                className="text-gray-400 hover:text-blue-600 transition-colors text-sm"
-                title="Compartir"
-              >
-                📤
-              </button>
-            </div>
           </div>
         </div>
         
-        {/* Related articles indicator */}
+        {/* Related articles */}
         {article.relatedArticles && article.relatedArticles.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <span className="text-xs text-gray-500">
-              📝 {article.relatedArticles.length} artículo{article.relatedArticles.length > 1 ? 's' : ''} relacionado{article.relatedArticles.length > 1 ? 's' : ''}
-            </span>
+          <div className="pt-3 border-t border-gray-100 text-xs text-gray-500 flex items-center gap-1">
+            <FaComment className="w-3 h-3" />
+            {article.relatedArticles.length} artículo{article.relatedArticles.length > 1 ? 's' : ''} relacionado{article.relatedArticles.length > 1 ? 's' : ''}
           </div>
         )}
       </div>
+      
+      {/* Hover effects overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-colombia-blue/5 via-transparent to-colombia-yellow/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+      
+      {/* Copy feedback */}
+      {copied && (
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg z-50">
+          ✅ Enlace copiado
+        </div>
+      )}
     </div>
   );
 };

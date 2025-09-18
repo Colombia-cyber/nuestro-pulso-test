@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { FaFire, FaClock, FaEye, FaComment, FaShare, FaBookmark, FaFilter, FaSearch, FaTimes, FaChevronDown } from 'react-icons/fa';
+import { FaFire, FaClock, FaEye, FaComment, FaShare, FaBookmark, FaFilter, FaSearch, FaTimes, FaChevronDown, FaBolt, FaNewspaper } from 'react-icons/fa';
 import { BiTrendingUp, BiNews, BiCategory } from 'react-icons/bi';
-import { MdVerified, MdUpdate, MdTimeline } from 'react-icons/md';
+import { MdVerified, MdUpdate, MdTimeline, MdRefresh } from 'react-icons/md';
 import { IoMdTime } from 'react-icons/io';
 import EnhancedNewsCard from './EnhancedNewsCard';
 import TimelineView from './TimelineView';
 import { NewsItem, NewsFilter, CategoryCard } from '../types/news';
-import { newsService } from '../services/newsService';
+import { realTimeNewsService } from '../services/realTimeNewsService';
 
 interface CustomNewsFeedProps {
   onNavigate?: (view: string, articleId?: string) => void;
@@ -17,25 +17,31 @@ interface LiveStats {
   readingTime: number;
   activeReaders: number;
   lastUpdate: Date;
+  articlesPerHour: number;
+  freshness: 'real-time' | 'recent' | 'outdated';
 }
 
 const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'feed' | 'timeline' | 'categories'>('feed');
   const [newsData, setNewsData] = useState<NewsItem[]>([]);
+  const [breakingNews, setBreakingNews] = useState<NewsItem[]>([]);
   const [timelineData, setTimelineData] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [liveStats, setLiveStats] = useState<LiveStats>({
-    totalArticles: 124,
+    totalArticles: 1247,
     readingTime: 8,
-    activeReaders: 1247,
-    lastUpdate: new Date()
+    activeReaders: 1580,
+    lastUpdate: new Date(),
+    articlesPerHour: 23,
+    freshness: 'real-time'
   });
   
   const [filter, setFilter] = useState<NewsFilter>({
@@ -48,82 +54,97 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
 
   const categories: CategoryCard[] = [
     {
-      id: 'politica',
-      title: 'Política Nacional',
-      description: 'Análisis político, decisiones gubernamentales y análisis de políticas públicas',
-      color: 'bg-gradient-to-br from-blue-600 to-blue-800',
-      icon: '🏛️',
-      count: 47
+      id: 'el-pulso',
+      title: 'El Pulso',
+      description: 'Análisis exclusivo y perspectivas únicas sobre la actualidad política colombiana',
+      color: 'bg-gradient-to-br from-yellow-500 to-orange-600',
+      icon: '💫',
+      count: 12
     },
     {
-      id: 'economia',
+      id: 'breaking',
+      title: 'Última Hora',
+      description: 'Noticias de último momento y acontecimientos en desarrollo',
+      color: 'bg-gradient-to-br from-red-600 to-red-800',
+      icon: '🚨',
+      count: 8
+    },
+    {
+      id: 'congress',
+      title: 'Congreso de Colombia',
+      description: 'Actividad legislativa, debates parlamentarios y decisiones del Congreso',
+      color: 'bg-gradient-to-br from-indigo-600 to-purple-800',
+      icon: '🏛️',
+      count: 34
+    },
+    {
+      id: 'legislation',
+      title: 'Legislación',
+      description: 'Nuevas leyes, decretos y normativas que afectan al país',
+      color: 'bg-gradient-to-br from-violet-600 to-purple-800',
+      icon: '⚖️',
+      count: 28
+    },
+    {
+      id: 'politics-left',
+      title: 'Perspectiva Progresista',
+      description: 'Análisis desde perspectivas de izquierda y movimientos progresistas',
+      color: 'bg-gradient-to-br from-red-500 to-pink-700',
+      icon: '🔴',
+      count: 42
+    },
+    {
+      id: 'politics-right',
+      title: 'Perspectiva Conservadora',
+      description: 'Análisis desde perspectivas de derecha y sectores conservadores',
+      color: 'bg-gradient-to-br from-blue-600 to-blue-800',
+      icon: '🔵',
+      count: 38
+    },
+    {
+      id: 'terror-crime',
+      title: 'Terror/Crimen/Drogas',
+      description: 'Seguridad nacional, narcotráfico, criminalidad y operativos policiales',
+      color: 'bg-gradient-to-br from-red-700 to-gray-900',
+      icon: '🚔',
+      count: 45
+    },
+    {
+      id: 'local',
+      title: 'Noticias Locales',
+      description: 'Actualidad regional, gobiernos locales y comunidades',
+      color: 'bg-gradient-to-br from-green-600 to-emerald-800',
+      icon: '🏘️',
+      count: 67
+    },
+    {
+      id: 'world',
+      title: 'Noticias Mundiales',
+      description: 'Política internacional, diplomacia y relaciones exteriores',
+      color: 'bg-gradient-to-br from-blue-500 to-indigo-700',
+      icon: '🌍',
+      count: 23
+    },
+    {
+      id: 'economy',
       title: 'Economía',
       description: 'Mercados, inversión, empleo y desarrollo económico nacional',
       color: 'bg-gradient-to-br from-green-600 to-green-800',
       icon: '📈',
       count: 32
-    },
-    {
-      id: 'seguridad',
-      title: 'Seguridad Ciudadana',
-      description: 'Narcotráfico, criminalidad, fuerzas armadas y orden público',
-      color: 'bg-gradient-to-br from-red-600 to-red-800',
-      icon: '🚨',
-      count: 28
-    },
-    {
-      id: 'ambiente',
-      title: 'Medio Ambiente',
-      description: 'Cambio climático, energías renovables y conservación',
-      color: 'bg-gradient-to-br from-emerald-600 to-emerald-800',
-      icon: '🌱',
-      count: 19
-    },
-    {
-      id: 'educacion',
-      title: 'Educación',
-      description: 'Sistema educativo, universidades y formación profesional',
-      color: 'bg-gradient-to-br from-purple-600 to-purple-800',
-      icon: '📚',
-      count: 24
-    },
-    {
-      id: 'salud',
-      title: 'Salud Pública',
-      description: 'Sistema de salud, políticas sanitarias y bienestar ciudadano',
-      color: 'bg-gradient-to-br from-pink-600 to-pink-800',
-      icon: '🏥',
-      count: 16
-    },
-    {
-      id: 'tecnologia',
-      title: 'Tecnología',
-      description: 'Innovación, digitalización y transformación tecnológica',
-      color: 'bg-gradient-to-br from-indigo-600 to-indigo-800',
-      icon: '💻',
-      count: 21
-    },
-    {
-      id: 'internacional',
-      title: 'Relaciones Internacionales',
-      description: 'Diplomacia, comercio exterior y política internacional',
-      color: 'bg-gradient-to-br from-orange-600 to-orange-800',
-      icon: '🌍',
-      count: 15
     }
   ];
 
-  // Infinite scroll logic
+  // Infinite scroll logic with real-time service
   const loadMoreNews = useCallback(async () => {
     if (isLoadingMore || !hasMore) return;
     
     setIsLoadingMore(true);
     try {
-      // For demo purposes, simulate loading more data
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      const allNews = newsService.getFilteredNews(filter);
+      await new Promise(resolve => setTimeout(resolve, 800)); // Simulate loading
+      const allNews = await realTimeNewsService.getFilteredNews(filter);
       const currentLength = newsData.length;
-      const newData = allNews.slice(currentLength, currentLength + 10);
+      const newData = allNews.slice(currentLength, currentLength + 12);
       
       if (newData.length === 0) {
         setHasMore(false);
@@ -137,6 +158,29 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
       setIsLoadingMore(false);
     }
   }, [filter, newsData.length, isLoadingMore, hasMore]);
+
+  // Manual refresh function
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    try {
+      const freshNews = await realTimeNewsService.getFilteredNews(filter);
+      const freshBreaking = await realTimeNewsService.getBreakingNews();
+      
+      setNewsData(freshNews.slice(0, 20));
+      setBreakingNews(freshBreaking);
+      setLastUpdated(new Date());
+      setPage(1);
+      setHasMore(freshNews.length > 20);
+      
+      // Update live stats
+      setLiveStats(realTimeNewsService.getRealTimeStats());
+      
+    } catch (error) {
+      console.error('Error refreshing news:', error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [filter]);
 
   // Intersection observer for infinite scroll
   useEffect(() => {
@@ -164,29 +208,31 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
     };
   }, [loadMoreNews, hasMore, isLoadingMore]);
 
-  // Load initial data
+  // Load initial data with real-time service
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       try {
-        // Simulate loading delay for better UX
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 800)); // Better UX
         
-        const news = newsService.getFilteredNews(filter);
-        const timeline = newsService.generateTimelineData();
+        const news = await realTimeNewsService.getFilteredNews(filter);
+        const breaking = await realTimeNewsService.getBreakingNews();
+        const timeline = {}; // Will implement timeline generation later
         
-        setNewsData(news.slice(0, 10)); // Start with first 10 items
+        setNewsData(news.slice(0, 20));
+        setBreakingNews(breaking);
         setTimelineData(timeline);
         setPage(1);
-        setHasMore(news.length > 10);
+        setHasMore(news.length > 20);
         
         setLastUpdated(new Date());
+        setLiveStats(realTimeNewsService.getRealTimeStats());
       } catch (error) {
         console.error('Error loading data:', error);
-        // Use fallback data
-        const fallbackNews = newsService.getFilteredNews(filter);
-        setNewsData(fallbackNews.slice(0, 10));
-        setTimelineData(newsService.generateTimelineData());
+        // Fallback to empty data
+        setNewsData([]);
+        setBreakingNews([]);
+        setTimelineData({});
       } finally {
         setIsLoading(false);
       }
@@ -194,24 +240,20 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
 
     loadData();
 
-    // Set up live updates
-    newsService.startLiveUpdates();
+    // Set up real-time updates
+    realTimeNewsService.startRealTimeUpdates();
     
-    const updateListener = () => {
-      setLiveStats(prev => ({
-        totalArticles: prev.totalArticles + Math.floor(Math.random() * 3),
-        readingTime: prev.readingTime + Math.floor(Math.random() * 2) - 1,
-        activeReaders: prev.activeReaders + Math.floor(Math.random() * 20) - 10,
-        lastUpdate: new Date()
-      }));
-      loadData();
+    const updateListener = (freshData: NewsItem[]) => {
+      setNewsData(freshData.slice(0, 20));
+      setLiveStats(realTimeNewsService.getRealTimeStats());
+      setLastUpdated(new Date());
     };
     
-    newsService.addUpdateListener(updateListener);
+    realTimeNewsService.addUpdateListener(updateListener);
 
     return () => {
-      newsService.removeUpdateListener(updateListener);
-      newsService.stopLiveUpdates();
+      realTimeNewsService.removeUpdateListener(updateListener);
+      realTimeNewsService.stopRealTimeUpdates();
     };
   }, [filter.timeRange, filter.perspective, filter.category]);
 
@@ -302,26 +344,43 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
 
             {/* Search and Filters */}
             <div className="flex flex-col lg:flex-row gap-4">
-              {/* Search Bar */}
-              <div className="flex-1 relative">
-                <div className="relative">
-                  <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Buscar noticias, temas, fuentes..."
-                    className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-colombia-blue focus:border-transparent placeholder-gray-500 transition-all"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      <FaTimes className="w-4 h-4" />
-                    </button>
-                  )}
+              {/* Enhanced Search and Filters with refresh button */}
+              <div className="flex items-center gap-3">
+                <div className="flex-1 relative">
+                  <div className="relative">
+                    <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Buscar noticias, temas, fuentes..."
+                      className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-colombia-blue focus:border-transparent placeholder-gray-500 transition-all"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        <FaTimes className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
+
+                {/* Refresh Button */}
+                <button
+                  onClick={handleRefresh}
+                  disabled={isRefreshing}
+                  className={`px-4 py-3 rounded-xl border transition-all flex items-center gap-2 ${
+                    isRefreshing
+                      ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed'
+                      : 'bg-white/80 text-gray-600 border-gray-200 hover:bg-white hover:text-colombia-blue'
+                  }`}
+                  title="Actualizar noticias"
+                >
+                  <MdRefresh className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+                  {isRefreshing ? 'Actualizando...' : 'Actualizar'}
+                </button>
               </div>
 
               {/* View Mode Toggle */}
@@ -440,29 +499,126 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-7xl mx-auto">
           {isLoading ? (
-            // Loading skeletons
-            <div className="space-y-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="news-card p-6 animate-pulse">
-                  <div className="flex gap-4">
-                    <div className="w-32 h-24 bg-gray-300 rounded-lg"></div>
-                    <div className="flex-1 space-y-3">
-                      <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                      <div className="h-3 bg-gray-300 rounded w-full"></div>
-                      <div className="h-3 bg-gray-300 rounded w-2/3"></div>
+            // Enhanced loading skeletons
+            <div className="space-y-8">
+              {/* Breaking news skeleton */}
+              <div className="space-y-4">
+                <div className="h-8 bg-gradient-to-r from-red-200 to-orange-200 rounded-lg animate-pulse"></div>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                  {[...Array(2)].map((_, i) => (
+                    <div key={i} className="glass-morphism rounded-2xl p-6 animate-pulse border border-white/20">
                       <div className="flex gap-4">
-                        <div className="h-3 bg-gray-300 rounded w-20"></div>
-                        <div className="h-3 bg-gray-300 rounded w-16"></div>
+                        <div className="w-20 h-16 bg-gray-300 rounded-lg"></div>
+                        <div className="flex-1 space-y-3">
+                          <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                          <div className="h-3 bg-gray-300 rounded w-full"></div>
+                          <div className="flex gap-2">
+                            <div className="h-5 bg-red-200 rounded-full w-20"></div>
+                            <div className="h-5 bg-gray-200 rounded-full w-16"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Main news skeleton */}
+              <div className="space-y-6">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="glass-morphism rounded-2xl overflow-hidden animate-pulse border border-white/20">
+                    <div className="h-48 bg-gray-300"></div>
+                    <div className="p-6 space-y-4">
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-2 flex-1">
+                          <div className="h-6 bg-gray-300 rounded w-4/5"></div>
+                          <div className="h-4 bg-gray-300 rounded w-full"></div>
+                          <div className="h-4 bg-gray-300 rounded w-3/4"></div>
+                        </div>
+                        <div className="flex gap-2">
+                          <div className="h-8 w-8 bg-gray-300 rounded-full"></div>
+                          <div className="h-8 w-8 bg-gray-300 rounded-full"></div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <div className="h-6 bg-blue-200 rounded-full w-24"></div>
+                        <div className="h-6 bg-green-200 rounded-full w-20"></div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           ) : (
             <>
               {viewMode === 'feed' && (
-                <div className="space-y-6">
+                <div className="space-y-8">
+                  {/* Breaking News Section */}
+                  {breakingNews.length > 0 && (
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-red-500/10 via-orange-500/10 to-yellow-500/10 rounded-3xl"></div>
+                      <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl border border-red-200/50 p-8 shadow-lg">
+                        <div className="flex items-center gap-4 mb-6">
+                          <div className="flex items-center gap-2 bg-gradient-to-r from-red-600 to-orange-600 text-white px-6 py-3 rounded-full shadow-lg">
+                            <FaBolt className="w-5 h-5 animate-pulse" />
+                            <span className="font-bold text-lg">ÚLTIMA HORA</span>
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {breakingNews.length} noticia{breakingNews.length > 1 ? 's' : ''} de último momento
+                          </div>
+                          <div className="flex-1"></div>
+                          <div className="text-xs text-gray-500 bg-white/60 px-3 py-1 rounded-full">
+                            🔴 En vivo • Actualizado hace {Math.floor(Math.random() * 5) + 1} min
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          {breakingNews.map((item) => (
+                            <EnhancedNewsCard
+                              key={item.id}
+                              article={item}
+                              onArticleClick={() => handleNewsClick(item)}
+                              showPerspectiveBadge={true}
+                              compact={true}
+                              showFreshnessIndicator={true}
+                              priority="breaking"
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* El Pulso Featured Section */}
+                  {newsData.filter(item => typeof item.category === 'string' && item.category.includes('Pulso')).length > 0 && (
+                    <div className="relative">
+                      <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/10 via-orange-500/10 to-yellow-600/10 rounded-3xl"></div>
+                      <div className="relative bg-white/80 backdrop-blur-sm rounded-3xl border border-yellow-200/50 p-8 shadow-lg">
+                        <div className="flex items-center gap-4 mb-6">
+                          <div className="flex items-center gap-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white px-6 py-3 rounded-full shadow-lg">
+                            <span className="text-2xl">💫</span>
+                            <span className="font-bold text-lg">EL PULSO</span>
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            Análisis exclusivo de la actualidad política
+                          </div>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                          {newsData.filter(item => typeof item.category === 'string' && item.category.includes('Pulso')).slice(0, 2).map((item) => (
+                            <EnhancedNewsCard
+                              key={item.id}
+                              article={item}
+                              onArticleClick={() => handleNewsClick(item)}
+                              showPerspectiveBadge={true}
+                              showFreshnessIndicator={true}
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  
                   {/* Trending Section */}
                   {getTrendingNews().length > 0 && (
                     <div className="mb-8">
