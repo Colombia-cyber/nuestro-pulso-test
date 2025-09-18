@@ -1,6 +1,10 @@
 import React, { useState, Suspense } from "react";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
+import ColombianHomepage from "./components/ColombianHomepage";
+import EnhancedPulseReels from "./components/EnhancedPulseReels";
+import ArticleDetail from "./components/ArticleDetail";
+import NewsSearch from "./components/NewsSearch";
 import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
@@ -49,10 +53,12 @@ function App() {
   const [currentView, setCurrentView] = useState('home');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [viewData, setViewData] = useState<any>(null);
 
-  const handleNavigate = (view: string) => {
+  const handleNavigate = (view: string, data?: any) => {
     setIsLoading(true);
     setError(null);
+    setViewData(data);
     
     // Simulate loading delay for better UX
     setTimeout(() => {
@@ -80,11 +86,33 @@ function App() {
 
     try {
       switch (currentView) {
+        case 'enhanced-reels':
+          return <EnhancedPulseReels onNavigate={handleNavigate} />;
         case 'reels':
           return <PulseReels />;
+        case 'article-detail':
+          return viewData?.articleId ? (
+            <ArticleDetail 
+              articleId={viewData.articleId} 
+              onClose={() => handleNavigate('home')}
+              onNavigate={handleNavigate}
+            />
+          ) : <HeroSection onNavigate={handleNavigate} />;
+        case 'reel-detail':
+          return <EnhancedPulseReels onNavigate={handleNavigate} />;
+        case 'reel-comments':
+          return <Comments />;
+        case 'news-search':
+          return <NewsSearch 
+            searchType={viewData?.type || 'news'} 
+            initialQuery={viewData?.query || ''}
+            onNavigate={handleNavigate}
+          />;
+        case 'news-section':
+          return <CustomNewsFeed onNavigate={handleNavigate} />;
         case 'feeds':
         case 'news':
-          return <CustomNewsFeed />;
+          return <CustomNewsFeed onNavigate={handleNavigate} />;
         case 'congress':
           return <CongressTracker />;
         case 'elections':
@@ -104,7 +132,7 @@ function App() {
           return <SearchPage />;
         case 'home':
         default:
-          return <HeroSection onNavigate={handleNavigate} />;
+          return <ColombianHomepage onNavigate={handleNavigate} />;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
@@ -114,7 +142,13 @@ function App() {
 
   const getLoadingMessage = (view: string): string => {
     const messages: Record<string, string> = {
+      'enhanced-reels': 'Cargando Reels mejorados...',
       'reels': 'Cargando Reels...',
+      'article-detail': 'Cargando artículo...',
+      'reel-detail': 'Cargando video...',
+      'reel-comments': 'Cargando comentarios...',
+      'news-search': 'Preparando búsqueda de noticias...',
+      'news-section': 'Cargando sección de noticias...',
       'feeds': 'Cargando noticias...',
       'news': 'Cargando noticias...',
       'congress': 'Cargando actividad del Congreso...',
