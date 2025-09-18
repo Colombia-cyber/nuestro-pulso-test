@@ -77,6 +77,7 @@ export default {
         'float': 'float 3s ease-in-out infinite',
         'shimmer': 'shimmer 2s linear infinite',
         'gradient': 'gradient 15s ease infinite',
+        'marquee': 'marquee 20s linear infinite',
       },
       keyframes: {
         fadeIn: {
@@ -114,6 +115,10 @@ export default {
         gradient: {
           '0%, 100%': { backgroundPosition: '0% 50%' },
           '50%': { backgroundPosition: '100% 50%' }
+        },
+        marquee: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(-100%)' }
         }
       },
       backdropBlur: {
