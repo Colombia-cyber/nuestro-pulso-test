@@ -3,7 +3,8 @@ import { FaSearch, FaUsers, FaChartLine, FaArrowRight, FaHistory } from 'react-i
 import { BiPoll, BiTrendingUp } from 'react-icons/bi';
 import { MdLiveTv, MdTopic } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
-import GoogleClassSearchBar from '../components/GoogleClassSearchBar';
+import UniversalSearchBar from '../components/UniversalSearchBar';
+import { NewsTopic } from '../config/newsTopics';
 
 interface ModernHomepageProps {
   onNavigate: (view: string) => void;
@@ -142,13 +143,21 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
     onNavigate(action);
   };
 
-  const handleSearch = (query: string, tab: 'world' | 'local') => {
+  const handleSearch = (query: string, category: 'local' | 'world', topic?: NewsTopic) => {
     // Navigate to search with query parameters
     const params = new URLSearchParams();
     params.set('q', query);
-    params.set('tab', tab);
+    params.set('category', category);
+    if (topic) {
+      params.set('topic', topic.id);
+    }
     window.history.pushState(null, '', `/search?${params.toString()}`);
     onNavigate('search');
+  };
+
+  const handleTopicSelect = (topic: NewsTopic) => {
+    // Can be used for analytics or other actions when a topic is selected
+    console.log('Topic selected:', topic);
   };
 
   const formatTime = (date: Date) => {
@@ -218,8 +227,9 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
 
             {/* Universal Search */}
             <div className="max-w-4xl mx-auto mb-16">
-              <GoogleClassSearchBar
+              <UniversalSearchBar
                 onSearch={handleSearch}
+                onTopicSelect={handleTopicSelect}
                 placeholder="Buscar en Colombia y el mundo..."
                 autoFocus={false}
                 className="shadow-2xl"

@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { FaHeart, FaComment, FaShare, FaBookmark, FaPlay, FaPause, FaVolumeUp, FaVolumeMute, FaExpand, FaEllipsisV } from 'react-icons/fa';
+import { FaHeart, FaComment, FaShare, FaBookmark, FaPlay, FaPause, FaVolumeUp, FaVolumeMute, FaExpand, FaEllipsisV, FaFilter, FaFire } from 'react-icons/fa';
 import { BiTrendingUp, BiHash } from 'react-icons/bi';
 import { MdVerified, MdLiveTv } from 'react-icons/md';
 import { IoMdTime, IoMdEye } from 'react-icons/io';
 import { getVisibleCategories } from '../config/categories';
 import { PulseReel } from '../types/pulseReel';
 import { pulseReels as samplePulseReels } from '../data/pulseReels';
+import { getAllTopics, NewsTopic } from '../config/newsTopics';
 
 // Safely get environment variable with fallback
 const getEnvVar = (key: string, fallback = ''): string => {
@@ -90,6 +91,7 @@ const convertToVerticalReel = (pulseReel: PulseReel, index: number): VerticalRee
 const PulseReels: React.FC = () => {
   const [currentReelIndex, setCurrentReelIndex] = useState(0);
   const [reels, setReels] = useState<VerticalReel[]>([]);
+  const [filteredReels, setFilteredReels] = useState<VerticalReel[]>([]);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -98,9 +100,20 @@ const PulseReels: React.FC = () => {
   const [followedUsers, setFollowedUsers] = useState<Set<string>>(new Set());
   const [likedReels, setLikedReels] = useState<Set<string>>(new Set());
   const [bookmarkedReels, setBookmarkedReels] = useState<Set<string>>(new Set());
+  const [activeFilter, setActiveFilter] = useState<'all' | 'trending' | 'recent' | 'topic'>('all');
+  const [selectedTopic, setSelectedTopic] = useState<NewsTopic | null>(null);
+  const [showComments, setShowComments] = useState(false);
 
   const containerRef = useRef<HTMLDivElement>(null);
   const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
+
+  // Filter options
+  const filterOptions = [
+    { id: 'all', name: 'Todos', icon: '📺', color: 'bg-gray-500' },
+    { id: 'trending', name: 'Tendencias', icon: '🔥', color: 'bg-red-500' },
+    { id: 'recent', name: 'Recientes', icon: '⏰', color: 'bg-blue-500' },
+    { id: 'topic', name: 'Por tema', icon: '🏷️', color: 'bg-purple-500' }
+  ];
 
   // Mock additional reels data
   const additionalReels: Partial<VerticalReel>[] = [
@@ -172,18 +185,53 @@ const PulseReels: React.FC = () => {
       }));
 
       setReels([...convertedReels, ...enhancedReels]);
+      setFilteredReels([...convertedReels, ...enhancedReels]);
       setIsLoading(false);
     };
 
     loadReels();
   }, []);
 
+  // Filter reels based on active filter and selected topic
+  useEffect(() => {
+    let filtered = [...reels];
+
+    switch (activeFilter) {
+      case 'trending':
+        // Sort by likes and views
+        filtered = filtered.sort((a, b) => (b.likes + b.views * 0.1) - (a.likes + a.views * 0.1));
+        break;
+      case 'recent':
+        // Sort by timestamp
+        filtered = filtered.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+        break;
+      case 'topic':
+        if (selectedTopic) {
+          filtered = filtered.filter(reel => 
+            reel.hashtags.some(tag => 
+              selectedTopic.keywords.some(keyword => 
+                tag.toLowerCase().includes(keyword.toLowerCase())
+              )
+            ) || reel.category === selectedTopic.id
+          );
+        }
+        break;
+      default:
+        // Keep original order for 'all'
+        break;
+    }
+
+    setFilteredReels(filtered);
+    setCurrentReelIndex(0);
+  }, [activeFilter, selectedTopic, reels]);
+
+  const currentReel = filteredReels[currentReelIndex];
   // Handle vertical scroll/swipe navigation
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.key === 'ArrowUp' && currentReelIndex > 0) {
         setCurrentReelIndex(prev => prev - 1);
-      } else if (e.key === 'ArrowDown' && currentReelIndex < reels.length - 1) {
+      } else if (e.key === 'ArrowDown' && currentReelIndex < filteredReels.length - 1) {
         setCurrentReelIndex(prev => prev + 1);
       } else if (e.key === ' ') {
         e.preventDefault();
@@ -195,7 +243,7 @@ const PulseReels: React.FC = () => {
 
     const handleScroll = (e: WheelEvent) => {
       e.preventDefault();
-      if (e.deltaY > 0 && currentReelIndex < reels.length - 1) {
+      if (e.deltaY > 0 && currentReelIndex < filteredReels.length - 1) {
         setCurrentReelIndex(prev => prev + 1);
       } else if (e.deltaY < 0 && currentReelIndex > 0) {
         setCurrentReelIndex(prev => prev - 1);
@@ -213,7 +261,7 @@ const PulseReels: React.FC = () => {
         containerRef.current.removeEventListener('wheel', handleScroll);
       }
     };
-  }, [currentReelIndex, reels.length]);
+  }, [currentReelIndex, filteredReels.length]);
 
   // Auto-hide UI after inactivity
   useEffect(() => {
@@ -240,7 +288,17 @@ const PulseReels: React.FC = () => {
     };
   }, []);
 
-  const currentReel = reels[currentReelIndex];
+  const handleFilterChange = (filter: 'all' | 'trending' | 'recent' | 'topic') => {
+    setActiveFilter(filter);
+    if (filter !== 'topic') {
+      setSelectedTopic(null);
+    }
+  };
+
+  const handleTopicSelect = (topic: NewsTopic) => {
+    setSelectedTopic(topic);
+    setActiveFilter('topic');
+  };
 
   const handleLike = (reelId: string) => {
     setLikedReels(prev => {
@@ -276,6 +334,10 @@ const PulseReels: React.FC = () => {
       }
       return newSet;
     });
+  };
+
+  const handleComment = () => {
+    setShowComments(!showComments);
   };
 
   const formatTimeAgo = (timestamp: Date) => {
@@ -327,6 +389,54 @@ const PulseReels: React.FC = () => {
       className="fixed inset-0 bg-black overflow-hidden select-none"
       style={{ height: '100vh', width: '100vw' }}
     >
+      {/* Filter Bar */}
+      <div className={`absolute top-4 left-4 right-4 z-40 transition-opacity duration-300 ${showActions ? 'opacity-100' : 'opacity-0'}`}>
+        <div className="flex items-center justify-between">
+          {/* Filter Buttons */}
+          <div className="flex items-center gap-2">
+            {filterOptions.map((filter) => (
+              <button
+                key={filter.id}
+                onClick={() => handleFilterChange(filter.id as any)}
+                className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium transition-all ${
+                  activeFilter === filter.id
+                    ? `${filter.color} text-white shadow-lg`
+                    : 'bg-black/30 text-white/80 hover:bg-black/50'
+                }`}
+              >
+                <span>{filter.icon}</span>
+                <span className="hidden sm:inline">{filter.name}</span>
+              </button>
+            ))}
+          </div>
+
+          {/* Topic Selector */}
+          {activeFilter === 'topic' && (
+            <div className="flex items-center gap-2">
+              <select
+                value={selectedTopic?.id || ''}
+                onChange={(e) => {
+                  const topic = getAllTopics().find(t => t.id === e.target.value);
+                  if (topic) handleTopicSelect(topic);
+                }}
+                className="bg-black/50 text-white border border-white/30 rounded-lg px-3 py-2 text-sm"
+              >
+                <option value="">Seleccionar tema...</option>
+                {getAllTopics().map((topic) => (
+                  <option key={topic.id} value={topic.id}>
+                    {topic.emoji} {topic.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {/* Reel Counter */}
+          <div className="bg-black/50 text-white px-3 py-2 rounded-full text-sm">
+            {currentReelIndex + 1} / {filteredReels.length}
+          </div>
+        </div>
+      </div>
       {/* Video Background */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="relative w-full h-full max-w-md mx-auto bg-gradient-to-br from-purple-900 via-blue-900 to-green-900">
@@ -426,7 +536,10 @@ const PulseReels: React.FC = () => {
 
           {/* Comment */}
           <div className="text-center">
-            <button className="block mx-auto mb-1">
+            <button 
+              onClick={handleComment}
+              className="block mx-auto mb-1"
+            >
               <FaComment className="w-7 h-7 text-white" />
             </button>
             <div className="text-white text-xs">{formatCount(currentReel.comments)}</div>
@@ -519,11 +632,11 @@ const PulseReels: React.FC = () => {
             ↑
           </button>
           <button
-            onClick={() => currentReelIndex < reels.length - 1 && setCurrentReelIndex(prev => prev + 1)}
+            onClick={() => currentReelIndex < filteredReels.length - 1 && setCurrentReelIndex(prev => prev + 1)}
             className={`block p-3 rounded-full ${
-              currentReelIndex === reels.length - 1 ? 'bg-gray-600 cursor-not-allowed' : 'bg-black/50 hover:bg-black/70'
+              currentReelIndex === filteredReels.length - 1 ? 'bg-gray-600 cursor-not-allowed' : 'bg-black/50 hover:bg-black/70'
             } text-white transition-colors`}
-            disabled={currentReelIndex === reels.length - 1}
+            disabled={currentReelIndex === filteredReels.length - 1}
           >
             ↓
           </button>
@@ -550,9 +663,33 @@ const PulseReels: React.FC = () => {
       <div className="absolute bottom-0 left-0 right-0 h-1 bg-black/30 z-30">
         <div
           className="h-full bg-colombia-yellow transition-all duration-300"
-          style={{ width: `${((currentReelIndex + 1) / reels.length) * 100}%` }}
+          style={{ width: `${((currentReelIndex + 1) / filteredReels.length) * 100}%` }}
         />
       </div>
+
+      {/* Comments Overlay */}
+      {showComments && (
+        <div className="absolute inset-0 bg-black/80 z-40 flex items-end">
+          <div className="w-full max-h-2/3 bg-white rounded-t-3xl">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h3 className="text-xl font-bold text-gray-900">
+                💬 Comentarios
+              </h3>
+              <button
+                onClick={() => setShowComments(false)}
+                className="p-2 rounded-full hover:bg-gray-100"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-4 max-h-96 overflow-y-auto">
+              <p className="text-gray-600 text-center py-8">
+                Los comentarios se integrarán con el Community Hub
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Help Overlay */}
       <div className="absolute top-1/2 left-4 transform -translate-y-1/2 text-white text-xs space-y-1 opacity-50">
