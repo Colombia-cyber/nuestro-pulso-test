@@ -1,16 +1,21 @@
 import React, { useState, Suspense } from "react";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
+import ModernHomepage from "./components/ModernHomepage";
 import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
+import EnhancedSearchPage from "./pages/EnhancedSearch";
 import PulseReels from "./components/PulseReels";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
 import LiveChat from "./components/LiveChat";
 import Debate from "./components/Debate";
 import Survey from "./components/Survey";
+
+// Import modern styles
+import "./styles/modern.css";
 
 // Loading component for better UX
 const LoadingSpinner: React.FC<{ message?: string }> = ({ message = "Cargando..." }) => (
@@ -101,10 +106,10 @@ function App() {
         case 'community-hub':
           return <CommunityHub />;
         case 'search':
-          return <SearchPage />;
+          return <EnhancedSearchPage />;
         case 'home':
         default:
-          return <HeroSection onNavigate={handleNavigate} />;
+          return <ModernHomepage onNavigate={handleNavigate} />;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
