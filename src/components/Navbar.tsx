@@ -76,8 +76,17 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
             <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
               <div className="relative w-full">
                 <UniversalSearchBar 
-                  compact={true}
-                  onResults={() => handleNavClick('search')}
+                  onSearch={(query, category, topic) => {
+                    // Navigate to search with parameters
+                    const params = new URLSearchParams();
+                    params.set('q', query);
+                    params.set('category', category);
+                    if (topic) params.set('topic', topic.id);
+                    window.history.pushState(null, '', `/search?${params.toString()}`);
+                    handleNavClick('search');
+                  }}
+                  onTopicSelect={(topic) => console.log('Topic selected:', topic)}
+                  className="scale-75 origin-left"
                 />
               </div>
             </div>
@@ -326,10 +335,17 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
             <div className="p-6">
               <UniversalSearchBar 
                 autoFocus={true}
-                onResults={() => {
+                onSearch={(query, category, topic) => {
+                  // Navigate to search with parameters
+                  const params = new URLSearchParams();
+                  params.set('q', query);
+                  params.set('category', category);
+                  if (topic) params.set('topic', topic.id);
+                  window.history.pushState(null, '', `/search?${params.toString()}`);
                   setShowSearchModal(false);
                   handleNavClick('search');
                 }}
+                onTopicSelect={(topic) => console.log('Topic selected:', topic)}
               />
             </div>
           </div>

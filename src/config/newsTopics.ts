@@ -1,0 +1,233 @@
+export interface NewsTopic {
+  id: string;
+  name: string;
+  emoji: string;
+  description: string;
+  category: 'local' | 'world';
+  perspective?: 'left' | 'right' | 'balanced';
+  color: string;
+  keywords: string[];
+}
+
+export const localTopics: NewsTopic[] = [
+  {
+    id: 'terror-news',
+    name: 'Terror News',
+    emoji: '⚠️',
+    description: 'Alertas y noticias de seguridad nacional',
+    category: 'local',
+    color: 'from-red-600 to-red-800',
+    keywords: ['terror', 'seguridad', 'amenaza', 'atentado', 'violencia']
+  },
+  {
+    id: 'gustavo-petro',
+    name: 'Gustavo Petro',
+    emoji: '🇨🇴',
+    description: 'Noticias sobre el presidente y gobierno nacional',
+    category: 'local',
+    color: 'from-blue-600 to-blue-800',
+    keywords: ['petro', 'presidente', 'gobierno', 'casa de nariño']
+  },
+  {
+    id: 'drugs-crime',
+    name: 'Drugs & Crime',
+    emoji: '🚔',
+    description: 'Narcotráfico, crimen organizado y justicia',
+    category: 'local',
+    color: 'from-red-500 to-orange-600',
+    keywords: ['drogas', 'narcotráfico', 'crimen', 'delincuencia', 'justicia']
+  },
+  {
+    id: 'legislation',
+    name: 'Legislation',
+    emoji: '⚖️',
+    description: 'Leyes, decretos y normativas',
+    category: 'local',
+    color: 'from-purple-600 to-purple-800',
+    keywords: ['ley', 'decreto', 'legislación', 'normativa', 'jurídico']
+  },
+  {
+    id: 'congress',
+    name: 'Congress of Colombia',
+    emoji: '🏛️',
+    description: 'Actividad del Congreso de la República',
+    category: 'local',
+    color: 'from-indigo-600 to-indigo-800',
+    keywords: ['congreso', 'senado', 'cámara', 'representantes', 'legislativo']
+  },
+  {
+    id: 'politics',
+    name: 'Politics',
+    emoji: '🗳️',
+    description: 'Política nacional y partidos',
+    category: 'local',
+    color: 'from-green-600 to-green-800',
+    keywords: ['política', 'partido', 'elecciones', 'campaña', 'democracia']
+  },
+  {
+    id: 'wealth',
+    name: 'Wealth',
+    emoji: '💰',
+    description: 'Economía, finanzas y desarrollo',
+    category: 'local',
+    color: 'from-yellow-600 to-yellow-800',
+    keywords: ['economía', 'finanzas', 'riqueza', 'desarrollo', 'inversión']
+  },
+  {
+    id: 'employment',
+    name: 'Employment',
+    emoji: '💼',
+    description: 'Trabajo, empleo y oportunidades laborales',
+    category: 'local',
+    color: 'from-teal-600 to-teal-800',
+    keywords: ['empleo', 'trabajo', 'laboral', 'desempleo', 'oportunidades']
+  },
+  {
+    id: 'issues',
+    name: 'Issues',
+    emoji: '⚡',
+    description: 'Problemas sociales y desafíos nacionales',
+    category: 'local',
+    color: 'from-orange-600 to-red-600',
+    keywords: ['problemas', 'crisis', 'desafíos', 'social', 'conflicto']
+  }
+];
+
+export const worldTopics: NewsTopic[] = [
+  {
+    id: 'world-terror',
+    name: 'Terror News',
+    emoji: '🌍',
+    description: 'Terrorismo y seguridad mundial',
+    category: 'world',
+    color: 'from-red-600 to-red-800',
+    keywords: ['terror', 'terrorism', 'security', 'international']
+  },
+  {
+    id: 'world-leaders',
+    name: 'World Leaders',
+    emoji: '👥',
+    description: 'Líderes mundiales y diplomacia',
+    category: 'world',
+    color: 'from-blue-600 to-blue-800',
+    keywords: ['leaders', 'diplomacy', 'summit', 'international']
+  },
+  {
+    id: 'world-drugs-crime',
+    name: 'Drugs & Crime',
+    emoji: '🌐',
+    description: 'Crimen internacional y narcotráfico',
+    category: 'world',
+    color: 'from-red-500 to-orange-600',
+    keywords: ['drugs', 'crime', 'international', 'trafficking']
+  },
+  {
+    id: 'world-legislation',
+    name: 'Legislation',
+    emoji: '📜',
+    description: 'Leyes y tratados internacionales',
+    category: 'world',
+    color: 'from-purple-600 to-purple-800',
+    keywords: ['law', 'treaty', 'international', 'legislation']
+  },
+  {
+    id: 'world-politics',
+    name: 'Politics',
+    emoji: '🌎',
+    description: 'Política internacional',
+    category: 'world',
+    color: 'from-green-600 to-green-800',
+    keywords: ['politics', 'international', 'election', 'democracy']
+  },
+  {
+    id: 'world-wealth',
+    name: 'Wealth',
+    emoji: '💎',
+    description: 'Economía global y mercados',
+    category: 'world',
+    color: 'from-yellow-600 to-yellow-800',
+    keywords: ['economy', 'global', 'markets', 'finance']
+  },
+  {
+    id: 'world-employment',
+    name: 'Employment',
+    emoji: '🌐',
+    description: 'Mercado laboral mundial',
+    category: 'world',
+    color: 'from-teal-600 to-teal-800',
+    keywords: ['employment', 'jobs', 'global', 'labor']
+  },
+  {
+    id: 'world-issues',
+    name: 'Issues',
+    emoji: '🔥',
+    description: 'Crisis y problemas globales',
+    category: 'world',
+    color: 'from-orange-600 to-red-600',
+    keywords: ['crisis', 'global', 'issues', 'problems']
+  }
+];
+
+export const perspectiveTopics: NewsTopic[] = [
+  {
+    id: 'left-wing',
+    name: 'Left Wing',
+    emoji: '🔵',
+    description: 'Perspectiva progresista y de izquierda',
+    category: 'local',
+    perspective: 'left',
+    color: 'from-blue-500 to-blue-700',
+    keywords: ['progresista', 'izquierda', 'social', 'igualdad']
+  },
+  {
+    id: 'right-wing',
+    name: 'Right Wing',
+    emoji: '🔴',
+    description: 'Perspectiva conservadora y de derecha',
+    category: 'local',
+    perspective: 'right',
+    color: 'from-red-500 to-red-700',
+    keywords: ['conservador', 'derecha', 'tradicional', 'libertad']
+  },
+  {
+    id: 'world-left-wing',
+    name: 'Left Wing',
+    emoji: '🌍',
+    description: 'Perspectiva progresista mundial',
+    category: 'world',
+    perspective: 'left',
+    color: 'from-blue-500 to-blue-700',
+    keywords: ['progressive', 'left', 'social', 'equality']
+  },
+  {
+    id: 'world-right-wing',
+    name: 'Right Wing',
+    emoji: '🌎',
+    description: 'Perspectiva conservadora mundial',
+    category: 'world',
+    perspective: 'right',
+    color: 'from-red-500 to-red-700',
+    keywords: ['conservative', 'right', 'traditional', 'liberty']
+  }
+];
+
+export const getAllTopics = (): NewsTopic[] => {
+  return [...localTopics, ...worldTopics, ...perspectiveTopics];
+};
+
+export const getTopicsByCategory = (category: 'local' | 'world'): NewsTopic[] => {
+  return getAllTopics().filter(topic => topic.category === category);
+};
+
+export const getTopicById = (id: string): NewsTopic | undefined => {
+  return getAllTopics().find(topic => topic.id === id);
+};
+
+export const searchTopicsByKeyword = (keyword: string): NewsTopic[] => {
+  const searchTerm = keyword.toLowerCase();
+  return getAllTopics().filter(topic => 
+    topic.keywords.some(k => k.toLowerCase().includes(searchTerm)) ||
+    topic.name.toLowerCase().includes(searchTerm) ||
+    topic.description.toLowerCase().includes(searchTerm)
+  );
+};
