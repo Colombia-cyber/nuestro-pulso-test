@@ -71,7 +71,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
       id: 'search',
       title: 'Búsqueda Universal',
       description: 'Explora mundo y Colombia',
-      icon: '🔍',
+      icon: 'SEARCH',
       gradient: 'from-blue-500 via-purple-500 to-pink-500',
       action: 'search',
       count: 'Mundial + Local'
@@ -80,7 +80,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
       id: 'news',
       title: 'Noticias',
       description: 'Información balanceada',
-      icon: '📰',
+      icon: 'NEWS',
       gradient: 'from-green-500 via-teal-500 to-blue-500',
       action: 'feeds',
       count: '+47 hoy',
@@ -90,7 +90,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
       id: 'polls',
       title: 'Encuestas',
       description: 'Voz ciudadana',
-      icon: '📊',
+      icon: 'POLLS',
       gradient: 'from-purple-500 via-pink-500 to-red-500',
       action: 'surveys',
       count: '12 activas',
@@ -100,7 +100,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
       id: 'debates',
       title: 'Debates',
       description: 'Conversación cívica',
-      icon: '🗣️',
+      icon: 'DEBATE',
       gradient: 'from-orange-500 via-red-500 to-pink-500',
       action: 'debates',
       count: '156 activos',
@@ -110,7 +110,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
       id: 'congress',
       title: 'Congreso',
       description: 'Seguimiento legislativo',
-      icon: '🏛️',
+      icon: 'CONGRESS',
       gradient: 'from-indigo-500 via-blue-500 to-teal-500',
       action: 'congress',
       count: 'En sesión'
@@ -119,7 +119,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
       id: 'reels',
       title: 'Reels',
       description: 'Videos informativos',
-      icon: '🎬',
+      icon: 'REELS',
       gradient: 'from-pink-500 via-rose-500 to-orange-500',
       action: 'reels',
       count: '156 videos'
@@ -279,15 +279,15 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
             {/* Live Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-16">
               {[
-                { icon: '👥', value: liveStats.onlineUsers.toLocaleString(), label: 'Usuarios activos', color: 'blue' },
-                { icon: '📊', value: liveStats.activePolls, label: 'Encuestas vivas', color: 'purple' },
-                { icon: '📰', value: liveStats.newsUpdates, label: 'Noticias hoy', color: 'green' },
-                { icon: '💬', value: liveStats.discussions, label: 'Debates abiertos', color: 'orange' }
+                { icon: 'USERS', value: liveStats.onlineUsers.toLocaleString(), label: 'Usuarios activos', color: 'blue' },
+                { icon: 'POLLS', value: liveStats.activePolls, label: 'Encuestas vivas', color: 'purple' },
+                { icon: 'NEWS', value: liveStats.newsUpdates, label: 'Noticias hoy', color: 'green' },
+                { icon: 'CHAT', value: liveStats.discussions, label: 'Debates abiertos', color: 'orange' }
               ].map((stat, index) => (
                 <div key={index} className="glass-modern rounded-2xl p-6 text-center border border-white/20 backdrop-blur-xl hover:scale-105 transition-transform duration-300">
-                  <div className="text-3xl mb-2">{stat.icon}</div>
+                  <div className="text-sm font-black tracking-widest text-gray-600 mb-2">{stat.icon}</div>
                   <div className={`text-2xl font-bold mb-1 text-${stat.color}-600`}>{stat.value}</div>
-                  <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
+                  <div className="text-sm text-gray-600 font-bold">{stat.label}</div>
                 </div>
               ))}
             </div>
@@ -326,20 +326,24 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
                 {/* Content */}
                 <div className="relative z-10">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="text-4xl">{action.icon}</div>
+                    <div className="px-4 py-2 bg-white/20 rounded-xl backdrop-blur-sm">
+                      <span className="text-sm font-black tracking-widest text-white">
+                        {action.icon}
+                      </span>
+                    </div>
                     {action.trend && (
-                      <div className="text-sm font-bold px-2 py-1 bg-white/20 rounded-full">
-                        {action.trend === 'up' ? '📈' : '📊'}
+                      <div className="text-sm font-bold px-3 py-1 bg-white/20 rounded-full">
+                        {action.trend === 'up' ? 'TRENDING' : 'STATS'}
                       </div>
                     )}
                   </div>
                   
-                  <h3 className="text-2xl font-bold mb-2">{action.title}</h3>
-                  <p className="text-white/90 mb-4 text-lg">{action.description}</p>
+                  <h3 className="text-2xl font-black mb-2 tracking-tight">{action.title}</h3>
+                  <p className="text-white/90 mb-4 text-lg font-medium">{action.description}</p>
                   
                   {action.count && (
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-bold bg-white/20 px-3 py-1 rounded-full">
+                      <span className="text-sm font-bold bg-white/20 px-4 py-2 rounded-full">
                         {action.count}
                       </span>
                       <FaArrowRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transform translate-x-2 group-hover:translate-x-0 transition-all duration-300" />
@@ -360,28 +364,28 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Category Selector */}
+          {/* Category Selector - TEXT-ONLY */}
           <div className="flex justify-center mb-8">
-            <div className="flex items-center bg-white rounded-2xl p-2 shadow-lg border border-gray-200">
+            <div className="flex items-center bg-white rounded-2xl p-3 shadow-lg border border-gray-200">
               <button
                 onClick={() => setSelectedNewsCategory('local')}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+                className={`flex items-center gap-3 px-8 py-4 rounded-xl font-black transition-all duration-300 ${
                   selectedNewsCategory === 'local'
-                    ? 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white shadow-lg'
-                    : 'text-gray-600 hover:bg-gray-50'
+                    ? 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white shadow-xl scale-105'
+                    : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                🇨🇴 Colombia
+                <span className="text-lg font-extrabold tracking-wide">COLOMBIA LOCAL</span>
               </button>
               <button
                 onClick={() => setSelectedNewsCategory('world')}
-                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+                className={`flex items-center gap-3 px-8 py-4 rounded-xl font-black transition-all duration-300 ${
                   selectedNewsCategory === 'world'
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
-                    : 'text-gray-600 hover:bg-gray-50'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-xl scale-105'
+                    : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                🌍 Mundo
+                <span className="text-lg font-extrabold tracking-wide">MUNDO GLOBAL</span>
               </button>
             </div>
           </div>
