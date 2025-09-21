@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaGlobe, FaMapMarkerAlt, FaTimes, FaFilter } from 'react-icons/fa';
 import { BiTrendingUp } from 'react-icons/bi';
-import { NewsTopic, getAllTopics, searchTopicsByKeyword } from '../config/newsTopics';
+import { NewsTopic, getAllTopics, searchTopicsByKeyword, getPriorityTopics } from '../config/newsTopics';
+import TopicTabs from './TopicTabs';
 
 interface UniversalSearchBarProps {
   onSearch: (query: string, category: 'local' | 'world', topic?: NewsTopic) => void;
@@ -107,14 +108,14 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
     setShowTopics(false);
     
     // DEDICATED PAGE NAVIGATION: Left Wing and Right Wing open in-app pages
-    if (topic.id === 'left-wing' || topic.id === 'world-left-wing') {
+    if (topic.id === 'izquierda-politica' || topic.id === 'left-wing') {
       // Navigate to dedicated Left Wing page
       window.history.pushState(null, '', '/left-wing');
       window.dispatchEvent(new CustomEvent('navigate', { detail: 'left-wing' }));
       return;
     }
     
-    if (topic.id === 'right-wing' || topic.id === 'world-right-wing') {
+    if (topic.id === 'derecha-politica' || topic.id === 'right-wing' || topic.id === 'right-wing-english') {
       // Navigate to dedicated Right Wing page
       window.history.pushState(null, '', '/right-wing');
       window.dispatchEvent(new CustomEvent('navigate', { detail: 'right-wing' }));
@@ -316,10 +317,21 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
         )}
       </div>
 
+      {/* Priority Topic Tabs - NEW PROMINENT SECTION */}
+      <div className="mt-6">
+        <TopicTabs
+          activeCategory={selectedCategory}
+          selectedTopic={selectedTopic}
+          onTopicClick={handleTopicClick}
+          className="priority-topics-section"
+        />
+      </div>
+
       {/* Quick Topic Pills - CLEAN, BOLD, TEXT-ONLY */}
       <div className="mt-4 flex flex-wrap gap-3">
         {getAllTopics()
           .filter(topic => topic.category === selectedCategory)
+          .filter(topic => !getPriorityTopics(selectedCategory).some(p => p.id === topic.id))
           .slice(0, 6)
           .map((topic) => (
             <button
