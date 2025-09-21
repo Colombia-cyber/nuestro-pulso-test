@@ -3,6 +3,7 @@ import { FaSearch, FaFilter, FaGlobe, FaMapMarkerAlt, FaCalendarAlt, FaSort, FaI
 import { MdClear, MdImage, MdVideoLibrary, MdShoppingCart, MdWeb } from 'react-icons/md';
 import { BiNews } from 'react-icons/bi';
 import { SearchFilters } from '../types/search';
+import { getFiltersForMode, LOCAL_FILTERS, MUNDO_FILTERS } from '../data/searchSources';
 
 
 
@@ -19,6 +20,8 @@ interface GoogleClassSearchBarProps {
   className?: string;
   placeholder?: string;
   autoFocus?: boolean;
+  activeTab?: 'world' | 'local';
+  onTabChange?: (tab: 'world' | 'local') => void;
 }
 
 const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
@@ -26,10 +29,12 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
   onResultsChange,
   className = '',
   placeholder = 'Buscar en mundo y Colombia...',
-  autoFocus = false
+  autoFocus = false,
+  activeTab: parentActiveTab = 'local',
+  onTabChange
 }) => {
   const [query, setQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'world' | 'local'>('local');
+  const [activeTab, setActiveTab] = useState<'world' | 'local'>(parentActiveTab);
   const [showFilters, setShowFilters] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -52,15 +57,15 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
   const searchTabs: SearchTab[] = [
     {
       id: 'local',
-      name: 'Local Colombia',
+      name: 'Local Colombia 🇨🇴',
       icon: <FaMapMarkerAlt className="w-4 h-4" />,
-      description: 'Noticias, negocios y fuentes colombianas'
+      description: 'Red Cívica de Colombia - Fuentes nacionales y locales'
     },
     {
       id: 'world',
-      name: 'Mundo',
+      name: 'Mundo 🌍',
       icon: <FaGlobe className="w-4 h-4" />,
-      description: 'Búsqueda global con Google'
+      description: 'Búsqueda global con Copilot AI y fuentes internacionales'
     }
   ];
 
@@ -188,9 +193,17 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
     setTimeout(() => performSearch(), 100);
   };
 
+  // Sync activeTab with parent
+  useEffect(() => {
+    setActiveTab(parentActiveTab);
+  }, [parentActiveTab]);
+
   // Handle tab change
   const handleTabChange = (tab: 'world' | 'local') => {
     setActiveTab(tab);
+    if (onTabChange) {
+      onTabChange(tab);
+    }
     if (query) {
       // Re-search with new tab
       setTimeout(() => performSearch(), 100);
