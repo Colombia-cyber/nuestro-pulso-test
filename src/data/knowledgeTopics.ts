@@ -371,13 +371,188 @@ export const knowledgeTopics: Record<string, KnowledgePanelTopic> = {
       secondary: '#1DA1F2',
       accent: '#FFFFFF'
     }
+  },
+  'donald trump': {
+    id: 'donald-trump',
+    name: 'Donald Trump',
+    type: 'person',
+    summary: 'Donald John Trump is an American politician, media personality, and businessman who served as the 45th president of the United States from 2017 to 2021. He was the Republican Party nominee for president in 2016, 2020, and 2024.',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/56/Donald_Trump_official_portrait.jpg/1200px-Donald_Trump_official_portrait.jpg',
+    website: 'https://www.donaldjtrump.com',
+    founded: 'Born: June 14, 1946',
+    founder: ['Donald Trump Sr.', 'Mary Anne MacLeod Trump'],
+    headquarters: 'Mar-a-Lago, Palm Beach, Florida, USA',
+    employees: 'Various Trump Organization staff',
+    industry: 'Politics, Business, Real Estate',
+    languages: ['English'],
+    areaServed: 'United States, Global influence',
+    rating: {
+      score: 3.2,
+      source: 'Various polls',
+      reviews: 'Mixed public opinion'
+    },
+    downloads: [],
+    marketCap: 'Net worth: $2.6 billion (2024 est.)',
+    revenue: 'Trump Organization revenues',
+    officialLinks: [
+      { label: 'Truth Social', url: 'https://truthsocial.com/@realDonaldTrump', icon: '📱', type: 'social' },
+      { label: 'Official Website', url: 'https://www.donaldjtrump.com', icon: '🌐', type: 'website' },
+      { label: 'Wikipedia', url: 'https://en.wikipedia.org/wiki/Donald_Trump', icon: '📚', type: 'website' },
+      { label: 'Trump Organization', url: 'https://www.trump.com', icon: '🏢', type: 'website' },
+      { label: 'Presidential Library', url: 'https://www.trumplibrary.gov', icon: '🏛️', type: 'website' }
+    ],
+    keyFacts: [
+      { label: '45th President', value: '2017-2021', icon: '🏛️' },
+      { label: 'Age', value: '78 years old', icon: '👤' },
+      { label: 'Political Party', value: 'Republican', icon: '🐘' },
+      { label: 'Born', value: 'Queens, NY', icon: '🗽' },
+      { label: 'Education', value: 'Wharton School', icon: '🎓' },
+      { label: 'Children', value: '5 children', icon: '👨‍👩‍👧‍👦' },
+      { label: 'Business', value: 'Trump Organization', icon: '🏢' },
+      { label: 'TV Show', value: 'The Apprentice', icon: '📺' }
+    ],
+    relatedSearches: [
+      'Donald Trump 2024',
+      'Trump legal cases',
+      'Trump presidency',
+      'Truth Social',
+      'Trump Organization',
+      'Melania Trump',
+      'Trump family',
+      'Trump policies',
+      'Trump rallies',
+      'Trump news'
+    ],
+    newsKeywords: ['Donald Trump', 'Trump', 'President Trump', '45th President', 'Republican', 'MAGA'],
+    colors: {
+      primary: '#C41E3A',
+      secondary: '#002868',
+      accent: '#FFFFFF'
+    }
+  },
+  'elon musk': {
+    id: 'elon-musk',
+    name: 'Elon Musk',
+    type: 'person',
+    summary: 'Elon Reeve Musk is a businessman and investor known for his key roles in space company SpaceX and automotive company Tesla, Inc. He is also owner of social media platform X (formerly Twitter) and has interests in artificial intelligence and neural technology.',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Elon_Musk_Colorado_2022_%28cropped2%29.jpg/1200px-Elon_Musk_Colorado_2022_%28cropped2%29.jpg',
+    website: 'https://x.com/elonmusk',
+    founded: 'Born: June 28, 1971',
+    founder: ['Errol Musk', 'Maye Musk'],
+    headquarters: 'Austin, Texas, USA',
+    employees: 'Tesla: 140,000+, SpaceX: 13,000+',
+    industry: 'Technology, Space, Automotive, AI',
+    languages: ['English', 'Afrikaans'],
+    areaServed: 'Worldwide',
+    rating: {
+      score: 4.2,
+      source: 'Business leadership ratings',
+      reviews: 'Generally positive in tech industry'
+    },
+    downloads: [],
+    marketCap: 'Net worth: $219 billion (2024)',
+    revenue: 'Tesla: $96.8B, SpaceX: $8B+ (2023)',
+    officialLinks: [
+      { label: 'X (Twitter)', url: 'https://x.com/elonmusk', icon: '🐦', type: 'social' },
+      { label: 'Tesla', url: 'https://www.tesla.com', icon: '🚗', type: 'website' },
+      { label: 'SpaceX', url: 'https://www.spacex.com', icon: '🚀', type: 'website' },
+      { label: 'Neuralink', url: 'https://neuralink.com', icon: '🧠', type: 'website' },
+      { label: 'Wikipedia', url: 'https://en.wikipedia.org/wiki/Elon_Musk', icon: '📚', type: 'website' }
+    ],
+    keyFacts: [
+      { label: 'Net Worth', value: '$219 billion', icon: '💰' },
+      { label: 'Age', value: '53 years old', icon: '👤' },
+      { label: 'Companies', value: 'Tesla, SpaceX, X', icon: '🏢' },
+      { label: 'Born', value: 'Pretoria, South Africa', icon: '🌍' },
+      { label: 'Education', value: 'UPenn', icon: '🎓' },
+      { label: 'Children', value: '12 children', icon: '👨‍👩‍👧‍👦' },
+      { label: 'Citizenship', value: 'US, Canada, South Africa', icon: '🛂' },
+      { label: 'Tesla Stock', value: '20.5% ownership', icon: '📈' }
+    ],
+    relatedSearches: [
+      'Elon Musk Tesla',
+      'Elon Musk SpaceX',
+      'Elon Musk Twitter X',
+      'Elon Musk net worth',
+      'Elon Musk Neuralink',
+      'Elon Musk AI',
+      'Elon Musk Mars',
+      'Elon Musk news',
+      'Elon Musk quotes',
+      'Elon Musk biography'
+    ],
+    newsKeywords: ['Elon Musk', 'Tesla', 'SpaceX', 'X Twitter', 'Neuralink', 'entrepreneur'],
+    colors: {
+      primary: '#000000',
+      secondary: '#E31B23',
+      accent: '#FFFFFF'
+    }
+  },
+  'taylor swift': {
+    id: 'taylor-swift',
+    name: 'Taylor Swift',
+    type: 'person',
+    summary: 'Taylor Alison Swift is an American singer-songwriter. Known for her autobiographical songwriting, artistic reinventions, and cultural impact, Swift is a leading figure in popular music and the subject of widespread public interest.',
+    logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Taylor_Swift_at_the_2023_MTV_Video_Music_Awards_4.png/1200px-Taylor_Swift_at_the_2023_MTV_Video_Music_Awards_4.png',
+    website: 'https://www.taylorswift.com',
+    founded: 'Born: December 13, 1989',
+    founder: ['Scott Swift', 'Andrea Swift'],
+    headquarters: 'Nashville, Tennessee / New York, USA',
+    employees: 'Large touring and production team',
+    industry: 'Music, Entertainment',
+    languages: ['English'],
+    areaServed: 'Worldwide',
+    rating: {
+      score: 4.8,
+      source: 'Music platforms average',
+      reviews: 'Critically acclaimed'
+    },
+    downloads: [],
+    marketCap: 'Net worth: $1.1 billion (2024)',
+    revenue: 'Eras Tour: $1+ billion grossed',
+    officialLinks: [
+      { label: 'Official Website', url: 'https://www.taylorswift.com', icon: '🌐', type: 'website' },
+      { label: 'Instagram', url: 'https://www.instagram.com/taylorswift', icon: '📷', type: 'social' },
+      { label: 'Spotify', url: 'https://open.spotify.com/artist/06HL4z0CvFAxyc27GXpf02', icon: '🎵', type: 'website' },
+      { label: 'Apple Music', url: 'https://music.apple.com/us/artist/taylor-swift/159260351', icon: '🍎', type: 'website' },
+      { label: 'Wikipedia', url: 'https://en.wikipedia.org/wiki/Taylor_Swift', icon: '📚', type: 'website' }
+    ],
+    keyFacts: [
+      { label: 'Net Worth', value: '$1.1 billion', icon: '💰' },
+      { label: 'Age', value: '35 years old', icon: '👤' },
+      { label: 'Albums', value: '11 studio albums', icon: '💿' },
+      { label: 'Grammy Awards', value: '14 wins', icon: '🏆' },
+      { label: 'Record Sales', value: '200M+ worldwide', icon: '📈' },
+      { label: 'Streaming', value: '100B+ streams', icon: '🎧' },
+      { label: 'Tours', value: 'Eras Tour record-breaking', icon: '🎤' },
+      { label: 'Born', value: 'West Reading, PA', icon: '🏠' }
+    ],
+    relatedSearches: [
+      'Taylor Swift Eras Tour',
+      'Taylor Swift boyfriend',
+      'Taylor Swift new album',
+      'Taylor Swift Travis Kelce',
+      'Taylor Swift lyrics',
+      'Taylor Swift tickets',
+      'Taylor Swift net worth',
+      'Taylor Swift songs',
+      'Taylor Swift tour dates',
+      'Swifties'
+    ],
+    newsKeywords: ['Taylor Swift', 'Swifties', 'Eras Tour', 'pop music', 'Travis Kelce'],
+    colors: {
+      primary: '#B784A7',
+      secondary: '#F5F5DC',
+      accent: '#FFD700'
+    }
   }
 };
 
+// Enhanced topic detection with better world vs local classification
 export const detectTopicFromQuery = (query: string): KnowledgePanelTopic | null => {
   const lowercaseQuery = query.toLowerCase().trim();
   
-  // Direct matches
+  // Direct matches first
   if (knowledgeTopics[lowercaseQuery]) {
     return knowledgeTopics[lowercaseQuery];
   }
@@ -388,20 +563,83 @@ export const detectTopicFromQuery = (query: string): KnowledgePanelTopic | null 
     
     // Check if the query is exactly the topic name or contains the topic name as a whole word
     if (lowercaseQuery === topicName || 
-        new RegExp(`\\b${topicName}\\b`).test(lowercaseQuery)) {
+        new RegExp(`\\b${topicName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`).test(lowercaseQuery)) {
       return topic;
     }
     
     // Also check for exact keyword matches (but not partial matches)
     for (const keyword of topic.newsKeywords) {
+      const escapedKeyword = keyword.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       if (lowercaseQuery === keyword.toLowerCase() || 
-          new RegExp(`\\b${keyword.toLowerCase()}\\b`).test(lowercaseQuery)) {
+          new RegExp(`\\b${escapedKeyword}\\b`).test(lowercaseQuery)) {
         return topic;
       }
     }
   }
   
   return null;
+};
+
+// Define world topics (global figures, companies, concepts)
+const WORLD_TOPICS = new Set([
+  'donald trump', 'trump', 'elon musk', 'taylor swift', 'facebook', 'meta',
+  'instagram', 'twitter', 'x', 'youtube', 'whatsapp', 'google', 'apple',
+  'microsoft', 'amazon', 'tesla', 'spacex', 'netflix', 'tiktok'
+]);
+
+// Define local/Colombian topic indicators
+const LOCAL_INDICATORS = new Set([
+  'colombia', 'colombiano', 'colombiana', 'bogotá', 'medellín', 'cali',
+  'barranquilla', 'cartagena', 'gustavo petro', 'petro', 'congreso colombia',
+  'gobierno colombia', 'senado colombia', 'cámara representantes',
+  'corte constitucional', 'procuraduría', 'fiscalía', 'banco república',
+  'ecopetrol', 'avianca', 'grupo aval', 'caracol', 'rcn', 'el tiempo',
+  'semana', 'cambio', 'peso colombiano', 'cop'
+]);
+
+// Enhanced search mode detection
+export const detectSearchMode = (query: string): 'world' | 'local' => {
+  const lowercaseQuery = query.toLowerCase().trim();
+  
+  // Check for explicit local indicators first
+  for (const indicator of LOCAL_INDICATORS) {
+    if (lowercaseQuery.includes(indicator)) {
+      return 'local';
+    }
+  }
+  
+  // Check for world topics
+  for (const worldTopic of WORLD_TOPICS) {
+    if (lowercaseQuery.includes(worldTopic)) {
+      return 'world';
+    }
+  }
+  
+  // If we have a knowledge panel topic, it's likely a world topic
+  if (detectTopicFromQuery(query)) {
+    return 'world';
+  }
+  
+  // Default heuristics:
+  // - Single words or well-known names tend to be world topics
+  // - Phrases with Colombian context words are local
+  // - Generic topics default to world for better international coverage
+  
+  const words = lowercaseQuery.split(/\s+/);
+  
+  // Single word queries or famous names -> world
+  if (words.length === 1 || 
+      words.length === 2 && /^[a-z]+\s[a-z]+$/.test(lowercaseQuery)) {
+    return 'world';
+  }
+  
+  // Complex phrases default to local unless they contain world indicators
+  return 'local';
+};
+
+// Check if a query should show knowledge panel (world topics with available data)
+export const shouldShowKnowledgePanel = (query: string, searchMode: 'world' | 'local'): boolean => {
+  return searchMode === 'world' && detectTopicFromQuery(query) !== null;
 };
 
 export const getAllKnowledgeTopics = (): KnowledgePanelTopic[] => {

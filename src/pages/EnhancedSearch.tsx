@@ -3,6 +3,7 @@ import GoogleClassSearchBar from '../components/GoogleClassSearchBar';
 import GoogleClassSearchResults from '../components/GoogleClassSearchResults';
 import { FaHistory, FaChartLine } from 'react-icons/fa';
 import { BiTrendingUp } from 'react-icons/bi';
+import { detectSearchMode, shouldShowKnowledgePanel } from '../data/knowledgeTopics';
 
 interface SearchResult {
   id: string;
@@ -60,12 +61,16 @@ const EnhancedSearchPage: React.FC = () => {
     
     if (query) {
       setCurrentQuery(query);
-      if (tab && ['world', 'local'].includes(tab)) {
-        setActiveTab(tab);
-      }
+      
+      // Auto-detect search mode if no tab specified or if tab doesn't match detected mode
+      const detectedMode = detectSearchMode(query);
+      const actualTab = tab && ['world', 'local'].includes(tab) ? tab : detectedMode;
+      
+      setActiveTab(actualTab);
+      
       // Trigger search
       setTimeout(() => {
-        performSearch(query, tab || 'local', getDefaultFilters());
+        performSearch(query, actualTab, getDefaultFilters());
       }, 100);
     }
   }, []);
@@ -122,30 +127,34 @@ const EnhancedSearchPage: React.FC = () => {
 
     setIsLoading(true);
     setCurrentQuery(query);
-    setActiveTab(tab);
     setCurrentPage(1);
+
+    // Auto-detect search mode if not explicitly specified
+    const detectedMode = detectSearchMode(query);
+    const actualTab = tab || detectedMode;
+    setActiveTab(actualTab);
 
     try {
       // Update URL
       const params = new URLSearchParams();
       params.set('q', query);
-      params.set('tab', tab);
+      params.set('tab', actualTab);
       window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
 
       // Simulate API call with realistic delay
-      await new Promise(resolve => setTimeout(resolve, tab === 'world' ? 800 : 500));
+      await new Promise(resolve => setTimeout(resolve, actualTab === 'world' ? 800 : 500));
 
       let results: SearchResult[] = [];
       let total = 0;
       let searchDuration = 0;
 
-      if (tab === 'world') {
-        // Simulate Google Search API results
+      if (actualTab === 'world') {
+        // Generate world search results with global sources
         results = generateWorldSearchResults(query, filters);
         total = Math.floor(Math.random() * 50000000) + 1000000; // Large result count for world search
         searchDuration = Math.floor(Math.random() * 300) + 200; // 200-500ms
       } else {
-        // Simulate local Colombian search
+        // Generate local Colombian search with regional sources
         results = generateLocalSearchResults(query, filters);
         total = Math.floor(Math.random() * 500000) + 1000; // Smaller result count for local
         searchDuration = Math.floor(Math.random() * 200) + 100; // 100-300ms
@@ -166,67 +175,93 @@ const EnhancedSearchPage: React.FC = () => {
   };
 
   const generateWorldSearchResults = (query: string, filters: SearchFilters): SearchResult[] => {
-    const baseResults: SearchResult[] = [
-      {
-        id: `world-${Date.now()}-1`,
-        title: `${query} - Latest News & Updates | Global Coverage`,
-        description: `Stay informed with the latest breaking news, analysis, and comprehensive coverage about ${query} from trusted international sources worldwide.`,
-        url: `https://news.google.com/search?q=${encodeURIComponent(query)}`,
-        source: 'Google News',
-        timestamp: new Date().toISOString(),
-        type: 'news',
-        location: 'Global',
-        relevanceScore: 98,
-        category: 'International News',
-        tags: [query.toLowerCase(), 'global', 'news', 'international']
-      },
-      {
-        id: `world-${Date.now()}-2`,
-        title: `${query} | Wikipedia`,
-        description: `Learn about ${query} with detailed information, references, and comprehensive coverage from Wikipedia, the free encyclopedia.`,
-        url: `https://en.wikipedia.org/wiki/${encodeURIComponent(query)}`,
-        source: 'Wikipedia',
-        timestamp: new Date(Date.now() - 3600000).toISOString(),
-        type: 'web',
-        location: 'Global',
-        relevanceScore: 95,
-        tags: [query.toLowerCase(), 'encyclopedia', 'reference']
-      },
-      {
-        id: `world-${Date.now()}-3`,
-        title: `${query} - BBC News Coverage`,
-        description: `Comprehensive reporting on ${query} from BBC News, featuring analysis, expert opinions, and breaking news updates.`,
-        url: `https://bbc.com/search?q=${encodeURIComponent(query)}`,
-        source: 'BBC News',
-        timestamp: new Date(Date.now() - 1800000).toISOString(),
-        type: 'news',
-        location: 'United Kingdom',
-        relevanceScore: 92,
-        author: 'BBC Editorial Team',
-        category: 'World News',
-        tags: [query.toLowerCase(), 'bbc', 'international', 'analysis']
-      },
-      {
-        id: `world-${Date.now()}-4`,
-        title: `${query} - Reuters International Coverage`,
-        description: `Breaking news and analysis about ${query} from Reuters, providing accurate and unbiased reporting from around the world.`,
-        url: `https://reuters.com/search/news?blob=${encodeURIComponent(query)}`,
-        source: 'Reuters',
-        timestamp: new Date(Date.now() - 2700000).toISOString(),
-        type: 'news',
-        location: 'Global',
-        relevanceScore: 90,
-        category: 'Business & Politics',
-        tags: [query.toLowerCase(), 'reuters', 'business', 'politics']
-      }
+    // Generate proper world search results with global sources
+    const globalSources = [
+      { name: 'Wikipedia', domain: 'en.wikipedia.org', type: 'encyclopedia' },
+      { name: 'BBC News', domain: 'bbc.com', type: 'news' },
+      { name: 'CNN', domain: 'cnn.com', type: 'news' },
+      { name: 'Reuters', domain: 'reuters.com', type: 'news' },
+      { name: 'The Guardian', domain: 'theguardian.com', type: 'news' },
+      { name: 'Associated Press', domain: 'apnews.com', type: 'news' },
+      { name: 'The New York Times', domain: 'nytimes.com', type: 'news' },
+      { name: 'Forbes', domain: 'forbes.com', type: 'business' },
+      { name: 'Bloomberg', domain: 'bloomberg.com', type: 'business' },
+      { name: 'Washington Post', domain: 'washingtonpost.com', type: 'news' }
     ];
+
+    const results: SearchResult[] = [];
+    
+    // Create world-appropriate results
+    globalSources.forEach((source, index) => {
+      if (index >= 5) return; // Limit to top 5 sources
+      
+      results.push({
+        id: `world-${Date.now()}-${index}`,
+        title: `${query} - ${getWorldTitle(query, source)}`,
+        description: getWorldDescription(query, source),
+        url: `https://${source.domain}/search?q=${encodeURIComponent(query)}`,
+        source: source.name,
+        timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(), // Random within last 24h
+        type: source.type === 'encyclopedia' ? 'web' : 'news',
+        location: 'Global',
+        relevanceScore: Math.floor(98 - index * 2), // High relevance for world topics
+        category: getWorldCategory(source.type),
+        tags: getWorldTags(query, source.type)
+      });
+    });
 
     // Apply content type filter
     if (filters.contentType !== 'all') {
-      return baseResults.filter(result => result.type === filters.contentType);
+      return results.filter(result => result.type === filters.contentType);
     }
 
-    return baseResults;
+    return results;
+  };
+
+  // Helper functions for world search content
+  const getWorldTitle = (query: string, source: { name: string; type: string }) => {
+    switch (source.type) {
+      case 'encyclopedia':
+        return `Complete Information & Biography`;
+      case 'news':
+        return `Latest News & Updates`;
+      case 'business':
+        return `Business & Financial News`;
+      default:
+        return `Global Coverage`;
+    }
+  };
+
+  const getWorldDescription = (query: string, source: { name: string; type: string }) => {
+    switch (source.type) {
+      case 'encyclopedia':
+        return `Comprehensive information about ${query}, including biography, career, achievements, and detailed background from the world's leading encyclopedia.`;
+      case 'news':
+        return `Breaking news, latest updates, and in-depth analysis about ${query} from trusted international news sources.`;
+      case 'business':
+        return `Financial news, market analysis, and business coverage related to ${query} from leading business publications.`;
+      default:
+        return `Global perspective and coverage of ${query} from international sources.`;
+    }
+  };
+
+  const getWorldCategory = (type: string) => {
+    switch (type) {
+      case 'encyclopedia': return 'Reference';
+      case 'news': return 'International News';
+      case 'business': return 'Business & Finance';
+      default: return 'Global';
+    }
+  };
+
+  const getWorldTags = (query: string, type: string) => {
+    const baseTags = [query.toLowerCase(), 'global', 'international'];
+    switch (type) {
+      case 'encyclopedia': return [...baseTags, 'reference', 'biography'];
+      case 'news': return [...baseTags, 'news', 'breaking'];
+      case 'business': return [...baseTags, 'business', 'finance'];
+      default: return baseTags;
+    }
   };
 
   const generateLocalSearchResults = (query: string, filters: SearchFilters): SearchResult[] => {
