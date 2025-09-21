@@ -31,7 +31,7 @@ interface SearchFilters {
 const EnhancedSearchPage: React.FC = () => {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [currentQuery, setCurrentQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'world' | 'local'>('local');
+  const [activeTab, setActiveTab] = useState<'world' | 'local'>('world');
   const [totalResults, setTotalResults] = useState(0);
   const [searchTime, setSearchTime] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,10 +62,12 @@ const EnhancedSearchPage: React.FC = () => {
       setCurrentQuery(query);
       if (tab && ['world', 'local'].includes(tab)) {
         setActiveTab(tab);
+      } else {
+        setActiveTab('world'); // Default to world search
       }
       // Trigger search
       setTimeout(() => {
-        performSearch(query, tab || 'local', getDefaultFilters());
+        performSearch(query, tab || 'world', getDefaultFilters());
       }, 100);
     }
   }, []);
@@ -169,8 +171,8 @@ const EnhancedSearchPage: React.FC = () => {
     const baseResults: SearchResult[] = [
       {
         id: `world-${Date.now()}-1`,
-        title: `${query} - Latest News & Updates | Global Coverage`,
-        description: `Stay informed with the latest breaking news, analysis, and comprehensive coverage about ${query} from trusted international sources worldwide.`,
+        title: `${query} - Latest Global News & Analysis | International Coverage`,
+        description: `Comprehensive international coverage of ${query} from leading news sources worldwide, including breaking news, expert analysis, and global perspectives.`,
         url: `https://news.google.com/search?q=${encodeURIComponent(query)}`,
         source: 'Google News',
         timestamp: new Date().toISOString(),
@@ -178,46 +180,98 @@ const EnhancedSearchPage: React.FC = () => {
         location: 'Global',
         relevanceScore: 98,
         category: 'International News',
-        tags: [query.toLowerCase(), 'global', 'news', 'international']
+        tags: [query.toLowerCase(), 'global', 'news', 'international', 'breaking']
       },
       {
         id: `world-${Date.now()}-2`,
-        title: `${query} | Wikipedia`,
-        description: `Learn about ${query} with detailed information, references, and comprehensive coverage from Wikipedia, the free encyclopedia.`,
+        title: `${query} | Wikipedia - Global Encyclopedia`,
+        description: `Detailed international information about ${query} with multilingual references, global perspectives, and comprehensive coverage from Wikipedia.`,
         url: `https://en.wikipedia.org/wiki/${encodeURIComponent(query)}`,
         source: 'Wikipedia',
-        timestamp: new Date(Date.now() - 3600000).toISOString(),
+        timestamp: new Date(Date.now() - 1800000).toISOString(),
         type: 'web',
         location: 'Global',
         relevanceScore: 95,
-        tags: [query.toLowerCase(), 'encyclopedia', 'reference']
+        tags: [query.toLowerCase(), 'encyclopedia', 'reference', 'multilingual']
       },
       {
         id: `world-${Date.now()}-3`,
-        title: `${query} - BBC News Coverage`,
-        description: `Comprehensive reporting on ${query} from BBC News, featuring analysis, expert opinions, and breaking news updates.`,
+        title: `${query} - BBC World Service | International Reporting`,
+        description: `In-depth global coverage of ${query} from BBC World Service, featuring international correspondents, expert analysis, and worldwide impact assessment.`,
         url: `https://bbc.com/search?q=${encodeURIComponent(query)}`,
-        source: 'BBC News',
-        timestamp: new Date(Date.now() - 1800000).toISOString(),
+        source: 'BBC World',
+        timestamp: new Date(Date.now() - 900000).toISOString(),
         type: 'news',
         location: 'United Kingdom',
-        relevanceScore: 92,
-        author: 'BBC Editorial Team',
+        relevanceScore: 94,
+        author: 'BBC International Team',
         category: 'World News',
-        tags: [query.toLowerCase(), 'bbc', 'international', 'analysis']
+        tags: [query.toLowerCase(), 'bbc', 'world-service', 'analysis', 'international']
       },
       {
         id: `world-${Date.now()}-4`,
-        title: `${query} - Reuters International Coverage`,
-        description: `Breaking news and analysis about ${query} from Reuters, providing accurate and unbiased reporting from around the world.`,
+        title: `${query} - Reuters Global Markets & Politics`,
+        description: `Breaking international news about ${query} from Reuters global network, covering business, politics, and economic impact worldwide.`,
         url: `https://reuters.com/search/news?blob=${encodeURIComponent(query)}`,
         source: 'Reuters',
         timestamp: new Date(Date.now() - 2700000).toISOString(),
         type: 'news',
         location: 'Global',
-        relevanceScore: 90,
+        relevanceScore: 93,
         category: 'Business & Politics',
-        tags: [query.toLowerCase(), 'reuters', 'business', 'politics']
+        tags: [query.toLowerCase(), 'reuters', 'business', 'politics', 'markets']
+      },
+      {
+        id: `world-${Date.now()}-5`,
+        title: `${query} - CNN International Coverage`,
+        description: `Global perspective on ${query} from CNN International, featuring reports from worldwide correspondents and breaking news alerts.`,
+        url: `https://cnn.com/search?q=${encodeURIComponent(query)}`,
+        source: 'CNN International',
+        timestamp: new Date(Date.now() - 3600000).toISOString(),
+        type: 'news',
+        location: 'United States',
+        relevanceScore: 92,
+        category: 'World News',
+        tags: [query.toLowerCase(), 'cnn', 'international', 'breaking-news']
+      },
+      {
+        id: `world-${Date.now()}-6`,
+        title: `${query} - Al Jazeera English | Global South Perspective`,
+        description: `International coverage of ${query} from Al Jazeera English, offering Global South perspectives and in-depth analysis from worldwide bureaus.`,
+        url: `https://aljazeera.com/search/${encodeURIComponent(query)}`,
+        source: 'Al Jazeera English',
+        timestamp: new Date(Date.now() - 4500000).toISOString(),
+        type: 'news',
+        location: 'Qatar',
+        relevanceScore: 90,
+        category: 'International News',
+        tags: [query.toLowerCase(), 'aljazeera', 'global-south', 'perspective']
+      },
+      {
+        id: `world-${Date.now()}-7`,
+        title: `${query} - Associated Press | Worldwide Wire`,
+        description: `Comprehensive global reporting on ${query} from Associated Press correspondents in over 100 countries worldwide.`,
+        url: `https://apnews.com/search?q=${encodeURIComponent(query)}`,
+        source: 'Associated Press',
+        timestamp: new Date(Date.now() - 5400000).toISOString(),
+        type: 'news',
+        location: 'Global',
+        relevanceScore: 91,
+        category: 'Breaking News',
+        tags: [query.toLowerCase(), 'ap', 'wire', 'global-network']
+      },
+      {
+        id: `world-${Date.now()}-8`,
+        title: `${query} - Financial Times | Global Business Impact`,
+        description: `International business and economic analysis of ${query} from Financial Times, covering global markets and financial implications.`,
+        url: `https://ft.com/search?q=${encodeURIComponent(query)}`,
+        source: 'Financial Times',
+        timestamp: new Date(Date.now() - 7200000).toISOString(),
+        type: 'news',
+        location: 'United Kingdom',
+        relevanceScore: 89,
+        category: 'Business & Economics',
+        tags: [query.toLowerCase(), 'financial-times', 'business', 'economics', 'markets']
       }
     ];
 
@@ -398,30 +452,43 @@ const EnhancedSearchPage: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-16">
-                <div className="text-6xl mb-4">🌟</div>
+                <div className="text-6xl mb-4">🌍</div>
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Búsqueda Universal Avanzada
+                  Búsqueda Universal Global
                 </h3>
                 <p className="text-gray-600 mb-8">
-                  Busca información en Colombia y el mundo con filtros avanzados
+                  Explora contenido mundial y noticias internacionales con nuestra búsqueda avanzada
                 </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                  <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                  <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                     <h4 className="font-bold text-lg mb-2 flex items-center gap-2">
-                      🇨🇴 Búsqueda Local
+                      🌍 Búsqueda Mundial (Predeterminado)
                     </h4>
                     <p className="text-gray-600 text-sm">
-                      Encuentra noticias, negocios y fuentes exclusivamente colombianas
+                      Accede a noticias internacionales, análisis global, y contenido de fuentes mundiales como BBC, Reuters, CNN, Al Jazeera y más
                     </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">BBC World</span>
+                      <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Reuters</span>
+                      <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">CNN Int'l</span>
+                    </div>
                   </div>
-                  <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                  <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
                     <h4 className="font-bold text-lg mb-2 flex items-center gap-2">
-                      🌍 Búsqueda Mundial
+                      🇨🇴 Filtro Colombia
                     </h4>
                     <p className="text-gray-600 text-sm">
-                      Accede a información global usando la potencia de Google
+                      Cuando necesites contenido específico de Colombia, usa el filtro local para noticias nacionales y regionales
                     </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">El Tiempo</span>
+                      <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Semana</span>
+                      <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Caracol</span>
+                    </div>
                   </div>
+                </div>
+                <div className="mt-8 text-sm text-gray-500">
+                  <p>💡 <strong>Tip:</strong> Por defecto buscamos contenido mundial. Cambia a "Colombia" cuando necesites información local específica.</p>
                 </div>
               </div>
             )}

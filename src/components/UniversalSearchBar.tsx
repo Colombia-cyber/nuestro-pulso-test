@@ -14,12 +14,12 @@ interface UniversalSearchBarProps {
 const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
   onSearch,
   onTopicSelect,
-  placeholder = "Buscar noticias en Colombia y el mundo...",
+  placeholder = "Buscar en el mundo y Colombia...",
   autoFocus = false,
   className = ""
 }) => {
   const [query, setQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<'local' | 'world'>('local');
+  const [selectedCategory, setSelectedCategory] = useState<'local' | 'world'>('world');
   const [selectedTopic, setSelectedTopic] = useState<NewsTopic | null>(null);
   const [showTopics, setShowTopics] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -124,17 +124,6 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
         {/* Category Tabs */}
         <div className="flex border-b border-gray-200">
           <button
-            onClick={() => setSelectedCategory('local')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 font-medium transition-all ${
-              selectedCategory === 'local'
-                ? 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white'
-                : 'text-gray-600 hover:bg-gray-50'
-            }`}
-          >
-            <FaMapMarkerAlt className="w-4 h-4" />
-            Colombia
-          </button>
-          <button
             onClick={() => setSelectedCategory('world')}
             className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 font-medium transition-all ${
               selectedCategory === 'world'
@@ -144,6 +133,17 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
           >
             <FaGlobe className="w-4 h-4" />
             Mundo
+          </button>
+          <button
+            onClick={() => setSelectedCategory('local')}
+            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 font-medium transition-all ${
+              selectedCategory === 'local'
+                ? 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white'
+                : 'text-gray-600 hover:bg-gray-50'
+            }`}
+          >
+            <FaMapMarkerAlt className="w-4 h-4" />
+            Colombia
           </button>
         </div>
 
