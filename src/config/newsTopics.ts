@@ -253,10 +253,10 @@ export const getAllTopics = (): NewsTopic[] => {
 };
 
 export const getPriorityTopics = (category: 'local' | 'world'): NewsTopic[] => {
-  // Return the priority topics in the specified order
+  // Return the priority topics in the specified order - DONALD TRUMP, DERECHA, IZQUIERDA are prominently featured
   const priorityIds = category === 'local' 
-    ? ['drugs-crime', 'terror-news', 'gustavo-petro', 'congress', 'left-wing', 'right-wing', 'donald-trump-local']
-    : ['donald-trump-world', 'world-politics', 'world-terror', 'world-right-wing', 'world-left-wing', 'world-wealth', 'world-travel'];
+    ? ['donald-trump-local', 'right-wing', 'left-wing', 'drugs-crime', 'terror-news', 'gustavo-petro', 'congress']
+    : ['donald-trump-world', 'world-right-wing', 'world-left-wing', 'world-politics', 'world-terror', 'world-wealth', 'world-travel'];
   
   const allTopics = getTopicsByCategory(category);
   return priorityIds.map(id => allTopics.find(topic => topic.id === id)).filter(Boolean) as NewsTopic[];
