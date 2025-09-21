@@ -1,4 +1,4 @@
-import React, { useState, Suspense } from "react";
+import React, { useState, Suspense, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import ModernHomepage from "./components/ModernHomepage";
@@ -7,6 +7,8 @@ import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
 import EnhancedSearchPage from "./pages/EnhancedSearch";
+import LeftWingPage from "./pages/LeftWing";
+import RightWingPage from "./pages/RightWing";
 import ModernSearchEngine from "./components/ModernSearchEngine";
 import PulseReels from "./components/PulseReels";
 import CongressTracker from "./components/CongressTracker";
@@ -55,6 +57,19 @@ function App() {
   const [currentView, setCurrentView] = useState('home');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Listen for custom navigation events
+  useEffect(() => {
+    const handleCustomNavigation = (event: CustomEvent) => {
+      handleNavigate(event.detail);
+    };
+
+    window.addEventListener('navigate' as any, handleCustomNavigation);
+    
+    return () => {
+      window.removeEventListener('navigate' as any, handleCustomNavigation);
+    };
+  }, []);
 
   const handleNavigate = (view: string) => {
     setIsLoading(true);
@@ -108,6 +123,10 @@ function App() {
           return <CommunityHub />;
         case 'search':
           return <ModernSearchEngine />;
+        case 'left-wing':
+          return <LeftWingPage onNavigate={handleNavigate} />;
+        case 'right-wing':
+          return <RightWingPage onNavigate={handleNavigate} />;
         case 'home':
         default:
           return <ModernHomepage onNavigate={handleNavigate} />;

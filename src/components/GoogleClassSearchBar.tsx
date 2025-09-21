@@ -198,15 +198,15 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
     setActiveTab(parentActiveTab);
   }, [parentActiveTab]);
 
-  // Handle tab change
+  // Handle tab change - INSTANT SWITCHING
   const handleTabChange = (tab: 'world' | 'local') => {
     setActiveTab(tab);
     if (onTabChange) {
       onTabChange(tab);
     }
     if (query) {
-      // Re-search with new tab
-      setTimeout(() => performSearch(), 100);
+      // INSTANT RE-SEARCH: Immediately search with new tab context
+      performSearch();
     }
   };
 

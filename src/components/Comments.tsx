@@ -16,9 +16,17 @@ interface CommentsProps {
   articleId?: number;
   articleTitle?: string;
   isHub?: boolean;
+  onCommentSubmit?: (comment: string) => void;
+  allowInstantPosting?: boolean;
 }
 
-const Comments: React.FC<CommentsProps> = ({ articleId, articleTitle, isHub = false }) => {
+const Comments: React.FC<CommentsProps> = ({ 
+  articleId, 
+  articleTitle, 
+  isHub = false, 
+  onCommentSubmit,
+  allowInstantPosting = false 
+}) => {
   const [comments, setComments] = useState<UserComment[]>([]);
   const [newComment, setNewComment] = useState('');
   const [replyTo, setReplyTo] = useState<number | null>(null);
@@ -113,6 +121,12 @@ const Comments: React.FC<CommentsProps> = ({ articleId, articleTitle, isHub = fa
     };
 
     setComments([comment, ...comments]);
+    
+    // INSTANT COMMENT POSTING: Notify parent component if callback provided
+    if (onCommentSubmit && allowInstantPosting) {
+      onCommentSubmit(newComment);
+    }
+    
     setNewComment('');
     
     // Save to localStorage for persistence across components
