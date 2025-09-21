@@ -196,7 +196,7 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
     setLastUpdated(new Date());
   };
 
-  // INSTANT TOPIC LOADING - Make topics instantly responsive
+  // INSTANT TOPIC LOADING - Make topics instantly responsive with 1-click action
   const handleTopicClick = async (topicDisplay: TopicDisplay) => {
     const topic = topicDisplay.topic;
     setSelectedTopic(topic.id);
@@ -229,21 +229,26 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
         }
       }));
 
-      // INSTANT CALLBACK: Immediately notify parent with news data
+      // PRIORITY 1: Instant callback for immediate navigation
       if (onInstantLoad) {
         onInstantLoad(topic, selectedCategory, newsData);
+        return; // Exit early for instant navigation
       }
 
-      // Call the parent callback to update news feed
+      // FALLBACK: Update news feed on current page
       if (onNewsUpdate) {
         onNewsUpdate(newsData, topic);
       }
 
-      // Also call the original topic select callback
+      // Also call the original topic select callback for compatibility
       onTopicSelect(topic, selectedCategory);
 
     } catch (error) {
       console.error('Error fetching topic news:', error);
+      
+      // FALLBACK on error: Use direct navigation without news data
+      console.log('Falling back to direct navigation for topic:', topic.name);
+      onTopicSelect(topic, selectedCategory);
       
       // Reset loading state
       setTopicStats(prev => ({
