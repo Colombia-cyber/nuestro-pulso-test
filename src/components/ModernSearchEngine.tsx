@@ -17,7 +17,8 @@ import GoogleClassSearchBar from './GoogleClassSearchBar';
 import GoogleClassSearchResults from './GoogleClassSearchResults';
 import KnowledgePanel from './KnowledgePanel';
 import ThankYouSection from './ThankYouSection';
-import { detectTopicFromQuery, detectSearchMode } from '../data/knowledgeTopics';
+import { detectTopicFromQuery, detectSearchMode, shouldShowKnowledgePanel } from '../data/knowledgeTopics';
+import { generateSearchResults, getFiltersForMode, LOCAL_FILTERS, MUNDO_FILTERS } from '../data/searchSources';
 import { 
   SearchFilters, 
   SearchResult, 
@@ -285,39 +286,13 @@ const ModernSearchEngine: React.FC = () => {
     }
   };
 
-  // Helper functions for search results (simplified versions)
+  // Helper functions for search results (using separated sources)
   const generateWorldSearchResults = (query: string, filters: SearchFilters) => {
-    // Use the existing world search logic from EnhancedSearchPage
-    return Array.from({ length: 5 }, (_, i) => ({
-      id: `world-${Date.now()}-${i}`,
-      title: `${query} - Global Coverage ${i + 1}`,
-      description: `International perspective on ${query} with comprehensive analysis from global sources.`,
-      url: `https://example.com/world/${encodeURIComponent(query)}`,
-      source: ['BBC News', 'CNN', 'Reuters', 'The Guardian', 'Associated Press'][i],
-      timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-      type: 'news' as const,
-      location: 'Global',
-      relevanceScore: Math.floor(98 - i * 2),
-      category: 'International News',
-      tags: [query.toLowerCase(), 'global', 'international']
-    }));
+    return generateSearchResults(query, 'mundo', 10);
   };
 
   const generateLocalSearchResults = (query: string, filters: SearchFilters) => {
-    // Use the existing local search logic from EnhancedSearchPage
-    return Array.from({ length: 5 }, (_, i) => ({
-      id: `local-${Date.now()}-${i}`,
-      title: `${query} en Colombia - ${['Noticias', 'Análisis', 'Opinión', 'Reportaje', 'Especial'][i]}`,
-      description: `Cobertura completa sobre ${query} en Colombia con análisis del contexto nacional.`,
-      url: `https://example.com/colombia/${encodeURIComponent(query)}`,
-      source: ['El Tiempo', 'Semana', 'Caracol Radio', 'Gov.co', 'Nuestro Pulso'][i],
-      timestamp: new Date(Date.now() - Math.random() * 86400000).toISOString(),
-      type: 'news' as const,
-      location: 'Colombia',
-      relevanceScore: Math.floor(97 - i * 2),
-      category: 'Política Nacional',
-      tags: [query.toLowerCase(), 'colombia', 'nacional']
-    }));
+    return generateSearchResults(query, 'local', 10);
   };
 
   const generateRelatedTopics = (query: string, entities: EntityHighlight[]) => {
@@ -412,40 +387,77 @@ const ModernSearchEngine: React.FC = () => {
       darkMode ? 'dark bg-gray-900' : 'bg-gray-50'
     }`}>
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Modern Search Header */}
+        {/* Modern Search Header with Mode-Specific Branding */}
         <div className={`rounded-2xl shadow-xl border transition-colors duration-300 mb-8 ${
           darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
         }`}>
-          {/* Top toolbar */}
+          {/* Top toolbar with distinct branding */}
           <div className={`flex items-center justify-between p-4 border-b transition-colors ${
             darkMode ? 'border-gray-700' : 'border-gray-200'
-          }`}>
+          } ${activeTab === 'local' ? 'bg-gradient-to-r from-yellow-50 to-blue-50' : 'bg-gradient-to-r from-gray-50 to-purple-50'}`}>
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                  <BsStars className="w-4 h-4 text-white" />
-                </div>
-                <span className={`font-semibold ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                  Copilot Search AI
-                </span>
+                {activeTab === 'local' ? (
+                  // Local Colombia Branding
+                  <>
+                    <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 rounded-lg flex items-center justify-center">
+                      <span className="text-white text-xl font-bold">🇨🇴</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                        Nuestro Pulso Colombia
+                      </span>
+                      <span className="text-sm text-blue-600 font-medium">
+                        Red Cívica de Colombia
+                      </span>
+                    </div>
+                    <div className="ml-2 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold">
+                      LOCAL COLOMBIA 🇨🇴
+                    </div>
+                  </>
+                ) : (
+                  // Mundo/World Neutral Branding
+                  <>
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+                      <BsStars className="w-5 h-5 text-white" />
+                    </div>
+                    <div className="flex flex-col">
+                      <span className={`font-bold text-lg ${darkMode ? 'text-white' : 'text-gray-900'}`}>
+                        Copilot Search AI
+                      </span>
+                      <span className="text-sm text-purple-600 font-medium">
+                        Global Intelligence Search
+                      </span>
+                    </div>
+                    <div className="ml-2 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-bold">
+                      MUNDO 🌍
+                    </div>
+                  </>
+                )}
               </div>
-              {entityHighlights.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <FaBrain className="w-4 h-4 text-purple-500" />
-                  <span className="text-sm text-purple-600 font-medium">
-                    {entityHighlights.length} entities detected
-                  </span>
-                </div>
-              )}
-              {sentimentData && (
-                <div className="flex items-center gap-2">
-                  {sentimentData.label === 'positive' && <MdSentimentSatisfied className="w-4 h-4 text-green-500" />}
-                  {sentimentData.label === 'neutral' && <MdSentimentNeutral className="w-4 h-4 text-gray-500" />}
-                  {sentimentData.label === 'negative' && <MdSentimentDissatisfied className="w-4 h-4 text-red-500" />}
-                  <span className="text-sm text-gray-600">
-                    {sentimentData.label} sentiment
-                  </span>
-                </div>
+              
+              {/* AI Features (only in Mundo mode) */}
+              {activeTab === 'world' && (
+                <>
+                  {entityHighlights.length > 0 && (
+                    <div className="flex items-center gap-2">
+                      <FaBrain className="w-4 h-4 text-purple-500" />
+                      <span className="text-sm text-purple-600 font-medium">
+                        {entityHighlights.length} entities detected
+                      </span>
+                    </div>
+                  )}
+                  {sentimentData && (
+                    <div className="flex items-center gap-2">
+                      {sentimentData.label === 'positive' && <MdSentimentSatisfied className="w-4 h-4 text-green-500" />}
+                      {sentimentData.label === 'neutral' && <MdSentimentNeutral className="w-4 h-4 text-gray-500" />}
+                      {sentimentData.label === 'negative' && <MdSentimentDissatisfied className="w-4 h-4 text-red-500" />}
+                      <span className="text-sm text-gray-600">
+                        {sentimentData.label} sentiment
+                      </span>
+                    </div>
+                  )}
+                </>
               )}
             </div>
             
@@ -529,8 +541,12 @@ const ModernSearchEngine: React.FC = () => {
           <GoogleClassSearchBar
             onSearch={performSearch}
             autoFocus={!currentQuery}
-            placeholder="Ask Copilot Search anything about Colombia and the world..."
+            placeholder={activeTab === 'local' 
+              ? "Buscar en Colombia: Congreso, Gustavo Petro, noticias nacionales..." 
+              : "Ask Copilot AI about global topics: Donald Trump, companies, world news..."}
             className="m-4"
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
           />
 
           {/* Advanced filters panel */}
@@ -665,8 +681,8 @@ const ModernSearchEngine: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Main Search Results */}
           <div className="lg:col-span-3">
-            {/* Knowledge Panel (if applicable) */}
-            {knowledgeTopic && currentQuery && (
+            {/* Knowledge Panel (ONLY in Mundo mode) */}
+            {activeTab === 'world' && knowledgeTopic && currentQuery && shouldShowKnowledgePanel(currentQuery, activeTab) && (
               <div className="mb-8">
                 <KnowledgePanel 
                   topic={knowledgeTopic} 
@@ -716,38 +732,123 @@ const ModernSearchEngine: React.FC = () => {
               </div>
             ) : (
               <div className="text-center py-16">
-                <div className="text-6xl mb-4">🌟</div>
+                <div className="text-6xl mb-4">{activeTab === 'local' ? '🇨🇴' : '🌟'}</div>
                 <h3 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                  Welcome to Copilot Search AI
+                  {activeTab === 'local' 
+                    ? 'Bienvenido a Nuestro Pulso Colombia'
+                    : 'Welcome to Copilot Search AI'}
                 </h3>
                 <p className={`mb-8 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  The most advanced search experience for Colombia and the world
+                  {activeTab === 'local' 
+                    ? 'La red cívica más avanzada de Colombia para búsquedas locales'
+                    : 'The most advanced global search experience powered by AI'}
                 </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                  <div className={`rounded-lg p-6 shadow-sm border ${
-                    darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                  }`}>
-                    <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
-                      darkMode ? 'text-white' : 'text-gray-900'
-                    }`}>
-                      🇨🇴 Local Search
-                    </h4>
-                    <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                      Colombian news, government, and local sources with AI analysis
-                    </p>
-                  </div>
-                  <div className={`rounded-lg p-6 shadow-sm border ${
-                    darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                  }`}>
-                    <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
-                      darkMode ? 'text-white' : 'text-gray-900'
-                    }`}>
-                      🌍 World Search
-                    </h4>
-                    <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                      Global information with knowledge panels and entity detection
-                    </p>
-                  </div>
+                  {activeTab === 'local' ? (
+                    // Local Colombia Features
+                    <>
+                      <div className={`rounded-lg p-6 shadow-sm border ${
+                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                      }`}>
+                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
+                          darkMode ? 'text-white' : 'text-gray-900'
+                        }`}>
+                          🏢 Congreso de Colombia
+                        </h4>
+                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          Actividad legislativa, votaciones y sesiones del Congreso Nacional
+                        </p>
+                      </div>
+                      <div className={`rounded-lg p-6 shadow-sm border ${
+                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                      }`}>
+                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
+                          darkMode ? 'text-white' : 'text-gray-900'
+                        }`}>
+                          🚔 Seguridad Nacional
+                        </h4>
+                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          Noticias sobre narcotráfico, crimen y seguridad en Colombia
+                        </p>
+                      </div>
+                      <div className={`rounded-lg p-6 shadow-sm border ${
+                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                      }`}>
+                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
+                          darkMode ? 'text-white' : 'text-gray-900'
+                        }`}>
+                          🇨🇴 Gustavo Petro
+                        </h4>
+                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          Últimas noticias y decisiones del Presidente de Colombia
+                        </p>
+                      </div>
+                      <div className={`rounded-lg p-6 shadow-sm border ${
+                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                      }`}>
+                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
+                          darkMode ? 'text-white' : 'text-gray-900'
+                        }`}>
+                          🗳️ Perspectivas Políticas
+                        </h4>
+                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          Análisis de izquierda y derecha desde el contexto colombiano
+                        </p>
+                      </div>
+                    </>
+                  ) : (
+                    // Mundo Global Features
+                    <>
+                      <div className={`rounded-lg p-6 shadow-sm border ${
+                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                      }`}>
+                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
+                          darkMode ? 'text-white' : 'text-gray-900'
+                        }`}>
+                          🧠 AI Knowledge Panels
+                        </h4>
+                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          Facts, images, timelines, and company info powered by AI
+                        </p>
+                      </div>
+                      <div className={`rounded-lg p-6 shadow-sm border ${
+                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                      }`}>
+                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
+                          darkMode ? 'text-white' : 'text-gray-900'
+                        }`}>
+                          🇺🇸 Donald Trump
+                        </h4>
+                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          Global coverage of US politics and international affairs
+                        </p>
+                      </div>
+                      <div className={`rounded-lg p-6 shadow-sm border ${
+                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                      }`}>
+                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
+                          darkMode ? 'text-white' : 'text-gray-900'
+                        }`}>
+                          🌍 Global Sources
+                        </h4>
+                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          BBC, CNN, Reuters, AP, The Guardian and international media
+                        </p>
+                      </div>
+                      <div className={`rounded-lg p-6 shadow-sm border ${
+                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                      }`}>
+                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
+                          darkMode ? 'text-white' : 'text-gray-900'
+                        }`}>
+                          📊 Sentiment Analysis
+                        </h4>
+                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+                          Entity detection and sentiment analysis for global topics
+                        </p>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
             )}
@@ -874,6 +975,36 @@ const ModernSearchEngine: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Mode-specific footer */}
+        {(searchResults.length > 0 || currentQuery) && (
+          <div className={`mt-12 p-6 rounded-xl text-center ${
+            activeTab === 'local' 
+              ? 'bg-gradient-to-r from-yellow-50 to-blue-50 border border-yellow-200' 
+              : 'bg-gradient-to-r from-gray-50 to-purple-50 border border-purple-200'
+          }`}>
+            {activeTab === 'local' ? (
+              <div>
+                <p className="text-lg font-bold text-blue-600 mb-2">
+                  ¡Gracias por usar Nuestro Pulso!
+                </p>
+                <p className="text-sm text-gray-600">
+                  La red cívica de Colombia • Fuentes 100% nacionales y locales
+                </p>
+              </div>
+            ) : (
+              <div>
+                <p className="text-lg font-bold text-purple-600 mb-2 flex items-center justify-center gap-2">
+                  <BsStars className="w-5 h-5" />
+                  Powered by Copilot AI
+                </p>
+                <p className="text-sm text-gray-600">
+                  Global intelligence search • International sources and knowledge panels
+                </p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Thank You Feedback Section */}
         <ThankYouSection
