@@ -7,6 +7,7 @@ export interface NewsTopic {
   perspective?: 'left' | 'right' | 'balanced';
   color: string;
   keywords: string[];
+  prominent?: boolean; // For 1-click topic tabs
 }
 
 export const localTopics: NewsTopic[] = [
@@ -59,13 +60,14 @@ export const localTopics: NewsTopic[] = [
   },
   {
     id: 'right-wing',
-    name: 'Right Wing',
+    name: 'Derecha Política',
     emoji: '🔴',
     description: 'Perspectiva conservadora y de derecha',
     category: 'local',
     perspective: 'right',
     color: 'from-red-500 to-red-700',
-    keywords: ['conservador', 'derecha', 'tradicional', 'libertad', 'empresa', 'colombia']
+    keywords: ['conservador', 'derecha', 'tradicional', 'libertad', 'empresa', 'colombia'],
+    prominent: true
   },
   {
     id: 'donald-trump-local',
@@ -74,7 +76,8 @@ export const localTopics: NewsTopic[] = [
     description: 'Noticias sobre Trump con enfoque en Sudamérica/Colombia',
     category: 'local',
     color: 'from-orange-500 to-red-600',
-    keywords: ['trump', 'donald trump', 'colombia', 'sudamerica', 'politica exterior', 'comercio', 'migracion']
+    keywords: ['trump', 'donald trump', 'colombia', 'sudamerica', 'politica exterior', 'comercio', 'migracion'],
+    prominent: true
   },
   // Additional existing topics
   {
@@ -133,7 +136,8 @@ export const worldTopics: NewsTopic[] = [
     description: 'Noticias globales sobre Donald Trump',
     category: 'world',
     color: 'from-orange-500 to-red-600',
-    keywords: ['trump', 'donald trump', 'usa', 'politics', 'global', 'international', 'america']
+    keywords: ['trump', 'donald trump', 'usa', 'politics', 'global', 'international', 'america'],
+    prominent: true
   },
   {
     id: 'world-politics',
@@ -155,13 +159,14 @@ export const worldTopics: NewsTopic[] = [
   },
   {
     id: 'world-right-wing',
-    name: 'Right Wing',
+    name: 'Derecha Política',
     emoji: '🔴',
     description: 'Perspectiva conservadora mundial',
     category: 'world',
     perspective: 'right',
     color: 'from-red-500 to-red-700',
-    keywords: ['conservative', 'right', 'traditional', 'liberty', 'business', 'global']
+    keywords: ['conservative', 'right', 'traditional', 'liberty', 'business', 'global'],
+    prominent: true
   },
   {
     id: 'world-left-wing',
@@ -247,6 +252,10 @@ export const worldTopics: NewsTopic[] = [
     keywords: ['crisis', 'global', 'issues', 'problems']
   }
 ];
+
+export const getProminentTopics = (category: 'local' | 'world'): NewsTopic[] => {
+  return getTopicsByCategory(category).filter(topic => topic.prominent);
+};
 
 export const getAllTopics = (): NewsTopic[] => {
   return [...localTopics, ...worldTopics];
