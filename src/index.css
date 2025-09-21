@@ -72,11 +72,11 @@
 
   /* Button styles */
   .btn-primary {
-    @apply bg-colombia-blue text-white font-medium px-6 py-3 rounded-xl shadow-lg hover:bg-colombia-blue-dark transition-all duration-300 hover:shadow-xl transform hover:-translate-y-0.5;
+    @apply bg-colombia-blue text-white font-medium px-6 py-3 rounded-xl shadow-lg hover:bg-colombia-blue-600 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-0.5;
   }
 
   .btn-secondary {
-    @apply bg-colombia-yellow text-colombia-blue font-medium px-6 py-3 rounded-xl shadow-lg hover:bg-colombia-yellow-dark transition-all duration-300 hover:shadow-xl transform hover:-translate-y-0.5;
+    @apply bg-colombia-yellow text-colombia-blue font-medium px-6 py-3 rounded-xl shadow-lg hover:bg-colombia-yellow-600 transition-all duration-300 hover:shadow-xl transform hover:-translate-y-0.5;
   }
 
   .btn-ghost {

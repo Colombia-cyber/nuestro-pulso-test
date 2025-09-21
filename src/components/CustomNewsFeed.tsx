@@ -260,132 +260,135 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Sticky Header */}
-      <div className="sticky top-16 z-40 bg-white/95 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-25 via-white to-colombia-blue-25">
+      {/* Premium Sticky Header */}
+      <div className="sticky top-18 lg:top-22 z-40 nav-premium backdrop-blur-4xl border-b border-white/30 shadow-premium">
+        <div className="container mx-auto px-4 py-6">
           <div className="max-w-7xl mx-auto">
-            {/* Main Header */}
-            <div className="flex items-center justify-between mb-4">
+            {/* Premium Main Header */}
+            <div className="flex items-center justify-between mb-6">
               <div>
-                <h1 className="text-3xl font-bold text-gradient-colombia flex items-center gap-3">
-                  <BiNews className="w-8 h-8" />
+                <h1 className="text-4xl lg:text-5xl font-black text-gradient-colombia-premium flex items-center gap-4 animate-gradient-aurora">
+                  <BiNews className="w-10 h-10" />
                   Noticias & Feeds
                 </h1>
-                <p className="text-gray-600 mt-1">
+                <p className="text-gray-600 mt-2 text-lg lg:text-xl">
                   Información actualizada con perspectivas balanceadas
                 </p>
               </div>
 
-              {/* Live Stats */}
-              <div className="hidden lg:flex items-center gap-4">
-                <div className="glass rounded-lg px-4 py-2 border border-white/20">
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                    <span className="font-medium text-red-600">EN VIVO</span>
+              {/* Premium Live Stats */}
+              <div className="hidden lg:flex items-center gap-6">
+                <div className="glass-premium rounded-2xl px-6 py-3 border border-white/30">
+                  <div className="flex items-center gap-3 text-sm">
+                    <div className="relative">
+                      <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                      <div className="absolute inset-0 w-3 h-3 bg-red-500 rounded-full animate-premium-glow opacity-50"></div>
+                    </div>
+                    <span className="font-bold text-red-600">EN VIVO</span>
                   </div>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <FaEye className="w-3 h-3" />
-                    <span>{liveStats.activeReaders.toLocaleString()} lectores</span>
+                <div className="text-base text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <FaEye className="w-4 h-4" />
+                    <span className="font-semibold">{liveStats.activeReaders.toLocaleString()} lectores</span>
                   </div>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <IoMdTime className="w-3 h-3" />
+                <div className="text-base text-gray-600">
+                  <div className="flex items-center gap-2">
+                    <IoMdTime className="w-4 h-4" />
                     <span>Actualizado {formatTime(lastUpdated)}</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Search and Filters */}
-            <div className="flex flex-col lg:flex-row gap-4">
-              {/* Search Bar */}
+            {/* Premium Search and Filters */}
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Premium Search Bar */}
               <div className="flex-1 relative">
                 <div className="relative">
-                  <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <FaSearch className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   <input
                     type="text"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Buscar noticias, temas, fuentes..."
-                    className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-colombia-blue focus:border-transparent placeholder-gray-500 transition-all"
+                    className="input-premium w-full pl-16 pr-6 py-4 text-lg border-0 focus:outline-none focus:ring-0 placeholder-gray-500"
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      className="absolute right-6 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
                     >
-                      <FaTimes className="w-4 h-4" />
+                      <FaTimes className="w-5 h-5" />
                     </button>
                   )}
                 </div>
               </div>
 
-              {/* View Mode Toggle */}
-              <div className="flex bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-1">
+              {/* Premium View Mode Toggle */}
+              <div className="flex glass-premium rounded-2xl border border-white/30 p-2">
                 <button
                   onClick={() => setViewMode('feed')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                  className={`px-6 py-3 rounded-xl text-base font-bold transition-all duration-400 flex items-center gap-3 ${
                     viewMode === 'feed'
-                      ? 'bg-colombia-blue text-white shadow-lg'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                      ? 'bg-gradient-colombia-premium text-white shadow-colombia-strong transform scale-105'
+                      : 'text-gray-700 hover:glass-subtle hover:scale-102'
                   }`}
                 >
-                  <FaFire className="w-3 h-3" />
+                  <FaFire className="w-4 h-4" />
                   Feed
                 </button>
                 <button
                   onClick={() => setViewMode('timeline')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                  className={`px-6 py-3 rounded-xl text-base font-bold transition-all duration-400 flex items-center gap-3 ${
                     viewMode === 'timeline'
-                      ? 'bg-colombia-blue text-white shadow-lg'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                      ? 'bg-gradient-to-r from-accent-primary to-accent-tertiary text-white shadow-premium transform scale-105'
+                      : 'text-gray-700 hover:glass-subtle hover:scale-102'
                   }`}
                 >
-                  <MdTimeline className="w-3 h-3" />
+                  <MdTimeline className="w-4 h-4" />
                   Timeline
                 </button>
                 <button
                   onClick={() => setViewMode('categories')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                  className={`px-6 py-3 rounded-xl text-base font-bold transition-all duration-400 flex items-center gap-3 ${
                     viewMode === 'categories'
-                      ? 'bg-colombia-blue text-white shadow-lg'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                      ? 'bg-gradient-to-r from-accent-secondary to-accent-warning text-white shadow-premium transform scale-105'
+                      : 'text-gray-700 hover:glass-subtle hover:scale-102'
                   }`}
                 >
-                  <BiCategory className="w-3 h-3" />
+                  <BiCategory className="w-4 h-4" />
                   Categorías
                 </button>
               </div>
 
-              {/* Filters Button */}
+              {/* Premium Filters Button */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className={`px-4 py-2 rounded-xl border transition-all flex items-center gap-2 ${
+                className={`px-6 py-3 rounded-2xl border transition-all duration-400 flex items-center gap-3 font-bold ${
                   showFilters
-                    ? 'bg-colombia-blue text-white border-colombia-blue'
-                    : 'bg-white/80 text-gray-600 border-gray-200 hover:bg-white'
+                    ? 'bg-gradient-to-r from-accent-primary to-accent-tertiary text-white border-accent-primary shadow-premium'
+                    : 'glass-premium text-gray-700 border-white/30 hover:glass-elegant'
                 }`}
               >
-                <FaFilter className="w-3 h-3" />
+                <FaFilter className="w-4 h-4" />
                 Filtros
-                <FaChevronDown className={`w-3 h-3 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
+                <FaChevronDown className={`w-4 h-4 transition-transform duration-300 ${showFilters ? 'rotate-180' : ''}`} />
               </button>
             </div>
 
-            {/* Expandable Filters */}
+            {/* Premium Expandable Filters */}
             {showFilters && (
-              <div className="mt-4 p-4 bg-white/90 backdrop-blur-sm rounded-xl border border-gray-200">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="mt-6 card-premium p-8 border border-white/30 rounded-3xl shadow-premium animate-slide-up">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Período</label>
+                    <label className="block text-base font-bold text-gray-700 mb-3">Período</label>
                     <select
                       value={filter.timeRange}
                       onChange={(e) => handleFilterChange({ timeRange: e.target.value as any })}
-                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-colombia-blue focus:border-transparent"
+                      className="input-premium w-full p-3 border-0 rounded-xl focus:ring-2 focus:ring-colombia-blue focus:border-transparent"
                     >
                       <option value="all">Todos los períodos</option>
                       <option value="today">Hoy</option>
@@ -395,11 +398,11 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Perspectiva</label>
+                    <label className="block text-base font-bold text-gray-700 mb-3">Perspectiva</label>
                     <select
                       value={filter.perspective}
                       onChange={(e) => handleFilterChange({ perspective: e.target.value as any })}
-                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-colombia-blue focus:border-transparent"
+                      className="input-premium w-full p-3 border-0 rounded-xl focus:ring-2 focus:ring-colombia-blue focus:border-transparent"
                     >
                       <option value="both">Todas las perspectivas</option>
                       <option value="progressive">Solo progresistas</option>
@@ -408,11 +411,11 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Fuente</label>
+                    <label className="block text-base font-bold text-gray-700 mb-3">Fuente</label>
                     <select
                       value={filter.source || ''}
                       onChange={(e) => handleFilterChange({ source: e.target.value || undefined })}
-                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-colombia-blue focus:border-transparent"
+                      className="input-premium w-full p-3 border-0 rounded-xl focus:ring-2 focus:ring-colombia-blue focus:border-transparent"
                     >
                       <option value="">Todas las fuentes</option>
                       <option value="el-tiempo">El Tiempo</option>
@@ -422,10 +425,10 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
                     </select>
                   </div>
                 </div>
-                <div className="mt-4 flex justify-end">
+                <div className="mt-6 flex justify-end">
                   <button
                     onClick={clearFilters}
-                    className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
+                    className="px-6 py-3 text-base text-gray-600 hover:text-gray-800 transition-colors font-semibold"
                   >
                     Limpiar filtros
                   </button>
@@ -436,23 +439,23 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="container mx-auto px-4 py-6">
+      {/* Premium Main Content */}
+      <div className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {isLoading ? (
-            // Loading skeletons
-            <div className="space-y-6">
+            // Premium Loading skeletons
+            <div className="space-y-8">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="news-card p-6 animate-pulse">
-                  <div className="flex gap-4">
-                    <div className="w-32 h-24 bg-gray-300 rounded-lg"></div>
-                    <div className="flex-1 space-y-3">
-                      <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                      <div className="h-3 bg-gray-300 rounded w-full"></div>
-                      <div className="h-3 bg-gray-300 rounded w-2/3"></div>
-                      <div className="flex gap-4">
-                        <div className="h-3 bg-gray-300 rounded w-20"></div>
-                        <div className="h-3 bg-gray-300 rounded w-16"></div>
+                <div key={i} className="news-card-premium p-8 animate-pulse">
+                  <div className="flex gap-6">
+                    <div className="w-48 h-32 bg-gray-300 rounded-2xl loading-shimmer"></div>
+                    <div className="flex-1 space-y-4">
+                      <div className="h-6 bg-gray-300 rounded-xl w-3/4 loading-shimmer"></div>
+                      <div className="h-4 bg-gray-300 rounded-lg w-full loading-shimmer"></div>
+                      <div className="h-4 bg-gray-300 rounded-lg w-2/3 loading-shimmer"></div>
+                      <div className="flex gap-6">
+                        <div className="h-4 bg-gray-300 rounded-lg w-24 loading-shimmer"></div>
+                        <div className="h-4 bg-gray-300 rounded-lg w-20 loading-shimmer"></div>
                       </div>
                     </div>
                   </div>
@@ -462,42 +465,43 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
           ) : (
             <>
               {viewMode === 'feed' && (
-                <div className="space-y-6">
-                  {/* Trending Section */}
+                <div className="space-y-10">
+                  {/* Premium Trending Section */}
                   {getTrendingNews().length > 0 && (
-                    <div className="mb-8">
-                      <div className="flex items-center gap-3 mb-6">
-                        <div className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-600 text-white px-4 py-2 rounded-full">
-                          <FaFire className="w-4 h-4" />
-                          <span className="font-bold">Trending Ahora</span>
+                    <div className="mb-12">
+                      <div className="flex items-center gap-4 mb-8">
+                        <div className="flex items-center gap-3 bg-gradient-to-r from-orange-500 to-red-600 text-white px-6 py-3 rounded-full shadow-premium">
+                          <FaFire className="w-5 h-5" />
+                          <span className="font-black text-lg">Trending Ahora</span>
                         </div>
-                        <div className="text-sm text-gray-600">
+                        <div className="text-base text-gray-600 font-semibold">
                           {getTrendingNews().length} artículos
                         </div>
                       </div>
                       
-                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {getTrendingNews().map((item) => (
-                          <EnhancedNewsCard
-                            key={item.id}
-                            article={item}
-                            onArticleClick={() => handleNewsClick(item)}
-                            showPerspectiveBadge={true}
-                          />
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        {getTrendingNews().map((item, index) => (
+                          <div key={item.id} className="animate-premium-scale-in" style={{ animationDelay: `${index * 200}ms` }}>
+                            <EnhancedNewsCard
+                              article={item}
+                              onArticleClick={() => handleNewsClick(item)}
+                              showPerspectiveBadge={true}
+                            />
+                          </div>
                         ))}
                       </div>
                     </div>
                   )}
 
-                  {/* Latest News */}
+                  {/* Premium Latest News */}
                   <div>
-                    <div className="flex items-center justify-between mb-6">
-                      <div className="flex items-center gap-3">
-                        <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                          <MdUpdate className="w-6 h-6 text-colombia-blue" />
+                    <div className="flex items-center justify-between mb-8">
+                      <div className="flex items-center gap-4">
+                        <h2 className="text-3xl lg:text-4xl font-black text-gradient-premium flex items-center gap-3">
+                          <MdUpdate className="w-8 h-8 text-colombia-blue-600" />
                           Últimas Noticias
                         </h2>
-                        <div className="text-sm text-gray-600">
+                        <div className="text-base text-gray-600 font-semibold">
                           {filteredNews.length} artículos
                         </div>
                       </div>
@@ -508,34 +512,35 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
                             setSelectedCategory(null);
                             handleFilterChange({ category: undefined });
                           }}
-                          className="text-sm text-colombia-blue hover:text-colombia-blue-dark transition-colors flex items-center gap-1"
+                          className="text-base text-colombia-blue hover:text-colombia-blue-600 transition-colors flex items-center gap-2 font-semibold"
                         >
-                          <FaTimes className="w-3 h-3" />
+                          <FaTimes className="w-4 h-4" />
                           Limpiar categoría
                         </button>
                       )}
                     </div>
 
-                    {/* News Grid */}
-                    <div className="space-y-4">
-                      {filteredNews.map((item) => (
-                        <EnhancedNewsCard
-                          key={item.id}
-                          article={item}
-                          onArticleClick={() => handleNewsClick(item)}
-                          showPerspectiveBadge={true}
-                        />
+                    {/* Premium News Grid */}
+                    <div className="space-y-6">
+                      {filteredNews.map((item, index) => (
+                        <div key={item.id} className="animate-premium-scale-in" style={{ animationDelay: `${index * 100}ms` }}>
+                          <EnhancedNewsCard
+                            article={item}
+                            onArticleClick={() => handleNewsClick(item)}
+                            showPerspectiveBadge={true}
+                          />
+                        </div>
                       ))}
                     </div>
 
-                    {/* Infinite Scroll Trigger */}
-                    <div ref={observerRef} className="py-8">
+                    {/* Premium Infinite Scroll Trigger */}
+                    <div ref={observerRef} className="py-12">
                       {isLoadingMore && (
                         <div className="flex justify-center">
-                          <div className="glass rounded-lg px-6 py-3 border border-white/20">
-                            <div className="flex items-center gap-3">
-                              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-colombia-blue"></div>
-                              <span className="text-gray-600">Cargando más noticias...</span>
+                          <div className="glass-premium rounded-2xl px-8 py-4 border border-white/30 shadow-premium">
+                            <div className="flex items-center gap-4">
+                              <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-colombia-blue"></div>
+                              <span className="text-gray-600 font-semibold text-lg">Cargando más noticias...</span>
                             </div>
                           </div>
                         </div>
@@ -543,8 +548,8 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
                       
                       {!hasMore && filteredNews.length > 0 && (
                         <div className="text-center text-gray-500">
-                          <div className="glass rounded-lg px-6 py-3 border border-white/20 inline-block">
-                            Has visto todas las noticias disponibles
+                          <div className="glass-premium rounded-2xl px-8 py-4 border border-white/30 inline-block shadow-soft">
+                            <span className="font-semibold text-lg">Has visto todas las noticias disponibles</span>
                           </div>
                         </div>
                       )}
@@ -561,50 +566,57 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
               )}
 
               {viewMode === 'categories' && (
-                <div className="space-y-6">
-                  <div className="text-center mb-8">
-                    <h2 className="text-3xl font-bold text-gray-900 mb-4">
+                <div className="space-y-10">
+                  <div className="text-center mb-12">
+                    <h2 className="text-4xl lg:text-5xl font-black text-gradient-premium mb-6">
                       📂 Explora por Categorías
                     </h2>
-                    <p className="text-gray-600 max-w-2xl mx-auto">
+                    <p className="text-xl lg:text-2xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
                       Descubre noticias organizadas por temas específicos. 
                       Cada categoría incluye análisis profundo y perspectivas balanceadas.
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                    {categories.map((category) => (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    {categories.map((category, index) => (
                       <div
                         key={category.id}
                         onClick={() => handleCategoryClick(category.id)}
-                        className="group cursor-pointer"
+                        className="group cursor-pointer animate-premium-scale-in"
+                        style={{ animationDelay: `${index * 150}ms` }}
                       >
-                        <div className={`${category.color} rounded-2xl p-6 text-white h-full transform hover:scale-105 transition-all duration-300 hover:shadow-xl relative overflow-hidden`}>
-                          {/* Background Pattern */}
-                          <div className="absolute inset-0 opacity-10">
-                            <div className="absolute -top-4 -right-4 w-24 h-24 rounded-full bg-white"></div>
-                            <div className="absolute -bottom-4 -left-4 w-16 h-16 rounded-full bg-white"></div>
+                        <div className={`${category.color} rounded-4xl p-8 text-white h-full transform hover:scale-105 transition-all duration-600 hover:shadow-premium-lg relative overflow-hidden perspective-3d`}>
+                          {/* Premium Background Pattern */}
+                          <div className="absolute inset-0 opacity-20">
+                            <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/30 blur-2xl"></div>
+                            <div className="absolute -bottom-8 -left-8 w-24 h-24 rounded-full bg-white/20 blur-xl"></div>
+                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full bg-white/10 blur-3xl"></div>
+                          </div>
+                          
+                          {/* Premium Shimmer Effect */}
+                          <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-premium-shimmer"></div>
                           </div>
                           
                           <div className="relative z-10">
-                            <div className="flex items-center justify-between mb-4">
-                              <span className="text-4xl">{category.icon}</span>
-                              <div className="bg-white/20 rounded-full px-3 py-1">
-                                <span className="text-sm font-medium">{category.count}</span>
+                            <div className="flex items-center justify-between mb-6">
+                              <span className="text-5xl animate-bounce-gentle group-hover:animate-premium-bounce">{category.icon}</span>
+                              <div className="glass-subtle rounded-full px-4 py-2 border border-white/30">
+                                <span className="text-lg font-black">{category.count}</span>
                               </div>
                             </div>
                             
-                            <h3 className="text-xl font-bold mb-3 group-hover:text-colombia-yellow transition-colors">
+                            <h3 className="text-2xl lg:text-3xl font-black mb-4 group-hover:text-colombia-yellow-200 transition-colors leading-tight">
                               {category.title}
                             </h3>
                             
-                            <p className="text-white/90 text-sm leading-relaxed mb-4">
+                            <p className="text-white/95 text-base lg:text-lg leading-relaxed mb-6">
                               {category.description}
                             </p>
                             
-                            <div className="flex items-center justify-between text-sm">
-                              <span className="opacity-80">Explorar categoría</span>
-                              <BiTrendingUp className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                            <div className="flex items-center justify-between text-base">
+                              <span className="opacity-90 font-semibold">Explorar categoría</span>
+                              <BiTrendingUp className="w-6 h-6 transform group-hover:translate-x-2 transition-transform duration-400" />
                             </div>
                           </div>
                         </div>
@@ -612,12 +624,12 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
                     ))}
                   </div>
 
-                  <div className="glass rounded-2xl p-6 border border-white/20 text-center">
-                    <div className="flex items-center justify-center gap-2 text-colombia-blue mb-3">
-                      <MdVerified className="w-5 h-5" />
-                      <span className="font-semibold">Contenido Verificado</span>
+                  <div className="card-premium rounded-4xl p-10 border border-white/30 text-center shadow-premium">
+                    <div className="flex items-center justify-center gap-3 text-colombia-blue-600 mb-4">
+                      <MdVerified className="w-6 h-6" />
+                      <span className="font-black text-xl">Contenido Verificado</span>
                     </div>
-                    <p className="text-gray-600">
+                    <p className="text-lg lg:text-xl text-gray-600 leading-relaxed">
                       Todas nuestras categorías incluyen contenido verificado por nuestro equipo editorial 
                       y perspectivas balanceadas de múltiples fuentes confiables.
                     </p>

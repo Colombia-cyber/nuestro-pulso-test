@@ -124,55 +124,55 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
     return (
       <div 
         onClick={handleCardClick}
-        className="bg-white rounded-lg shadow hover:shadow-md transition-all duration-200 p-4 cursor-pointer border border-gray-100 hover:border-gray-200"
+        className="news-card-premium rounded-2xl p-6 cursor-pointer border border-white/30 hover:shadow-premium transform hover:scale-102 transition-all duration-400 animate-premium-scale-in"
       >
-        <div className="flex items-start space-x-3">
+        <div className="flex items-start space-x-4">
           {!imageError && article.imageUrl && (
             <div className="flex-shrink-0">
               <img 
                 src={article.imageUrl}
                 alt={article.title}
-                className="w-16 h-16 rounded-lg object-cover"
+                className="w-20 h-20 rounded-2xl object-cover shadow-soft"
                 onError={() => setImageError(true)}
               />
             </div>
           )}
           
           <div className="flex-1 min-w-0">
-            <div className="flex items-center space-x-2 mb-2">
-              <span className="text-lg">{getSourceIcon(article.source)}</span>
-              <span className="text-xs font-medium text-gray-600">{getSourceName(article.source)}</span>
-              <span className="text-xs text-gray-400">•</span>
-              <span className="text-xs text-gray-500">{formatDate(article.publishedAt)}</span>
+            <div className="flex items-center space-x-3 mb-3">
+              <span className="text-2xl">{getSourceIcon(article.source)}</span>
+              <span className="text-sm font-bold text-gray-600">{getSourceName(article.source)}</span>
+              <span className="text-sm text-gray-400">•</span>
+              <span className="text-sm text-gray-500">{formatDate(article.publishedAt)}</span>
               {article.trending && (
                 <>
-                  <span className="text-xs text-gray-400">•</span>
-                  <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">
+                  <span className="text-sm text-gray-400">•</span>
+                  <span className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-3 py-1 rounded-full text-xs font-bold shadow-premium">
                     🔥 Trending
                   </span>
                 </>
               )}
             </div>
             
-            <h3 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-2">
+            <h3 className="text-base font-bold text-gray-900 line-clamp-2 mb-3 leading-tight">
               {article.title}
             </h3>
             
             <div className="flex items-center justify-between">
               {showPerspectiveBadge && (
-                <span className={`px-2 py-1 rounded-full text-xs font-medium border ${getPerspectiveColor(article.perspective)}`}>
+                <span className={`px-3 py-1 rounded-full text-sm font-bold border-2 ${getPerspectiveColor(article.perspective)} shadow-soft`}>
                   {getPerspectiveLabel(article.perspective)}
                 </span>
               )}
               
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
                 {article.readTime && (
-                  <span className="text-xs text-gray-500">{article.readTime}</span>
+                  <span className="text-sm text-gray-500 font-medium">{article.readTime}</span>
                 )}
                 
                 <button
                   onClick={handleShare}
-                  className="text-gray-400 hover:text-blue-600 transition-colors"
+                  className="text-gray-400 hover:text-blue-600 transition-colors p-2 rounded-lg hover:bg-blue-50"
                   title="Compartir"
                 >
                   📤
@@ -188,36 +188,37 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
   return (
     <div 
       onClick={handleCardClick}
-      className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border border-gray-100 hover:border-gray-200 group"
+      className="news-card-premium rounded-3xl shadow-premium hover:shadow-premium-lg transition-all duration-600 overflow-hidden cursor-pointer border border-white/30 hover:border-white/50 group perspective-3d animate-premium-scale-in"
     >
-      {/* Image Header */}
+      {/* Premium Image Header */}
       {!imageError && article.imageUrl && (
-        <div className="relative h-48 overflow-hidden">
+        <div className="relative h-56 overflow-hidden">
           <img 
             src={article.imageUrl}
             alt={article.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-800"
             onError={() => setImageError(true)}
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-400"></div>
           
-          {/* Overlay badges */}
-          <div className="absolute top-3 left-3 flex space-x-2">
-            <span className="bg-white/90 backdrop-blur-sm text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
+          {/* Premium Overlay badges */}
+          <div className="absolute top-4 left-4 flex space-x-3">
+            <span className="glass-premium text-gray-800 px-4 py-2 rounded-full text-sm font-bold border border-white/30 backdrop-blur-lg">
               {getSourceIcon(article.source)} {getSourceName(article.source)}
             </span>
             
             {article.trending && (
-              <span className="bg-red-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
+              <span className="bg-gradient-to-r from-orange-500 to-red-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-premium animate-pulse">
                 🔥 Trending
               </span>
             )}
           </div>
           
-          {/* Share button overlay */}
-          <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          {/* Premium Share button overlay */}
+          <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-400">
             <button
               onClick={handleShare}
-              className="bg-white/90 backdrop-blur-sm text-gray-700 hover:text-blue-600 p-2 rounded-full shadow-lg transition-colors"
+              className="glass-premium text-gray-700 hover:text-blue-600 p-3 rounded-full shadow-premium transition-all duration-300 transform hover:scale-110 border border-white/30"
               title="Compartir"
             >
               📤
@@ -226,49 +227,49 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
         </div>
       )}
       
-      {/* Content */}
-      <div className="p-6">
-        {/* Header info */}
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center space-x-2 text-sm text-gray-600">
+      {/* Premium Content */}
+      <div className="p-8">
+        {/* Premium Header info */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-3 text-base text-gray-600">
             {imageError && (
               <>
-                <span className="text-lg">{getSourceIcon(article.source)}</span>
-                <span className="font-medium">{getSourceName(article.source)}</span>
+                <span className="text-2xl">{getSourceIcon(article.source)}</span>
+                <span className="font-bold">{getSourceName(article.source)}</span>
                 <span>•</span>
               </>
             )}
-            <span>{formatDate(article.publishedAt)}</span>
+            <span className="font-medium">{formatDate(article.publishedAt)}</span>
             {article.readTime && (
               <>
                 <span>•</span>
-                <span>{article.readTime}</span>
+                <span className="font-medium">{article.readTime}</span>
               </>
             )}
           </div>
           
-          <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs font-medium">
+          <span className="glass-subtle text-gray-700 px-4 py-2 rounded-full text-sm font-bold border border-gray-200">
             {article.category}
           </span>
         </div>
         
-        {/* Title */}
-        <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-blue-900 transition-colors">
+        {/* Premium Title */}
+        <h3 className="text-xl lg:text-2xl font-black text-gray-900 mb-4 line-clamp-2 group-hover:text-colombia-blue-600 transition-colors duration-300 leading-tight">
           {article.title}
         </h3>
         
-        {/* Summary */}
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+        {/* Premium Summary */}
+        <p className="text-lg text-gray-600 mb-6 line-clamp-3 leading-relaxed">
           {article.summary}
         </p>
         
-        {/* Tags */}
+        {/* Premium Tags */}
         {article.tags && article.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mb-4">
+          <div className="flex flex-wrap gap-2 mb-6">
             {article.tags.slice(0, 3).map((tag, index) => (
               <span 
                 key={index}
-                className="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs"
+                className="glass-subtle text-gray-700 px-3 py-1 rounded-full text-sm font-medium border border-gray-200 hover:glass-elegant transition-all duration-300"
               >
                 #{tag}
               </span>
@@ -276,29 +277,29 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
           </div>
         )}
         
-        {/* Footer */}
-        <div className="flex items-center justify-between">
+        {/* Premium Footer */}
+        <div className="flex items-center justify-between pt-6 border-t border-gray-100">
           {showPerspectiveBadge && (
-            <span className={`px-3 py-1 rounded-full text-xs font-medium border ${getPerspectiveColor(article.perspective)}`}>
+            <span className={`px-4 py-2 rounded-full text-sm font-bold border-2 shadow-soft ${getPerspectiveColor(article.perspective)}`}>
               {getPerspectiveLabel(article.perspective)}
             </span>
           )}
           
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-4">
             {article.author && (
-              <div className="flex items-center space-x-2 text-xs text-gray-500">
-                <div className="w-6 h-6 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+              <div className="flex items-center space-x-3 text-sm text-gray-600">
+                <div className="w-8 h-8 bg-gradient-colombia-premium rounded-full flex items-center justify-center text-white font-bold shadow-soft">
                   {article.author.charAt(0).toUpperCase()}
                 </div>
-                <span>{article.author}</span>
+                <span className="font-semibold">{article.author}</span>
               </div>
             )}
             
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-3">
               <button
                 onClick={handleCopyLink}
-                className={`text-gray-400 hover:text-blue-600 transition-colors text-sm ${
-                  copied ? 'text-green-600' : ''
+                className={`p-3 rounded-xl glass-subtle hover:glass-elegant transition-all duration-300 transform hover:scale-110 text-base ${
+                  copied ? 'text-green-600' : 'text-gray-600 hover:text-blue-600'
                 }`}
                 title="Copiar enlace"
               >
@@ -307,7 +308,7 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
               
               <button
                 onClick={handleShare}
-                className="text-gray-400 hover:text-blue-600 transition-colors text-sm"
+                className="p-3 rounded-xl glass-subtle hover:glass-elegant text-gray-600 hover:text-blue-600 transition-all duration-300 transform hover:scale-110 text-base"
                 title="Compartir"
               >
                 📤
@@ -316,10 +317,10 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
           </div>
         </div>
         
-        {/* Related articles indicator */}
+        {/* Premium Related articles indicator */}
         {article.relatedArticles && article.relatedArticles.length > 0 && (
-          <div className="mt-3 pt-3 border-t border-gray-100">
-            <span className="text-xs text-gray-500">
+          <div className="mt-6 pt-6 border-t border-gray-100">
+            <span className="glass-subtle px-4 py-2 rounded-full text-sm font-bold text-colombia-blue-600 border border-colombia-blue-200">
               📝 {article.relatedArticles.length} artículo{article.relatedArticles.length > 1 ? 's' : ''} relacionado{article.relatedArticles.length > 1 ? 's' : ''}
             </span>
           </div>

@@ -41,40 +41,40 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
 
   return (
     <>
-      {/* Main Navigation */}
+      {/* Premium Main Navigation */}
       <nav 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-600 ${
           isScrolled 
-            ? 'bg-white/95 backdrop-blur-xl shadow-xl border-b border-colombia-yellow/20' 
-            : 'bg-gradient-colombia-soft backdrop-blur-sm'
+            ? 'nav-premium shadow-premium-lg border-b border-white/30' 
+            : 'glass-premium backdrop-blur-4xl'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo Section */}
+          <div className="flex items-center justify-between h-18 lg:h-22">
+            {/* Premium Logo Section */}
             <div 
-              className="flex items-center gap-3 cursor-pointer group"
+              className="flex items-center gap-4 cursor-pointer group"
               onClick={() => handleNavClick('home')}
             >
-              <div className="relative">
-                <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-colombia rounded-xl shadow-colombia flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 floating">
-                  <span className="text-white font-bold text-lg lg:text-xl">🇨🇴</span>
+              <div className="relative perspective-3d">
+                <div className="w-12 h-12 lg:w-14 lg:h-14 bg-gradient-colombia-premium rounded-2xl shadow-colombia-strong flex items-center justify-center transform group-hover:scale-110 group-hover:rotate-3d transition-all duration-500 animate-premium-glow">
+                  <span className="text-white font-black text-xl lg:text-2xl">🇨🇴</span>
                 </div>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full animate-pulse shadow-premium"></div>
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-gradient-colombia font-bold text-xl lg:text-2xl text-shadow">
+                <h1 className="text-gradient-colombia-premium font-black text-2xl lg:text-3xl text-shadow-lg animate-gradient-aurora">
                   Nuestro Pulso
                 </h1>
-                <p className="text-xs lg:text-sm text-colombia-blue/80 font-medium">
+                <p className="text-sm lg:text-base text-colombia-blue-600 font-bold">
                   Red Cívica de Colombia
                 </p>
               </div>
             </div>
 
-            {/* Desktop Search Bar */}
-            <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
-              <div className="relative w-full">
+            {/* Premium Desktop Search Bar */}
+            <div className="hidden lg:flex flex-1 max-w-3xl mx-8">
+              <div className="relative w-full perspective-3d">
                 <UniversalSearchBar 
                   onSearch={(query, category, topic) => {
                     // Navigate to search with parameters
@@ -86,13 +86,13 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
                     handleNavClick('search');
                   }}
                   onTopicSelect={(topic) => console.log('Topic selected:', topic)}
-                  className="scale-75 origin-left"
+                  className="scale-75 origin-left transform hover:scale-80 transition-transform duration-300"
                 />
               </div>
             </div>
             
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-1 xl:gap-2">
+            {/* Premium Desktop Navigation */}
+            <div className="hidden lg:flex items-center gap-2 xl:gap-3">
               {navItems.map((item) => {
                 const isActive = currentView === item.id || 
                   (item.id === 'feeds' && (currentView === 'news' || currentView === 'feeds')) ||
@@ -102,79 +102,79 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
                   <button
                     key={item.id}
                     onClick={() => handleNavClick(item.id)}
-                    className={`nav-item group relative ${isActive ? 'active' : ''}`}
+                    className={`nav-item-premium group relative ${isActive ? 'active' : ''}`}
                     title={item.label}
                   >
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg group-hover:animate-bounce-subtle">{item.icon}</span>
-                      <span className="hidden xl:inline font-medium text-sm">
+                    <div className="flex items-center gap-3">
+                      <span className="text-xl group-hover:animate-premium-bounce transform transition-transform duration-300">{item.icon}</span>
+                      <span className="hidden xl:inline font-bold text-sm">
                         {item.shortLabel}
                       </span>
                     </div>
                     {isActive && (
-                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-6 h-1 bg-colombia-yellow rounded-full"></div>
+                      <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gradient-colombia-premium rounded-full shadow-colombia animate-pulse"></div>
                     )}
                   </button>
                 );
               })}
             </div>
 
-            {/* Social Icons & Search - Desktop */}
-            <div className="hidden lg:flex items-center gap-3 ml-4">
-              {/* Social Media Icons */}
-              <div className="flex items-center gap-2">
+            {/* Premium Social Icons & Search - Desktop */}
+            <div className="hidden lg:flex items-center gap-4 ml-4">
+              {/* Premium Social Media Icons */}
+              <div className="flex items-center gap-3">
                 <a 
                   href="https://youtube.com/@nuestropulso" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:scale-110 transition-all duration-300 interactive-glow"
+                  className="p-3 rounded-2xl glass-elegant text-red-600 hover:glass-premium hover:scale-110 transition-all duration-400 shadow-soft hover:shadow-premium"
                   title="YouTube"
                 >
-                  <FaYoutube className="w-4 h-4" />
+                  <FaYoutube className="w-5 h-5" />
                 </a>
                 <a 
                   href="https://facebook.com/nuestropulso" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 hover:scale-110 transition-all duration-300 interactive-glow"
+                  className="p-3 rounded-2xl glass-elegant text-blue-600 hover:glass-premium hover:scale-110 transition-all duration-400 shadow-soft hover:shadow-premium"
                   title="Facebook"
                 >
-                  <FaFacebook className="w-4 h-4" />
+                  <FaFacebook className="w-5 h-5" />
                 </a>
                 <a 
                   href="https://twitter.com/nuestropulso" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-sky-50 text-sky-600 hover:bg-sky-100 hover:scale-110 transition-all duration-300 interactive-glow"
+                  className="p-3 rounded-2xl glass-elegant text-sky-600 hover:glass-premium hover:scale-110 transition-all duration-400 shadow-soft hover:shadow-premium"
                   title="Twitter"
                 >
-                  <FaTwitter className="w-4 h-4" />
+                  <FaTwitter className="w-5 h-5" />
                 </a>
                 <a 
                   href="https://wa.me/573001234567" 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="p-2 rounded-lg bg-green-50 text-green-600 hover:bg-green-100 hover:scale-110 transition-all duration-300 interactive-glow"
+                  className="p-3 rounded-2xl glass-elegant text-green-600 hover:glass-premium hover:scale-110 transition-all duration-400 shadow-soft hover:shadow-premium"
                   title="WhatsApp"
                 >
-                  <FaWhatsapp className="w-4 h-4" />
+                  <FaWhatsapp className="w-5 h-5" />
                 </a>
               </div>
 
               {/* Search Button for smaller screens */}
               <button 
                 onClick={() => setShowSearchModal(true)}
-                className="xl:hidden p-2 rounded-lg bg-colombia-blue/10 text-colombia-blue hover:bg-colombia-blue/20 transition-all duration-300"
+                className="xl:hidden p-3 rounded-2xl glass-elegant text-colombia-blue-600 hover:glass-premium transition-all duration-400"
                 title="Buscar"
               >
-                <FaSearch className="w-4 h-4" />
+                <FaSearch className="w-5 h-5" />
               </button>
 
-              {/* Login Button */}
-              <button className="btn-primary text-sm px-4 py-2 lg:px-6 lg:py-3">
-                <span className="flex items-center gap-2">
+              {/* Premium Login Button */}
+              <button className="btn-premium btn-colombia-premium text-base px-6 py-3 lg:px-8 lg:py-4">
+                <span className="flex items-center gap-3">
                   <span>🔐</span>
-                  <span className="hidden xl:inline">Ingresar</span>
+                  <span className="hidden xl:inline font-bold">Ingresar</span>
                 </span>
               </button>
             </div>
