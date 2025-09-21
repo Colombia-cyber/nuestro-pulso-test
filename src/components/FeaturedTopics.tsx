@@ -201,6 +201,21 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
     const topic = topicDisplay.topic;
     setSelectedTopic(topic.id);
     
+    // DEDICATED PAGE NAVIGATION: Left Wing and Right Wing open in-app pages
+    if (topic.id === 'left-wing' || topic.id === 'world-left-wing') {
+      // Navigate to dedicated Left Wing page
+      window.history.pushState(null, '', '/left-wing');
+      window.dispatchEvent(new CustomEvent('navigate', { detail: 'left-wing' }));
+      return;
+    }
+    
+    if (topic.id === 'right-wing' || topic.id === 'world-right-wing') {
+      // Navigate to dedicated Right Wing page
+      window.history.pushState(null, '', '/right-wing');
+      window.dispatchEvent(new CustomEvent('navigate', { detail: 'right-wing' }));
+      return;
+    }
+    
     // Set loading state for this specific topic
     setTopicStats(prev => ({
       ...prev,

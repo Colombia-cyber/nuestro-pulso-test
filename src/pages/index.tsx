@@ -1,4 +1,12 @@
 import React, { useEffect, useState } from "react";
+// Import new dedicated pages
+export { default as LeftWing } from './LeftWing';
+export { default as RightWing } from './RightWing';
+export { default as Home } from './Home';
+export { default as Search } from './Search';
+export { default as EnhancedSearch } from './EnhancedSearch';
+export { default as CommunityHub } from './CommunityHub';
+
 // Replace these imports with actual component paths if needed
 // import SectionTabs from "../components/SectionTabs";
 // import ReelsFeed from "../components/ReelsFeed";

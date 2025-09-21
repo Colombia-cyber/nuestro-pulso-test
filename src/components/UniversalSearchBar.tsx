@@ -106,7 +106,22 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
     onTopicSelect(topic);
     setShowTopics(false);
     
-    // INSTANT TOPIC SEARCH: If there's a query, immediately search with this topic
+    // DEDICATED PAGE NAVIGATION: Left Wing and Right Wing open in-app pages
+    if (topic.id === 'left-wing' || topic.id === 'world-left-wing') {
+      // Navigate to dedicated Left Wing page
+      window.history.pushState(null, '', '/left-wing');
+      window.dispatchEvent(new CustomEvent('navigate', { detail: 'left-wing' }));
+      return;
+    }
+    
+    if (topic.id === 'right-wing' || topic.id === 'world-right-wing') {
+      // Navigate to dedicated Right Wing page
+      window.history.pushState(null, '', '/right-wing');
+      window.dispatchEvent(new CustomEvent('navigate', { detail: 'right-wing' }));
+      return;
+    }
+    
+    // INSTANT TOPIC SEARCH: For other topics, search with instant results
     if (query.trim()) {
       performSearch(query, topic);
     } else {
@@ -163,19 +178,18 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
 
         {/* Search Input Row */}
         <div className="flex items-center p-4">
-          {/* Topic Filter Button */}
+          {/* Topic Filter Button - TEXT ONLY */}
           <button
             onClick={toggleTopics}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all mr-3 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all mr-3 border-2 ${
               selectedTopic
-                ? `bg-gradient-to-r ${selectedTopic.color} text-white`
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-gray-100 text-gray-800 border-gray-300 hover:border-blue-500 hover:text-blue-600'
             }`}
           >
             <FaFilter className="w-4 h-4" />
             {selectedTopic ? (
               <>
-                <span>{selectedTopic.emoji}</span>
                 <span className="hidden sm:inline">{selectedTopic.name}</span>
                 <button
                   onClick={(e) => {
@@ -230,20 +244,17 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                     <button
                       key={topic.id}
                       onClick={() => handleTopicClick(topic)}
-                      className={`flex items-center gap-3 p-3 rounded-lg transition-all text-left hover:shadow-md ${
+                      className={`p-4 rounded-lg transition-all text-left border-2 font-bold ${
                         selectedTopic?.id === topic.id
-                          ? `bg-gradient-to-r ${topic.color} text-white`
-                          : 'bg-gray-50 hover:bg-gray-100'
+                          ? 'bg-blue-600 text-white border-blue-600'
+                          : 'bg-gray-50 text-gray-800 border-gray-200 hover:border-blue-500 hover:bg-blue-50'
                       }`}
                     >
-                      <span className="text-xl">{topic.emoji}</span>
-                      <div>
-                        <div className="font-semibold">{topic.name}</div>
-                        <div className={`text-xs ${
-                          selectedTopic?.id === topic.id ? 'text-white/80' : 'text-gray-500'
-                        }`}>
-                          {topic.description}
-                        </div>
+                      <div className="font-bold text-lg">{topic.name}</div>
+                      <div className={`text-sm mt-1 ${
+                        selectedTopic?.id === topic.id ? 'text-blue-100' : 'text-gray-600'
+                      }`}>
+                        {topic.description}
                       </div>
                     </button>
                   ))}
@@ -305,7 +316,7 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
         )}
       </div>
 
-      {/* Quick Topic Pills */}
+      {/* Quick Topic Pills - TEXT ONLY, NO ICONS */}
       <div className="mt-4 flex flex-wrap gap-2">
         {getAllTopics()
           .filter(topic => topic.category === selectedCategory)
@@ -314,14 +325,13 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
             <button
               key={topic.id}
               onClick={() => handleTopicClick(topic)}
-              className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all ${
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all border-2 ${
                 selectedTopic?.id === topic.id
-                  ? `bg-gradient-to-r ${topic.color} text-white`
-                  : 'bg-white text-gray-700 border border-gray-300 hover:shadow-md'
+                  ? 'bg-blue-600 text-white border-blue-600'
+                  : 'bg-white text-gray-800 border-gray-300 hover:border-blue-500 hover:text-blue-600 hover:shadow-md'
               }`}
             >
-              <span>{topic.emoji}</span>
-              <span>{topic.name}</span>
+              {topic.name}
             </button>
           ))}
       </div>
