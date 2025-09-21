@@ -118,57 +118,57 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
 
   return (
     <div ref={searchRef} className={`relative w-full max-w-4xl mx-auto ${className}`}>
-      {/* Main Search Container */}
-      <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+      {/* Premium Main Search Container */}
+      <div className="relative search-premium rounded-4xl shadow-premium-lg border border-white/30 overflow-hidden animate-premium-scale-in">
         
-        {/* Category Tabs */}
-        <div className="flex border-b border-gray-200">
+        {/* Premium Category Tabs */}
+        <div className="flex border-b border-white/20">
           <button
             onClick={() => setSelectedCategory('local')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 font-medium transition-all ${
+            className={`flex-1 flex items-center justify-center gap-3 py-4 px-6 font-bold text-lg transition-all duration-400 ${
               selectedCategory === 'local'
-                ? 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-gradient-colombia-premium text-white shadow-colombia-strong'
+                : 'text-gray-700 hover:bg-white/30 hover:scale-102'
             }`}
           >
-            <FaMapMarkerAlt className="w-4 h-4" />
+            <FaMapMarkerAlt className="w-5 h-5" />
             Colombia
           </button>
           <button
             onClick={() => setSelectedCategory('world')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 font-medium transition-all ${
+            className={`flex-1 flex items-center justify-center gap-3 py-4 px-6 font-bold text-lg transition-all duration-400 ${
               selectedCategory === 'world'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-gradient-to-r from-accent-primary via-accent-tertiary to-accent-secondary text-white shadow-premium'
+                : 'text-gray-700 hover:bg-white/30 hover:scale-102'
             }`}
           >
-            <FaGlobe className="w-4 h-4" />
+            <FaGlobe className="w-5 h-5" />
             Mundo
           </button>
         </div>
 
-        {/* Search Input Row */}
-        <div className="flex items-center p-4">
-          {/* Topic Filter Button */}
+        {/* Premium Search Input Row */}
+        <div className="flex items-center p-6">
+          {/* Premium Topic Filter Button */}
           <button
             onClick={toggleTopics}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all mr-3 ${
+            className={`flex items-center gap-3 px-6 py-3 rounded-2xl font-bold text-base transition-all duration-400 mr-4 ${
               selectedTopic
-                ? `bg-gradient-to-r ${selectedTopic.color} text-white`
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                ? `bg-gradient-to-r ${selectedTopic.color} text-white shadow-premium transform scale-105`
+                : 'glass-elegant text-gray-700 hover:glass-premium hover:scale-102'
             }`}
           >
             <FaFilter className="w-4 h-4" />
             {selectedTopic ? (
               <>
-                <span>{selectedTopic.emoji}</span>
+                <span className="text-xl">{selectedTopic.emoji}</span>
                 <span className="hidden sm:inline">{selectedTopic.name}</span>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     clearTopic();
                   }}
-                  className="ml-1 hover:bg-white/20 rounded-full p-1"
+                  className="ml-2 hover:bg-white/30 rounded-full p-1 transition-colors duration-200"
                 >
                   <FaTimes className="w-3 h-3" />
                 </button>
@@ -178,10 +178,10 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
             )}
           </button>
 
-          {/* Search Input */}
+          {/* Premium Search Input */}
           <form onSubmit={handleSubmit} className="flex-1 flex items-center">
             <div className="relative flex-1">
-              <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <FaSearch className="absolute left-6 top-1/2 transform -translate-y-1/2 w-6 h-6 text-gray-400" />
               <input
                 ref={inputRef}
                 type="text"
@@ -189,44 +189,44 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={handleInputFocus}
                 placeholder={placeholder}
-                className="w-full pl-12 pr-4 py-3 text-lg border-0 focus:outline-none focus:ring-0"
+                className="input-premium w-full pl-16 pr-6 py-4 text-lg font-medium border-0 focus:outline-none focus:ring-0"
               />
             </div>
             <button
               type="submit"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
+              className="btn-premium btn-primary-premium ml-4 px-10 py-4 text-lg font-bold"
             >
               Buscar
             </button>
           </form>
         </div>
 
-        {/* Topic Filter Dropdown */}
+        {/* Premium Topic Filter Dropdown */}
         {showTopics && (
-          <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-2xl shadow-2xl z-50 max-h-96 overflow-y-auto">
-            <div className="p-4">
-              <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
-                <FaFilter className="w-5 h-5" />
+          <div className="absolute top-full left-0 right-0 glass-premium border border-white/30 rounded-b-4xl shadow-premium-lg z-50 max-h-96 overflow-y-auto scrollbar-modern animate-slide-up">
+            <div className="p-6">
+              <h3 className="text-xl font-black mb-6 flex items-center gap-3 text-gradient-premium">
+                <FaFilter className="w-6 h-6" />
                 Filtrar por tema
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {filteredTopics
                   .filter(topic => topic.category === selectedCategory)
                   .map((topic) => (
                     <button
                       key={topic.id}
                       onClick={() => handleTopicClick(topic)}
-                      className={`flex items-center gap-3 p-3 rounded-lg transition-all text-left hover:shadow-md ${
+                      className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-400 text-left hover:shadow-premium transform hover:scale-102 ${
                         selectedTopic?.id === topic.id
-                          ? `bg-gradient-to-r ${topic.color} text-white`
-                          : 'bg-gray-50 hover:bg-gray-100'
+                          ? `bg-gradient-to-r ${topic.color} text-white shadow-premium`
+                          : 'glass-subtle hover:glass-elegant'
                       }`}
                     >
-                      <span className="text-xl">{topic.emoji}</span>
+                      <span className="text-2xl">{topic.emoji}</span>
                       <div>
-                        <div className="font-semibold">{topic.name}</div>
-                        <div className={`text-xs ${
-                          selectedTopic?.id === topic.id ? 'text-white/80' : 'text-gray-500'
+                        <div className="font-bold text-base">{topic.name}</div>
+                        <div className={`text-sm ${
+                          selectedTopic?.id === topic.id ? 'text-white/90' : 'text-gray-500'
                         }`}>
                           {topic.description}
                         </div>
@@ -238,15 +238,15 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
           </div>
         )}
 
-        {/* Search Suggestions Dropdown */}
+        {/* Premium Search Suggestions Dropdown */}
         {showSuggestions && !showTopics && (
-          <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-b-2xl shadow-2xl z-50">
-            <div className="p-4">
+          <div className="absolute top-full left-0 right-0 glass-premium border border-white/30 rounded-b-4xl shadow-premium-lg z-50 animate-slide-up">
+            <div className="p-6">
               {/* Recent Searches */}
               {recentSearches.length > 0 && (
-                <div className="mb-6">
-                  <h3 className="text-sm font-semibold text-gray-700 mb-3">Búsquedas recientes</h3>
-                  <div className="space-y-2">
+                <div className="mb-8">
+                  <h3 className="text-base font-bold text-gray-700 mb-4">Búsquedas recientes</h3>
+                  <div className="space-y-3">
                     {recentSearches.map((search, index) => (
                       <button
                         key={index}
@@ -254,10 +254,10 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                           setQuery(search);
                           performSearch(search);
                         }}
-                        className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 text-left"
+                        className="w-full flex items-center gap-4 p-3 rounded-xl hover:glass-subtle text-left transition-all duration-300 hover:scale-102"
                       >
                         <FaSearch className="w-4 h-4 text-gray-400" />
-                        <span>{search}</span>
+                        <span className="font-medium">{search}</span>
                       </button>
                     ))}
                   </div>
@@ -266,11 +266,11 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
 
               {/* Trending Searches */}
               <div>
-                <h3 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
-                  <BiTrendingUp className="w-4 h-4 text-red-500" />
+                <h3 className="text-base font-bold text-gray-700 mb-4 flex items-center gap-3">
+                  <BiTrendingUp className="w-5 h-5 text-red-500" />
                   Tendencias
                 </h3>
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {trendingQueries.map((trending, index) => (
                     <button
                       key={index}
@@ -278,10 +278,10 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                         setQuery(trending);
                         performSearch(trending);
                       }}
-                      className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 text-left"
+                      className="w-full flex items-center gap-4 p-3 rounded-xl hover:glass-subtle text-left transition-all duration-300 hover:scale-102"
                     >
                       <BiTrendingUp className="w-4 h-4 text-red-500" />
-                      <span>{trending}</span>
+                      <span className="font-medium">{trending}</span>
                     </button>
                   ))}
                 </div>
@@ -291,8 +291,8 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
         )}
       </div>
 
-      {/* Quick Topic Pills */}
-      <div className="mt-4 flex flex-wrap gap-2">
+      {/* Premium Quick Topic Pills */}
+      <div className="mt-6 flex flex-wrap gap-3">
         {getAllTopics()
           .filter(topic => topic.category === selectedCategory)
           .slice(0, 6)
@@ -300,13 +300,13 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
             <button
               key={topic.id}
               onClick={() => handleTopicClick(topic)}
-              className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all ${
+              className={`flex items-center gap-3 px-4 py-2 rounded-full text-sm font-bold transition-all duration-400 transform hover:scale-105 ${
                 selectedTopic?.id === topic.id
-                  ? `bg-gradient-to-r ${topic.color} text-white`
-                  : 'bg-white text-gray-700 border border-gray-300 hover:shadow-md'
+                  ? `bg-gradient-to-r ${topic.color} text-white shadow-premium`
+                  : 'glass-elegant text-gray-700 border border-white/30 hover:shadow-medium'
               }`}
             >
-              <span>{topic.emoji}</span>
+              <span className="text-base">{topic.emoji}</span>
               <span>{topic.name}</span>
             </button>
           ))}
