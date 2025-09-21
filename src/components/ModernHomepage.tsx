@@ -4,6 +4,7 @@ import { BiPoll, BiTrendingUp } from 'react-icons/bi';
 import { MdLiveTv, MdTopic } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
 import UniversalSearchBar from '../components/UniversalSearchBar';
+import { FastButton, FastSearch } from '../components/fast-components';
 import { NewsTopic } from '../config/newsTopics';
 
 interface ModernHomepageProps {
@@ -143,14 +144,15 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
     onNavigate(action);
   };
 
-  const handleSearch = (query: string, category: 'local' | 'world', topic?: NewsTopic) => {
+  const handleSearch = (query: string, category?: string, filters?: Record<string, any>) => {
+    // Default to 'local' if category is not provided
+    const finalCategory = (category as 'local' | 'world') || 'local';
+    
     // Navigate to search with query parameters
     const params = new URLSearchParams();
     params.set('q', query);
-    params.set('category', category);
-    if (topic) {
-      params.set('topic', topic.id);
-    }
+    params.set('category', finalCategory);
+    
     window.history.pushState(null, '', `/search?${params.toString()}`);
     onNavigate('search');
   };
@@ -227,12 +229,15 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
 
             {/* Universal Search */}
             <div className="max-w-4xl mx-auto mb-16">
-              <UniversalSearchBar
-                onSearch={handleSearch}
-                onTopicSelect={handleTopicSelect}
+              <FastSearch
                 placeholder="Buscar en Colombia y el mundo..."
-                autoFocus={false}
+                showCategories={true}
+                showVideoResults={true}
+                enableVoiceSearch={true}
+                enableVisualSearch={true}
+                onSearch={handleSearch}
                 className="shadow-2xl"
+                enableAnalytics={true}
               />
             </div>
 
@@ -273,18 +278,22 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {quickActions.map((action, index) => (
-              <button
+              <FastButton
                 key={action.id}
                 onClick={() => handleQuickAction(action.action)}
-                className={`group relative overflow-hidden rounded-3xl p-8 text-left transition-all duration-500 transform hover:scale-105 hover:shadow-2xl bg-gradient-to-br ${action.gradient} text-white`}
-                style={{ animationDelay: `${index * 100}ms` }}
+                className={`group relative overflow-hidden rounded-3xl p-8 text-left bg-gradient-to-br ${action.gradient} text-white min-h-[200px]`}
+                variant="ghost"
+                size="lg"
+                animation="smooth"
+                // Using data attribute instead of style for animation delay
+                data-animation-delay={`${index * 100}ms`}
               >
                 {/* Background Pattern */}
                 <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
                 <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
                 
                 {/* Content */}
-                <div className="relative z-10">
+                <div className="relative z-10 h-full flex flex-col">
                   <div className="flex items-center justify-between mb-4">
                     <div className="text-4xl">{action.icon}</div>
                     {action.trend && (
@@ -295,7 +304,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
                   </div>
                   
                   <h3 className="text-2xl font-bold mb-2">{action.title}</h3>
-                  <p className="text-white/90 mb-4 text-lg">{action.description}</p>
+                  <p className="text-white/90 mb-4 text-lg flex-1">{action.description}</p>
                   
                   {action.count && (
                     <div className="flex items-center justify-between">
@@ -309,7 +318,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
 
                 {/* Hover Effect */}
                 <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </button>
+              </FastButton>
             ))}
           </div>
         </div>
@@ -376,27 +385,32 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <button
+                <FastButton
                   onClick={() => handleQuickAction('surveys')}
-                  className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                  variant="primary"
+                  size="lg"
+                  gradient={true}
+                  className="group"
                 >
                   <span className="flex items-center gap-3">
                     <BiPoll className="w-6 h-6" />
                     Participar en Encuestas
                     <FaArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                   </span>
-                </button>
+                </FastButton>
                 
-                <button
+                <FastButton
                   onClick={() => handleQuickAction('community-hub')}
-                  className="group border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-105"
+                  variant="secondary"
+                  size="lg"
+                  className="group"
                 >
                   <span className="flex items-center gap-3">
                     <FaUsers className="w-6 h-6" />
                     Únete a la Comunidad
                     <FaArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                   </span>
-                </button>
+                </FastButton>
               </div>
             </div>
           </div>
