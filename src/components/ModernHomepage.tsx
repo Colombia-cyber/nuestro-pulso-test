@@ -69,12 +69,15 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
 
   const loadTrendingTopics = () => {
     const topics: TrendingTopic[] = [
-      { id: '1', title: 'Reforma Pensional 2024', category: 'Política', engagement: 15420, trend: 'hot' },
-      { id: '2', title: 'Gustavo Petro Pronunciamientos', category: 'Gobierno', engagement: 12380, trend: 'rising' },
-      { id: '3', title: 'Elecciones Regionales', category: 'Electoral', engagement: 9850, trend: 'rising' },
-      { id: '4', title: 'Seguridad Nacional', category: 'Seguridad', engagement: 8920, trend: 'stable' },
-      { id: '5', title: 'Economía Colombiana', category: 'Economía', engagement: 7640, trend: 'stable' },
-      { id: '6', title: 'Paz Total', category: 'Social', engagement: 6890, trend: 'rising' }
+      { id: '1', title: 'Global Terror Alerts', category: 'Security', engagement: 24680, trend: 'hot' },
+      { id: '2', title: 'Donald Trump News', category: 'Politics', engagement: 19750, trend: 'rising' },
+      { id: '3', title: 'Gustavo Petro Updates', category: 'Government', engagement: 15420, trend: 'rising' },
+      { id: '4', title: 'International Drug Cartels', category: 'Crime', engagement: 13280, trend: 'hot' },
+      { id: '5', title: 'Global Health Crisis', category: 'Health', engagement: 11960, trend: 'stable' },
+      { id: '6', title: 'World Employment Crisis', category: 'Economy', engagement: 10340, trend: 'rising' },
+      { id: '7', title: 'International Legislation', category: 'Law', engagement: 8750, trend: 'stable' },
+      { id: '8', title: 'Colombian Congress Activity', category: 'Politics', engagement: 7890, trend: 'stable' },
+      { id: '9', title: 'Viral World Content', category: 'Trending', engagement: 6540, trend: 'hot' }
     ];
     setTrendingTopics(topics);
   };
@@ -327,7 +330,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
               <h2 className="text-4xl font-bold mb-8 flex items-center gap-3">
                 <BiTrendingUp className="w-8 h-8 text-red-500" />
                 <span className="bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
-                  Tendencias Nacionales
+                  Trending Now - Global Focus
                 </span>
               </h2>
               

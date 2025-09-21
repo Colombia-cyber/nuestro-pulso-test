@@ -1,13 +1,16 @@
 export enum NewsCategory {
-  POLITICS = 'Política',
-  ENVIRONMENT = 'Ambiente', 
-  ECONOMY = 'Economía',
-  SECURITY = 'Seguridad',
-  EDUCATION = 'Educación',
-  HEALTH = 'Salud',
-  INFRASTRUCTURE = 'Infraestructura',
-  AGRICULTURE = 'Agricultura',
-  BREAKING = 'Última Hora'
+  POLITICS = 'Politics',
+  SECURITY = 'Security', 
+  ECONOMY = 'Economy',
+  HEALTH = 'Health',
+  LEGISLATION = 'Legislation',
+  EMPLOYMENT = 'Employment',
+  CRIME = 'Crime',
+  BREAKING = 'Breaking News',
+  ENVIRONMENT = 'Environment',
+  EDUCATION = 'Education',
+  INFRASTRUCTURE = 'Infrastructure',
+  AGRICULTURE = 'Agriculture'
 }
 
 export interface NewsSource {

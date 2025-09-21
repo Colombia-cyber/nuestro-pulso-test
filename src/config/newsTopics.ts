@@ -13,158 +13,167 @@ export const localTopics: NewsTopic[] = [
   {
     id: 'terror-news',
     name: 'Terror News',
-    emoji: '⚠️',
-    description: 'Alertas y noticias de seguridad nacional',
+    emoji: '🚨',
+    description: 'Breaking alerts and global security threats',
     category: 'local',
-    color: 'from-red-600 to-red-800',
-    keywords: ['terror', 'seguridad', 'amenaza', 'atentado', 'violencia']
+    color: 'from-red-700 to-red-900',
+    keywords: ['terror', 'security', 'threat', 'attack', 'violence', 'terrorism', 'security alerts']
   },
   {
     id: 'gustavo-petro',
-    name: 'Gustavo Petro',
+    name: 'Gustavo Petro News',
     emoji: '🇨🇴',
-    description: 'Noticias sobre el presidente y gobierno nacional',
+    description: 'Latest from Colombia\'s President and administration',
     category: 'local',
     color: 'from-blue-600 to-blue-800',
-    keywords: ['petro', 'presidente', 'gobierno', 'casa de nariño']
+    keywords: ['petro', 'president', 'colombia', 'government', 'administration', 'casa nariño']
+  },
+  {
+    id: 'donald-trump',
+    name: 'Donald Trump News',
+    emoji: '🇺🇸',
+    description: 'Latest updates on Donald Trump and US politics',
+    category: 'world',
+    color: 'from-red-600 to-blue-600',
+    keywords: ['trump', 'donald trump', 'usa', 'america', 'republican', 'election', 'politics']
   },
   {
     id: 'drugs-crime',
     name: 'Drugs & Crime',
     emoji: '🚔',
-    description: 'Narcotráfico, crimen organizado y justicia',
+    description: 'Global drug trafficking, organized crime, and justice',
     category: 'local',
     color: 'from-red-500 to-orange-600',
-    keywords: ['drogas', 'narcotráfico', 'crimen', 'delincuencia', 'justicia']
+    keywords: ['drugs', 'crime', 'trafficking', 'cartel', 'justice', 'law enforcement', 'organized crime']
+  },
+  {
+    id: 'politics',
+    name: 'Politics',
+    emoji: '🏛️',
+    description: 'Global politics, elections, and democratic processes',
+    category: 'world',
+    color: 'from-indigo-600 to-purple-600',
+    keywords: ['politics', 'elections', 'democracy', 'government', 'campaign', 'voting', 'political']
   },
   {
     id: 'legislation',
     name: 'Legislation',
     emoji: '⚖️',
-    description: 'Leyes, decretos y normativas',
-    category: 'local',
+    description: 'Laws, bills, and legal developments worldwide',
+    category: 'world',
     color: 'from-purple-600 to-purple-800',
-    keywords: ['ley', 'decreto', 'legislación', 'normativa', 'jurídico']
+    keywords: ['law', 'legislation', 'bill', 'legal', 'court', 'judicial', 'supreme court']
   },
   {
-    id: 'congress',
-    name: 'Congress of Colombia',
-    emoji: '🏛️',
-    description: 'Actividad del Congreso de la República',
-    category: 'local',
-    color: 'from-indigo-600 to-indigo-800',
-    keywords: ['congreso', 'senado', 'cámara', 'representantes', 'legislativo']
-  },
-  {
-    id: 'politics',
-    name: 'Politics',
-    emoji: '🗳️',
-    description: 'Política nacional y partidos',
-    category: 'local',
-    color: 'from-green-600 to-green-800',
-    keywords: ['política', 'partido', 'elecciones', 'campaña', 'democracia']
-  },
-  {
-    id: 'wealth',
-    name: 'Wealth',
-    emoji: '💰',
-    description: 'Economía, finanzas y desarrollo',
-    category: 'local',
-    color: 'from-yellow-600 to-yellow-800',
-    keywords: ['economía', 'finanzas', 'riqueza', 'desarrollo', 'inversión']
+    id: 'health',
+    name: 'Health',
+    emoji: '🏥',
+    description: 'Global health news, medical breakthroughs, and public health',
+    category: 'world',
+    color: 'from-green-600 to-teal-600',
+    keywords: ['health', 'medical', 'healthcare', 'medicine', 'disease', 'pandemic', 'vaccine']
   },
   {
     id: 'employment',
     name: 'Employment',
     emoji: '💼',
-    description: 'Trabajo, empleo y oportunidades laborales',
-    category: 'local',
-    color: 'from-teal-600 to-teal-800',
-    keywords: ['empleo', 'trabajo', 'laboral', 'desempleo', 'oportunidades']
+    description: 'Global job markets, employment trends, and economic opportunities',
+    category: 'world',
+    color: 'from-teal-600 to-cyan-600',
+    keywords: ['employment', 'jobs', 'work', 'unemployment', 'economy', 'labor', 'career']
   },
   {
-    id: 'issues',
-    name: 'Issues',
-    emoji: '⚡',
-    description: 'Problemas sociales y desafíos nacionales',
+    id: 'congress-colombia',
+    name: 'Congress of Colombia',
+    emoji: '🏢',
+    description: 'Colombian Congress activities, legislation, and parliamentary news',
     category: 'local',
-    color: 'from-orange-600 to-red-600',
-    keywords: ['problemas', 'crisis', 'desafíos', 'social', 'conflicto']
+    color: 'from-amber-600 to-orange-600',
+    keywords: ['congress', 'senate', 'chamber', 'representatives', 'legislative', 'parliament', 'colombia']
+  },
+  {
+    id: 'reels-feeds',
+    name: 'Reels/Feeds',
+    emoji: '📱',
+    description: 'Essential world content, viral news, and trending global stories',
+    category: 'world',
+    color: 'from-pink-600 to-rose-600',
+    keywords: ['viral', 'trending', 'social media', 'reels', 'feeds', 'breaking', 'worldwide']
   }
 ];
 
 export const worldTopics: NewsTopic[] = [
   {
     id: 'world-terror',
-    name: 'Terror News',
+    name: 'Global Terror Alerts',
     emoji: '🌍',
-    description: 'Terrorismo y seguridad mundial',
+    description: 'International terrorism threats and security updates',
     category: 'world',
     color: 'from-red-600 to-red-800',
-    keywords: ['terror', 'terrorism', 'security', 'international']
+    keywords: ['terrorism', 'international security', 'global threats', 'ISIS', 'extremism']
   },
   {
-    id: 'world-leaders',
-    name: 'World Leaders',
-    emoji: '👥',
-    description: 'Líderes mundiales y diplomacia',
+    id: 'world-trump',
+    name: 'Trump International',
+    emoji: '🌐',
+    description: 'Donald Trump\'s global impact and international relations',
     category: 'world',
-    color: 'from-blue-600 to-blue-800',
-    keywords: ['leaders', 'diplomacy', 'summit', 'international']
+    color: 'from-red-500 to-blue-500',
+    keywords: ['trump international', 'US foreign policy', 'trade wars', 'nato', 'diplomacy']
   },
   {
     id: 'world-drugs-crime',
-    name: 'Drugs & Crime',
+    name: 'International Crime',
     emoji: '🌐',
-    description: 'Crimen internacional y narcotráfico',
+    description: 'Global drug cartels, organized crime, and law enforcement',
     category: 'world',
     color: 'from-red-500 to-orange-600',
-    keywords: ['drugs', 'crime', 'international', 'trafficking']
-  },
-  {
-    id: 'world-legislation',
-    name: 'Legislation',
-    emoji: '📜',
-    description: 'Leyes y tratados internacionales',
-    category: 'world',
-    color: 'from-purple-600 to-purple-800',
-    keywords: ['law', 'treaty', 'international', 'legislation']
+    keywords: ['international crime', 'drug cartels', 'money laundering', 'interpol']
   },
   {
     id: 'world-politics',
-    name: 'Politics',
+    name: 'Global Politics',
     emoji: '🌎',
-    description: 'Política internacional',
+    description: 'International politics, elections, and democratic movements',
     category: 'world',
-    color: 'from-green-600 to-green-800',
-    keywords: ['politics', 'international', 'election', 'democracy']
+    color: 'from-blue-600 to-purple-600',
+    keywords: ['international politics', 'world elections', 'democracy', 'authoritarianism']
   },
   {
-    id: 'world-wealth',
-    name: 'Wealth',
+    id: 'world-legislation',
+    name: 'International Law',
+    emoji: '📜',
+    description: 'International courts, treaties, and global legal developments',
+    category: 'world',
+    color: 'from-purple-600 to-purple-800',
+    keywords: ['international law', 'UN', 'treaties', 'human rights', 'ICC']
+  },
+  {
+    id: 'world-health',
+    name: 'Global Health',
+    emoji: '🏥',
+    description: 'Pandemic updates, WHO news, and global health initiatives',
+    category: 'world',
+    color: 'from-green-600 to-teal-600',
+    keywords: ['WHO', 'pandemic', 'global health', 'vaccines', 'disease outbreaks']
+  },
+  {
+    id: 'world-economy',
+    name: 'Global Economy',
     emoji: '💎',
-    description: 'Economía global y mercados',
+    description: 'World markets, international trade, and economic indicators',
     category: 'world',
-    color: 'from-yellow-600 to-yellow-800',
-    keywords: ['economy', 'global', 'markets', 'finance']
+    color: 'from-yellow-600 to-orange-600',
+    keywords: ['global economy', 'stock markets', 'trade', 'recession', 'inflation']
   },
   {
-    id: 'world-employment',
-    name: 'Employment',
-    emoji: '🌐',
-    description: 'Mercado laboral mundial',
-    category: 'world',
-    color: 'from-teal-600 to-teal-800',
-    keywords: ['employment', 'jobs', 'global', 'labor']
-  },
-  {
-    id: 'world-issues',
-    name: 'Issues',
+    id: 'world-feeds',
+    name: 'Viral World Content',
     emoji: '🔥',
-    description: 'Crisis y problemas globales',
+    description: 'Trending global stories, viral content, and breaking world news',
     category: 'world',
-    color: 'from-orange-600 to-red-600',
-    keywords: ['crisis', 'global', 'issues', 'problems']
+    color: 'from-pink-600 to-red-600',
+    keywords: ['viral news', 'trending', 'breaking news', 'social media', 'worldwide']
   }
 ];
 
