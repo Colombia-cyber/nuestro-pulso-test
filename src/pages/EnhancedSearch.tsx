@@ -31,7 +31,7 @@ interface SearchFilters {
 const EnhancedSearchPage: React.FC = () => {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [currentQuery, setCurrentQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'world' | 'local'>('local');
+  const [activeTab, setActiveTab] = useState<'world' | 'local'>('world');
   const [totalResults, setTotalResults] = useState(0);
   const [searchTime, setSearchTime] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -62,10 +62,12 @@ const EnhancedSearchPage: React.FC = () => {
       setCurrentQuery(query);
       if (tab && ['world', 'local'].includes(tab)) {
         setActiveTab(tab);
+      } else {
+        setActiveTab('world'); // Default to world search
       }
       // Trigger search
       setTimeout(() => {
-        performSearch(query, tab || 'local', getDefaultFilters());
+        performSearch(query, tab || 'world', getDefaultFilters());
       }, 100);
     }
   }, []);

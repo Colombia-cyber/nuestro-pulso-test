@@ -7,6 +7,7 @@ import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
 import EnhancedSearchPage from "./pages/EnhancedSearch";
+import NotFound404 from "./pages/NotFound404";
 import PulseReels from "./components/PulseReels";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
@@ -55,9 +56,75 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Handle URL-based routing and 404 detection
+  React.useEffect(() => {
+    const handleRouteChange = () => {
+      const path = window.location.pathname;
+      const searchParams = new URLSearchParams(window.location.search);
+      
+      // Define valid routes
+      const validRoutes = [
+        '/',
+        '/home',
+        '/reels',
+        '/feeds',
+        '/news',
+        '/congress',
+        '/elections',
+        '/chat',
+        '/debates',
+        '/surveys',
+        '/encuestas',
+        '/comments',
+        '/community-hub',
+        '/search'
+      ];
+      
+      // Check if current path is valid
+      const isValidRoute = validRoutes.includes(path) || 
+                          path.startsWith('/search') || 
+                          path === '' || 
+                          path === '/' ||
+                          path.startsWith('/#');
+      
+      if (!isValidRoute) {
+        setCurrentView('404');
+        return;
+      }
+      
+      // Route to appropriate view
+      if (path === '/' || path === '/home' || path === '') {
+        setCurrentView('home');
+      } else if (path === '/search' || searchParams.has('q')) {
+        setCurrentView('search');
+      } else if (path.startsWith('/')) {
+        const view = path.substring(1);
+        if (validRoutes.includes('/' + view)) {
+          setCurrentView(view);
+        } else {
+          setCurrentView('404');
+        }
+      }
+    };
+
+    // Handle initial load
+    handleRouteChange();
+    
+    // Listen for popstate events (back/forward button)
+    window.addEventListener('popstate', handleRouteChange);
+    
+    return () => {
+      window.removeEventListener('popstate', handleRouteChange);
+    };
+  }, []);
+
   const handleNavigate = (view: string) => {
     setIsLoading(true);
     setError(null);
+    
+    // Update URL
+    const newPath = view === 'home' ? '/' : `/${view}`;
+    window.history.pushState(null, '', newPath);
     
     // Simulate loading delay for better UX
     setTimeout(() => {
@@ -85,6 +152,8 @@ function App() {
 
     try {
       switch (currentView) {
+        case '404':
+          return <NotFound404 onNavigate={handleNavigate} />;
         case 'reels':
           return <PulseReels />;
         case 'feeds':
@@ -119,6 +188,7 @@ function App() {
 
   const getLoadingMessage = (view: string): string => {
     const messages: Record<string, string> = {
+      '404': 'Cargando página...',
       'reels': 'Cargando Reels...',
       'feeds': 'Cargando noticias...',
       'news': 'Cargando noticias...',
@@ -137,8 +207,10 @@ function App() {
 
   return (
     <div>
-      <Navbar onNavigate={handleNavigate} currentView={currentView} />
-      <div className="pt-20">
+      {currentView !== '404' && (
+        <Navbar onNavigate={handleNavigate} currentView={currentView} />
+      )}
+      <div className={currentView !== '404' ? 'pt-20' : ''}>
         <Suspense fallback={<LoadingSpinner />}>
           {renderCurrentView()}
         </Suspense>
