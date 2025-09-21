@@ -403,6 +403,248 @@
   }
 }
 
+/* Fast Components Styles (fast-r7aqkx-222-d through fast-r7aqkx-253-d) */
+.fast-component {
+  /* Base optimization for all fast components */
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.fast-button-r7aqkx-222-d {
+  /* Ultra-fast button optimizations */
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.fast-search-r7aqkx-223-d {
+  /* Ultra-fast search optimizations */
+  contain: layout style paint;
+}
+
+.fast-news-card-r7aqkx-224-d {
+  /* Ultra-fast news card optimizations */
+  contain: layout style;
+  content-visibility: auto;
+  contain-intrinsic-size: 0 300px;
+}
+
+/* Performance optimizations for fast components */
+.fast-component:hover {
+  transform: translateZ(0) scale(1.02);
+}
+
+.fast-component:active {
+  transform: translateZ(0) scale(0.98);
+}
+
+/* Ripple effect for fast buttons */
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.ripple-effect {
+  animation: ripple 0.3s ease-out;
+}
+
+/* Ultra-fast transitions */
+.transition-ultra-fast {
+  transition: all 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-fast {
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Modern focus styles for fast components */
+.fast-component:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 0.375rem;
+}
+
+/* Loading states for fast components */
+.fast-loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.fast-loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Perspective indicators for news cards */
+.perspective-progressive {
+  border-left: 4px solid #3b82f6;
+}
+
+.perspective-conservative {
+  border-left: 4px solid #ef4444;
+}
+
+.perspective-balanced {
+  border-left: 4px solid #10b981;
+}
+
+/* Enhanced gradient backgrounds for Colombia theme */
+.bg-gradient-colombia {
+  background: linear-gradient(135deg, #fbbf24 0%, #3b82f6 50%, #ef4444 100%);
+}
+
+.bg-gradient-colombia-soft {
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.1) 0%, rgba(59, 130, 246, 0.1) 50%, rgba(239, 68, 68, 0.1) 100%);
+}
+
+/* Text gradients for Colombia theme */
+.text-gradient-colombia {
+  background: linear-gradient(135deg, #fbbf24 0%, #3b82f6 50%, #ef4444 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+/* Navigation styles for fast components */
+.nav-item {
+  @apply px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105;
+}
+
+.nav-item.active {
+  @apply bg-blue-100 text-blue-700 shadow-sm;
+}
+
+.nav-item:hover {
+  @apply bg-gray-100 text-gray-900;
+}
+
+/* Button styles for fast components */
+.btn-primary {
+  @apply bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-blue-700 hover:to-purple-700 shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105;
+}
+
+.btn-secondary {
+  @apply bg-white text-gray-900 border border-gray-300 px-6 py-3 rounded-lg font-semibold hover:bg-gray-50 hover:border-gray-400 shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-105;
+}
+
+/* Interactive glow effects */
+.interactive-glow {
+  transition: box-shadow 0.3s ease;
+}
+
+.interactive-glow:hover {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+/* Colombia-specific color utilities */
+.text-colombia-blue {
+  color: #1e40af;
+}
+
+.text-colombia-yellow {
+  color: #fbbf24;
+}
+
+.text-colombia-red {
+  color: #ef4444;
+}
+
+.bg-colombia-blue {
+  background-color: #1e40af;
+}
+
+.bg-colombia-yellow {
+  background-color: #fbbf24;
+}
+
+.bg-colombia-red {
+  background-color: #ef4444;
+}
+
+.border-colombia-blue {
+  border-color: #1e40af;
+}
+
+.border-colombia-yellow {
+  border-color: #fbbf24;
+}
+
+.border-colombia-red {
+  border-color: #ef4444;
+}
+
+/* Shadow utilities for Colombia theme */
+.shadow-colombia {
+  box-shadow: 0 4px 14px 0 rgba(251, 191, 36, 0.3);
+}
+
+/* Animation delays for staggered effects */
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animation-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animation-delay-400 {
+  animation-delay: 400ms;
+}
+
+.animation-delay-500 {
+  animation-delay: 500ms;
+}
+
+/* Floating animation for hero elements */
+.floating {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Text shadow for better readability */
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
 /* Print styles */
 @media print {
   .glass-modern {
@@ -412,13 +654,19 @@
   
   .animate-float,
   .animate-bounce-subtle,
-  .animate-gradient {
+  .animate-gradient,
+  .floating {
     animation: none;
   }
   
   .shadow-lg,
   .shadow-xl,
-  .shadow-2xl {
+  .shadow-2xl,
+  .shadow-colombia {
     box-shadow: none;
+  }
+  
+  .fast-component {
+    transform: none !important;
   }
 }
