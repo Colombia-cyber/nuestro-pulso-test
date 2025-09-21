@@ -7,6 +7,7 @@ import Comments from "./components/Comments";
 import CommunityHub from "./pages/CommunityHub";
 import SearchPage from "./pages/Search";
 import EnhancedSearchPage from "./pages/EnhancedSearch";
+import ModernSearchEngine from "./components/ModernSearchEngine";
 import PulseReels from "./components/PulseReels";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
@@ -106,7 +107,7 @@ function App() {
         case 'community-hub':
           return <CommunityHub />;
         case 'search':
-          return <EnhancedSearchPage />;
+          return <ModernSearchEngine />;
         case 'home':
         default:
           return <ModernHomepage onNavigate={handleNavigate} />;

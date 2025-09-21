@@ -2,14 +2,9 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { FaSearch, FaFilter, FaGlobe, FaMapMarkerAlt, FaCalendarAlt, FaSort, FaInfinity } from 'react-icons/fa';
 import { MdClear, MdImage, MdVideoLibrary, MdShoppingCart, MdWeb } from 'react-icons/md';
 import { BiNews } from 'react-icons/bi';
+import { SearchFilters } from '../types/search';
 
-interface SearchFilters {
-  dateRange: 'all' | 'hour' | 'day' | 'week' | 'month' | 'year';
-  sources: string[];
-  location: string;
-  contentType: 'all' | 'news' | 'web' | 'images' | 'videos' | 'shopping' | 'articles';
-  sortBy: 'relevance' | 'date' | 'popularity';
-}
+
 
 interface SearchTab {
   id: 'world' | 'local';
