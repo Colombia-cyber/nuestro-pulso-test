@@ -2,20 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { FaHome, FaGlobe, FaMapMarkerAlt, FaEnvelope, FaRocket, FaSearch, FaVideo, FaNewspaper } from 'react-icons/fa';
 import { BiTrendingUp, BiNews } from 'react-icons/bi';
 import UniversalSearchBar from '../components/UniversalSearchBar';
+import TrendingService, { TrendingItem } from '../services/trendingService';
 
 // Import animations
 import '../styles/404-animations.css';
-
-interface TrendingItem {
-  id: string;
-  title: string;
-  type: 'news' | 'video';
-  source: string;
-  url: string;
-  timestamp: string;
-  category: 'world' | 'local';
-  trending: boolean;
-}
 
 interface NotFound404Props {
   onNavigate?: (view: string) => void;
@@ -27,81 +17,72 @@ const NotFound404: React.FC<NotFound404Props> = ({ onNavigate }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    // Simulate fetching trending content
+    // Fetch trending content using the service
     const fetchTrendingContent = async () => {
       setIsLoading(true);
       
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const mockTrendingItems: TrendingItem[] = [
-        {
-          id: '1',
-          title: 'Breaking: Major Climate Summit Reaches Historic Agreement',
-          type: 'news',
-          source: 'BBC World',
-          url: 'https://bbc.com/news/climate',
-          timestamp: '2 horas',
-          category: 'world',
-          trending: true
-        },
-        {
-          id: '2',
-          title: 'Colombia Election Results: Analysis and Implications',
-          type: 'news',
-          source: 'El Tiempo',
-          url: 'https://eltiempo.com',
-          timestamp: '1 hora',
-          category: 'local',
-          trending: true
-        },
-        {
-          id: '3',
-          title: 'Global Economic Outlook: What to Expect in 2024',
-          type: 'video',
-          source: 'Reuters',
-          url: 'https://reuters.com',
-          timestamp: '3 horas',
-          category: 'world',
-          trending: true
-        },
-        {
-          id: '4',
-          title: 'Technology Innovation: AI Revolution Continues',
-          type: 'news',
-          source: 'TechCrunch',
-          url: 'https://techcrunch.com',
-          timestamp: '45 min',
-          category: 'world',
-          trending: true
-        },
-        {
-          id: '5',
-          title: 'Latin America Trade Relations: New Partnerships',
-          type: 'video',
-          source: 'CNN Español',
-          url: 'https://cnn.com',
-          timestamp: '2 horas',
-          category: 'world',
-          trending: true
-        },
-        {
-          id: '6',
-          title: 'Colombia Healthcare System: Progress Report',
-          type: 'news',
-          source: 'Semana',
-          url: 'https://semana.com',
-          timestamp: '4 horas',
-          category: 'local',
-          trending: true
-        }
-      ];
-      
-      setTrendingItems(mockTrendingItems);
-      setIsLoading(false);
+      try {
+        const trendingService = TrendingService.getInstance();
+        const items = await trendingService.getTrendingContent('all');
+        
+        // Take first 6 items for display
+        setTrendingItems(items.slice(0, 6));
+      } catch (error) {
+        console.error('Failed to fetch trending content:', error);
+        
+        // Fallback to basic trending items
+        const fallbackItems: TrendingItem[] = [
+          {
+            id: '1',
+            title: 'Breaking: Major Climate Summit Reaches Historic Agreement',
+            type: 'news',
+            source: 'BBC World',
+            url: 'https://bbc.com/news/climate',
+            timestamp: '2 horas',
+            category: 'world',
+            trending: true
+          },
+          {
+            id: '2',
+            title: 'Colombia Election Results: Analysis and Implications',
+            type: 'news',
+            source: 'El Tiempo',
+            url: 'https://eltiempo.com',
+            timestamp: '1 hora',
+            category: 'local',
+            trending: true
+          },
+          {
+            id: '3',
+            title: 'Global Economic Outlook: What to Expect in 2024',
+            type: 'video',
+            source: 'Reuters',
+            url: 'https://reuters.com',
+            timestamp: '3 horas',
+            category: 'world',
+            trending: true
+          }
+        ];
+        setTrendingItems(fallbackItems);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchTrendingContent();
+
+    // Set up real-time updates every 30 seconds
+    const trendingService = TrendingService.getInstance();
+    const updateInterval = trendingService.startTrendingUpdates((items) => {
+      setTrendingItems(items.slice(0, 6));
+    }, 30000);
+
+    // Cleanup
+    return () => {
+      if (updateInterval) {
+        clearInterval(updateInterval);
+      }
+    };
   }, []);
 
   const handleSearch = (query: string, category: 'local' | 'world') => {
@@ -158,24 +139,41 @@ const NotFound404: React.FC<NotFound404Props> = ({ onNavigate }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 relative overflow-hidden">
+    <div 
+      className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 relative overflow-hidden"
+      role="main"
+      aria-labelledby="error-heading"
+      aria-describedby="error-description"
+    >
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
         <div className="absolute top-20 left-10 w-64 h-64 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
         <div className="absolute top-40 right-10 w-64 h-64 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
         <div className="absolute -bottom-32 left-20 w-64 h-64 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 py-8">
+        {/* Skip to main content link for screen readers */}
+        <a 
+          href="#main-content" 
+          className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-lg z-50"
+        >
+          Saltar al contenido principal
+        </a>
+
         {/* Header with Logo */}
-        <div className="text-center mb-8">
+        <header className="text-center mb-8">
           <div className="flex items-center justify-center gap-4 mb-6">
-            <div className="relative">
+            <button
+              onClick={() => handleNavigation('home')}
+              className="relative focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-2xl"
+              aria-label="Ir a la página de inicio de Nuestro Pulso"
+            >
               <div className="w-16 h-16 bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 rounded-2xl shadow-2xl flex items-center justify-center transform hover:scale-110 transition-all duration-300">
-                <span className="text-white font-bold text-2xl">🇨🇴</span>
+                <span className="text-white font-bold text-2xl" aria-hidden="true">🇨🇴</span>
               </div>
-              <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full animate-pulse"></div>
-            </div>
+              <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full animate-pulse" aria-hidden="true"></div>
+            </button>
             <div>
               <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 bg-clip-text text-transparent">
                 Nuestro Pulso
@@ -183,17 +181,19 @@ const NotFound404: React.FC<NotFound404Props> = ({ onNavigate }) => {
               <p className="text-gray-600 font-medium">Red Cívica de Colombia</p>
             </div>
           </div>
-        </div>
+        </header>
 
         {/* Main 404 Content */}
-        <div className="text-center mb-12">
+        <section id="main-content" className="text-center mb-12">
           {/* 404 Illustration */}
-          <div className="mb-8">
+          <div className="mb-8" aria-hidden="true">
             <svg 
               className="w-64 h-64 md:w-80 md:h-80 mx-auto" 
               viewBox="0 0 400 400" 
               fill="none" 
               xmlns="http://www.w3.org/2000/svg"
+              role="img"
+              aria-label="Ilustración de error 404"
             >
               {/* Animated 404 */}
               <g className="animate-bounce">
@@ -221,36 +221,45 @@ const NotFound404: React.FC<NotFound404Props> = ({ onNavigate }) => {
           </div>
 
           {/* Headline */}
-          <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
+          <h2 
+            id="error-heading"
+            className="text-4xl md:text-6xl font-bold text-gray-900 mb-6"
+          >
             ¡Oops! This page doesn't exist.
           </h2>
           
-          <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p 
+            id="error-description"
+            className="text-xl md:text-2xl text-gray-600 mb-8 max-w-2xl mx-auto"
+          >
             No te preocupes, esto pasa. Pero estamos aquí para ayudarte a encontrar lo que buscas.
           </p>
 
           {/* Universal Search Bar */}
           <div className="max-w-4xl mx-auto mb-12">
             <h3 className="text-2xl font-bold text-gray-800 mb-4 flex items-center justify-center gap-2">
-              <FaSearch className="w-6 h-6" />
+              <FaSearch className="w-6 h-6" aria-hidden="true" />
               Busca en todo el mundo
             </h3>
             <UniversalSearchBar
               onSearch={handleSearch}
               onTopicSelect={() => {}}
               placeholder="Buscar noticias, videos y contenido mundial..."
-              autoFocus={false}
+              autoFocus={true}
             />
           </div>
-        </div>
+        </section>
 
         {/* Quick Navigation Links */}
-        <div className="mb-12">
+        <section className="mb-12">
           <h3 className="text-2xl font-bold text-center text-gray-800 mb-8 flex items-center justify-center gap-2">
-            <FaRocket className="w-6 h-6" />
+            <FaRocket className="w-6 h-6" aria-hidden="true" />
             Enlaces rápidos
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <nav 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            aria-label="Navegación rápida"
+          >
             {quickLinks.map((link) => {
               const IconComponent = link.icon;
               return (
@@ -262,11 +271,12 @@ const NotFound404: React.FC<NotFound404Props> = ({ onNavigate }) => {
                     }
                     handleNavigation(link.view);
                   }}
-                  className={`group relative p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 border-2 border-transparent hover:border-opacity-20`}
+                  className={`group relative p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transform hover:scale-105 transition-all duration-300 border-2 border-transparent hover:border-opacity-20 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2`}
+                  aria-label={`${link.label}: ${link.description}`}
                 >
-                  <div className={`absolute inset-0 bg-gradient-to-r ${link.color} rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
+                  <div className={`absolute inset-0 bg-gradient-to-r ${link.color} rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300`} aria-hidden="true"></div>
                   <div className="relative z-10">
-                    <div className={`w-12 h-12 bg-gradient-to-r ${link.color} rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform duration-300`}>
+                    <div className={`w-12 h-12 bg-gradient-to-r ${link.color} rounded-xl flex items-center justify-center mb-4 mx-auto group-hover:scale-110 transition-transform duration-300`} aria-hidden="true">
                       <IconComponent className="w-6 h-6 text-white" />
                     </div>
                     <h4 className="font-bold text-lg text-gray-900 mb-2">{link.label}</h4>
@@ -275,8 +285,8 @@ const NotFound404: React.FC<NotFound404Props> = ({ onNavigate }) => {
                 </button>
               );
             })}
-          </div>
-        </div>
+          </nav>
+        </section>
 
         {/* Live Trending Content */}
         <div className="bg-white rounded-2xl shadow-xl p-6 md:p-8">
