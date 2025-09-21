@@ -12,6 +12,13 @@ export interface TopicNewsResponse {
   totalCount: number;
   sources: string[];
   lastUpdated: Date;
+  headlines: string[];
+  trendingScore: number;
+  engagement: {
+    views: number;
+    shares: number;
+    comments: number;
+  };
 }
 
 class TopicNewsService {
@@ -71,6 +78,7 @@ class TopicNewsService {
 
     // Mock implementation - in real app this would call actual APIs
     const articles = this.generateMockLocalNews(topic, searchTerms, limit);
+    const headlines = this.generateMockHeadlines(topic, 'local');
 
     return {
       articles,
@@ -82,7 +90,14 @@ class TopicNewsService {
         'Google News Colombia',
         'Portafolio'
       ],
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
+      headlines,
+      trendingScore: Math.floor(Math.random() * 100),
+      engagement: {
+        views: Math.floor(Math.random() * 10000) + 1000,
+        shares: Math.floor(Math.random() * 500) + 50,
+        comments: Math.floor(Math.random() * 200) + 20
+      }
     };
   }
 
@@ -96,6 +111,7 @@ class TopicNewsService {
 
     // Mock implementation - in real app this would call Google News API
     const articles = this.generateMockWorldNews(topic, searchTerms, limit);
+    const headlines = this.generateMockHeadlines(topic, 'world');
 
     return {
       articles,
@@ -107,7 +123,14 @@ class TopicNewsService {
         'CNN',
         'Associated Press'
       ],
-      lastUpdated: new Date()
+      lastUpdated: new Date(),
+      headlines,
+      trendingScore: Math.floor(Math.random() * 100),
+      engagement: {
+        views: Math.floor(Math.random() * 50000) + 5000,
+        shares: Math.floor(Math.random() * 2000) + 200,
+        comments: Math.floor(Math.random() * 1000) + 100
+      }
     };
   }
 
@@ -179,6 +202,37 @@ class TopicNewsService {
   }
 
   /**
+   * Generate mock headlines for development/testing
+   */
+  private generateMockHeadlines(topic: NewsTopic, mode: 'local' | 'world'): string[] {
+    const baseHeadlines = [
+      `Últimas noticias sobre ${topic.name}`,
+      `Desarrollo importante en ${topic.name}`,
+      `Análisis especial: ${topic.name}`,
+      `Expertos opinan sobre ${topic.name}`,
+      `Impacto de ${topic.name} en la sociedad`
+    ];
+
+    if (mode === 'local') {
+      return [
+        `${topic.name}: Impacto en Colombia`,
+        `Autoridades colombianas se pronuncian sobre ${topic.name}`,
+        `${topic.name} genera debate en el Congreso`,
+        `Comunidades locales reaccionan ante ${topic.name}`,
+        `Análisis regional: ${topic.name} en Sudamérica`
+      ];
+    } else {
+      return [
+        `${topic.name}: Perspectiva internacional`,
+        `Líderes mundiales debaten sobre ${topic.name}`,
+        `${topic.name} causa revuelo global`,
+        `Organismos internacionales analizan ${topic.name}`,
+        `Impacto mundial de ${topic.name}`
+      ];
+    }
+  }
+
+  /**
    * Fallback unique news for error handling, never identical between modes.
    */
   private getFallbackNews(request: TopicNewsRequest): TopicNewsResponse {
@@ -200,7 +254,10 @@ class TopicNewsService {
         ],
         totalCount: 1,
         sources: ['El Tiempo'],
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
+        headlines: ['Error de conexión: Noticias locales no disponibles'],
+        trendingScore: 0,
+        engagement: { views: 0, shares: 0, comments: 0 }
       };
     } else {
       return {
@@ -220,7 +277,10 @@ class TopicNewsService {
         ],
         totalCount: 1,
         sources: ['BBC'],
-        lastUpdated: new Date()
+        lastUpdated: new Date(),
+        headlines: ['Error de conexión: Noticias globales no disponibles'],
+        trendingScore: 0,
+        engagement: { views: 0, shares: 0, comments: 0 }
       };
     }
   }
