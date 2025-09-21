@@ -142,6 +142,20 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
     onNavigate('search');
   };
 
+  // NEW: Handle instant search without navigation
+  const handleInstantSearch = (query: string, category: 'local' | 'world', topic?: NewsTopic) => {
+    // Immediately navigate to feeds view with instant search results
+    const params = new URLSearchParams();
+    params.set('q', query);
+    params.set('category', category);
+    if (topic) {
+      params.set('topic', topic.id);
+    }
+    params.set('instant', 'true');
+    window.history.pushState(null, '', `/feeds?${params.toString()}`);
+    onNavigate('feeds');
+  };
+
   const handleTopicSelect = (topic: NewsTopic) => {
     // Can be used for analytics or other actions when a topic is selected
     console.log('Topic selected:', topic);
@@ -155,6 +169,28 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
     params.set('topic', topic.id);
     window.history.pushState(null, '', `/search?${params.toString()}`);
     onNavigate('feeds'); // Navigate to the feeds view to show news
+  };
+
+  // NEW: Handle instant topic loading
+  const handleInstantTopicLoad = (topic: NewsTopic, category: 'local' | 'world', newsData: TopicNewsResponse) => {
+    // Store the current topic news data for immediate display
+    setCurrentTopicNews({ topic, news: newsData });
+    
+    // Update live stats based on the news data
+    setLiveStats(prev => ({
+      ...prev,
+      newsUpdates: newsData.totalCount,
+      activePolls: prev.activePolls + Math.floor(Math.random() * 3),
+    }));
+
+    // Navigate immediately to the feeds view with pre-loaded data
+    const params = new URLSearchParams();
+    params.set('q', topic.name);
+    params.set('category', category);
+    params.set('topic', topic.id);
+    params.set('instant', 'true'); // Flag to indicate instant load
+    window.history.pushState(null, '', `/feeds?${params.toString()}`);
+    onNavigate('feeds');
   };
 
   const handleNewsUpdate = (newsData: TopicNewsResponse, topic: NewsTopic) => {
@@ -232,6 +268,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
             <div className="max-w-4xl mx-auto mb-16">
               <UniversalSearchBar
                 onSearch={handleSearch}
+                onInstantSearch={handleInstantSearch}
                 onTopicSelect={handleTopicSelect}
                 placeholder="Buscar en Colombia y el mundo..."
                 autoFocus={false}
@@ -354,6 +391,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
             selectedCategory={selectedNewsCategory}
             className="mb-12"
             onNewsUpdate={handleNewsUpdate}
+            onInstantLoad={handleInstantTopicLoad}
           />
 
           {/* Topic News Preview */}

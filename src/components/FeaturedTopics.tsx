@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { FaArrowRight, FaFire, FaEye, FaNewspaper, FaSync, FaSpinner } from 'react-icons/fa';
+import { FaArrowRight, FaFire, FaEye, FaNewspaper, FaSync, FaSpinner, FaBolt } from 'react-icons/fa';
 import { BiTrendingUp } from 'react-icons/bi';
-import { MdViewStream } from 'react-icons/md';
+import { MdViewStream, MdFlashOn } from 'react-icons/md';
 import { NewsTopic, getPriorityTopics } from '../config/newsTopics';
 import { topicNewsService, TopicNewsResponse } from '../services/topicNewsService';
 
@@ -10,6 +10,7 @@ interface FeaturedTopicsProps {
   selectedCategory: 'local' | 'world';
   className?: string;
   onNewsUpdate?: (newsData: TopicNewsResponse, topic: NewsTopic) => void;
+  onInstantLoad?: (topic: NewsTopic, category: 'local' | 'world', newsData: TopicNewsResponse) => void;
 }
 
 interface TopicStats {
@@ -19,21 +20,132 @@ interface TopicStats {
   isLoading?: boolean;
 }
 
+// Enhanced topic display configuration with descriptive text labels
+interface TopicDisplay {
+  topic: NewsTopic;
+  displayText: string;
+  description: string;
+  urgencyLevel: 'high' | 'medium' | 'normal';
+  category: 'breaking' | 'politics' | 'security' | 'analysis';
+}
+
 const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
   onTopicSelect,
   selectedCategory,
   className = "",
-  onNewsUpdate
+  onNewsUpdate,
+  onInstantLoad
 }) => {
   const [priorityTopics, setPriorityTopics] = useState<NewsTopic[]>([]);
   const [topicStats, setTopicStats] = useState<Record<string, TopicStats>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
+  const [topicDisplays, setTopicDisplays] = useState<TopicDisplay[]>([]);
+
+  // Enhanced topic display configuration - DESCRIPTIVE TEXT INSTEAD OF ICONS
+  const getTopicDisplays = (category: 'local' | 'world'): TopicDisplay[] => {
+    if (category === 'local') {
+      return [
+        {
+          topic: getPriorityTopics('local')[0], // drugs-crime
+          displayText: "DROGAS Y CRIMEN",
+          description: "Narcotráfico, crimen organizado, justicia",
+          urgencyLevel: 'high',
+          category: 'security'
+        },
+        {
+          topic: getPriorityTopics('local')[1], // terror-news
+          displayText: "TERRORISMO Y SEGURIDAD",
+          description: "Alertas de seguridad nacional y terrorismo",
+          urgencyLevel: 'high',
+          category: 'breaking'
+        },
+        {
+          topic: getPriorityTopics('local')[2], // gustavo-petro
+          displayText: "GUSTAVO PETRO NOTICIAS",
+          description: "Presidente de Colombia y gobierno nacional",
+          urgencyLevel: 'medium',
+          category: 'politics'
+        },
+        {
+          topic: getPriorityTopics('local')[3], // congress
+          displayText: "CONGRESO DE COLOMBIA",
+          description: "Actividad del Congreso de la República",
+          urgencyLevel: 'medium',
+          category: 'politics'
+        },
+        {
+          topic: getPriorityTopics('local')[4], // left-wing
+          displayText: "IZQUIERDA POLÍTICA",
+          description: "Perspectiva progresista y de izquierda",
+          urgencyLevel: 'normal',
+          category: 'analysis'
+        },
+        {
+          topic: getPriorityTopics('local')[5], // right-wing
+          displayText: "DERECHA POLÍTICA",
+          description: "Perspectiva conservadora y de derecha",
+          urgencyLevel: 'normal',
+          category: 'analysis'
+        }
+      ];
+    } else {
+      return [
+        {
+          topic: getPriorityTopics('world')[0], // donald-trump-world
+          displayText: "DONALD TRUMP GLOBAL",
+          description: "Noticias mundiales sobre Donald Trump",
+          urgencyLevel: 'high',
+          category: 'politics'
+        },
+        {
+          topic: getPriorityTopics('world')[1], // world-politics
+          displayText: "POLÍTICA MUNDIAL",
+          description: "Política internacional y global",
+          urgencyLevel: 'medium',
+          category: 'politics'
+        },
+        {
+          topic: getPriorityTopics('world')[2], // world-terror
+          displayText: "TERRORISMO MUNDIAL",
+          description: "Terrorismo y seguridad internacional",
+          urgencyLevel: 'high',
+          category: 'security'
+        },
+        {
+          topic: getPriorityTopics('world')[3], // world-right-wing
+          displayText: "DERECHA MUNDIAL",
+          description: "Perspectiva conservadora global",
+          urgencyLevel: 'normal',
+          category: 'analysis'
+        },
+        {
+          topic: getPriorityTopics('world')[4], // world-left-wing
+          displayText: "IZQUIERDA MUNDIAL",
+          description: "Perspectiva progresista global",
+          urgencyLevel: 'normal',
+          category: 'analysis'
+        },
+        {
+          topic: getPriorityTopics('world')[5], // world-travel
+          displayText: "MEJORES DESTINOS",
+          description: "Mejores lugares para viajar",
+          urgencyLevel: 'normal',
+          category: 'analysis'
+        }
+      ];
+    }
+  };
 
   useEffect(() => {
     loadPriorityTopics();
   }, [selectedCategory]);
+
+  useEffect(() => {
+    // Generate topic displays when topics change
+    setTopicDisplays(getTopicDisplays(selectedCategory));
+  }, [priorityTopics, selectedCategory]);
 
   useEffect(() => {
     // Simulate live updates
@@ -84,7 +196,9 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
     setLastUpdated(new Date());
   };
 
-  const handleTopicClick = async (topic: NewsTopic) => {
+  // INSTANT TOPIC LOADING - Make topics instantly responsive
+  const handleTopicClick = async (topicDisplay: TopicDisplay) => {
+    const topic = topicDisplay.topic;
     setSelectedTopic(topic.id);
     
     // Set loading state for this specific topic
@@ -97,7 +211,7 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
     }));
 
     try {
-      // Fetch news for this topic
+      // INSTANT LOAD: Fetch news for this topic immediately
       const newsData = await topicNewsService.fetchTopicNews({
         topic,
         mode: selectedCategory,
@@ -114,6 +228,11 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
           isLoading: false
         }
       }));
+
+      // INSTANT CALLBACK: Immediately notify parent with news data
+      if (onInstantLoad) {
+        onInstantLoad(topic, selectedCategory, newsData);
+      }
 
       // Call the parent callback to update news feed
       if (onNewsUpdate) {
@@ -146,6 +265,23 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
     if (diffMinutes < 60) return `Hace ${diffMinutes}m`;
     const diffHours = Math.floor(diffMinutes / 60);
     return `Hace ${diffHours}h`;
+  };
+
+  const getUrgencyColor = (urgencyLevel: 'high' | 'medium' | 'normal') => {
+    switch (urgencyLevel) {
+      case 'high': return 'from-red-500 to-red-700';
+      case 'medium': return 'from-orange-500 to-orange-700';
+      default: return 'from-blue-500 to-blue-700';
+    }
+  };
+
+  const getCategoryIcon = (category: 'breaking' | 'politics' | 'security' | 'analysis') => {
+    switch (category) {
+      case 'breaking': return <FaBolt className="w-4 h-4" />;
+      case 'politics': return <FaFire className="w-4 h-4" />;
+      case 'security': return <MdFlashOn className="w-4 h-4" />;
+      default: return <FaEye className="w-4 h-4" />;
+    }
   };
 
   return (
@@ -184,27 +320,30 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
         </button>
       </div>
 
-      {/* Topics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {priorityTopics.map((topic, index) => {
-          const stats = topicStats[topic.id];
-          const isTopicLoading = stats?.isLoading || selectedTopic === topic.id;
+      {/* Enhanced Topics Grid with Descriptive Text Labels */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {topicDisplays.map((topicDisplay, index) => {
+          const stats = topicStats[topicDisplay.topic.id];
+          const isTopicLoading = stats?.isLoading || selectedTopic === topicDisplay.topic.id;
+          const urgencyColor = getUrgencyColor(topicDisplay.urgencyLevel);
+          
           return (
             <button
-              key={topic.id}
-              onClick={() => handleTopicClick(topic)}
+              key={topicDisplay.topic.id}
+              onClick={() => handleTopicClick(topicDisplay)}
               disabled={isTopicLoading}
-              className={`group relative overflow-hidden rounded-3xl p-6 text-left transition-all duration-500 hover:scale-105 hover:shadow-2xl bg-white border-2 hover:border-gray-300 disabled:opacity-75 disabled:cursor-not-allowed ${
-                selectedTopic === topic.id ? 'ring-4 ring-blue-500 border-blue-400' : 'border-gray-200'
+              className={`group relative overflow-hidden rounded-2xl p-6 text-left transition-all duration-300 hover:scale-105 hover:shadow-2xl bg-gradient-to-br ${urgencyColor} text-white disabled:opacity-75 disabled:cursor-not-allowed ${
+                selectedTopic === topicDisplay.topic.id ? 'ring-4 ring-white/50 scale-105' : ''
               }`}
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              {/* Premium background gradient */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${topic.color} opacity-0 group-hover:opacity-8 transition-opacity duration-300`}></div>
+              {/* Background Pattern for Modern Look */}
+              <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"></div>
               
               {/* Enhanced live indicator */}
               {stats && stats.liveCount > 0 && (
-                <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full animate-pulse shadow-lg">
+                <div className="absolute top-4 right-4 flex items-center gap-1 px-3 py-1 bg-white/20 text-white text-xs font-bold rounded-full animate-pulse shadow-lg backdrop-blur-sm">
                   <div className="w-2 h-2 bg-white rounded-full animate-ping"></div>
                   <span>EN VIVO</span>
                 </div>
@@ -212,63 +351,73 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
 
               {/* Loading indicator */}
               {isTopicLoading && (
-                <div className="absolute top-4 left-4 flex items-center gap-1 px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded-full">
+                <div className="absolute top-4 left-4 flex items-center gap-1 px-3 py-1 bg-white/30 text-white text-xs font-bold rounded-full backdrop-blur-sm">
                   <FaSpinner className="w-3 h-3 animate-spin" />
-                  <span>Cargando...</span>
+                  <span>CARGANDO...</span>
                 </div>
               )}
 
-              {/* Content */}
+              {/* Content with DESCRIPTIVE TEXT LABELS */}
               <div className="relative z-10">
-                {/* Icon and Title */}
-                <div className="flex items-center gap-4 mb-4">
-                  <div className={`text-4xl p-4 rounded-2xl bg-gradient-to-br ${topic.color} text-white shadow-lg transform group-hover:scale-110 transition-transform duration-300`}>
-                    {topic.emoji}
+                {/* Category Badge and Title */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2 px-3 py-1 bg-white/20 rounded-full">
+                    {getCategoryIcon(topicDisplay.category)}
+                    <span className="text-xs font-bold uppercase tracking-wide">
+                      {topicDisplay.category}
+                    </span>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-gray-700 transition-colors mb-1">
-                      {topic.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 leading-tight">
-                      {topic.description}
-                    </p>
-                  </div>
+                  {topicDisplay.urgencyLevel === 'high' && (
+                    <div className="flex items-center gap-1 px-2 py-1 bg-red-500/30 rounded-full">
+                      <FaBolt className="w-3 h-3 text-yellow-300" />
+                      <span className="text-xs font-bold">URGENTE</span>
+                    </div>
+                  )}
                 </div>
+
+                {/* BOLD DESCRIPTIVE TEXT INSTEAD OF EMOJI */}
+                <h3 className="text-xl font-black mb-2 leading-tight tracking-wide">
+                  {topicDisplay.displayText}
+                </h3>
+                
+                <p className="text-white/90 text-sm leading-tight mb-4 font-medium">
+                  {topicDisplay.description}
+                </p>
 
                 {/* Enhanced Stats */}
                 {stats && (
                   <div className="grid grid-cols-2 gap-3 mb-4">
-                    <div className="text-center p-3 bg-gradient-to-br from-red-50 to-orange-50 rounded-xl border border-red-100">
+                    <div className="text-center p-3 bg-white/20 rounded-xl backdrop-blur-sm">
                       <div className="flex items-center justify-center gap-1 mb-1">
-                        <FaEye className="w-3 h-3 text-red-500" />
-                        <span className="text-lg font-bold text-gray-900">
+                        <FaEye className="w-3 h-3" />
+                        <span className="text-lg font-bold">
                           {stats.liveCount}
                         </span>
                       </div>
-                      <span className="text-xs text-gray-600 font-medium">En vivo</span>
+                      <span className="text-xs font-medium opacity-90">En vivo</span>
                     </div>
-                    <div className="text-center p-3 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                    <div className="text-center p-3 bg-white/20 rounded-xl backdrop-blur-sm">
                       <div className="flex items-center justify-center gap-1 mb-1">
-                        <FaNewspaper className="w-3 h-3 text-blue-500" />
-                        <span className="text-lg font-bold text-gray-900">
+                        <FaNewspaper className="w-3 h-3" />
+                        <span className="text-lg font-bold">
                           {stats.totalCount}
                         </span>
                       </div>
-                      <span className="text-xs text-gray-600 font-medium">Total</span>
+                      <span className="text-xs font-medium opacity-90">Total</span>
                     </div>
                   </div>
                 )}
 
-                {/* Premium action area */}
-                <div className="flex items-center justify-between bg-gray-50 rounded-xl p-3 group-hover:bg-white transition-colors">
+                {/* Enhanced action area */}
+                <div className="flex items-center justify-between bg-white/20 rounded-xl p-3 backdrop-blur-sm">
                   <div className="flex items-center gap-2">
-                    <BiTrendingUp className="w-4 h-4 text-orange-500" />
-                    <span className="text-sm font-medium text-gray-700">
-                      {selectedCategory === 'local' ? 'Colombia' : 'Mundial'}
+                    <BiTrendingUp className="w-4 h-4" />
+                    <span className="text-sm font-bold">
+                      {selectedCategory === 'local' ? 'COLOMBIA' : 'MUNDIAL'}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-blue-600 font-semibold">
-                    <span className="text-sm">Ver noticias</span>
+                  <div className="flex items-center gap-2 font-bold">
+                    <span className="text-sm">VER AHORA</span>
                     <FaArrowRight className={`w-4 h-4 transform transition-transform ${
                       isTopicLoading ? 'animate-pulse' : 'group-hover:translate-x-1'
                     }`} />
@@ -278,9 +427,6 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
 
               {/* Premium shimmer effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transform translate-x-[-100%] group-hover:translate-x-[100%] transition-all duration-1000"></div>
-              
-              {/* Premium border glow */}
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-500"></div>
             </button>
           );
         })}

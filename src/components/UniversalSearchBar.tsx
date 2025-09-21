@@ -6,6 +6,7 @@ import { NewsTopic, getAllTopics, searchTopicsByKeyword } from '../config/newsTo
 interface UniversalSearchBarProps {
   onSearch: (query: string, category: 'local' | 'world', topic?: NewsTopic) => void;
   onTopicSelect: (topic: NewsTopic) => void;
+  onInstantSearch?: (query: string, category: 'local' | 'world', topic?: NewsTopic) => void;
   placeholder?: string;
   autoFocus?: boolean;
   className?: string;
@@ -14,6 +15,7 @@ interface UniversalSearchBarProps {
 const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
   onSearch,
   onTopicSelect,
+  onInstantSearch,
   placeholder = "Buscar noticias en Colombia y el mundo...",
   autoFocus = false,
   className = ""
@@ -81,7 +83,13 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
 
   const performSearch = (searchQuery: string, topic?: NewsTopic) => {
     const finalTopic = topic || selectedTopic;
-    onSearch(searchQuery, selectedCategory, finalTopic || undefined);
+    
+    // INSTANT SEARCH: If instant search callback is provided, use it for immediate results
+    if (onInstantSearch) {
+      onInstantSearch(searchQuery, selectedCategory, finalTopic || undefined);
+    } else {
+      onSearch(searchQuery, selectedCategory, finalTopic || undefined);
+    }
     
     // Save to recent searches
     const newRecent = [searchQuery, ...recentSearches.filter(s => s !== searchQuery)].slice(0, 5);
@@ -98,8 +106,14 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
     onTopicSelect(topic);
     setShowTopics(false);
     
+    // INSTANT TOPIC SEARCH: If there's a query, immediately search with this topic
     if (query.trim()) {
       performSearch(query, topic);
+    } else {
+      // If no query, search for the topic name itself
+      const topicQuery = topic.name;
+      setQuery(topicQuery);
+      performSearch(topicQuery, topic);
     }
   };
 
