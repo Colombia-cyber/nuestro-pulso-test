@@ -1,19 +1,21 @@
 export interface NewsTopic {
   id: string;
   name: string;
-  emoji: string;
+  emoji: string; // Keep for backward compatibility but won't display
   description: string;
   category: 'local' | 'world';
   perspective?: 'left' | 'right' | 'balanced';
   color: string;
   keywords: string[];
+  displayText?: string; // New field for bold text display
 }
 
 export const localTopics: NewsTopic[] = [
   // Priority topics as requested
   {
     id: 'drugs-crime',
-    name: 'Drugs & Crime',
+    name: 'DROGAS Y CRIMEN',
+    displayText: 'DROGAS Y CRIMEN',
     emoji: '🚔',
     description: 'Narcotráfico, crimen organizado y justicia',
     category: 'local',
@@ -22,7 +24,8 @@ export const localTopics: NewsTopic[] = [
   },
   {
     id: 'terror-news',
-    name: 'Terror News',
+    name: 'TERRORISMO Y SEGURIDAD',
+    displayText: 'TERRORISMO Y SEGURIDAD',
     emoji: '🚨',
     description: 'Alertas y noticias de seguridad nacional',
     category: 'local',
@@ -31,7 +34,8 @@ export const localTopics: NewsTopic[] = [
   },
   {
     id: 'gustavo-petro',
-    name: 'Gustavo Petro News',
+    name: 'GUSTAVO PETRO',
+    displayText: 'GUSTAVO PETRO',
     emoji: '🇨🇴',
     description: 'Noticias sobre el presidente y gobierno nacional',
     category: 'local',
@@ -40,7 +44,8 @@ export const localTopics: NewsTopic[] = [
   },
   {
     id: 'congress',
-    name: 'Congress of Colombia',
+    name: 'CONGRESO COLOMBIA',
+    displayText: 'CONGRESO COLOMBIA',
     emoji: '🏢',
     description: 'Actividad del Congreso de la República',
     category: 'local',
@@ -49,7 +54,8 @@ export const localTopics: NewsTopic[] = [
   },
   {
     id: 'left-wing',
-    name: 'Left Wing',
+    name: 'IZQUIERDA POLÍTICA',
+    displayText: 'IZQUIERDA POLÍTICA',
     emoji: '🔵',
     description: 'Perspectiva progresista y de izquierda',
     category: 'local',
@@ -59,7 +65,8 @@ export const localTopics: NewsTopic[] = [
   },
   {
     id: 'right-wing',
-    name: 'Right Wing',
+    name: 'DERECHA POLÍTICA',
+    displayText: 'DERECHA POLÍTICA',
     emoji: '🔴',
     description: 'Perspectiva conservadora y de derecha',
     category: 'local',
@@ -69,7 +76,8 @@ export const localTopics: NewsTopic[] = [
   },
   {
     id: 'donald-trump-local',
-    name: 'Donald Trump',
+    name: 'DONALD TRUMP',
+    displayText: 'DONALD TRUMP',
     emoji: '🇺🇸',
     description: 'Noticias sobre Trump con enfoque en Sudamérica/Colombia',
     category: 'local',
@@ -128,7 +136,8 @@ export const worldTopics: NewsTopic[] = [
   // Priority topics for world news
   {
     id: 'donald-trump-world',
-    name: 'Donald Trump',
+    name: 'DONALD TRUMP',
+    displayText: 'DONALD TRUMP',
     emoji: '🇺🇸',
     description: 'Noticias globales sobre Donald Trump',
     category: 'world',
@@ -137,7 +146,8 @@ export const worldTopics: NewsTopic[] = [
   },
   {
     id: 'world-politics',
-    name: 'Politics',
+    name: 'POLÍTICA MUNDIAL',
+    displayText: 'POLÍTICA MUNDIAL',
     emoji: '🗳️',
     description: 'Política internacional',
     category: 'world',
@@ -146,7 +156,8 @@ export const worldTopics: NewsTopic[] = [
   },
   {
     id: 'world-terror',
-    name: 'Terror News',
+    name: 'TERRORISMO MUNDIAL',
+    displayText: 'TERRORISMO MUNDIAL',
     emoji: '🚨',
     description: 'Terrorismo y seguridad mundial',
     category: 'world',
@@ -155,7 +166,8 @@ export const worldTopics: NewsTopic[] = [
   },
   {
     id: 'world-right-wing',
-    name: 'Right Wing',
+    name: 'DERECHA MUNDIAL',
+    displayText: 'DERECHA MUNDIAL',
     emoji: '🔴',
     description: 'Perspectiva conservadora mundial',
     category: 'world',
@@ -165,7 +177,8 @@ export const worldTopics: NewsTopic[] = [
   },
   {
     id: 'world-left-wing',
-    name: 'Left Wing',
+    name: 'IZQUIERDA MUNDIAL',
+    displayText: 'IZQUIERDA MUNDIAL',
     emoji: '🔵',
     description: 'Perspectiva progresista mundial',
     category: 'world',
@@ -174,17 +187,9 @@ export const worldTopics: NewsTopic[] = [
     keywords: ['progressive', 'left', 'social', 'equality', 'reform', 'global']
   },
   {
-    id: 'world-wealth',
-    name: 'Wealth News',
-    emoji: '💎',
-    description: 'Economía global y mercados financieros',
-    category: 'world',
-    color: 'from-yellow-600 to-yellow-800',
-    keywords: ['economy', 'global', 'markets', 'finance', 'wealth', 'business', 'investment']
-  },
-  {
     id: 'world-travel',
-    name: 'Best Places to Travel',
+    name: 'MEJORES DESTINOS',
+    displayText: 'MEJORES DESTINOS',
     emoji: '✈️',
     description: 'Mejores destinos y noticias de viajes',
     category: 'world',
@@ -253,10 +258,10 @@ export const getAllTopics = (): NewsTopic[] => {
 };
 
 export const getPriorityTopics = (category: 'local' | 'world'): NewsTopic[] => {
-  // Return the priority topics in the specified order
+  // Return the priority topics in the specified order with Donald Trump and Derecha Política prominent
   const priorityIds = category === 'local' 
-    ? ['drugs-crime', 'terror-news', 'gustavo-petro', 'congress', 'left-wing', 'right-wing', 'donald-trump-local']
-    : ['donald-trump-world', 'world-politics', 'world-terror', 'world-right-wing', 'world-left-wing', 'world-wealth', 'world-travel'];
+    ? ['donald-trump-local', 'right-wing', 'drugs-crime', 'terror-news', 'gustavo-petro', 'congress', 'left-wing']
+    : ['donald-trump-world', 'world-right-wing', 'world-politics', 'world-terror', 'world-left-wing', 'world-travel'];
   
   const allTopics = getTopicsByCategory(category);
   return priorityIds.map(id => allTopics.find(topic => topic.id === id)).filter(Boolean) as NewsTopic[];

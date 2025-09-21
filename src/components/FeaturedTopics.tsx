@@ -48,77 +48,77 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
     if (category === 'local') {
       return [
         {
-          topic: getPriorityTopics('local')[0], // drugs-crime
+          topic: getPriorityTopics('local')[0], // donald-trump-local 
+          displayText: "DONALD TRUMP",
+          description: "Noticias de Trump relevantes para Colombia",
+          urgencyLevel: 'high',
+          category: 'politics'
+        },
+        {
+          topic: getPriorityTopics('local')[1], // right-wing
+          displayText: "DERECHA POLÍTICA",
+          description: "Perspectiva conservadora y de derecha",
+          urgencyLevel: 'normal',
+          category: 'analysis'
+        },
+        {
+          topic: getPriorityTopics('local')[2], // drugs-crime
           displayText: "DROGAS Y CRIMEN",
           description: "Narcotráfico, crimen organizado, justicia",
           urgencyLevel: 'high',
           category: 'security'
         },
         {
-          topic: getPriorityTopics('local')[1], // terror-news
+          topic: getPriorityTopics('local')[3], // terror-news
           displayText: "TERRORISMO Y SEGURIDAD",
           description: "Alertas de seguridad nacional y terrorismo",
           urgencyLevel: 'high',
           category: 'breaking'
         },
         {
-          topic: getPriorityTopics('local')[2], // gustavo-petro
-          displayText: "GUSTAVO PETRO NOTICIAS",
+          topic: getPriorityTopics('local')[4], // gustavo-petro
+          displayText: "GUSTAVO PETRO",
           description: "Presidente de Colombia y gobierno nacional",
           urgencyLevel: 'medium',
           category: 'politics'
         },
         {
-          topic: getPriorityTopics('local')[3], // congress
-          displayText: "CONGRESO DE COLOMBIA",
+          topic: getPriorityTopics('local')[5], // congress
+          displayText: "CONGRESO COLOMBIA",
           description: "Actividad del Congreso de la República",
           urgencyLevel: 'medium',
           category: 'politics'
-        },
-        {
-          topic: getPriorityTopics('local')[4], // left-wing
-          displayText: "IZQUIERDA POLÍTICA",
-          description: "Perspectiva progresista y de izquierda",
-          urgencyLevel: 'normal',
-          category: 'analysis'
-        },
-        {
-          topic: getPriorityTopics('local')[5], // right-wing
-          displayText: "DERECHA POLÍTICA",
-          description: "Perspectiva conservadora y de derecha",
-          urgencyLevel: 'normal',
-          category: 'analysis'
         }
       ];
     } else {
       return [
         {
           topic: getPriorityTopics('world')[0], // donald-trump-world
-          displayText: "DONALD TRUMP GLOBAL",
+          displayText: "DONALD TRUMP",
           description: "Noticias mundiales sobre Donald Trump",
           urgencyLevel: 'high',
           category: 'politics'
         },
         {
-          topic: getPriorityTopics('world')[1], // world-politics
+          topic: getPriorityTopics('world')[1], // world-right-wing
+          displayText: "DERECHA MUNDIAL",
+          description: "Perspectiva conservadora global",
+          urgencyLevel: 'normal',
+          category: 'analysis'
+        },
+        {
+          topic: getPriorityTopics('world')[2], // world-politics
           displayText: "POLÍTICA MUNDIAL",
           description: "Política internacional y global",
           urgencyLevel: 'medium',
           category: 'politics'
         },
         {
-          topic: getPriorityTopics('world')[2], // world-terror
+          topic: getPriorityTopics('world')[3], // world-terror
           displayText: "TERRORISMO MUNDIAL",
           description: "Terrorismo y seguridad internacional",
           urgencyLevel: 'high',
           category: 'security'
-        },
-        {
-          topic: getPriorityTopics('world')[3], // world-right-wing
-          displayText: "DERECHA MUNDIAL",
-          description: "Perspectiva conservadora global",
-          urgencyLevel: 'normal',
-          category: 'analysis'
         },
         {
           topic: getPriorityTopics('world')[4], // world-left-wing
@@ -391,7 +391,7 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
                 </div>
 
                 {/* BOLD DESCRIPTIVE TEXT INSTEAD OF EMOJI */}
-                <h3 className="text-xl font-black mb-2 leading-tight tracking-wide">
+                <h3 className="text-2xl font-black mb-2 leading-tight tracking-wide">
                   {topicDisplay.displayText}
                 </h3>
                 

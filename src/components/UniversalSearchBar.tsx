@@ -316,7 +316,7 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
         )}
       </div>
 
-      {/* Quick Topic Pills - TEXT ONLY, NO ICONS */}
+      {/* Quick Topic Pills - TEXT ONLY, NO ICONS, BOLD CLEAR TEXT */}
       <div className="mt-4 flex flex-wrap gap-2">
         {getAllTopics()
           .filter(topic => topic.category === selectedCategory)
@@ -325,13 +325,13 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
             <button
               key={topic.id}
               onClick={() => handleTopicClick(topic)}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all border-2 ${
+              className={`px-6 py-3 rounded-lg text-lg font-black transition-all border-2 ${
                 selectedTopic?.id === topic.id
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-800 border-gray-300 hover:border-blue-500 hover:text-blue-600 hover:shadow-md'
+                  ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
+                  : 'bg-white text-gray-900 border-gray-400 hover:border-blue-500 hover:text-blue-600 hover:shadow-md'
               }`}
             >
-              {topic.name}
+              {topic.name.toUpperCase()}
             </button>
           ))}
       </div>

@@ -57,13 +57,13 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
   const searchTabs: SearchTab[] = [
     {
       id: 'local',
-      name: 'Local Colombia 🇨🇴',
+      name: 'COLOMBIA LOCAL',
       icon: <FaMapMarkerAlt className="w-4 h-4" />,
       description: 'Red Cívica de Colombia - Fuentes nacionales y locales'
     },
     {
       id: 'world',
-      name: 'Mundo 🌍',
+      name: 'MUNDO GLOBAL',
       icon: <FaGlobe className="w-4 h-4" />,
       description: 'Búsqueda global con Copilot AI y fuentes internacionales'
     }
@@ -198,15 +198,24 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
     setActiveTab(parentActiveTab);
   }, [parentActiveTab]);
 
-  // Handle tab change - INSTANT SWITCHING
+  // Handle tab change - INSTANT SWITCHING WITH IMMEDIATE RE-SEARCH
   const handleTabChange = (tab: 'world' | 'local') => {
     setActiveTab(tab);
     if (onTabChange) {
       onTabChange(tab);
     }
-    if (query) {
-      // INSTANT RE-SEARCH: Immediately search with new tab context
-      performSearch();
+    // INSTANT RE-SEARCH: Immediately search with new tab context if query exists
+    if (query.trim()) {
+      // Update filters based on new tab context
+      const newFilters = { ...filters, location: tab === 'local' ? 'colombia' : 'global' };
+      setFilters(newFilters);
+      
+      // Immediate search with new context - no delay
+      setTimeout(() => {
+        if (onSearch) {
+          onSearch(query, tab, newFilters);
+        }
+      }, 50); // Minimal delay for UI feedback
     }
   };
 
@@ -243,17 +252,17 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-lg font-black transition-all duration-200 ${
                 activeTab === tab.id
-                  ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                  ? 'bg-blue-50 text-blue-700 border-b-4 border-blue-500 shadow-lg'
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50 border-b-4 border-transparent'
               }`}
               title={tab.description}
             >
               {tab.icon}
               <span>{tab.name}</span>
               {activeTab === tab.id && (
-                <div className="ml-2 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                <div className="ml-2 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
               )}
             </button>
           ))}
