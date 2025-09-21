@@ -28,15 +28,15 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
   };
 
   const navItems = [
-    { id: 'home', icon: '🏠', label: 'Inicio', shortLabel: 'Inicio' },
-    { id: 'reels', icon: '🎬', label: 'Reels', shortLabel: 'Reels' },
-    { id: 'feeds', icon: '📰', label: 'Noticias', shortLabel: 'Feeds' },
-    { id: 'congress', icon: '🏛️', label: 'Congreso', shortLabel: 'Congreso' },
-    { id: 'elections', icon: '🗳️', label: 'Elecciones', shortLabel: 'Votos' },
-    { id: 'chat', icon: '💬', label: 'Chat en Vivo', shortLabel: 'Chat' },
-    { id: 'debates', icon: '🗣️', label: 'Debates', shortLabel: 'Debates' },
-    { id: 'surveys', icon: '📊', label: 'Encuestas', shortLabel: 'Encuestas' },
-    { id: 'community-hub', icon: '💭', label: 'Community Hub', shortLabel: 'Hub' }
+    { id: 'home', icon: 'HOME', label: 'Inicio', shortLabel: 'INICIO' },
+    { id: 'reels', icon: 'REELS', label: 'Reels', shortLabel: 'REELS' },
+    { id: 'feeds', icon: 'NEWS', label: 'Noticias', shortLabel: 'NOTICIAS' },
+    { id: 'congress', icon: 'CONGRESS', label: 'Congreso', shortLabel: 'CONGRESO' },
+    { id: 'elections', icon: 'VOTE', label: 'Elecciones', shortLabel: 'VOTOS' },
+    { id: 'chat', icon: 'CHAT', label: 'Chat en Vivo', shortLabel: 'CHAT' },
+    { id: 'debates', icon: 'DEBATE', label: 'Debates', shortLabel: 'DEBATES' },
+    { id: 'surveys', icon: 'POLL', label: 'Encuestas', shortLabel: 'ENCUESTAS' },
+    { id: 'community-hub', icon: 'HUB', label: 'Community Hub', shortLabel: 'HUB' }
   ];
 
   return (
@@ -51,23 +51,23 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16 lg:h-20">
-            {/* Logo Section */}
+            {/* Logo Section - PROFESSIONAL */}
             <div 
               className="flex items-center gap-3 cursor-pointer group"
               onClick={() => handleNavClick('home')}
             >
               <div className="relative">
                 <div className="w-10 h-10 lg:w-12 lg:h-12 bg-gradient-colombia rounded-xl shadow-colombia flex items-center justify-center transform group-hover:scale-110 transition-all duration-300 floating">
-                  <span className="text-white font-bold text-lg lg:text-xl">🇨🇴</span>
+                  <span className="text-white font-black text-lg lg:text-xl">NP</span>
                 </div>
                 <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-gradient-colombia font-bold text-xl lg:text-2xl text-shadow">
-                  Nuestro Pulso
+                <h1 className="text-gradient-colombia font-black text-xl lg:text-2xl text-shadow tracking-tight">
+                  NUESTRO PULSO
                 </h1>
-                <p className="text-xs lg:text-sm text-colombia-blue/80 font-medium">
-                  Red Cívica de Colombia
+                <p className="text-xs lg:text-sm text-colombia-blue/80 font-bold uppercase tracking-wide">
+                  RED CÍVICA COLOMBIA
                 </p>
               </div>
             </div>
@@ -106,8 +106,10 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
                     title={item.label}
                   >
                     <div className="flex items-center gap-2">
-                      <span className="text-lg group-hover:animate-bounce-subtle">{item.icon}</span>
-                      <span className="hidden xl:inline font-medium text-sm">
+                      <span className="text-xs font-extrabold tracking-wider text-gray-600 group-hover:text-blue-600 transition-colors">
+                        {item.icon}
+                      </span>
+                      <span className="hidden xl:inline font-bold text-sm">
                         {item.shortLabel}
                       </span>
                     </div>
@@ -171,10 +173,10 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               </button>
 
               {/* Login Button */}
-              <button className="btn-primary text-sm px-4 py-2 lg:px-6 lg:py-3">
+              <button className="btn-primary text-sm px-4 py-2 lg:px-6 lg:py-3 font-bold">
                 <span className="flex items-center gap-2">
-                  <span>🔐</span>
-                  <span className="hidden xl:inline">Ingresar</span>
+                  <span className="font-bold">LOGIN</span>
+                  <span className="hidden xl:inline font-extrabold">INGRESAR</span>
                 </span>
               </button>
             </div>
@@ -221,11 +223,11 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
-                    <span className="text-xl">🇨🇴</span>
+                    <span className="text-xl font-black">NP</span>
                   </div>
                   <div>
-                    <h2 className="font-bold text-lg">Nuestro Pulso</h2>
-                    <p className="text-sm opacity-90">Red Cívica</p>
+                    <h2 className="font-black text-lg tracking-tight">NUESTRO PULSO</h2>
+                    <p className="text-sm opacity-90 font-bold uppercase tracking-wide">RED CÍVICA</p>
                   </div>
                 </div>
                 <button
@@ -255,8 +257,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
                           : 'text-gray-700 hover:bg-gray-50'
                       }`}
                     >
-                      <span className="text-xl">{item.icon}</span>
-                      <span className="font-medium">{item.label}</span>
+                      <span className="text-sm font-extrabold tracking-wider">{item.icon}</span>
+                      <span className="font-bold">{item.label}</span>
                       {isActive && (
                         <div className="ml-auto w-2 h-2 bg-colombia-yellow rounded-full"></div>
                       )}
@@ -305,10 +307,10 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               </div>
               
               {/* Login Button */}
-              <button className="w-full btn-primary">
+              <button className="w-full btn-primary font-bold">
                 <span className="flex items-center justify-center gap-2">
-                  <span>🔐</span>
-                  <span>Ingresar</span>
+                  <span className="font-bold">LOGIN</span>
+                  <span className="font-extrabold">INGRESAR</span>
                 </span>
               </button>
             </div>

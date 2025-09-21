@@ -150,59 +150,59 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
       {/* Main Search Container */}
       <div className="relative bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
         
-        {/* Category Tabs */}
+        {/* Category Tabs - BOLD TEXT-ONLY */}
         <div className="flex border-b border-gray-200">
           <button
             onClick={() => setSelectedCategory('local')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 font-medium transition-all ${
+            className={`flex-1 flex items-center justify-center gap-3 py-4 px-6 font-bold transition-all duration-300 ${
               selectedCategory === 'local'
-                ? 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white shadow-lg'
+                : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
             }`}
           >
-            <FaMapMarkerAlt className="w-4 h-4" />
-            Colombia
+            <FaMapMarkerAlt className="w-5 h-5" />
+            <span className="text-lg font-extrabold tracking-wide">COLOMBIA LOCAL</span>
           </button>
           <button
             onClick={() => setSelectedCategory('world')}
-            className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 font-medium transition-all ${
+            className={`flex-1 flex items-center justify-center gap-3 py-4 px-6 font-bold transition-all duration-300 ${
               selectedCategory === 'world'
-                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white'
-                : 'text-gray-600 hover:bg-gray-50'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900'
             }`}
           >
-            <FaGlobe className="w-4 h-4" />
-            Mundo
+            <FaGlobe className="w-5 h-5" />
+            <span className="text-lg font-extrabold tracking-wide">MUNDO GLOBAL</span>
           </button>
         </div>
 
         {/* Search Input Row */}
         <div className="flex items-center p-4">
-          {/* Topic Filter Button - TEXT ONLY */}
+          {/* Topic Filter Button - PROFESSIONAL TEXT-ONLY */}
           <button
             onClick={toggleTopics}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-bold transition-all mr-3 border-2 ${
+            className={`flex items-center gap-3 px-6 py-3 rounded-xl font-extrabold transition-all duration-300 mr-4 border-2 shadow-sm hover:shadow-lg ${
               selectedTopic
-                ? 'bg-blue-600 text-white border-blue-600'
-                : 'bg-gray-100 text-gray-800 border-gray-300 hover:border-blue-500 hover:text-blue-600'
+                ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white border-blue-600 shadow-lg'
+                : 'bg-gray-50 text-gray-800 border-gray-300 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700'
             }`}
           >
             <FaFilter className="w-4 h-4" />
             {selectedTopic ? (
               <>
-                <span className="hidden sm:inline">{selectedTopic.name}</span>
+                <span className="hidden sm:inline text-sm tracking-wide uppercase">{selectedTopic.name}</span>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     clearTopic();
                   }}
-                  className="ml-1 hover:bg-white/20 rounded-full p-1"
+                  className="ml-2 hover:bg-white/20 rounded-full p-1 transition-colors"
                 >
                   <FaTimes className="w-3 h-3" />
                 </button>
               </>
             ) : (
-              <span className="hidden sm:inline">Filtrar por tema</span>
+              <span className="hidden sm:inline text-sm tracking-wide uppercase">FILTRAR TEMA</span>
             )}
           </button>
 
@@ -222,9 +222,9 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
             </div>
             <button
               type="submit"
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-3 rounded-lg font-semibold hover:shadow-lg transition-all"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-3 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 tracking-wide"
             >
-              Buscar
+              BUSCAR
             </button>
           </form>
         </div>
@@ -316,8 +316,8 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
         )}
       </div>
 
-      {/* Quick Topic Pills - TEXT ONLY, NO ICONS */}
-      <div className="mt-4 flex flex-wrap gap-2">
+      {/* Quick Topic Pills - CLEAN, BOLD, TEXT-ONLY */}
+      <div className="mt-4 flex flex-wrap gap-3">
         {getAllTopics()
           .filter(topic => topic.category === selectedCategory)
           .slice(0, 6)
@@ -325,13 +325,15 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
             <button
               key={topic.id}
               onClick={() => handleTopicClick(topic)}
-              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all border-2 ${
+              className={`px-6 py-3 rounded-xl text-sm font-bold transition-all duration-300 border-2 shadow-sm hover:shadow-lg transform hover:scale-105 ${
                 selectedTopic?.id === topic.id
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-800 border-gray-300 hover:border-blue-500 hover:text-blue-600 hover:shadow-md'
+                  ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white border-blue-600 shadow-lg scale-105'
+                  : 'bg-white text-gray-900 border-gray-300 hover:border-blue-500 hover:bg-blue-50 hover:text-blue-700'
               }`}
             >
-              {topic.name}
+              <span className="font-extrabold tracking-wide uppercase text-xs">
+                {topic.name}
+              </span>
             </button>
           ))}
       </div>

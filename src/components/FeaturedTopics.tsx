@@ -305,15 +305,17 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
       <div className="flex items-center justify-between mb-8">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-2xl bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 shadow-lg">
-              <FaFire className="w-6 h-6 text-white" />
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-red-500 via-orange-500 to-yellow-500 shadow-xl">
+              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center">
+                <span className="text-xl font-bold text-red-600">T</span>
+              </div>
             </div>
             <div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 bg-clip-text text-transparent">
-                Temas Prioritarios
+              <h2 className="text-4xl font-black bg-gradient-to-r from-red-600 via-orange-600 to-yellow-600 bg-clip-text text-transparent tracking-tight">
+                TEMAS PRIORITARIOS
               </h2>
-              <p className="text-gray-600 font-medium">
-                {selectedCategory === 'local' ? 'Colombia' : 'Mundo'} • Noticias en vivo
+              <p className="text-gray-700 font-bold text-lg">
+                {selectedCategory === 'local' ? 'COLOMBIA' : 'MUNDO'} • NOTICIAS EN VIVO
               </p>
             </div>
           </div>
@@ -328,10 +330,10 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
         <button
           onClick={loadPriorityTopics}
           disabled={isLoading}
-          className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors disabled:opacity-50 font-bold"
         >
           <FaSync className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-          <span className="hidden sm:inline text-sm font-medium">Actualizar</span>
+          <span className="hidden sm:inline text-sm font-bold uppercase tracking-wide">ACTUALIZAR</span>
         </button>
       </div>
 

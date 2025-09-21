@@ -57,13 +57,13 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
   const searchTabs: SearchTab[] = [
     {
       id: 'local',
-      name: 'Local Colombia 🇨🇴',
+      name: 'LOCAL COLOMBIA',
       icon: <FaMapMarkerAlt className="w-4 h-4" />,
       description: 'Red Cívica de Colombia - Fuentes nacionales y locales'
     },
     {
       id: 'world',
-      name: 'Mundo 🌍',
+      name: 'MUNDO GLOBAL', 
       icon: <FaGlobe className="w-4 h-4" />,
       description: 'Búsqueda global con Copilot AI y fuentes internacionales'
     }
@@ -237,23 +237,26 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
     <div className={`google-search-container ${className}`}>
       {/* Search Header */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-        {/* Tab Selector */}
-        <div className="flex border-b border-gray-100">
+        {/* Tab Selector - ENHANCED VISUAL MODE INDICATORS */}
+        <div className="flex border-b border-gray-100 bg-gray-50">
           {searchTabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => handleTabChange(tab.id)}
-              className={`flex-1 flex items-center justify-center gap-2 px-6 py-4 text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 flex items-center justify-center gap-3 px-6 py-4 text-sm font-bold transition-all duration-300 ${
                 activeTab === tab.id
-                  ? 'bg-blue-50 text-blue-700 border-b-2 border-blue-500'
-                  : 'text-gray-600 hover:text-gray-800 hover:bg-gray-50'
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white border-b-4 border-white shadow-lg'
+                  : 'text-gray-700 hover:text-gray-900 hover:bg-gray-100'
               }`}
               title={tab.description}
             >
               {tab.icon}
-              <span>{tab.name}</span>
+              <span className="text-lg font-extrabold tracking-wide">{tab.name}</span>
               {activeTab === tab.id && (
-                <div className="ml-2 w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                <div className="ml-3 flex items-center gap-1">
+                  <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                  <span className="text-xs font-bold bg-white/20 px-2 py-1 rounded-full">ACTIVO</span>
+                </div>
               )}
             </button>
           ))}
@@ -305,15 +308,15 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
               <button
                 type="submit"
                 disabled={!query.trim() || isSearching}
-                className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:from-blue-700 hover:to-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 font-bold text-lg shadow-lg hover:shadow-xl transform hover:scale-105"
               >
                 {isSearching ? (
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Buscando...</span>
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span className="font-bold">BUSCANDO...</span>
                   </div>
                 ) : (
-                  'Buscar'
+                  <span className="font-extrabold tracking-wide">BUSCAR</span>
                 )}
               </button>
             </div>
@@ -342,23 +345,29 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
             )}
           </div>
 
-          {/* Result Info */}
+          {/* Result Info - ENHANCED MODE INDICATORS */}
           {(resultCount !== null || searchTime !== null) && (
-            <div className="mt-3 flex items-center gap-4 text-sm text-gray-600">
+            <div className="mt-4 flex items-center gap-6 text-sm">
               {resultCount !== null && (
-                <span>
-                  <strong>{resultCount.toLocaleString()}</strong> resultados
+                <span className="font-bold text-gray-800">
+                  <strong className="text-blue-600 text-lg">{resultCount.toLocaleString()}</strong> resultados
                 </span>
               )}
               {searchTime !== null && (
-                <span>
-                  en <strong>{searchTime}ms</strong>
+                <span className="font-medium text-gray-600">
+                  en <strong className="text-green-600">{searchTime}ms</strong>
                 </span>
               )}
-              <span className="flex items-center gap-1">
-                {activeTab === 'world' ? <FaGlobe className="w-3 h-3" /> : <FaMapMarkerAlt className="w-3 h-3" />}
-                {activeTab === 'world' ? 'Búsqueda global' : 'Búsqueda local'}
-              </span>
+              <div className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold text-sm ${
+                activeTab === 'world' 
+                  ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white' 
+                  : 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white'
+              }`}>
+                {activeTab === 'world' ? <FaGlobe className="w-4 h-4" /> : <FaMapMarkerAlt className="w-4 h-4" />}
+                <span className="font-extrabold tracking-wide uppercase">
+                  {activeTab === 'world' ? 'BÚSQUEDA MUNDIAL' : 'BÚSQUEDA LOCAL COLOMBIA'}
+                </span>
+              </div>
             </div>
           )}
         </form>
