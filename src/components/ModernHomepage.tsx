@@ -6,6 +6,7 @@ import { IoMdStats } from 'react-icons/io';
 import UniversalSearchBar from '../components/UniversalSearchBar';
 import FeaturedTopics from '../components/FeaturedTopics';
 import { NewsTopic } from '../config/newsTopics';
+import { TopicNewsResponse } from '../services/topicNewsService';
 
 interface ModernHomepageProps {
   onNavigate: (view: string) => void;
@@ -34,6 +35,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
   });
   const [isVisible, setIsVisible] = useState(false);
   const [selectedNewsCategory, setSelectedNewsCategory] = useState<'local' | 'world'>('local');
+  const [currentTopicNews, setCurrentTopicNews] = useState<{topic: NewsTopic, news: TopicNewsResponse} | null>(null);
 
   useEffect(() => {
     setIsVisible(true);
@@ -153,6 +155,18 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
     params.set('topic', topic.id);
     window.history.pushState(null, '', `/search?${params.toString()}`);
     onNavigate('feeds'); // Navigate to the feeds view to show news
+  };
+
+  const handleNewsUpdate = (newsData: TopicNewsResponse, topic: NewsTopic) => {
+    // Store the current topic news data for potential use
+    setCurrentTopicNews({ topic, news: newsData });
+    
+    // Update live stats based on the news data
+    setLiveStats(prev => ({
+      ...prev,
+      newsUpdates: newsData.totalCount,
+      activePolls: prev.activePolls + Math.floor(Math.random() * 3),
+    }));
   };
 
   const formatTime = (date: Date) => {
@@ -339,7 +353,71 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
             onTopicSelect={handlePriorityTopicSelect}
             selectedCategory={selectedNewsCategory}
             className="mb-12"
+            onNewsUpdate={handleNewsUpdate}
           />
+
+          {/* Topic News Preview */}
+          {currentTopicNews && (
+            <div className="mb-12 bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 shadow-lg">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-4">
+                  <div className={`text-3xl p-3 rounded-2xl bg-gradient-to-br ${currentTopicNews.topic.color} text-white shadow-lg`}>
+                    {currentTopicNews.topic.emoji}
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900">
+                      Noticias sobre {currentTopicNews.topic.name}
+                    </h3>
+                    <p className="text-gray-600">
+                      {selectedNewsCategory === 'local' ? 'Colombia y Sudamérica' : 'Perspectiva Mundial'} • 
+                      {currentTopicNews.news.totalCount} artículos encontrados
+                    </p>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handlePriorityTopicSelect(currentTopicNews.topic, selectedNewsCategory)}
+                  className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all transform hover:scale-105"
+                >
+                  Ver todas las noticias
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentTopicNews.news.articles.slice(0, 3).map((article, index) => (
+                  <div 
+                    key={article.id}
+                    className="bg-white rounded-2xl p-6 border border-gray-100 hover:shadow-lg transition-all cursor-pointer group"
+                    onClick={() => handlePriorityTopicSelect(currentTopicNews.topic, selectedNewsCategory)}
+                  >
+                    <div className="flex items-start gap-3 mb-4">
+                      <div className="text-sm font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">
+                        {typeof article.source === 'string' ? article.source : article.source.name}
+                      </div>
+                      {article.trending && (
+                        <div className="text-xs font-bold text-orange-600 bg-orange-50 px-2 py-1 rounded-full flex items-center gap-1">
+                          <BiTrendingUp className="w-3 h-3" />
+                          Trending
+                        </div>
+                      )}
+                    </div>
+                    
+                    <h4 className="text-lg font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+                      {article.title}
+                    </h4>
+                    
+                    <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                      {article.summary}
+                    </p>
+                    
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>{article.readTime}</span>
+                      <span>{new Date(article.publishedAt).toLocaleDateString('es-CO')}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Call to Action */}
           <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-8 md:p-12 text-white text-center shadow-2xl">
