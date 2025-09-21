@@ -4,22 +4,9 @@ import { MdImage, MdVideoLibrary, MdWeb } from 'react-icons/md';
 import { BiNews } from 'react-icons/bi';
 import KnowledgePanel from './KnowledgePanel';
 import { detectTopicFromQuery } from '../data/knowledgeTopics';
+import { SearchResult } from '../types/search';
 
-interface SearchResult {
-  id: string;
-  title: string;
-  description: string;
-  url: string;
-  source: string;
-  timestamp: string;
-  type: 'news' | 'web' | 'images' | 'videos' | 'shopping' | 'articles';
-  location: string;
-  relevanceScore: number;
-  image?: string;
-  author?: string;
-  category?: string;
-  tags?: string[];
-}
+
 
 interface GoogleClassSearchResultsProps {
   results: SearchResult[];
