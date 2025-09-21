@@ -43,32 +43,39 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
   useEffect(() => {
     setIsVisible(true);
     
-    // Update time
+    // Update time every minute
     const timeInterval = setInterval(() => {
       setCurrentTime(new Date());
     }, 60000);
 
-    // Update stats
+    // Update stats more frequently (every 10 seconds) for more live feel
     const statsInterval = setInterval(() => {
       setLiveStats(prev => ({
-        onlineUsers: prev.onlineUsers + Math.floor(Math.random() * 10) - 5,
-        activePolls: prev.activePolls + Math.floor(Math.random() * 3) - 1,
-        newsUpdates: prev.newsUpdates + Math.floor(Math.random() * 5),
-        discussions: prev.discussions + Math.floor(Math.random() * 8) - 2
+        onlineUsers: Math.max(2500, prev.onlineUsers + Math.floor(Math.random() * 20) - 10),
+        activePolls: Math.max(8, prev.activePolls + Math.floor(Math.random() * 3) - 1),
+        newsUpdates: prev.newsUpdates + Math.floor(Math.random() * 3),
+        discussions: Math.max(120, prev.discussions + Math.floor(Math.random() * 15) - 5)
       }));
-    }, 15000);
+    }, 10000); // Every 10 seconds for more dynamic feel
 
-    // Load trending topics
-    loadTrendingTopics();
+    // Load trending topics and refresh every 2 minutes
+    const loadAndRefreshTrending = () => {
+      loadTrendingTopics();
+    };
+    
+    loadAndRefreshTrending();
+    const trendingInterval = setInterval(loadAndRefreshTrending, 2 * 60 * 1000);
 
     return () => {
       clearInterval(timeInterval);
       clearInterval(statsInterval);
+      clearInterval(trendingInterval);
     };
   }, []);
 
   const loadTrendingTopics = () => {
-    const topics: TrendingTopic[] = [
+    // Add some randomness to engagement numbers to simulate real-time activity
+    const baseTopics: TrendingTopic[] = [
       { id: '1', title: 'Reforma Pensional 2024', category: 'Política', engagement: 15420, trend: 'hot' },
       { id: '2', title: 'Gustavo Petro Pronunciamientos', category: 'Gobierno', engagement: 12380, trend: 'rising' },
       { id: '3', title: 'Elecciones Regionales', category: 'Electoral', engagement: 9850, trend: 'rising' },
@@ -76,7 +83,14 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
       { id: '5', title: 'Economía Colombiana', category: 'Economía', engagement: 7640, trend: 'stable' },
       { id: '6', title: 'Paz Total', category: 'Social', engagement: 6890, trend: 'rising' }
     ];
-    setTrendingTopics(topics);
+    
+    // Add real-time variation to engagement numbers
+    const liveTopics = baseTopics.map(topic => ({
+      ...topic,
+      engagement: topic.engagement + Math.floor(Math.random() * 200) - 100
+    }));
+    
+    setTrendingTopics(liveTopics);
   };
 
   const quickActions: QuickAction[] = [
@@ -196,12 +210,26 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
             <div className="flex justify-center mb-8">
               <div className="glass-modern px-6 py-3 rounded-full border border-white/30 backdrop-blur-xl">
                 <div className="flex items-center gap-3 text-gray-700">
-                  <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
-                  <span className="font-medium">EN VIVO</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 bg-red-500 rounded-full animate-pulse"></div>
+                    <span className="font-bold text-red-600">EN VIVO</span>
+                  </div>
                   <span className="text-gray-400">•</span>
-                  <span className="text-sm">Bogotá {formatTime(currentTime)}</span>
+                  <span className="text-sm">
+                    Bogotá {formatTime(currentTime)}
+                  </span>
                   <span className="text-gray-400">•</span>
-                  <span className="text-sm font-medium text-blue-600">{liveStats.onlineUsers.toLocaleString()} en línea</span>
+                  <div className="flex items-center gap-1">
+                    <span className="text-sm font-bold text-blue-600 tabular-nums">
+                      {liveStats.onlineUsers.toLocaleString()}
+                    </span>
+                    <span className="text-xs text-gray-500">en línea</span>
+                  </div>
+                  <span className="text-gray-400">•</span>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-xs text-green-600 font-medium">ACTUALIZANDO</span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -239,15 +267,54 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
             {/* Live Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 max-w-4xl mx-auto mb-16">
               {[
-                { icon: '👥', value: liveStats.onlineUsers.toLocaleString(), label: 'Usuarios activos', color: 'blue' },
-                { icon: '📊', value: liveStats.activePolls, label: 'Encuestas vivas', color: 'purple' },
-                { icon: '📰', value: liveStats.newsUpdates, label: 'Noticias hoy', color: 'green' },
-                { icon: '💬', value: liveStats.discussions, label: 'Debates abiertos', color: 'orange' }
+                { 
+                  icon: '👥', 
+                  value: liveStats.onlineUsers.toLocaleString(), 
+                  label: 'Usuarios activos', 
+                  color: 'blue',
+                  pulse: true,
+                  subtitle: 'Ahora mismo'
+                },
+                { 
+                  icon: '📊', 
+                  value: liveStats.activePolls, 
+                  label: 'Encuestas vivas', 
+                  color: 'purple',
+                  pulse: false,
+                  subtitle: 'Votando ahora'
+                },
+                { 
+                  icon: '📰', 
+                  value: `+${liveStats.newsUpdates}`, 
+                  label: 'Noticias hoy', 
+                  color: 'green',
+                  pulse: false,
+                  subtitle: 'Últimas 24h'
+                },
+                { 
+                  icon: '💬', 
+                  value: liveStats.discussions, 
+                  label: 'Debates abiertos', 
+                  color: 'orange',
+                  pulse: true,
+                  subtitle: 'Participando'
+                }
               ].map((stat, index) => (
-                <div key={index} className="glass-modern rounded-2xl p-6 text-center border border-white/20 backdrop-blur-xl hover:scale-105 transition-transform duration-300">
+                <div 
+                  key={index} 
+                  className="glass-modern rounded-2xl p-6 text-center border border-white/20 backdrop-blur-xl hover:scale-105 transition-all duration-300 relative overflow-hidden"
+                >
+                  {stat.pulse && (
+                    <div className="absolute top-2 right-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    </div>
+                  )}
                   <div className="text-3xl mb-2">{stat.icon}</div>
-                  <div className={`text-2xl font-bold mb-1 text-${stat.color}-600`}>{stat.value}</div>
+                  <div className={`text-2xl font-bold mb-1 text-${stat.color}-600 tabular-nums transition-all duration-500`}>
+                    {stat.value}
+                  </div>
                   <div className="text-sm text-gray-600 font-medium">{stat.label}</div>
+                  <div className="text-xs text-gray-500 mt-1">{stat.subtitle}</div>
                 </div>
               ))}
             </div>
@@ -338,24 +405,33 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
                     onClick={() => handleSearch(topic.title, 'local')}
                     className="w-full group glass-modern rounded-2xl p-6 text-left border border-white/20 backdrop-blur-xl hover:shadow-lg transition-all duration-300 hover:scale-102"
                   >
-                    <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-3">
                         <span className="text-2xl font-bold text-gray-400">#{index + 1}</span>
                         <span className="text-lg">{getTrendIcon(topic.trend)}</span>
-                        <span className="text-sm px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
+                        <span className="text-sm px-3 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
                           {topic.category}
                         </span>
                       </div>
-                      <FaArrowRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <FaArrowRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                      </div>
                     </div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">
                       {topic.title}
                     </h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                      <span className="flex items-center gap-1">
-                        <FaUsers className="w-3 h-3" />
-                        {topic.engagement.toLocaleString()} interacciones
-                      </span>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-4 text-sm text-gray-600">
+                        <span className="flex items-center gap-1">
+                          <FaUsers className="w-3 h-3" />
+                          <span className="font-medium tabular-nums">{topic.engagement.toLocaleString()}</span>
+                          <span>interacciones</span>
+                        </span>
+                      </div>
+                      <div className="text-xs text-gray-500">
+                        Actualizado ahora
+                      </div>
                     </div>
                   </button>
                 ))}
