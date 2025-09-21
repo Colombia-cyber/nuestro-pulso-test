@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FaSearch, FaGlobe, FaMapMarkerAlt, FaTimes, FaFilter } from 'react-icons/fa';
 import { BiTrendingUp } from 'react-icons/bi';
-import { NewsTopic, getAllTopics, searchTopicsByKeyword } from '../config/newsTopics';
+import { NewsTopic, getAllTopics, searchTopicsByKeyword, getProminentTopics } from '../config/newsTopics';
 
 interface UniversalSearchBarProps {
   onSearch: (query: string, category: 'local' | 'world', topic?: NewsTopic) => void;
@@ -174,6 +174,26 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
             <FaGlobe className="w-5 h-5" />
             <span className="text-lg font-extrabold tracking-wide">MUNDO GLOBAL</span>
           </button>
+        </div>
+
+        {/* Prominent Topics Tabs - Bold, Clear Text */}
+        <div className="border-b border-gray-100 bg-gray-50/50">
+          <div className="flex items-center gap-1 px-4 py-2 overflow-x-auto">
+            <span className="text-sm font-medium text-gray-600 mr-2 flex-shrink-0">Temas destacados:</span>
+            {getProminentTopics(selectedCategory).map((topic) => (
+              <button
+                key={topic.id}
+                onClick={() => handleTopicClick(topic)}
+                className={`flex-shrink-0 px-4 py-2 rounded-lg font-bold text-sm transition-all border-2 ${
+                  selectedTopic?.id === topic.id
+                    ? 'bg-blue-600 text-white border-blue-600 shadow-lg'
+                    : 'bg-white text-gray-800 border-gray-300 hover:border-blue-500 hover:text-blue-600 hover:shadow-md'
+                }`}
+              >
+                {topic.name}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Search Input Row */}

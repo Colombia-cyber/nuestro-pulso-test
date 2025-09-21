@@ -4,6 +4,7 @@ import { MdClear, MdImage, MdVideoLibrary, MdShoppingCart, MdWeb } from 'react-i
 import { BiNews } from 'react-icons/bi';
 import { SearchFilters } from '../types/search';
 import { getFiltersForMode, LOCAL_FILTERS, MUNDO_FILTERS } from '../data/searchSources';
+import { getProminentTopics, NewsTopic } from '../config/newsTopics';
 
 
 
@@ -233,6 +234,31 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
     }
   };
 
+  // Handle topic click for instant navigation
+  const handleTopicClick = (topic: NewsTopic) => {
+    // DEDICATED PAGE NAVIGATION: Right Wing opens in-app page
+    if (topic.id === 'right-wing' || topic.id === 'world-right-wing') {
+      // Navigate to dedicated Right Wing page
+      window.history.pushState(null, '', '/right-wing');
+      window.dispatchEvent(new CustomEvent('navigate', { detail: 'right-wing' }));
+      return;
+    }
+    
+    // INSTANT TOPIC SEARCH: For other topics, search with instant results
+    const topicQuery = topic.name;
+    setQuery(topicQuery);
+    
+    // Add to search history
+    const newHistory = [topicQuery, ...searchHistory.filter(h => h !== topicQuery)].slice(0, 10);
+    setSearchHistory(newHistory);
+    localStorage.setItem('searchHistory', JSON.stringify(newHistory));
+    
+    // Perform search immediately
+    if (onSearch) {
+      onSearch(topicQuery, activeTab, filters);
+    }
+  };
+
   return (
     <div className={`google-search-container ${className}`}>
       {/* Search Header */}
@@ -260,6 +286,22 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
               )}
             </button>
           ))}
+        </div>
+
+        {/* Prominent Topics Tabs - Bold, Clear Text */}
+        <div className="border-b border-gray-100 bg-gray-50/50">
+          <div className="flex items-center gap-1 px-4 py-2 overflow-x-auto">
+            <span className="text-sm font-medium text-gray-600 mr-2 flex-shrink-0">Temas destacados:</span>
+            {getProminentTopics(activeTab).map((topic) => (
+              <button
+                key={topic.id}
+                onClick={() => handleTopicClick(topic)}
+                className="flex-shrink-0 px-3 py-1.5 rounded-lg font-bold text-sm transition-all border-2 bg-white text-gray-800 border-gray-300 hover:border-blue-500 hover:text-blue-600 hover:shadow-md"
+              >
+                {topic.name}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Search Form */}
