@@ -5,6 +5,7 @@ import { MdVerified, MdUpdate, MdTimeline } from 'react-icons/md';
 import { IoMdTime } from 'react-icons/io';
 import EnhancedNewsCard from './EnhancedNewsCard';
 import TimelineView from './TimelineView';
+import { FastVirtualList, FastNewsCard, FastButton, type NewsArticle, type VirtualListItem } from './fast-components';
 import { NewsItem, NewsFilter, CategoryCard } from '../types/news';
 import { newsService } from '../services/newsService';
 

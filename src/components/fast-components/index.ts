@@ -7,6 +7,8 @@ export { default as FastBase, type FastComponentProps, usePerformanceMonitor, us
 export { default as FastButton, type FastButtonProps, type FastButtonRef } from './FastButton';
 export { default as FastSearch, type FastSearchProps } from './FastSearch';
 export { default as FastNewsCard, type FastNewsCardProps, type NewsArticle } from './FastNewsCard';
+export { default as FastNavigation, type FastNavigationProps, type NavigationItem } from './FastNavigation';
+export { default as FastVirtualList, type FastVirtualListProps, type VirtualListItem } from './FastVirtualList';
 
 // Component registry for fast components
 export const FAST_COMPONENTS = {
