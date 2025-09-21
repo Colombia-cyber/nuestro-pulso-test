@@ -48,68 +48,84 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
 
   const categories: CategoryCard[] = [
     {
-      id: 'politica',
-      title: 'Política Nacional',
-      description: 'Análisis político, decisiones gubernamentales y análisis de políticas públicas',
-      color: 'bg-gradient-to-br from-blue-600 to-blue-800',
-      icon: '🏛️',
-      count: 47
+      id: 'terror-news',
+      title: 'Terror & Security Alerts',
+      description: 'Global terror threats, security updates, and international safety measures',
+      color: 'bg-gradient-to-br from-red-700 to-red-900',
+      icon: '🚨',
+      count: 89
     },
     {
-      id: 'economia',
-      title: 'Economía',
-      description: 'Mercados, inversión, empleo y desarrollo económico nacional',
-      color: 'bg-gradient-to-br from-green-600 to-green-800',
-      icon: '📈',
+      id: 'donald-trump',
+      title: 'Donald Trump News',
+      description: 'Latest updates on Donald Trump, US politics, and international relations',
+      color: 'bg-gradient-to-br from-red-600 to-blue-600',
+      icon: '🇺🇸',
+      count: 67
+    },
+    {
+      id: 'gustavo-petro',
+      title: 'Gustavo Petro Updates',
+      description: 'Colombian President news, government decisions, and policy announcements',
+      color: 'bg-gradient-to-br from-blue-600 to-blue-800',
+      icon: '🇨🇴',
+      count: 54
+    },
+    {
+      id: 'drugs-crime',
+      title: 'Drugs & International Crime',
+      description: 'Global drug trafficking, organized crime networks, and law enforcement operations',
+      color: 'bg-gradient-to-br from-red-600 to-orange-700',
+      icon: '🚔',
+      count: 43
+    },
+    {
+      id: 'politics',
+      title: 'Global Politics',
+      description: 'International politics, world elections, diplomatic relations, and democracy updates',
+      color: 'bg-gradient-to-br from-indigo-600 to-purple-600',
+      icon: '🏛️',
+      count: 76
+    },
+    {
+      id: 'legislation',
+      title: 'International Legislation',
+      description: 'Global laws, international treaties, court decisions, and legal developments',
+      color: 'bg-gradient-to-br from-purple-600 to-purple-800',
+      icon: '⚖️',
       count: 32
     },
     {
-      id: 'seguridad',
-      title: 'Seguridad Ciudadana',
-      description: 'Narcotráfico, criminalidad, fuerzas armadas y orden público',
-      color: 'bg-gradient-to-br from-red-600 to-red-800',
-      icon: '🚨',
+      id: 'health',
+      title: 'Global Health',
+      description: 'World health updates, pandemic news, medical breakthroughs, and WHO announcements',
+      color: 'bg-gradient-to-br from-green-600 to-teal-600',
+      icon: '🏥',
+      count: 58
+    },
+    {
+      id: 'employment',
+      title: 'World Employment',
+      description: 'Global job markets, employment trends, economic opportunities, and labor issues',
+      color: 'bg-gradient-to-br from-teal-600 to-cyan-600',
+      icon: '💼',
+      count: 41
+    },
+    {
+      id: 'congress-colombia',
+      title: 'Colombian Congress',
+      description: 'Colombian legislative activities, congressional debates, and parliamentary decisions',
+      color: 'bg-gradient-to-br from-amber-600 to-orange-600',
+      icon: '🏢',
       count: 28
     },
     {
-      id: 'ambiente',
-      title: 'Medio Ambiente',
-      description: 'Cambio climático, energías renovables y conservación',
-      color: 'bg-gradient-to-br from-emerald-600 to-emerald-800',
-      icon: '🌱',
-      count: 19
-    },
-    {
-      id: 'educacion',
-      title: 'Educación',
-      description: 'Sistema educativo, universidades y formación profesional',
-      color: 'bg-gradient-to-br from-purple-600 to-purple-800',
-      icon: '📚',
-      count: 24
-    },
-    {
-      id: 'salud',
-      title: 'Salud Pública',
-      description: 'Sistema de salud, políticas sanitarias y bienestar ciudadano',
-      color: 'bg-gradient-to-br from-pink-600 to-pink-800',
-      icon: '🏥',
-      count: 16
-    },
-    {
-      id: 'tecnologia',
-      title: 'Tecnología',
-      description: 'Innovación, digitalización y transformación tecnológica',
-      color: 'bg-gradient-to-br from-indigo-600 to-indigo-800',
-      icon: '💻',
-      count: 21
-    },
-    {
-      id: 'internacional',
-      title: 'Relaciones Internacionales',
-      description: 'Diplomacia, comercio exterior y política internacional',
-      color: 'bg-gradient-to-br from-orange-600 to-orange-800',
-      icon: '🌍',
-      count: 15
+      id: 'reels-feeds',
+      title: 'Viral World Content',
+      description: 'Trending global stories, viral content, breaking international news, and social feeds',
+      color: 'bg-gradient-to-br from-pink-600 to-rose-600',
+      icon: '📱',
+      count: 92
     }
   ];
 
@@ -270,10 +286,10 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
               <div>
                 <h1 className="text-3xl font-bold text-gradient-colombia flex items-center gap-3">
                   <BiNews className="w-8 h-8" />
-                  Noticias & Feeds
+                  Latest News & World Feeds
                 </h1>
                 <p className="text-gray-600 mt-1">
-                  Información actualizada con perspectivas balanceadas
+                  Global news updates with prioritized world-class coverage
                 </p>
               </div>
 
@@ -495,10 +511,10 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
                       <div className="flex items-center gap-3">
                         <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                           <MdUpdate className="w-6 h-6 text-colombia-blue" />
-                          Últimas Noticias
+                          Latest News - Global Priority
                         </h2>
                         <div className="text-sm text-gray-600">
-                          {filteredNews.length} artículos
+                          {filteredNews.length} articles
                         </div>
                       </div>
                       
@@ -564,11 +580,11 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
                 <div className="space-y-6">
                   <div className="text-center mb-8">
                     <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                      📂 Explora por Categorías
+                      🌍 Explore by Priority Topics
                     </h2>
                     <p className="text-gray-600 max-w-2xl mx-auto">
-                      Descubre noticias organizadas por temas específicos. 
-                      Cada categoría incluye análisis profundo y perspectivas balanceadas.
+                      Discover news organized by our prioritized global topics. 
+                      Each category features world-class coverage with essential international content.
                     </p>
                   </div>
 
