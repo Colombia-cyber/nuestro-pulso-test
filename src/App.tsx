@@ -1,5 +1,7 @@
 import React, { useState, Suspense } from "react";
 import { FastNavbar } from "./components/FastNavbar";
+import { FastErrorBoundary } from "./components/FastAdvancedComponents";
+import { FastPerformanceDashboard, FastNotificationSystem } from "./components/FastPerformanceComponents";
 import HeroSection from "./components/HeroSection";
 import ModernHomepage from "./components/ModernHomepage";
 import CustomNewsFeed from "./components/CustomNewsFeed";
@@ -144,14 +146,43 @@ function App() {
   };
 
   return (
-    <div>
-      <FastNavbar onNavigate={handleNavigate} currentView={currentView} />
-      <div className="pt-20">
-        <Suspense fallback={<LoadingSpinner />}>
-          {renderCurrentView()}
-        </Suspense>
+    <FastErrorBoundary
+      maxRetries={3}
+      onError={(error, errorInfo) => {
+        console.error('Ultra-fast component error:', error, errorInfo);
+        // Show notification
+        if ((window as any).showNotification) {
+          (window as any).showNotification({
+            type: 'error',
+            title: 'Error en la aplicación',
+            message: 'Se ha detectado un error. Reintentando automáticamente...',
+            duration: 5000
+          });
+        }
+      }}
+    >
+      <div>
+        <FastNavbar onNavigate={handleNavigate} currentView={currentView} />
+        <div className="pt-20">
+          <Suspense fallback={<LoadingSpinner />}>
+            {renderCurrentView()}
+          </Suspense>
+        </div>
+        
+        {/* Ultra-fast performance monitoring */}
+        <FastPerformanceDashboard 
+          showDetailed={false}
+          autoRefresh={true}
+          refreshInterval={1000}
+        />
+        
+        {/* Global notification system */}
+        <FastNotificationSystem 
+          position="top-right"
+          maxNotifications={5}
+        />
       </div>
-    </div>
+    </FastErrorBoundary>
   );
 }
 
