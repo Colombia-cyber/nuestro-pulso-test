@@ -165,95 +165,20 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
       setSearchHistory(newHistory);
       localStorage.setItem('searchHistory', JSON.stringify(newHistory));
 
-      // Simulate search based on tab
-      let results: any[] = [];
-      let totalResults = 0;
-
-      if (activeTab === 'world') {
-        // Simulate Google Search API call
-        await new Promise(resolve => setTimeout(resolve, 300));
-        results = generateMockWorldResults(query, filters);
-        totalResults = Math.floor(Math.random() * 50000000) + 1000000; // Simulate large result counts
-      } else {
-        // Simulate local Colombian search
-        await new Promise(resolve => setTimeout(resolve, 200));
-        results = generateMockLocalResults(query, filters);
-        totalResults = Math.floor(Math.random() * 500000) + 1000;
-      }
-
-      setResultCount(totalResults);
-      setSearchTime(Date.now() - startTime);
-
+      // Call parent's search handler - parent will handle all result generation
       if (onSearch) {
         onSearch(query, activeTab, filters);
       }
 
-      if (onResultsChange) {
-        onResultsChange(results);
-      }
+      // Set basic timing info for UI feedback
+      setSearchTime(Date.now() - startTime);
 
     } catch (error) {
       console.error('Search failed:', error);
     } finally {
       setIsSearching(false);
     }
-  }, [query, activeTab, filters, searchHistory, onSearch, onResultsChange]);
-
-  // Generate mock world results
-  const generateMockWorldResults = (searchQuery: string, searchFilters: SearchFilters) => {
-    return [
-      {
-        id: `world-${Date.now()}-1`,
-        title: `${searchQuery} - Latest Global News and Updates`,
-        description: `Comprehensive coverage of ${searchQuery} from international sources, including breaking news, analysis, and expert opinions from around the world.`,
-        url: `https://example.com/search?q=${encodeURIComponent(searchQuery)}`,
-        source: 'Reuters',
-        timestamp: new Date().toISOString(),
-        type: 'news',
-        location: 'Global',
-        relevanceScore: 98
-      },
-      {
-        id: `world-${Date.now()}-2`,
-        title: `${searchQuery} | Wikipedia`,
-        description: `Learn about ${searchQuery} with detailed information, history, and references from the world's largest encyclopedia.`,
-        url: `https://en.wikipedia.org/wiki/${encodeURIComponent(searchQuery)}`,
-        source: 'Wikipedia',
-        timestamp: new Date(Date.now() - 3600000).toISOString(),
-        type: 'web',
-        location: 'Global',
-        relevanceScore: 95
-      }
-    ];
-  };
-
-  // Generate mock local results
-  const generateMockLocalResults = (searchQuery: string, searchFilters: SearchFilters) => {
-    return [
-      {
-        id: `local-${Date.now()}-1`,
-        title: `${searchQuery} en Colombia - Noticias Nacionales`,
-        description: `Cobertura completa sobre ${searchQuery} en el contexto colombiano, incluyendo análisis político, social y económico.`,
-        url: `#`,
-        source: 'El Tiempo',
-        timestamp: new Date().toISOString(),
-        type: 'news',
-        location: 'Colombia',
-        relevanceScore: 97
-      },
-      {
-        id: `local-${Date.now()}-2`,
-        title: `Gobierno de Colombia sobre ${searchQuery}`,
-        description: `Información oficial del gobierno colombiano relacionada con ${searchQuery}, políticas públicas y declaraciones oficiales.`,
-        url: `#`,
-        source: 'Gov.co',
-        timestamp: new Date(Date.now() - 1800000).toISOString(),
-        type: 'web',
-        location: 'Bogotá',
-        relevanceScore: 94
-      }
-    ];
-  };
+  }, [query, activeTab, filters, searchHistory, onSearch]);
 
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {

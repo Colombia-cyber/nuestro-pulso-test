@@ -132,6 +132,9 @@ const EnhancedSearchPage: React.FC = () => {
     // Auto-detect search mode if not explicitly specified
     const detectedMode = detectSearchMode(query);
     const actualTab = tab || detectedMode;
+    
+    // IMPORTANT: Use detected mode for actual search logic, but respect user's tab selection for UI
+    const searchMode = actualTab;
     setActiveTab(actualTab);
 
     try {
@@ -142,19 +145,19 @@ const EnhancedSearchPage: React.FC = () => {
       window.history.replaceState(null, '', `${window.location.pathname}?${params.toString()}`);
 
       // Simulate API call with realistic delay
-      await new Promise(resolve => setTimeout(resolve, actualTab === 'world' ? 800 : 500));
+      await new Promise(resolve => setTimeout(resolve, searchMode === 'world' ? 800 : 500));
 
       let results: SearchResult[] = [];
       let total = 0;
       let searchDuration = 0;
 
-      if (actualTab === 'world') {
-        // Generate world search results with global sources
+      if (searchMode === 'world') {
+        // Generate world search results with global sources ONLY
         results = generateWorldSearchResults(query, filters);
         total = Math.floor(Math.random() * 50000000) + 1000000; // Large result count for world search
         searchDuration = Math.floor(Math.random() * 300) + 200; // 200-500ms
       } else {
-        // Generate local Colombian search with regional sources
+        // Generate local Colombian search with regional sources ONLY
         results = generateLocalSearchResults(query, filters);
         total = Math.floor(Math.random() * 500000) + 1000; // Smaller result count for local
         searchDuration = Math.floor(Math.random() * 200) + 100; // 100-300ms
@@ -398,7 +401,6 @@ const EnhancedSearchPage: React.FC = () => {
         <div className="mb-8">
           <GoogleClassSearchBar
             onSearch={performSearch}
-            onResultsChange={setSearchResults}
             autoFocus={!currentQuery}
             placeholder="Buscar en el mundo y Colombia..."
             className="mb-6"
