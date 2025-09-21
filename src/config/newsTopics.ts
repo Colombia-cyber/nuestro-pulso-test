@@ -10,47 +10,47 @@ export interface NewsTopic {
 }
 
 export const localTopics: NewsTopic[] = [
-  // Priority topics as requested
+  // Priority topics as requested - EXACT WORDING AS SPECIFIED
   {
-    id: 'drugs-crime',
-    name: 'Drugs & Crime',
-    emoji: '🚔',
-    description: 'Narcotráfico, crimen organizado y justicia',
+    id: 'drogas-crimen',
+    name: 'DROGAS Y CRIMEN',
+    emoji: '',
+    description: 'Narcotráfico, crimen organizado y justicia en Colombia',
     category: 'local',
     color: 'from-red-500 to-orange-600',
     keywords: ['drogas', 'narcotráfico', 'crimen', 'delincuencia', 'justicia', 'carteles', 'colombia', 'sudamerica']
   },
   {
-    id: 'terror-news',
-    name: 'Terror News',
-    emoji: '🚨',
+    id: 'terrorismo-seguridad',
+    name: 'TERRORISMO Y SEGURIDAD',
+    emoji: '',
     description: 'Alertas y noticias de seguridad nacional',
     category: 'local',
     color: 'from-red-600 to-red-800',
     keywords: ['terror', 'seguridad', 'amenaza', 'atentado', 'violencia', 'terrorismo', 'colombia']
   },
   {
-    id: 'gustavo-petro',
-    name: 'Gustavo Petro News',
-    emoji: '🇨🇴',
+    id: 'gustavo-petro-noticias',
+    name: 'GUSTAVO PETRO NOTICIAS',
+    emoji: '',
     description: 'Noticias sobre el presidente y gobierno nacional',
     category: 'local',
     color: 'from-blue-600 to-blue-800',
     keywords: ['petro', 'presidente', 'gobierno', 'casa de nariño', 'mandatario', 'colombia']
   },
   {
-    id: 'congress',
-    name: 'Congress of Colombia',
-    emoji: '🏢',
+    id: 'congreso-colombia',
+    name: 'CONGRESO DE COLOMBIA',
+    emoji: '',
     description: 'Actividad del Congreso de la República',
     category: 'local',
     color: 'from-indigo-600 to-indigo-800',
     keywords: ['congreso', 'senado', 'cámara', 'representantes', 'legislativo', 'debates', 'colombia']
   },
   {
-    id: 'left-wing',
-    name: 'Left Wing',
-    emoji: '🔵',
+    id: 'izquierda-politica',
+    name: 'IZQUIERDA POLÍTICA',
+    emoji: '',
     description: 'Perspectiva progresista y de izquierda',
     category: 'local',
     perspective: 'left',
@@ -58,9 +58,9 @@ export const localTopics: NewsTopic[] = [
     keywords: ['progresista', 'izquierda', 'social', 'igualdad', 'reforma', 'colombia']
   },
   {
-    id: 'right-wing',
-    name: 'Right Wing',
-    emoji: '🔴',
+    id: 'derecha-politica',
+    name: 'DERECHA POLÍTICA',
+    emoji: '',
     description: 'Perspectiva conservadora y de derecha',
     category: 'local',
     perspective: 'right',
@@ -69,8 +69,8 @@ export const localTopics: NewsTopic[] = [
   },
   {
     id: 'donald-trump-local',
-    name: 'Donald Trump',
-    emoji: '🇺🇸',
+    name: 'DONALD TRUMP',
+    emoji: '',
     description: 'Noticias sobre Trump con enfoque en Sudamérica/Colombia',
     category: 'local',
     color: 'from-orange-500 to-red-600',
@@ -125,15 +125,25 @@ export const localTopics: NewsTopic[] = [
 ];
 
 export const worldTopics: NewsTopic[] = [
-  // Priority topics for world news
+  // Priority topics for world news - EXACT WORDING AS SPECIFIED
   {
     id: 'donald-trump-world',
-    name: 'Donald Trump',
-    emoji: '🇺🇸',
+    name: 'DONALD TRUMP',
+    emoji: '',
     description: 'Noticias globales sobre Donald Trump',
     category: 'world',
     color: 'from-orange-500 to-red-600',
     keywords: ['trump', 'donald trump', 'usa', 'politics', 'global', 'international', 'america']
+  },
+  {
+    id: 'right-wing-english',
+    name: 'RIGHT WING (ENGLISH)',
+    emoji: '',
+    description: 'Conservative perspective worldwide in English',
+    category: 'world',
+    perspective: 'right',
+    color: 'from-red-500 to-red-700',
+    keywords: ['conservative', 'right', 'traditional', 'liberty', 'business', 'global', 'english']
   },
   {
     id: 'world-politics',
@@ -253,10 +263,10 @@ export const getAllTopics = (): NewsTopic[] => {
 };
 
 export const getPriorityTopics = (category: 'local' | 'world'): NewsTopic[] => {
-  // Return the priority topics in the specified order
+  // Return the priority topics in the specified order - EXACTLY AS REQUESTED
   const priorityIds = category === 'local' 
-    ? ['drugs-crime', 'terror-news', 'gustavo-petro', 'congress', 'left-wing', 'right-wing', 'donald-trump-local']
-    : ['donald-trump-world', 'world-politics', 'world-terror', 'world-right-wing', 'world-left-wing', 'world-wealth', 'world-travel'];
+    ? ['drogas-crimen', 'terrorismo-seguridad', 'gustavo-petro-noticias', 'congreso-colombia', 'izquierda-politica', 'derecha-politica', 'donald-trump-local']
+    : ['donald-trump-world', 'right-wing-english'];
   
   const allTopics = getTopicsByCategory(category);
   return priorityIds.map(id => allTopics.find(topic => topic.id === id)).filter(Boolean) as NewsTopic[];

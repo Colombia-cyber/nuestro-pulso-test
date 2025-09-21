@@ -4,6 +4,8 @@ import { MdClear, MdImage, MdVideoLibrary, MdShoppingCart, MdWeb } from 'react-i
 import { BiNews } from 'react-icons/bi';
 import { SearchFilters } from '../types/search';
 import { getFiltersForMode, LOCAL_FILTERS, MUNDO_FILTERS } from '../data/searchSources';
+import { NewsTopic, getPriorityTopics } from '../config/newsTopics';
+import TopicTabs from './TopicTabs';
 
 
 
@@ -17,6 +19,7 @@ interface SearchTab {
 interface GoogleClassSearchBarProps {
   onSearch?: (query: string, tab: 'world' | 'local', filters: SearchFilters) => void;
   onResultsChange?: (results: any[]) => void;
+  onTopicSelect?: (topic: NewsTopic) => void;
   className?: string;
   placeholder?: string;
   autoFocus?: boolean;
@@ -27,6 +30,7 @@ interface GoogleClassSearchBarProps {
 const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
   onSearch,
   onResultsChange,
+  onTopicSelect,
   className = '',
   placeholder = 'Buscar en mundo y Colombia...',
   autoFocus = false,
@@ -35,6 +39,7 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
 }) => {
   const [query, setQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'world' | 'local'>(parentActiveTab);
+  const [selectedTopic, setSelectedTopic] = useState<NewsTopic | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
@@ -221,9 +226,44 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
     }
   };
 
+  // Handle topic click
+  const handleTopicClick = (topic: NewsTopic) => {
+    setSelectedTopic(topic);
+    setActiveTab(topic.category);
+    
+    if (onTopicSelect) {
+      onTopicSelect(topic);
+    }
+    
+    // DEDICATED PAGE NAVIGATION: Left Wing and Right Wing open in-app pages
+    if (topic.id === 'izquierda-politica' || topic.id === 'left-wing') {
+      window.history.pushState(null, '', '/left-wing');
+      window.dispatchEvent(new CustomEvent('navigate', { detail: 'left-wing' }));
+      return;
+    }
+    
+    if (topic.id === 'derecha-politica' || topic.id === 'right-wing' || topic.id === 'right-wing-english') {
+      window.history.pushState(null, '', '/right-wing');
+      window.dispatchEvent(new CustomEvent('navigate', { detail: 'right-wing' }));
+      return;
+    }
+    
+    // For other topics, set query and search immediately
+    const topicQuery = topic.name;
+    setQuery(topicQuery);
+    
+    // Perform search immediately
+    setTimeout(() => {
+      if (onSearch) {
+        onSearch(topicQuery, topic.category, filters);
+      }
+    }, 100);
+  };
+
   // Clear search
   const clearSearch = () => {
     setQuery('');
+    setSelectedTopic(null);
     setSuggestions([]);
     setShowSuggestions(false);
     setResultCount(null);
@@ -260,6 +300,16 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
               )}
             </button>
           ))}
+        </div>
+
+        {/* Priority Topic Tabs Section */}
+        <div className="p-4 bg-gray-50 border-b border-gray-100">
+          <TopicTabs
+            activeCategory={activeTab}
+            selectedTopic={selectedTopic}
+            onTopicClick={handleTopicClick}
+            className="compact-topic-tabs"
+          />
         </div>
 
         {/* Search Form */}

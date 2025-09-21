@@ -17,8 +17,10 @@ import GoogleClassSearchBar from './GoogleClassSearchBar';
 import GoogleClassSearchResults from './GoogleClassSearchResults';
 import KnowledgePanel from './KnowledgePanel';
 import ThankYouSection from './ThankYouSection';
+import TopicTabs from './TopicTabs';
 import { detectTopicFromQuery, detectSearchMode, shouldShowKnowledgePanel } from '../data/knowledgeTopics';
 import { generateSearchResults, getFiltersForMode, LOCAL_FILTERS, MUNDO_FILTERS } from '../data/searchSources';
+import { NewsTopic, getPriorityTopics } from '../config/newsTopics';
 import { 
   SearchFilters, 
   SearchResult, 
@@ -36,6 +38,7 @@ const ModernSearchEngine: React.FC = () => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
   const [currentQuery, setCurrentQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'world' | 'local'>('local');
+  const [selectedTopic, setSelectedTopic] = useState<NewsTopic | null>(null);
   const [totalResults, setTotalResults] = useState(0);
   const [searchTime, setSearchTime] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -380,6 +383,30 @@ const ModernSearchEngine: React.FC = () => {
     }, 500);
   };
 
+  // Handle topic selection
+  const handleTopicSelect = (topic: NewsTopic) => {
+    setSelectedTopic(topic);
+    setActiveTab(topic.category);
+    
+    // DEDICATED PAGE NAVIGATION: Left Wing and Right Wing open in-app pages
+    if (topic.id === 'izquierda-politica' || topic.id === 'left-wing') {
+      window.history.pushState(null, '', '/left-wing');
+      window.dispatchEvent(new CustomEvent('navigate', { detail: 'left-wing' }));
+      return;
+    }
+    
+    if (topic.id === 'derecha-politica' || topic.id === 'right-wing' || topic.id === 'right-wing-english') {
+      window.history.pushState(null, '', '/right-wing');
+      window.dispatchEvent(new CustomEvent('navigate', { detail: 'right-wing' }));
+      return;
+    }
+    
+    // For other topics, search immediately
+    const topicQuery = topic.name;
+    setCurrentQuery(topicQuery);
+    performSearch(topicQuery, topic.category, filters);
+  };
+
   const knowledgeTopic = useMemo(() => detectTopicFromQuery(currentQuery), [currentQuery]);
 
   return (
@@ -540,6 +567,7 @@ const ModernSearchEngine: React.FC = () => {
           {/* Enhanced search bar */}
           <GoogleClassSearchBar
             onSearch={performSearch}
+            onTopicSelect={handleTopicSelect}
             autoFocus={!currentQuery}
             placeholder={activeTab === 'local' 
               ? "Buscar en Colombia: Congreso, Gustavo Petro, noticias nacionales..." 
