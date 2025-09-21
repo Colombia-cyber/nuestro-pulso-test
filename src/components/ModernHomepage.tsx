@@ -360,11 +360,17 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Category Selector */}
+          {/* Category Selector with Instant Context Switching */}
           <div className="flex justify-center mb-8">
             <div className="flex items-center bg-white rounded-2xl p-2 shadow-lg border border-gray-200">
               <button
-                onClick={() => setSelectedNewsCategory('local')}
+                onClick={() => {
+                  setSelectedNewsCategory('local');
+                  // INSTANT CONTEXT SWITCH: Reload current topic in new context
+                  if (currentTopicNews) {
+                    handleInstantTopicLoad(currentTopicNews.topic, 'local', currentTopicNews.news);
+                  }
+                }}
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
                   selectedNewsCategory === 'local'
                     ? 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white shadow-lg'
@@ -374,7 +380,13 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
                 🇨🇴 Colombia
               </button>
               <button
-                onClick={() => setSelectedNewsCategory('world')}
+                onClick={() => {
+                  setSelectedNewsCategory('world');
+                  // INSTANT CONTEXT SWITCH: Reload current topic in new context
+                  if (currentTopicNews) {
+                    handleInstantTopicLoad(currentTopicNews.topic, 'world', currentTopicNews.news);
+                  }
+                }}
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
                   selectedNewsCategory === 'world'
                     ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'

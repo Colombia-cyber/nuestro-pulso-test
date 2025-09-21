@@ -31,6 +31,12 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  
+  // INSTANT LOADING: Track current topic and context for immediate display
+  const [currentTopic, setCurrentTopic] = useState<string | null>(null);
+  const [currentContext, setCurrentContext] = useState<'local' | 'world'>('local');
+  const [isInstantLoad, setIsInstantLoad] = useState(false);
+  
   const [liveStats, setLiveStats] = useState<LiveStats>({
     totalArticles: 124,
     readingTime: 8,
@@ -164,6 +170,31 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
     };
   }, [loadMoreNews, hasMore, isLoadingMore]);
 
+  // INSTANT LOADING: Check URL parameters for instant topic loading
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const query = urlParams.get('q');
+    const category = urlParams.get('category') as 'local' | 'world' | null;
+    const topic = urlParams.get('topic');
+    const instant = urlParams.get('instant') === 'true';
+    
+    if (instant && query) {
+      console.log('Instant loading detected:', { query, category, topic });
+      setCurrentTopic(topic);
+      setCurrentContext(category || 'local');
+      setSearchQuery(query);
+      setIsInstantLoad(true);
+      
+      // Update filter based on topic context
+      if (category) {
+        setFilter(prev => ({
+          ...prev,
+          perspective: category === 'local' ? 'conservative' : 'both'
+        }));
+      }
+    }
+  }, []);
+
   // Load initial data
   useEffect(() => {
     const loadData = async () => {
@@ -268,12 +299,27 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
             {/* Main Header */}
             <div className="flex items-center justify-between mb-4">
               <div>
+                {/* INSTANT LOADING: Show topic context when loaded from instant search */}
+                {isInstantLoad && currentTopic ? (
+                  <div className="mb-2">
+                    <div className="flex items-center gap-2 text-sm text-blue-600 bg-blue-50 px-3 py-1 rounded-full inline-flex">
+                      <BiTrendingUp className="w-4 h-4" />
+                      <span className="font-semibold">
+                        {currentContext === 'local' ? '🇨🇴 Colombia' : '🌍 Mundo'} • {searchQuery}
+                      </span>
+                    </div>
+                  </div>
+                ) : null}
+                
                 <h1 className="text-3xl font-bold text-gradient-colombia flex items-center gap-3">
                   <BiNews className="w-8 h-8" />
-                  Noticias & Feeds
+                  {isInstantLoad ? 'Resultados de Búsqueda' : 'Noticias & Feeds'}
                 </h1>
                 <p className="text-gray-600 mt-1">
-                  Información actualizada con perspectivas balanceadas
+                  {isInstantLoad 
+                    ? `Mostrando resultados para "${searchQuery}" en ${currentContext === 'local' ? 'Colombia' : 'contexto mundial'}`
+                    : 'Información actualizada con perspectivas balanceadas'
+                  }
                 </p>
               </div>
 

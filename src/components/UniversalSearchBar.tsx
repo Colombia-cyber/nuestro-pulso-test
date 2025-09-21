@@ -81,13 +81,17 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
     }
   };
 
-  const performSearch = (searchQuery: string, topic?: NewsTopic) => {
+  const performSearch = (searchQuery: string, topic?: NewsTopic, forceInstant: boolean = false) => {
     const finalTopic = topic || selectedTopic;
     
-    // INSTANT SEARCH: If instant search callback is provided, use it for immediate results
-    if (onInstantSearch) {
+    // PRIORITY: Always use instant search for 1-click actions
+    if (onInstantSearch && (forceInstant || finalTopic)) {
+      onInstantSearch(searchQuery, selectedCategory, finalTopic || undefined);
+    } else if (onInstantSearch) {
+      // Use instant search as primary method
       onInstantSearch(searchQuery, selectedCategory, finalTopic || undefined);
     } else {
+      // Fallback to regular search
       onSearch(searchQuery, selectedCategory, finalTopic || undefined);
     }
     
@@ -106,15 +110,11 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
     onTopicSelect(topic);
     setShowTopics(false);
     
-    // INSTANT TOPIC SEARCH: If there's a query, immediately search with this topic
-    if (query.trim()) {
-      performSearch(query, topic);
-    } else {
-      // If no query, search for the topic name itself
-      const topicQuery = topic.name;
-      setQuery(topicQuery);
-      performSearch(topicQuery, topic);
-    }
+    // INSTANT TOPIC SEARCH: Always search immediately with this topic
+    const topicQuery = query.trim() || topic.name;
+    setQuery(topicQuery);
+    // Force instant search for topic clicks
+    performSearch(topicQuery, topic, true);
   };
 
   const clearTopic = () => {
@@ -266,7 +266,8 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                         key={index}
                         onClick={() => {
                           setQuery(search);
-                          performSearch(search);
+                          // Force instant search for recent searches
+                          performSearch(search, undefined, true);
                         }}
                         className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 text-left"
                       >
@@ -290,7 +291,8 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                       key={index}
                       onClick={() => {
                         setQuery(trending);
-                        performSearch(trending);
+                        // Force instant search for trending queries
+                        performSearch(trending, undefined, true);
                       }}
                       className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 text-left"
                     >
@@ -314,10 +316,10 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
             <button
               key={topic.id}
               onClick={() => handleTopicClick(topic)}
-              className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all ${
+              className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium transition-all hover:scale-105 hover:shadow-md ${
                 selectedTopic?.id === topic.id
-                  ? `bg-gradient-to-r ${topic.color} text-white`
-                  : 'bg-white text-gray-700 border border-gray-300 hover:shadow-md'
+                  ? `bg-gradient-to-r ${topic.color} text-white shadow-lg`
+                  : 'bg-white text-gray-700 border border-gray-300 hover:shadow-md hover:border-gray-400'
               }`}
             >
               <span>{topic.emoji}</span>
