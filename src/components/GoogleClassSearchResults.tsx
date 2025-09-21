@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { FaExternalLinkAlt, FaClock, FaGlobe, FaMapMarkerAlt, FaShare, FaBookmark, FaThumbsUp } from 'react-icons/fa';
 import { MdImage, MdVideoLibrary, MdWeb } from 'react-icons/md';
 import { BiNews } from 'react-icons/bi';
+import KnowledgePanel from './KnowledgePanel';
+import { detectTopicFromQuery } from '../data/knowledgeTopics';
 
 interface SearchResult {
   id: string;
@@ -27,6 +29,7 @@ interface GoogleClassSearchResultsProps {
   activeTab: 'world' | 'local';
   onResultClick?: (result: SearchResult) => void;
   onLoadMore?: () => void;
+  onSearchRelated?: (query: string) => void;
   hasMore?: boolean;
   loading?: boolean;
   className?: string;
@@ -40,6 +43,7 @@ const GoogleClassSearchResults: React.FC<GoogleClassSearchResultsProps> = ({
   activeTab,
   onResultClick,
   onLoadMore,
+  onSearchRelated,
   hasMore = false,
   loading = false,
   className = ''
@@ -47,6 +51,9 @@ const GoogleClassSearchResults: React.FC<GoogleClassSearchResultsProps> = ({
   const [expandedResults, setExpandedResults] = useState<Set<string>>(new Set());
   const [bookmarkedResults, setBookmarkedResults] = useState<Set<string>>(new Set());
   const [viewMode, setViewMode] = useState<'compact' | 'detailed'>('compact');
+
+  // Detect knowledge panel topic
+  const knowledgeTopic = detectTopicFromQuery(query);
 
   // Load bookmarks from localStorage
   useEffect(() => {
@@ -171,6 +178,17 @@ const GoogleClassSearchResults: React.FC<GoogleClassSearchResultsProps> = ({
 
   return (
     <div className={`google-search-results ${className}`}>
+      {/* Knowledge Panel - Show at top for major topics */}
+      {knowledgeTopic && (
+        <div className="mb-8">
+          <KnowledgePanel 
+            topic={knowledgeTopic} 
+            onSearchRelated={onSearchRelated}
+            className="shadow-lg"
+          />
+        </div>
+      )}
+
       {/* Results Header */}
       <div className="mb-6 pb-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
@@ -192,6 +210,11 @@ const GoogleClassSearchResults: React.FC<GoogleClassSearchResultsProps> = ({
                 </>
               )}
             </div>
+            {knowledgeTopic && (
+              <div className="flex items-center gap-1 text-sm text-blue-600 font-medium">
+                🧠 <span>Panel de conocimiento activado</span>
+              </div>
+            )}
           </div>
           
           <div className="flex items-center gap-2">

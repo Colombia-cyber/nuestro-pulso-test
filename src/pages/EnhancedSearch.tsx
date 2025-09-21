@@ -382,6 +382,7 @@ const EnhancedSearchPage: React.FC = () => {
                 searchTime={searchTime}
                 activeTab={activeTab}
                 onResultClick={handleResultClick}
+                onSearchRelated={(query: string) => performSearch(query, activeTab, getDefaultFilters())}
                 onLoadMore={handleLoadMore}
                 hasMore={hasMore}
                 loading={isLoading}
