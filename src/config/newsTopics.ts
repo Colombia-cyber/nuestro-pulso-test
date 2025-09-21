@@ -21,6 +21,15 @@ export const localTopics: NewsTopic[] = [
     keywords: ['terror', 'seguridad', 'amenaza', 'atentado', 'violencia', 'terrorismo']
   },
   {
+    id: 'donald-trump',
+    name: 'Donald Trump',
+    emoji: '🇺🇸',
+    description: 'Impacto de Trump en Colombia y Sudamérica',
+    category: 'local',
+    color: 'from-orange-600 to-red-600',
+    keywords: ['trump', 'donald trump', 'estados unidos', 'eeuu', 'colombia', 'sudamerica', 'america']
+  },
+  {
     id: 'gustavo-petro',
     name: 'Gustavo Petro News',
     emoji: '🇨🇴',
@@ -37,6 +46,15 @@ export const localTopics: NewsTopic[] = [
     category: 'local',
     color: 'from-red-500 to-orange-600',
     keywords: ['drogas', 'narcotráfico', 'crimen', 'delincuencia', 'justicia', 'carteles']
+  },
+  {
+    id: 'politics',
+    name: 'Politics',
+    emoji: '🗳️',
+    description: 'Política nacional y partidos',
+    category: 'local',
+    color: 'from-green-600 to-green-800',
+    keywords: ['política', 'partido', 'elecciones', 'campaña', 'democracia']
   },
   {
     id: 'congress',
@@ -76,15 +94,6 @@ export const localTopics: NewsTopic[] = [
     category: 'local',
     color: 'from-purple-600 to-purple-800',
     keywords: ['ley', 'decreto', 'legislación', 'normativa', 'jurídico']
-  },
-  {
-    id: 'politics',
-    name: 'Politics',
-    emoji: '🗳️',
-    description: 'Política nacional y partidos',
-    category: 'local',
-    color: 'from-green-600 to-green-800',
-    keywords: ['política', 'partido', 'elecciones', 'campaña', 'democracia']
   },
   {
     id: 'wealth',
@@ -127,6 +136,15 @@ export const worldTopics: NewsTopic[] = [
     keywords: ['terror', 'terrorism', 'security', 'international', 'threats']
   },
   {
+    id: 'world-donald-trump',
+    name: 'Donald Trump',
+    emoji: '🇺🇸',
+    description: 'Trump en política global y internacional',
+    category: 'world',
+    color: 'from-orange-600 to-red-600',
+    keywords: ['trump', 'donald trump', 'usa', 'president', 'america', 'global', 'international']
+  },
+  {
     id: 'world-drugs-crime',
     name: 'Drugs & Crime',
     emoji: '🚔',
@@ -134,6 +152,15 @@ export const worldTopics: NewsTopic[] = [
     category: 'world',
     color: 'from-red-500 to-orange-600',
     keywords: ['drugs', 'crime', 'international', 'trafficking', 'cartels']
+  },
+  {
+    id: 'world-politics',
+    name: 'Politics',
+    emoji: '🌎',
+    description: 'Política internacional',
+    category: 'world',
+    color: 'from-green-600 to-green-800',
+    keywords: ['politics', 'international', 'election', 'democracy']
   },
   {
     id: 'world-congress',
@@ -184,15 +211,6 @@ export const worldTopics: NewsTopic[] = [
     keywords: ['law', 'treaty', 'international', 'legislation']
   },
   {
-    id: 'world-politics',
-    name: 'Politics',
-    emoji: '🌎',
-    description: 'Política internacional',
-    category: 'world',
-    color: 'from-green-600 to-green-800',
-    keywords: ['politics', 'international', 'election', 'democracy']
-  },
-  {
     id: 'world-wealth',
     name: 'Wealth',
     emoji: '💎',
@@ -228,8 +246,8 @@ export const getAllTopics = (): NewsTopic[] => {
 export const getPriorityTopics = (category: 'local' | 'world'): NewsTopic[] => {
   // Return the priority topics in the specified order
   const priorityIds = category === 'local' 
-    ? ['terror-news', 'gustavo-petro', 'drugs-crime', 'congress', 'left-wing', 'right-wing']
-    : ['world-terror', 'world-drugs-crime', 'world-congress', 'world-left-wing', 'world-right-wing'];
+    ? ['terror-news', 'donald-trump', 'politics', 'gustavo-petro', 'drugs-crime', 'congress']
+    : ['world-terror', 'world-donald-trump', 'world-politics', 'world-drugs-crime', 'world-congress', 'world-left-wing'];
   
   const allTopics = getTopicsByCategory(category);
   return priorityIds.map(id => allTopics.find(topic => topic.id === id)).filter(Boolean) as NewsTopic[];

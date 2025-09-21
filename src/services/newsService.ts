@@ -265,6 +265,16 @@ class NewsService {
   getFilteredNews(filter: NewsFilter = {}): NewsItem[] {
     let filtered = [...this.newsData];
 
+    // Filter by topic
+    if (filter.topic) {
+      filtered = filtered.filter(item => {
+        // Check if the topic matches the article title, summary, or tags
+        const searchText = `${item.title} ${item.summary} ${(item.tags || []).join(' ')}`.toLowerCase();
+        const topicKeywords = this.getTopicKeywords(filter.topic!);
+        return topicKeywords.some(keyword => searchText.includes(keyword.toLowerCase()));
+      });
+    }
+
     // Filter by time range
     if (filter.timeRange && filter.timeRange !== 'all') {
       const now = new Date();
@@ -304,6 +314,41 @@ class NewsService {
     return filtered.sort((a, b) => 
       new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime()
     );
+  }
+
+  // Get keywords for topic filtering
+  private getTopicKeywords(topicId: string): string[] {
+    const topicKeywordMap: Record<string, string[]> = {
+      // Local topics
+      'terror-news': ['terror', 'terrorismo', 'seguridad', 'amenaza', 'atentado', 'violencia'],
+      'donald-trump': ['trump', 'donald trump', 'estados unidos', 'eeuu', 'colombia', 'sudamerica'],
+      'gustavo-petro': ['petro', 'presidente', 'gobierno', 'casa de nariño', 'mandatario'],
+      'drugs-crime': ['drogas', 'narcotráfico', 'crimen', 'delincuencia', 'justicia', 'carteles'],
+      'politics': ['política', 'partido', 'elecciones', 'campaña', 'democracia'],
+      'congress': ['congreso', 'senado', 'cámara', 'representantes', 'legislativo', 'debates'],
+      'left-wing': ['progresista', 'izquierda', 'social', 'igualdad', 'reforma'],
+      'right-wing': ['conservador', 'derecha', 'tradicional', 'libertad', 'empresa'],
+      'legislation': ['ley', 'decreto', 'legislación', 'normativa', 'jurídico'],
+      'wealth': ['economía', 'finanzas', 'riqueza', 'desarrollo', 'inversión'],
+      'employment': ['empleo', 'trabajo', 'laboral', 'desempleo', 'oportunidades'],
+      'issues': ['problemas', 'crisis', 'desafíos', 'social', 'conflicto'],
+      
+      // World topics
+      'world-terror': ['terror', 'terrorism', 'security', 'international', 'threats'],
+      'world-donald-trump': ['trump', 'donald trump', 'usa', 'president', 'america', 'global'],
+      'world-drugs-crime': ['drugs', 'crime', 'international', 'trafficking', 'cartels'],
+      'world-politics': ['politics', 'international', 'election', 'democracy'],
+      'world-congress': ['parliament', 'congress', 'legislature', 'government', 'international'],
+      'world-left-wing': ['progressive', 'left', 'social', 'equality', 'reform'],
+      'world-right-wing': ['conservative', 'right', 'traditional', 'liberty', 'business'],
+      'world-leaders': ['leaders', 'diplomacy', 'summit', 'international'],
+      'world-legislation': ['law', 'treaty', 'international', 'legislation'],
+      'world-wealth': ['economy', 'global', 'markets', 'finance'],
+      'world-employment': ['employment', 'jobs', 'global', 'labor'],
+      'world-issues': ['crisis', 'global', 'issues', 'problems']
+    };
+
+    return topicKeywordMap[topicId] || [topicId];
   }
 
   // Get trending news

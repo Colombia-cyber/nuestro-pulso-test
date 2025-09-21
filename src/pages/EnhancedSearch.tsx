@@ -365,7 +365,6 @@ const EnhancedSearchPage: React.FC = () => {
             onSearch={performSearch}
             onResultsChange={setSearchResults}
             autoFocus={!currentQuery}
-            placeholder="Buscar en el mundo y Colombia..."
             className="mb-6"
           />
         </div>
