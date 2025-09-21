@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { FaFire, FaClock, FaEye, FaComment, FaShare, FaBookmark, FaFilter, FaSearch, FaTimes, FaChevronDown } from 'react-icons/fa';
+import { FaFire, FaClock, FaEye, FaComment, FaShare, FaBookmark, FaFilter, FaSearch, FaTimes, FaChevronDown, FaRocket } from 'react-icons/fa';
 import { BiTrendingUp, BiNews, BiCategory } from 'react-icons/bi';
 import { MdVerified, MdUpdate, MdTimeline } from 'react-icons/md';
 import { IoMdTime } from 'react-icons/io';
@@ -7,6 +7,7 @@ import EnhancedNewsCard from './EnhancedNewsCard';
 import TimelineView from './TimelineView';
 import { NewsItem, NewsFilter, CategoryCard } from '../types/news';
 import { newsService } from '../services/newsService';
+import { FastLocalNews, FastButton, FastSearchBar } from './fast';
 
 interface CustomNewsFeedProps {
   onNavigate?: (view: string, articleId?: string) => void;
@@ -21,7 +22,8 @@ interface LiveStats {
 
 const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'feed' | 'timeline' | 'categories'>('feed');
+  const [viewMode, setViewMode] = useState<'feed' | 'timeline' | 'categories' | 'fast-local'>('fast-local');
+  const [useFastComponents, setUseFastComponents] = useState(true);
   const [newsData, setNewsData] = useState<NewsItem[]>([]);
   const [timelineData, setTimelineData] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -271,30 +273,56 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
                 <h1 className="text-3xl font-bold text-gradient-colombia flex items-center gap-3">
                   <BiNews className="w-8 h-8" />
                   Noticias & Feeds
+                  {useFastComponents && (
+                    <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-1 rounded-full text-sm">
+                      <FaRocket className="w-3 h-3" />
+                      <span>Ultra-Fast</span>
+                    </div>
+                  )}
                 </h1>
                 <p className="text-gray-600 mt-1">
-                  Información actualizada con perspectivas balanceadas
+                  Información actualizada con perspectivas balanceadas y componentes ultra-rápidos
                 </p>
               </div>
 
-              {/* Live Stats */}
-              <div className="hidden lg:flex items-center gap-4">
-                <div className="glass rounded-lg px-4 py-2 border border-white/20">
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                    <span className="font-medium text-red-600">EN VIVO</span>
-                  </div>
+              <div className="flex items-center gap-4">
+                {/* Fast Components Toggle */}
+                <div className="hidden lg:flex items-center gap-3">
+                  <span className="text-sm text-gray-600">Modo ultra-rápido:</span>
+                  <button
+                    onClick={() => setUseFastComponents(!useFastComponents)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                      useFastComponents ? 'bg-blue-600' : 'bg-gray-200'
+                    }`}
+                    aria-label="Toggle fast components"
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        useFastComponents ? 'translate-x-6' : 'translate-x-1'
+                      }`}
+                    />
+                  </button>
                 </div>
-                <div className="text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <FaEye className="w-3 h-3" />
-                    <span>{liveStats.activeReaders.toLocaleString()} lectores</span>
+
+                {/* Live Stats */}
+                <div className="hidden lg:flex items-center gap-4">
+                  <div className="glass rounded-lg px-4 py-2 border border-white/20">
+                    <div className="flex items-center gap-2 text-sm">
+                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                      <span className="font-medium text-red-600">EN VIVO</span>
+                    </div>
                   </div>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <IoMdTime className="w-3 h-3" />
-                    <span>Actualizado {formatTime(lastUpdated)}</span>
+                  <div className="text-sm text-gray-600">
+                    <div className="flex items-center gap-1">
+                      <FaEye className="w-3 h-3" />
+                      <span>{liveStats.activeReaders.toLocaleString()} lectores</span>
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-600">
+                    <div className="flex items-center gap-1">
+                      <IoMdTime className="w-3 h-3" />
+                      <span>Actualizado {formatTime(lastUpdated)}</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -304,28 +332,55 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
             <div className="flex flex-col lg:flex-row gap-4">
               {/* Search Bar */}
               <div className="flex-1 relative">
-                <div className="relative">
-                  <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                {useFastComponents ? (
+                  <FastSearchBar
+                    query={searchQuery}
+                    onQueryChange={setSearchQuery}
                     placeholder="Buscar noticias, temas, fuentes..."
-                    className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-colombia-blue focus:border-transparent placeholder-gray-500 transition-all"
+                    category="local"
+                    suggestions={[
+                      'Reforma pensional',
+                      'Gustavo Petro',
+                      'Congreso Colombia',
+                      'Economía colombiana',
+                      'Seguridad nacional'
+                    ]}
                   />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      <FaTimes className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
+                ) : (
+                  <div className="relative">
+                    <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                    <input
+                      type="text"
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      placeholder="Buscar noticias, temas, fuentes..."
+                      className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-colombia-blue focus:border-transparent placeholder-gray-500 transition-all"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        <FaTimes className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* View Mode Toggle */}
               <div className="flex bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-1">
+                <button
+                  onClick={() => setViewMode('fast-local')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                    viewMode === 'fast-local'
+                      ? 'bg-colombia-blue text-white shadow-lg'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                  }`}
+                >
+                  <FaRocket className="w-3 h-3" />
+                  Fast Local
+                </button>
                 <button
                   onClick={() => setViewMode('feed')}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
@@ -461,6 +516,49 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
             </div>
           ) : (
             <>
+              {viewMode === 'fast-local' && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3 mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                      <FaRocket className="w-6 h-6 text-blue-600" />
+                      Noticias Ultra-Rápidas de Colombia
+                    </h2>
+                    <div className="bg-gradient-to-r from-green-400 to-blue-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      Componentes Optimizados
+                    </div>
+                  </div>
+                  
+                  <FastLocalNews
+                    region="colombia"
+                    showTrending={true}
+                    autoRefresh={true}
+                    maxArticles={20}
+                    onArticleClick={(article) => {
+                      // Convert NewsArticle to NewsItem format for compatibility
+                      const newsItem = {
+                        ...article,
+                        publishedAt: article.publishedAt.toISOString(),
+                        trending: article.trending || false,
+                        perspective: (article.perspective as 'progressive' | 'conservative' | 'both') || 'both',
+                        readTime: article.readTime ? `${article.readTime} min` : undefined,
+                        hasBalancedCoverage: article.perspective === 'balanced',
+                        sources: [{ name: article.source, url: article.url || '#' }],
+                        perspectives: article.perspective ? [article.perspective] : [],
+                        relatedArticles: [],
+                        socialMetrics: {
+                          likes: 0,
+                          shares: article.shares || 0,
+                          comments: article.comments || 0,
+                          views: article.views || 0
+                        }
+                      };
+                      handleNewsClick(newsItem);
+                    }}
+                    className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-6"
+                  />
+                </div>
+              )}
+
               {viewMode === 'feed' && (
                 <div className="space-y-6">
                   {/* Trending Section */}

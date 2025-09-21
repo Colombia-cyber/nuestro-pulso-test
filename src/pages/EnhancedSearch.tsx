@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import GoogleClassSearchBar from '../components/GoogleClassSearchBar';
 import GoogleClassSearchResults from '../components/GoogleClassSearchResults';
-import { FaHistory, FaChartLine } from 'react-icons/fa';
+import { FaHistory, FaChartLine, FaRocket } from 'react-icons/fa';
 import { BiTrendingUp } from 'react-icons/bi';
+import { FastSearchBar, FastLocalNews, FastButton } from '../components/fast';
 
 interface SearchResult {
   id: string;
@@ -32,6 +33,7 @@ const EnhancedSearchPage: React.FC = () => {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [currentQuery, setCurrentQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'world' | 'local'>('local');
+  const [useFastComponents, setUseFastComponents] = useState(true);
   const [totalResults, setTotalResults] = useState(0);
   const [searchTime, setSearchTime] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -359,15 +361,62 @@ const EnhancedSearchPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Search Header */}
+        {/* Search Header with Fast Components Toggle */}
         <div className="mb-8">
-          <GoogleClassSearchBar
-            onSearch={performSearch}
-            onResultsChange={setSearchResults}
-            autoFocus={!currentQuery}
-            placeholder="Buscar en el mundo y Colombia..."
-            className="mb-6"
-          />
+          {/* Fast Components Toggle */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold text-gray-900">Búsqueda Universal</h1>
+              <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-3 py-1 rounded-full text-sm">
+                <FaRocket className="w-3 h-3" />
+                <span>Ultra-Fast</span>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <span className="text-sm text-gray-600">Modo ultra-rápido:</span>
+              <button
+                onClick={() => setUseFastComponents(!useFastComponents)}
+                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                  useFastComponents ? 'bg-blue-600' : 'bg-gray-200'
+                }`}
+                aria-label="Toggle fast components"
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                    useFastComponents ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+
+          {useFastComponents ? (
+            <FastSearchBar
+              query={currentQuery}
+              onSearch={(query, options) => performSearch(query, activeTab, getDefaultFilters())}
+              onQueryChange={setCurrentQuery}
+              category={activeTab}
+              placeholder={activeTab === 'local' ? 'Buscar en Colombia...' : 'Buscar en el mundo...'}
+              autoFocus={!currentQuery}
+              className="mb-6"
+              suggestions={[
+                'Reforma pensional Colombia',
+                'Gustavo Petro noticias',
+                'Elecciones regionales 2024',
+                'Congreso Colombia',
+                'Economía colombiana'
+              ]}
+            />
+          ) : (
+            <GoogleClassSearchBar
+              onSearch={performSearch}
+              onResultsChange={setSearchResults}
+              autoFocus={!currentQuery}
+              placeholder="Buscar en el mundo y Colombia..."
+              className="mb-6"
+            />
+          )}
         </div>
 
         {/* Main Content Area */}
@@ -397,32 +446,57 @@ const EnhancedSearchPage: React.FC = () => {
                 </p>
               </div>
             ) : (
-              <div className="text-center py-16">
-                <div className="text-6xl mb-4">🌟</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                  Búsqueda Universal Avanzada
-                </h3>
-                <p className="text-gray-600 mb-8">
-                  Busca información en Colombia y el mundo con filtros avanzados
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                  <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                    <h4 className="font-bold text-lg mb-2 flex items-center gap-2">
-                      🇨🇴 Búsqueda Local
-                    </h4>
-                    <p className="text-gray-600 text-sm">
-                      Encuentra noticias, negocios y fuentes exclusivamente colombianas
-                    </p>
-                  </div>
-                  <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
-                    <h4 className="font-bold text-lg mb-2 flex items-center gap-2">
-                      🌍 Búsqueda Mundial
-                    </h4>
-                    <p className="text-gray-600 text-sm">
-                      Accede a información global usando la potencia de Google
-                    </p>
+              <div className="space-y-8">
+                {/* Welcome State */}
+                <div className="text-center py-16">
+                  <div className="text-6xl mb-4">🌟</div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">
+                    Búsqueda Universal Avanzada
+                  </h3>
+                  <p className="text-gray-600 mb-8">
+                    Busca información en Colombia y el mundo con componentes ultra-rápidos
+                  </p>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                      <h4 className="font-bold text-lg mb-2 flex items-center gap-2">
+                        🇨🇴 Búsqueda Local Ultra-Rápida
+                      </h4>
+                      <p className="text-gray-600 text-sm">
+                        Encuentra noticias, negocios y fuentes exclusivamente colombianas con velocidad instantánea
+                      </p>
+                    </div>
+                    <div className="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                      <h4 className="font-bold text-lg mb-2 flex items-center gap-2">
+                        🌍 Búsqueda Mundial Optimizada
+                      </h4>
+                      <p className="text-gray-600 text-sm">
+                        Accede a información global usando componentes optimizados y la potencia de Google
+                      </p>
+                    </div>
                   </div>
                 </div>
+
+                {/* Featured Local News - Only show when using fast components and no search */}
+                {useFastComponents && activeTab === 'local' && (
+                  <div>
+                    <div className="flex items-center gap-3 mb-6">
+                      <h3 className="text-2xl font-bold text-gray-900">📺 Noticias Destacadas de Colombia</h3>
+                      <div className="bg-gradient-to-r from-yellow-400 to-red-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        Componentes Ultra-Rápidos
+                      </div>
+                    </div>
+                    <FastLocalNews
+                      region="colombia"
+                      showTrending={true}
+                      autoRefresh={true}
+                      maxArticles={8}
+                      onArticleClick={(article) => {
+                        console.log('Article clicked:', article);
+                        // Could navigate to article or open modal
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -433,17 +507,20 @@ const EnhancedSearchPage: React.FC = () => {
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
               <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
                 <BiTrendingUp className="w-5 h-5 text-red-500" />
-                Temas Populares
+                Temas Populares Colombia
               </h3>
               <div className="space-y-2">
                 {trendingTopics.slice(0, 6).map((topic, index) => (
-                  <button
+                  <FastButton
                     key={index}
                     onClick={() => performSearch(topic, 'local', getDefaultFilters())}
-                    className="block w-full text-left text-sm text-blue-600 hover:text-blue-800 hover:bg-blue-50 px-2 py-1 rounded transition-colors"
+                    variant="secondary"
+                    size="sm"
+                    fullWidth
+                    className="justify-start text-left hover:bg-blue-50 hover:text-blue-700"
                   >
-                    {index + 1}. {topic}
-                  </button>
+                    <span className="text-sm">{index + 1}. {topic}</span>
+                  </FastButton>
                 ))}
               </div>
             </div>
