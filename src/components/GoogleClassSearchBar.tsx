@@ -30,7 +30,7 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
   onSearch,
   onResultsChange,
   className = '',
-  placeholder = 'Buscar en mundo y Colombia...',
+  placeholder,
   autoFocus = false
 }) => {
   const [query, setQuery] = useState('');
@@ -300,6 +300,12 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
     }
   };
 
+  // Get dynamic placeholder based on active tab
+  const getPlaceholder = () => {
+    if (placeholder) return placeholder;
+    return activeTab === 'world' ? 'Search world...' : 'Search in Colombia...';
+  };
+
   return (
     <div className={`google-search-container ${className}`}>
       {/* Search Header */}
@@ -341,7 +347,7 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
                   onChange={(e) => setQuery(e.target.value)}
                   onFocus={() => setShowSuggestions(true)}
                   onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
-                  placeholder={placeholder}
+                  placeholder={getPlaceholder()}
                   className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg text-gray-900 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-lg"
                   autoComplete="off"
                 />

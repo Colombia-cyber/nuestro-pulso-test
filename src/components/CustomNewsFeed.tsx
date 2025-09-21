@@ -164,15 +164,38 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
     };
   }, [loadMoreNews, hasMore, isLoadingMore]);
 
-  // Load initial data
+  // Load initial data and handle URL parameters
   useEffect(() => {
     const loadData = async () => {
       setIsLoading(true);
       try {
+        // Check URL parameters for topic/category filtering
+        const urlParams = new URLSearchParams(window.location.search);
+        const topic = urlParams.get('topic');
+        const category = urlParams.get('category');
+        const query = urlParams.get('q');
+
+        // Update filter based on URL parameters
+        const newFilter: NewsFilter = { ...filter };
+        if (topic) {
+          newFilter.topic = topic;
+        }
+        if (category) {
+          newFilter.category = category === 'world' ? 'international' : 'national';
+        }
+        if (query) {
+          setSearchQuery(query);
+        }
+
+        // Update filter state if it changed
+        if (JSON.stringify(newFilter) !== JSON.stringify(filter)) {
+          setFilter(newFilter);
+        }
+
         // Simulate loading delay for better UX
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        const news = newsService.getFilteredNews(filter);
+        const news = newsService.getFilteredNews(newFilter);
         const timeline = newsService.generateTimelineData();
         
         setNewsData(news.slice(0, 10)); // Start with first 10 items
