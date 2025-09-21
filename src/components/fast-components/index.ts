@@ -8,7 +8,9 @@ export { default as FastButton, type FastButtonProps, type FastButtonRef } from 
 export { default as FastSearch, type FastSearchProps } from './FastSearch';
 export { default as FastNewsCard, type FastNewsCardProps, type NewsArticle } from './FastNewsCard';
 export { default as FastNavigation, type FastNavigationProps, type NavigationItem } from './FastNavigation';
+export { default as FastModal, type FastModalProps } from './FastModal';
 export { default as FastVirtualList, type FastVirtualListProps, type VirtualListItem } from './FastVirtualList';
+export { default as FastReels, type FastReelsProps, type ReelItem } from './FastReels';
 
 // Component registry for fast components
 export const FAST_COMPONENTS = {

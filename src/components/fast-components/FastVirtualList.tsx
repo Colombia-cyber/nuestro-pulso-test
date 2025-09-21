@@ -247,7 +247,7 @@ const FastVirtualList = memo<FastVirtualListProps>(({
       case 'end':
         scrollOffset = itemPosition - containerSize + itemSize;
         break;
-      case 'auto':
+      case 'auto': {
         const currentScrollOffset = direction === 'vertical' ? scrollState.scrollTop : scrollState.scrollLeft;
         const itemEnd = itemPosition + itemSize;
         
@@ -259,6 +259,7 @@ const FastVirtualList = memo<FastVirtualListProps>(({
           return; // Item is already visible
         }
         break;
+      }
     }
 
     // Apply scroll
@@ -306,13 +307,17 @@ const FastVirtualList = memo<FastVirtualListProps>(({
           break;
         case 'PageDown':
           event.preventDefault();
-          const pageSize = Math.floor(containerHeight / (typeof itemHeight === 'number' ? itemHeight : 50));
-          newFocusedIndex = Math.min(items.length - 1, focusedIndex + pageSize);
+          {
+            const pageSize = Math.floor(containerHeight / (typeof itemHeight === 'number' ? itemHeight : 50));
+            newFocusedIndex = Math.min(items.length - 1, focusedIndex + pageSize);
+          }
           break;
         case 'PageUp':
           event.preventDefault();
-          const pageSizeUp = Math.floor(containerHeight / (typeof itemHeight === 'number' ? itemHeight : 50));
-          newFocusedIndex = Math.max(0, focusedIndex - pageSizeUp);
+          {
+            const pageSizeUp = Math.floor(containerHeight / (typeof itemHeight === 'number' ? itemHeight : 50));
+            newFocusedIndex = Math.max(0, focusedIndex - pageSizeUp);
+          }
           break;
       }
 
