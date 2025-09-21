@@ -10,23 +10,24 @@ export interface NewsTopic {
 }
 
 export const localTopics: NewsTopic[] = [
+  // Priority topics as requested
   {
     id: 'terror-news',
     name: 'Terror News',
-    emoji: '⚠️',
+    emoji: '🚨',
     description: 'Alertas y noticias de seguridad nacional',
     category: 'local',
     color: 'from-red-600 to-red-800',
-    keywords: ['terror', 'seguridad', 'amenaza', 'atentado', 'violencia']
+    keywords: ['terror', 'seguridad', 'amenaza', 'atentado', 'violencia', 'terrorismo']
   },
   {
     id: 'gustavo-petro',
-    name: 'Gustavo Petro',
+    name: 'Gustavo Petro News',
     emoji: '🇨🇴',
     description: 'Noticias sobre el presidente y gobierno nacional',
     category: 'local',
     color: 'from-blue-600 to-blue-800',
-    keywords: ['petro', 'presidente', 'gobierno', 'casa de nariño']
+    keywords: ['petro', 'presidente', 'gobierno', 'casa de nariño', 'mandatario']
   },
   {
     id: 'drugs-crime',
@@ -35,8 +36,38 @@ export const localTopics: NewsTopic[] = [
     description: 'Narcotráfico, crimen organizado y justicia',
     category: 'local',
     color: 'from-red-500 to-orange-600',
-    keywords: ['drogas', 'narcotráfico', 'crimen', 'delincuencia', 'justicia']
+    keywords: ['drogas', 'narcotráfico', 'crimen', 'delincuencia', 'justicia', 'carteles']
   },
+  {
+    id: 'congress',
+    name: 'Congress of Colombia',
+    emoji: '🏢',
+    description: 'Actividad del Congreso de la República',
+    category: 'local',
+    color: 'from-indigo-600 to-indigo-800',
+    keywords: ['congreso', 'senado', 'cámara', 'representantes', 'legislativo', 'debates']
+  },
+  {
+    id: 'left-wing',
+    name: 'Left Wing',
+    emoji: '🔵',
+    description: 'Perspectiva progresista y de izquierda',
+    category: 'local',
+    perspective: 'left',
+    color: 'from-blue-500 to-blue-700',
+    keywords: ['progresista', 'izquierda', 'social', 'igualdad', 'reforma']
+  },
+  {
+    id: 'right-wing',
+    name: 'Right Wing',
+    emoji: '🔴',
+    description: 'Perspectiva conservadora y de derecha',
+    category: 'local',
+    perspective: 'right',
+    color: 'from-red-500 to-red-700',
+    keywords: ['conservador', 'derecha', 'tradicional', 'libertad', 'empresa']
+  },
+  // Additional existing topics
   {
     id: 'legislation',
     name: 'Legislation',
@@ -45,15 +76,6 @@ export const localTopics: NewsTopic[] = [
     category: 'local',
     color: 'from-purple-600 to-purple-800',
     keywords: ['ley', 'decreto', 'legislación', 'normativa', 'jurídico']
-  },
-  {
-    id: 'congress',
-    name: 'Congress of Colombia',
-    emoji: '🏛️',
-    description: 'Actividad del Congreso de la República',
-    category: 'local',
-    color: 'from-indigo-600 to-indigo-800',
-    keywords: ['congreso', 'senado', 'cámara', 'representantes', 'legislativo']
   },
   {
     id: 'politics',
@@ -94,15 +116,55 @@ export const localTopics: NewsTopic[] = [
 ];
 
 export const worldTopics: NewsTopic[] = [
+  // Priority topics for world news
   {
     id: 'world-terror',
     name: 'Terror News',
-    emoji: '🌍',
+    emoji: '🚨',
     description: 'Terrorismo y seguridad mundial',
     category: 'world',
     color: 'from-red-600 to-red-800',
-    keywords: ['terror', 'terrorism', 'security', 'international']
+    keywords: ['terror', 'terrorism', 'security', 'international', 'threats']
   },
+  {
+    id: 'world-drugs-crime',
+    name: 'Drugs & Crime',
+    emoji: '🚔',
+    description: 'Crimen internacional y narcotráfico',
+    category: 'world',
+    color: 'from-red-500 to-orange-600',
+    keywords: ['drugs', 'crime', 'international', 'trafficking', 'cartels']
+  },
+  {
+    id: 'world-congress',
+    name: 'World Congress',
+    emoji: '🏢',
+    description: 'Parlamentos y congresos mundiales',
+    category: 'world',
+    color: 'from-indigo-600 to-indigo-800',
+    keywords: ['parliament', 'congress', 'legislature', 'government', 'international']
+  },
+  {
+    id: 'world-left-wing',
+    name: 'Left Wing',
+    emoji: '🔵',
+    description: 'Perspectiva progresista mundial',
+    category: 'world',
+    perspective: 'left',
+    color: 'from-blue-500 to-blue-700',
+    keywords: ['progressive', 'left', 'social', 'equality', 'reform']
+  },
+  {
+    id: 'world-right-wing',
+    name: 'Right Wing',
+    emoji: '🔴',
+    description: 'Perspectiva conservadora mundial',
+    category: 'world',
+    perspective: 'right',
+    color: 'from-red-500 to-red-700',
+    keywords: ['conservative', 'right', 'traditional', 'liberty', 'business']
+  },
+  // Additional existing topics
   {
     id: 'world-leaders',
     name: 'World Leaders',
@@ -111,15 +173,6 @@ export const worldTopics: NewsTopic[] = [
     category: 'world',
     color: 'from-blue-600 to-blue-800',
     keywords: ['leaders', 'diplomacy', 'summit', 'international']
-  },
-  {
-    id: 'world-drugs-crime',
-    name: 'Drugs & Crime',
-    emoji: '🌐',
-    description: 'Crimen internacional y narcotráfico',
-    category: 'world',
-    color: 'from-red-500 to-orange-600',
-    keywords: ['drugs', 'crime', 'international', 'trafficking']
   },
   {
     id: 'world-legislation',
@@ -168,51 +221,18 @@ export const worldTopics: NewsTopic[] = [
   }
 ];
 
-export const perspectiveTopics: NewsTopic[] = [
-  {
-    id: 'left-wing',
-    name: 'Left Wing',
-    emoji: '🔵',
-    description: 'Perspectiva progresista y de izquierda',
-    category: 'local',
-    perspective: 'left',
-    color: 'from-blue-500 to-blue-700',
-    keywords: ['progresista', 'izquierda', 'social', 'igualdad']
-  },
-  {
-    id: 'right-wing',
-    name: 'Right Wing',
-    emoji: '🔴',
-    description: 'Perspectiva conservadora y de derecha',
-    category: 'local',
-    perspective: 'right',
-    color: 'from-red-500 to-red-700',
-    keywords: ['conservador', 'derecha', 'tradicional', 'libertad']
-  },
-  {
-    id: 'world-left-wing',
-    name: 'Left Wing',
-    emoji: '🌍',
-    description: 'Perspectiva progresista mundial',
-    category: 'world',
-    perspective: 'left',
-    color: 'from-blue-500 to-blue-700',
-    keywords: ['progressive', 'left', 'social', 'equality']
-  },
-  {
-    id: 'world-right-wing',
-    name: 'Right Wing',
-    emoji: '🌎',
-    description: 'Perspectiva conservadora mundial',
-    category: 'world',
-    perspective: 'right',
-    color: 'from-red-500 to-red-700',
-    keywords: ['conservative', 'right', 'traditional', 'liberty']
-  }
-];
-
 export const getAllTopics = (): NewsTopic[] => {
-  return [...localTopics, ...worldTopics, ...perspectiveTopics];
+  return [...localTopics, ...worldTopics];
+};
+
+export const getPriorityTopics = (category: 'local' | 'world'): NewsTopic[] => {
+  // Return the priority topics in the specified order
+  const priorityIds = category === 'local' 
+    ? ['terror-news', 'gustavo-petro', 'drugs-crime', 'congress', 'left-wing', 'right-wing']
+    : ['world-terror', 'world-drugs-crime', 'world-congress', 'world-left-wing', 'world-right-wing'];
+  
+  const allTopics = getTopicsByCategory(category);
+  return priorityIds.map(id => allTopics.find(topic => topic.id === id)).filter(Boolean) as NewsTopic[];
 };
 
 export const getTopicsByCategory = (category: 'local' | 'world'): NewsTopic[] => {

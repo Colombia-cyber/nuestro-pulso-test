@@ -4,6 +4,7 @@ import { BiPoll, BiTrendingUp } from 'react-icons/bi';
 import { MdLiveTv, MdTopic } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
 import UniversalSearchBar from '../components/UniversalSearchBar';
+import FeaturedTopics from '../components/FeaturedTopics';
 import { NewsTopic } from '../config/newsTopics';
 
 interface ModernHomepageProps {
@@ -21,13 +22,7 @@ interface QuickAction {
   trend?: 'up' | 'down' | 'stable';
 }
 
-interface TrendingTopic {
-  id: string;
-  title: string;
-  category: string;
-  engagement: number;
-  trend: 'rising' | 'hot' | 'stable';
-}
+
 
 const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
@@ -38,7 +33,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
     discussions: 156
   });
   const [isVisible, setIsVisible] = useState(false);
-  const [trendingTopics, setTrendingTopics] = useState<TrendingTopic[]>([]);
+  const [selectedNewsCategory, setSelectedNewsCategory] = useState<'local' | 'world'>('local');
 
   useEffect(() => {
     setIsVisible(true);
@@ -58,8 +53,8 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
       }));
     }, 15000);
 
-    // Load trending topics
-    loadTrendingTopics();
+    // Load initial data
+    setIsVisible(true);
 
     return () => {
       clearInterval(timeInterval);
@@ -67,17 +62,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
     };
   }, []);
 
-  const loadTrendingTopics = () => {
-    const topics: TrendingTopic[] = [
-      { id: '1', title: 'Reforma Pensional 2024', category: 'Política', engagement: 15420, trend: 'hot' },
-      { id: '2', title: 'Gustavo Petro Pronunciamientos', category: 'Gobierno', engagement: 12380, trend: 'rising' },
-      { id: '3', title: 'Elecciones Regionales', category: 'Electoral', engagement: 9850, trend: 'rising' },
-      { id: '4', title: 'Seguridad Nacional', category: 'Seguridad', engagement: 8920, trend: 'stable' },
-      { id: '5', title: 'Economía Colombiana', category: 'Economía', engagement: 7640, trend: 'stable' },
-      { id: '6', title: 'Paz Total', category: 'Social', engagement: 6890, trend: 'rising' }
-    ];
-    setTrendingTopics(topics);
-  };
+
 
   const quickActions: QuickAction[] = [
     {
@@ -160,6 +145,16 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
     console.log('Topic selected:', topic);
   };
 
+  const handlePriorityTopicSelect = (topic: NewsTopic, category: 'local' | 'world') => {
+    // Navigate to search with the specific topic and category
+    const params = new URLSearchParams();
+    params.set('q', topic.name);
+    params.set('category', category);
+    params.set('topic', topic.id);
+    window.history.pushState(null, '', `/search?${params.toString()}`);
+    onNavigate('feeds'); // Navigate to the feeds view to show news
+  };
+
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('es-CO', { 
       hour: '2-digit', 
@@ -168,13 +163,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
     });
   };
 
-  const getTrendIcon = (trend: string) => {
-    switch (trend) {
-      case 'hot': return '🔥';
-      case 'rising': return '📈';
-      default: return '📊';
-    }
-  };
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
@@ -315,89 +304,76 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* Trending Topics */}
+      {/* Featured Priority Topics */}
       <div className={`relative py-16 bg-white/50 backdrop-blur-sm transition-all duration-1000 delay-500 ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            
-            {/* Trending Topics Section */}
-            <div>
-              <h2 className="text-4xl font-bold mb-8 flex items-center gap-3">
-                <BiTrendingUp className="w-8 h-8 text-red-500" />
-                <span className="bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">
-                  Tendencias Nacionales
-                </span>
-              </h2>
-              
-              <div className="space-y-4">
-                {trendingTopics.map((topic, index) => (
-                  <button
-                    key={topic.id}
-                    onClick={() => handleSearch(topic.title, 'local')}
-                    className="w-full group glass-modern rounded-2xl p-6 text-left border border-white/20 backdrop-blur-xl hover:shadow-lg transition-all duration-300 hover:scale-102"
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl font-bold text-gray-400">#{index + 1}</span>
-                        <span className="text-lg">{getTrendIcon(topic.trend)}</span>
-                        <span className="text-sm px-2 py-1 bg-blue-100 text-blue-800 rounded-full font-medium">
-                          {topic.category}
-                        </span>
-                      </div>
-                      <FaArrowRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
-                      {topic.title}
-                    </h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                      <span className="flex items-center gap-1">
-                        <FaUsers className="w-3 h-3" />
-                        {topic.engagement.toLocaleString()} interacciones
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
+          {/* Category Selector */}
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center bg-white rounded-2xl p-2 shadow-lg border border-gray-200">
+              <button
+                onClick={() => setSelectedNewsCategory('local')}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+                  selectedNewsCategory === 'local'
+                    ? 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white shadow-lg'
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                🇨🇴 Colombia
+              </button>
+              <button
+                onClick={() => setSelectedNewsCategory('world')}
+                className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
+                  selectedNewsCategory === 'world'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg'
+                    : 'text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                🌍 Mundo
+              </button>
             </div>
+          </div>
 
-            {/* Call to Action */}
-            <div className="text-center lg:text-left">
-              <h2 className="text-4xl font-bold mb-6">
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                  Tu Voz Construye Colombia
+          <FeaturedTopics
+            onTopicSelect={handlePriorityTopicSelect}
+            selectedCategory={selectedNewsCategory}
+            className="mb-12"
+          />
+
+          {/* Call to Action */}
+          <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-8 md:p-12 text-white text-center shadow-2xl">
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              Tu Voz Construye Colombia
+            </h2>
+            
+            <p className="text-lg md:text-xl mb-8 leading-relaxed max-w-3xl mx-auto opacity-90">
+              Participa en la conversación nacional. Vota, debate, opina y ayuda a construir 
+              un futuro mejor para todos los colombianos.
+            </p>
+            
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <button
+                onClick={() => handleQuickAction('surveys')}
+                className="group bg-white text-blue-600 px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              >
+                <span className="flex items-center justify-center gap-3">
+                  <BiPoll className="w-6 h-6" />
+                  Participar en Encuestas
+                  <FaArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
                 </span>
-              </h2>
+              </button>
               
-              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
-                Participa en la conversación nacional. Vota, debate, opina y ayuda a construir 
-                un futuro mejor para todos los colombianos.
-              </p>
-              
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <button
-                  onClick={() => handleQuickAction('surveys')}
-                  className="group bg-gradient-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-                >
-                  <span className="flex items-center gap-3">
-                    <BiPoll className="w-6 h-6" />
-                    Participar en Encuestas
-                    <FaArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </button>
-                
-                <button
-                  onClick={() => handleQuickAction('community-hub')}
-                  className="group border-2 border-blue-600 text-blue-600 px-8 py-4 rounded-2xl font-bold text-lg hover:bg-blue-600 hover:text-white transition-all duration-300 transform hover:scale-105"
-                >
-                  <span className="flex items-center gap-3">
-                    <FaUsers className="w-6 h-6" />
-                    Únete a la Comunidad
-                    <FaArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
-                  </span>
-                </button>
-              </div>
+              <button
+                onClick={() => handleQuickAction('community-hub')}
+                className="group border-2 border-white text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105"
+              >
+                <span className="flex items-center justify-center gap-3">
+                  <FaUsers className="w-6 h-6" />
+                  Únete a la Comunidad
+                  <FaArrowRight className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" />
+                </span>
+              </button>
             </div>
           </div>
         </div>
