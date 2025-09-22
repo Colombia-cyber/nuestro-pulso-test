@@ -9,8 +9,54 @@ export interface NewsTopic {
   keywords: string[];
 }
 
-// Local topics - empty array as all specified topics have been removed per requirements
-export const localTopics: NewsTopic[] = [];
+// Local topics - Colombia-focused versions of global topics
+export const localTopics: NewsTopic[] = [
+  {
+    id: 'donald-trump-colombia',
+    name: 'Donald Trump Global',
+    emoji: '🇺🇸',
+    description: 'Impacto de Trump en Colombia y la región',
+    category: 'local',
+    color: 'from-orange-600 to-red-600',
+    keywords: ['donald trump', 'colombia', 'relaciones', 'internacional', 'política']
+  },
+  {
+    id: 'global-terrorism-colombia',
+    name: 'Global Terrorism',
+    emoji: '🛡️',
+    description: 'Terrorismo global y seguridad en Colombia',
+    category: 'local',
+    color: 'from-red-600 to-red-800',
+    keywords: ['terrorismo', 'seguridad', 'colombia', 'global', 'paz']
+  },
+  {
+    id: 'world-right-colombia',
+    name: 'World Right',
+    emoji: '🔵',
+    description: 'Perspectiva conservadora mundial y Colombia',
+    category: 'local',
+    color: 'from-blue-600 to-indigo-600',
+    keywords: ['derecha', 'conservador', 'colombia', 'mundial', 'política']
+  },
+  {
+    id: 'world-left-colombia',
+    name: 'World Left',
+    emoji: '🌹',
+    description: 'Perspectiva progresista mundial y Colombia',
+    category: 'local',
+    color: 'from-pink-600 to-red-600',
+    keywords: ['izquierda', 'progresista', 'colombia', 'mundial', 'política']
+  },
+  {
+    id: 'best-destinations-colombia',
+    name: 'Best Destinations',
+    emoji: '🏝️',
+    description: 'Mejores destinos turísticos en Colombia y el mundo',
+    category: 'local',
+    color: 'from-teal-600 to-blue-600',
+    keywords: ['turismo', 'destinos', 'colombia', 'viajes', 'lugares']
+  }
+];
 
 // World topics - focused on international/global news (NO Legislation, Politics, Wealth)
 export const worldTopics: NewsTopic[] = [
@@ -71,11 +117,10 @@ export const getTopicsByCategory = (category: 'local' | 'world'): NewsTopic[] =>
   return getAllTopics().filter(topic => topic.category === category);
 };
 
-// Helper: get priority topics for local or world (local topics removed per requirements)
+// Helper: get priority topics for local or world
 export const getPriorityTopics = (category: 'local' | 'world'): NewsTopic[] => {
-  // Local topics have been removed per requirements, only return world topics
   const priorityIds = category === 'local'
-    ? [] // Empty array - all local topics removed
+    ? ['donald-trump-colombia', 'global-terrorism-colombia', 'world-right-colombia', 'world-left-colombia', 'best-destinations-colombia']
     : ['donald-trump-world', 'world-terror', 'world-right-wing', 'world-left-wing', 'world-travel'];
 
   const allTopics = getTopicsByCategory(category);

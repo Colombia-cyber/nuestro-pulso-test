@@ -270,7 +270,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
                 onSearch={handleSearch}
                 onInstantSearch={handleInstantSearch}
                 onTopicSelect={handleTopicSelect}
-                placeholder="Buscar en Colombia y el mundo..."
+                placeholder="Search in Colombia and around the world..."
                 autoFocus={false}
                 className="shadow-2xl"
               />

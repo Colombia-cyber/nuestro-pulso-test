@@ -44,9 +44,15 @@ interface TopicDisplay {
   category: 'breaking' | 'politics' | 'security' | 'analysis';
 }
 
-// Enhanced mapping with more detailed topic information (local topics removed per requirements)
+// Enhanced mapping with detailed topic information for both local and world categories
 const topicLabels: Record<string, { displayText: string; description: string; urgencyLevel: 'high' | 'medium' | 'normal'; category: 'breaking' | 'politics' | 'security' | 'analysis' }> = {
-  // Local topics removed per requirements
+  // Local (Colombia) topics
+  "donald-trump-colombia": { displayText: "DONALD TRUMP GLOBAL", description: "Impacto de Trump en Colombia y relaciones internacionales", urgencyLevel: 'high', category: 'politics' },
+  "global-terrorism-colombia": { displayText: "GLOBAL TERRORISM", description: "Terrorismo global y su impacto en la seguridad de Colombia", urgencyLevel: 'high', category: 'security' },
+  "world-right-colombia": { displayText: "WORLD RIGHT", description: "Perspectiva conservadora mundial y su influencia en Colombia", urgencyLevel: 'normal', category: 'analysis' },
+  "world-left-colombia": { displayText: "WORLD LEFT", description: "Perspectiva progresista mundial y su influencia en Colombia", urgencyLevel: 'normal', category: 'analysis' },
+  "best-destinations-colombia": { displayText: "BEST DESTINATIONS", description: "Mejores destinos turísticos en Colombia y el mundo", urgencyLevel: 'normal', category: 'analysis' },
+  // World topics
   "donald-trump-world": { displayText: "DONALD TRUMP GLOBAL", description: "Noticias internacionales sobre Trump y su influencia mundial", urgencyLevel: 'high', category: 'politics' },
   "world-terror":       { displayText: "TERRORISMO MUNDIAL", description: "Terrorismo internacional, seguridad global y operaciones antiterroristas", urgencyLevel: 'high', category: 'security' },
   "world-right-wing":   { displayText: "DERECHA MUNDIAL", description: "Movimientos conservadores globales y políticas de derecha", urgencyLevel: 'normal', category: 'analysis' },
