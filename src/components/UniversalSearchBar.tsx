@@ -16,7 +16,7 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
   onSearch,
   onTopicSelect,
   onInstantSearch,
-  placeholder = "Buscar noticias en Colombia y el mundo...",
+  placeholder = "Search in Colombia and around the world...",
   autoFocus = false,
   className = ""
 }) => {
