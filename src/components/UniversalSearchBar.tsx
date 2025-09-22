@@ -161,7 +161,7 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
             }`}
           >
             <FaMapMarkerAlt className="w-5 h-5" />
-            <span className="text-lg font-extrabold tracking-wide">COLOMBIA LOCAL</span>
+            <span className="text-lg font-extrabold tracking-wide">COLOMBIA</span>
           </button>
           <button
             onClick={() => setSelectedCategory('world')}
@@ -172,7 +172,7 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
             }`}
           >
             <FaGlobe className="w-5 h-5" />
-            <span className="text-lg font-extrabold tracking-wide">MUNDO GLOBAL</span>
+            <span className="text-lg font-extrabold tracking-wide">MUNDO</span>
           </button>
         </div>
 
@@ -202,7 +202,7 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
                 </button>
               </>
             ) : (
-              <span className="hidden sm:inline text-sm tracking-wide uppercase">FILTRAR TEMA</span>
+              <span className="hidden sm:inline text-sm tracking-wide uppercase">TEMA</span>
             )}
           </button>
 
@@ -224,7 +224,7 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
               type="submit"
               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-3 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 tracking-wide"
             >
-              SEARCH
+              BUSCAR
             </button>
           </form>
         </div>

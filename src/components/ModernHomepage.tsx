@@ -71,7 +71,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
       id: 'search',
       title: 'Búsqueda Universal',
       description: 'Explora mundo y Colombia',
-      icon: 'SEARCH',
+      icon: 'BUSCAR',
       gradient: 'from-blue-500 via-purple-500 to-pink-500',
       action: 'search',
       count: 'Mundial + Local'
@@ -375,7 +375,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span className="text-lg font-extrabold tracking-wide">COLOMBIA LOCAL</span>
+                <span className="text-lg font-extrabold tracking-wide">COLOMBIA</span>
               </button>
               <button
                 onClick={() => setSelectedNewsCategory('world')}
@@ -385,7 +385,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span className="text-lg font-extrabold tracking-wide">MUNDO GLOBAL</span>
+                <span className="text-lg font-extrabold tracking-wide">MUNDO</span>
               </button>
             </div>
           </div>
