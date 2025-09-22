@@ -316,7 +316,7 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
                     <span className="font-bold">BUSCANDO...</span>
                   </div>
                 ) : (
-                  <span className="font-extrabold tracking-wide">BUSCAR</span>
+                  <span className="font-extrabold tracking-wide">SEARCH</span>
                 )}
               </button>
             </div>

@@ -224,7 +224,7 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
               type="submit"
               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-10 py-3 rounded-xl font-bold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 tracking-wide"
             >
-              BUSCAR
+              SEARCH
             </button>
           </form>
         </div>
