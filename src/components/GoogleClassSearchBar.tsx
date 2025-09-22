@@ -63,7 +63,7 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
     },
     {
       id: 'world',
-      name: 'MUNDO GLOBAL', 
+      name: 'MUNDO', 
       icon: <FaGlobe className="w-4 h-4" />,
       description: 'Búsqueda global con Copilot AI y fuentes internacionales'
     }
@@ -316,7 +316,7 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
                     <span className="font-bold">BUSCANDO...</span>
                   </div>
                 ) : (
-                  <span className="font-extrabold tracking-wide">SEARCH</span>
+                  <span className="font-extrabold tracking-wide">BUSCAR</span>
                 )}
               </button>
             </div>
