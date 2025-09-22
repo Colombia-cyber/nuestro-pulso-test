@@ -44,14 +44,9 @@ interface TopicDisplay {
   category: 'breaking' | 'politics' | 'security' | 'analysis';
 }
 
-// Enhanced mapping with more detailed topic information
+// Enhanced mapping with more detailed topic information (local topics removed per requirements)
 const topicLabels: Record<string, { displayText: string; description: string; urgencyLevel: 'high' | 'medium' | 'normal'; category: 'breaking' | 'politics' | 'security' | 'analysis' }> = {
-  "drugs-crime":        { displayText: "DRUGS AND CRIME", description: "Narcotráfico, crimen organizado, operativos antidrogas y justicia", urgencyLevel: 'high', category: 'security' },
-  "gustavo-petro":      { displayText: "GUSTAVO PETRO", description: "Presidente de Colombia, decisiones gubernamentales y política nacional", urgencyLevel: 'medium', category: 'politics' },
-  "congress":           { displayText: "CONGRESS", description: "Actividad legislativa, debates parlamentarios y nuevas leyes", urgencyLevel: 'medium', category: 'politics' },
-  "political-left":     { displayText: "POLITICAL LEFT", description: "Perspectiva progresista, movimientos sociales y agenda de izquierda", urgencyLevel: 'normal', category: 'analysis' },
-  "political-right":    { displayText: "POLITICAL RIGHT", description: "Perspectiva conservadora, libre mercado y agenda de derecha", urgencyLevel: 'normal', category: 'analysis' },
-  "trump-local":        { displayText: "TRUMP LOCAL", description: "Impacto de las políticas de Trump en las relaciones con Colombia", urgencyLevel: 'medium', category: 'politics' },
+  // Local topics removed per requirements
   "donald-trump-world": { displayText: "DONALD TRUMP GLOBAL", description: "Noticias internacionales sobre Trump y su influencia mundial", urgencyLevel: 'high', category: 'politics' },
   "world-terror":       { displayText: "TERRORISMO MUNDIAL", description: "Terrorismo internacional, seguridad global y operaciones antiterroristas", urgencyLevel: 'high', category: 'security' },
   "world-right-wing":   { displayText: "DERECHA MUNDIAL", description: "Movimientos conservadores globales y políticas de derecha", urgencyLevel: 'normal', category: 'analysis' },
@@ -463,7 +458,7 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
               }`}
             >
               <FaSearch />
-              <span>Buscar</span>
+              <span>Search</span>
             </button>
 
             <button
@@ -617,7 +612,7 @@ const FeaturedTopics: React.FC<FeaturedTopicsProps> = ({
               className="px-6 py-3 bg-purple-500 hover:bg-purple-600 text-white rounded-lg font-medium transition-all duration-200 hover:scale-105 ripple-effect flex items-center space-x-2"
             >
               <FaSearch />
-              <span>Buscar temas</span>
+              <span>Search topics</span>
             </button>
           </div>
         </div>
