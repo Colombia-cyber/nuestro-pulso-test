@@ -46,7 +46,7 @@ interface TopicDisplay {
 // Enhanced mapping with more detailed topic information
 const topicLabels: Record<string, { displayText: string; description: string; urgencyLevel: 'high' | 'medium' | 'normal'; category: 'breaking' | 'politics' | 'security' | 'analysis' }> = {
   "drugs-crime":        { displayText: "DROGAS Y CRIMEN", description: "Narcotráfico, crimen organizado, operativos antidrogas y justicia", urgencyLevel: 'high', category: 'security' },
-  "terror-news":        { displayText: "TERRORISMO Y SEGURIDAD", description: "Alertas de seguridad nacional, terrorismo y operaciones militares", urgencyLevel: 'high', category: 'breaking' },
+
   "gustavo-petro":      { displayText: "GUSTAVO PETRO NOTICIAS", description: "Presidente de Colombia, decisiones gubernamentales y política nacional", urgencyLevel: 'medium', category: 'politics' },
   "congress":           { displayText: "CONGRESO DE COLOMBIA", description: "Actividad legislativa, debates parlamentarios y nuevas leyes", urgencyLevel: 'medium', category: 'politics' },
   "left-wing":          { displayText: "IZQUIERDA POLÍTICA", description: "Perspectiva progresista, movimientos sociales y agenda de izquierda", urgencyLevel: 'normal', category: 'analysis' },

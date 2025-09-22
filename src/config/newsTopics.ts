@@ -20,15 +20,7 @@ export const localTopics: NewsTopic[] = [
     color: 'from-red-600 to-red-800',
     keywords: ['drugs', 'crime', 'narcotrafico', 'criminal', 'justicia', 'policia']
   },
-  {
-    id: 'terror-news',
-    name: 'Terrorismo y Seguridad',
-    emoji: '⚠️',
-    description: 'Alertas de seguridad nacional y terrorismo',
-    category: 'local',
-    color: 'from-orange-600 to-red-600',
-    keywords: ['terrorism', 'security', 'alerts', 'nacional', 'seguridad']
-  },
+
   {
     id: 'gustavo-petro',
     name: 'Gustavo Petro',
@@ -139,7 +131,7 @@ export const getTopicsByCategory = (category: 'local' | 'world'): NewsTopic[] =>
 export const getPriorityTopics = (category: 'local' | 'world'): NewsTopic[] => {
   // Only include desired topics in order!
   const priorityIds = category === 'local'
-    ? ['drugs-crime', 'terror-news', 'gustavo-petro', 'congress', 'left-wing', 'right-wing', 'donald-trump-local']
+    ? ['drugs-crime', 'gustavo-petro', 'congress', 'left-wing', 'right-wing', 'donald-trump-local']
     : ['donald-trump-world', 'world-terror', 'world-right-wing', 'world-left-wing', 'world-travel'];
 
   const allTopics = getTopicsByCategory(category);
