@@ -18,7 +18,7 @@ import GoogleClassSearchResults from './GoogleClassSearchResults';
 import KnowledgePanel from './KnowledgePanel';
 import ThankYouSection from './ThankYouSection';
 import { detectTopicFromQuery, detectSearchMode, shouldShowKnowledgePanel } from '../data/knowledgeTopics';
-import { generateSearchResults, getFiltersForMode, LOCAL_FILTERS, MUNDO_FILTERS } from '../data/searchSources';
+import { generateSearchResults, getFiltersForMode, LOCAL_FILTERS, GLOBAL_FILTERS } from '../data/searchSources';
 import { 
   SearchFilters, 
   SearchResult, 
@@ -412,7 +412,7 @@ const ModernSearchEngine: React.FC = () => {
                       </span>
                     </div>
                     <div className="ml-2 px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold">
-                      LOCAL COLOMBIA 🇨🇴
+                      LOCAL 🇨🇴
                     </div>
                   </>
                 ) : (
@@ -430,7 +430,7 @@ const ModernSearchEngine: React.FC = () => {
                       </span>
                     </div>
                     <div className="ml-2 px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-bold">
-                      MUNDO 🌍
+                      GLOBAL 🌍
                     </div>
                   </>
                 )}

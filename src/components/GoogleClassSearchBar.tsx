@@ -3,7 +3,7 @@ import { FaSearch, FaFilter, FaGlobe, FaMapMarkerAlt, FaCalendarAlt, FaSort, FaI
 import { MdClear, MdImage, MdVideoLibrary, MdShoppingCart, MdWeb } from 'react-icons/md';
 import { BiNews } from 'react-icons/bi';
 import { SearchFilters } from '../types/search';
-import { getFiltersForMode, LOCAL_FILTERS, MUNDO_FILTERS } from '../data/searchSources';
+import { getFiltersForMode, LOCAL_FILTERS, GLOBAL_FILTERS } from '../data/searchSources';
 
 
 
@@ -57,13 +57,13 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
   const searchTabs: SearchTab[] = [
     {
       id: 'local',
-      name: 'LOCAL COLOMBIA',
+      name: 'LOCAL',
       icon: <FaMapMarkerAlt className="w-4 h-4" />,
       description: 'Red Cívica de Colombia - Fuentes nacionales y locales'
     },
     {
       id: 'world',
-      name: 'MUNDO', 
+      name: 'GLOBAL', 
       icon: <FaGlobe className="w-4 h-4" />,
       description: 'Búsqueda global con Copilot AI y fuentes internacionales'
     }
@@ -316,7 +316,7 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
                     <span className="font-bold">BUSCANDO...</span>
                   </div>
                 ) : (
-                  <span className="font-extrabold tracking-wide">BUSCAR</span>
+                  <span className="font-extrabold tracking-wide">Buscar</span>
                 )}
               </button>
             </div>
@@ -365,7 +365,7 @@ const GoogleClassSearchBar: React.FC<GoogleClassSearchBarProps> = ({
               }`}>
                 {activeTab === 'world' ? <FaGlobe className="w-4 h-4" /> : <FaMapMarkerAlt className="w-4 h-4" />}
                 <span className="font-extrabold tracking-wide uppercase">
-                  {activeTab === 'world' ? 'BÚSQUEDA MUNDIAL' : 'BÚSQUEDA LOCAL COLOMBIA'}
+                  {activeTab === 'world' ? 'Búsqueda Global' : 'Búsqueda Local'}
                 </span>
               </div>
             </div>

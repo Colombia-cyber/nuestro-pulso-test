@@ -9,7 +9,7 @@ export interface SearchSource {
 }
 
 // Colombian/Local sources - ONLY for Local Colombia search
-export const COLOMBIA_SOURCES: SearchSource[] = [
+export const LOCAL_SOURCES: SearchSource[] = [
   // Colombian News Media
   { name: 'El Tiempo', type: 'news', country: 'colombia', category: 'local', reliability: 'high', url: 'eltiempo.com' },
   { name: 'Semana', type: 'news', country: 'colombia', category: 'local', reliability: 'high', url: 'semana.com' },
@@ -87,7 +87,7 @@ export const LOCAL_FILTERS = {
 };
 
 // Global Mundo filters and categories
-export const MUNDO_FILTERS = {
+export const GLOBAL_FILTERS = {
   categories: [
     { id: 'donald-trump', name: 'Donald Trump', icon: '🇺🇸', description: 'US Presidential politics and news' },
     { id: 'politics', name: 'Politics', icon: '🗳️', description: 'Global political developments' },
@@ -112,12 +112,12 @@ export const MUNDO_FILTERS = {
 
 // Get appropriate sources based on search mode
 export const getSourcesForMode = (mode: 'local' | 'mundo'): SearchSource[] => {
-  return mode === 'local' ? COLOMBIA_SOURCES : GLOBAL_SOURCES;
+  return mode === 'local' ? LOCAL_SOURCES : GLOBAL_SOURCES;
 };
 
 // Get appropriate filters based on search mode
 export const getFiltersForMode = (mode: 'local' | 'mundo') => {
-  return mode === 'local' ? LOCAL_FILTERS : MUNDO_FILTERS;
+  return mode === 'local' ? LOCAL_FILTERS : GLOBAL_FILTERS;
 };
 
 // Check if a source is appropriate for a search mode
