@@ -10,6 +10,7 @@ import { newsService } from '../services/newsService';
 
 interface CustomNewsFeedProps {
   onNavigate?: (view: string, articleId?: string) => void;
+  topic?: string;
 }
 
 interface LiveStats {
@@ -19,7 +20,7 @@ interface LiveStats {
   lastUpdate: Date;
 }
 
-const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate }) => {
+const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'colombia-news' }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'feed' | 'timeline' | 'categories'>('feed');
   const [newsData, setNewsData] = useState<NewsItem[]>([]);

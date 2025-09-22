@@ -4,18 +4,22 @@ import HeroSection from "./components/HeroSection";
 import ModernHomepage from "./components/ModernHomepage";
 import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
+import ArticleComments from "./components/ArticleComments";
 import CommunityHub from "./pages/CommunityHub";
+import CrossPlatformCommunityHub from "./components/CrossPlatformCommunityHub";
 import SearchPage from "./pages/Search";
 import EnhancedSearchPage from "./pages/EnhancedSearch";
 import LeftWingPage from "./pages/LeftWing";
 import RightWingPage from "./pages/RightWing";
 import ModernSearchEngine from "./components/ModernSearchEngine";
 import PulseReels from "./components/PulseReels";
+import EnhancedPulseReels from "./components/EnhancedPulseReels";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
 import LiveChat from "./components/LiveChat";
 import Debate from "./components/Debate";
 import Survey from "./components/Survey";
+import TopicTabs from "./components/TopicTabs";
 
 // Import modern styles
 import "./styles/modern.css";
@@ -55,6 +59,7 @@ const ErrorFallback: React.FC<{ error?: string; onRetry?: () => void }> = ({
 
 function App() {
   const [currentView, setCurrentView] = useState('home');
+  const [currentTopic, setCurrentTopic] = useState('colombia-news');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -82,6 +87,14 @@ function App() {
     }, 300);
   };
 
+  const handleTopicChange = (topicId: string) => {
+    setCurrentTopic(topicId);
+    // If we're not in feeds/news view, navigate there
+    if (!['feeds', 'news'].includes(currentView)) {
+      handleNavigate('feeds');
+    }
+  };
+
   const handleRetry = () => {
     setError(null);
     setIsLoading(true);
@@ -102,10 +115,18 @@ function App() {
     try {
       switch (currentView) {
         case 'reels':
-          return <PulseReels />;
+          return <EnhancedPulseReels />;
         case 'feeds':
         case 'news':
-          return <CustomNewsFeed />;
+          return (
+            <div>
+              <TopicTabs 
+                onTopicChange={handleTopicChange} 
+                currentTopic={currentTopic} 
+              />
+              <CustomNewsFeed topic={currentTopic} />
+            </div>
+          );
         case 'congress':
           return <CongressTracker />;
         case 'elections':
@@ -119,8 +140,10 @@ function App() {
           return <Survey />;
         case 'comments':
           return <Comments />;
+        case 'article-comments':
+          return <ArticleComments onNavigate={handleNavigate} />;
         case 'community-hub':
-          return <CommunityHub />;
+          return <CrossPlatformCommunityHub />;
         case 'search':
           return <ModernSearchEngine />;
         case 'left-wing':
