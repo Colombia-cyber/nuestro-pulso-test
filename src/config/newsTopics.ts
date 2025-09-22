@@ -9,62 +9,61 @@ export interface NewsTopic {
   keywords: string[];
 }
 
-// Local topics - focused on Colombian/South American news
+// Local topics - dynamic homepage topics as specified in requirements
 export const localTopics: NewsTopic[] = [
   {
     id: 'drugs-crime',
-    name: 'Drogas y Crimen',
+    name: 'Drugs and Crime',
     emoji: '🚔',
-    description: 'Narcotráfico, crimen organizado, justicia',
+    description: 'Narcotráfico, crimen organizado, operativos antidrogas y justicia',
     category: 'local',
-    color: 'from-red-600 to-red-800',
-    keywords: ['drugs', 'crime', 'narcotrafico', 'criminal', 'justicia', 'policia']
+    color: 'from-red-500 via-red-600 to-red-700',
+    keywords: ['drugs', 'crime', 'narcotrafico', 'criminal', 'justicia', 'policia', 'cartel']
   },
-
   {
     id: 'gustavo-petro',
     name: 'Gustavo Petro',
     emoji: '🇨🇴',
-    description: 'Presidente de Colombia y gobierno nacional',
+    description: 'Presidente de Colombia, decisiones gubernamentales y política nacional',
     category: 'local',
-    color: 'from-green-600 to-green-800',
-    keywords: ['gustavo petro', 'presidente', 'gobierno', 'colombia', 'politica']
+    color: 'from-green-500 via-green-600 to-green-700',
+    keywords: ['gustavo petro', 'presidente', 'gobierno', 'colombia', 'politica', 'reforma']
   },
   {
     id: 'congress',
-    name: 'Congreso',
+    name: 'Congress',
     emoji: '🏛️',
-    description: 'Actividad del Congreso de la República',
+    description: 'Actividad legislativa, debates parlamentarios y nuevas leyes',
     category: 'local',
-    color: 'from-blue-600 to-blue-800',
-    keywords: ['congreso', 'senado', 'camara', 'republica', 'legislativo']
+    color: 'from-blue-500 via-blue-600 to-blue-700',
+    keywords: ['congreso', 'congress', 'senado', 'camara', 'republica', 'legislativo', 'parlamento']
   },
   {
-    id: 'left-wing',
-    name: 'Izquierda Política',
+    id: 'political-left',
+    name: 'Political Left',
     emoji: '🌹',
-    description: 'Perspectiva progresista y de izquierda',
+    description: 'Perspectiva progresista, movimientos sociales y agenda de izquierda',
     category: 'local',
-    color: 'from-pink-600 to-red-600',
-    keywords: ['left', 'izquierda', 'progressive', 'social', 'progresista']
+    color: 'from-pink-500 via-rose-600 to-red-600',
+    keywords: ['left', 'izquierda', 'progressive', 'social', 'progresista', 'leftist']
   },
   {
-    id: 'right-wing',
-    name: 'Derecha Política',
+    id: 'political-right',
+    name: 'Political Right',
     emoji: '🔵',
-    description: 'Perspectiva conservadora y de derecha',
+    description: 'Perspectiva conservadora, libre mercado y agenda de derecha',
     category: 'local',
-    color: 'from-blue-600 to-indigo-600',
-    keywords: ['right', 'derecha', 'conservative', 'tradicional', 'conservador']
+    color: 'from-blue-500 via-indigo-600 to-purple-600',
+    keywords: ['right', 'derecha', 'conservative', 'tradicional', 'conservador', 'rightist']
   },
   {
-    id: 'donald-trump-local',
+    id: 'trump-local',
     name: 'Trump Local',
     emoji: '🇺🇸',
-    description: 'Impacto de Donald Trump en Colombia',
+    description: 'Impacto de las políticas de Trump en las relaciones con Colombia',
     category: 'local',
-    color: 'from-orange-600 to-red-600',
-    keywords: ['donald trump', 'usa', 'america', 'colombia', 'relations']
+    color: 'from-orange-500 via-red-600 to-red-700',
+    keywords: ['donald trump', 'trump', 'usa', 'america', 'colombia', 'relations', 'local impact']
   }
 ];
 
@@ -131,7 +130,7 @@ export const getTopicsByCategory = (category: 'local' | 'world'): NewsTopic[] =>
 export const getPriorityTopics = (category: 'local' | 'world'): NewsTopic[] => {
   // Only include desired topics in order!
   const priorityIds = category === 'local'
-    ? ['drugs-crime', 'gustavo-petro', 'congress', 'left-wing', 'right-wing', 'donald-trump-local']
+    ? ['drugs-crime', 'gustavo-petro', 'congress', 'political-left', 'political-right', 'trump-local']
     : ['donald-trump-world', 'world-terror', 'world-right-wing', 'world-left-wing', 'world-travel'];
 
   const allTopics = getTopicsByCategory(category);
