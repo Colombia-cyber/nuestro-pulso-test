@@ -3,11 +3,13 @@ import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import ModernHomepage from "./components/ModernHomepage";
 import WorldClassHomepage from "./components/WorldClassHomepage";
+import QuantumWorldClassHomepage from "./components/QuantumWorldClassHomepage";
 import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import ArticleComments from "./components/ArticleComments";
 import CommunityHub from "./pages/CommunityHub";
 import CrossPlatformCommunityHub from "./components/CrossPlatformCommunityHub";
+import QuantumCommunityHub from "./components/QuantumCommunityHub";
 import SearchPage from "./pages/Search";
 import EnhancedSearchPage from "./pages/EnhancedSearch";
 import LeftWingPage from "./pages/LeftWing";
@@ -15,6 +17,7 @@ import RightWingPage from "./pages/RightWing";
 import ModernSearchEngine from "./components/ModernSearchEngine";
 import PulseReels from "./components/PulseReels";
 import EnhancedPulseReels from "./components/EnhancedPulseReels";
+import QuantumReelsHub from "./components/QuantumReelsHub";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
 import LiveChat from "./components/LiveChat";
@@ -120,7 +123,7 @@ function App() {
     try {
       switch (currentView) {
         case 'reels':
-          return <EnhancedPulseReels />;
+          return <QuantumReelsHub />;
         case 'feeds':
         case 'news':
           return (
@@ -148,7 +151,7 @@ function App() {
         case 'article-comments':
           return <ArticleComments onNavigate={handleNavigate} />;
         case 'community-hub':
-          return <CrossPlatformCommunityHub />;
+          return <QuantumCommunityHub />;
         case 'search':
           return <ModernSearchEngine />;
         case 'left-wing':
@@ -157,7 +160,7 @@ function App() {
           return <RightWingPage onNavigate={handleNavigate} />;
         case 'home':
         default:
-          return <WorldClassHomepage onNavigate={handleNavigate} />;
+          return <QuantumWorldClassHomepage onNavigate={handleNavigate} />;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
