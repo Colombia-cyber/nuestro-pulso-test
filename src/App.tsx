@@ -25,6 +25,7 @@ import Debate from "./components/Debate";
 import Survey from "./components/Survey";
 import TopicTabs from "./components/TopicTabs";
 import ElTiempoOpinionFeed from "./components/ElTiempoOpinionFeed";
+import ColombianNewsFeed from "./components/ColombianNewsFeed";
 import { useMultiModalNavigation } from "./services/multiModalNavigation";
 
 // Import modern styles
@@ -161,6 +162,8 @@ function App() {
           return <RightWingPage onNavigate={handleNavigate} />;
         case 'eltiempo-opinion':
           return <ElTiempoOpinionFeed />;
+        case 'colombian-news-feed':
+          return <ColombianNewsFeed />;
         case 'home':
         default:
           return <QuantumWorldClassHomepage onNavigate={handleNavigate} />;
