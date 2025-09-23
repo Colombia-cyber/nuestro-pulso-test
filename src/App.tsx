@@ -10,6 +10,7 @@ import ArticleComments from "./components/ArticleComments";
 import CommunityHub from "./pages/CommunityHub";
 import CrossPlatformCommunityHub from "./components/CrossPlatformCommunityHub";
 import QuantumCommunityHub from "./components/QuantumCommunityHub";
+import ColombiaHub from "./components/ColombiaHub";
 import SearchPage from "./pages/Search";
 import EnhancedSearchPage from "./pages/EnhancedSearch";
 import LeftWingPage from "./pages/LeftWing";
@@ -152,6 +153,8 @@ function App() {
           return <ArticleComments onNavigate={handleNavigate} />;
         case 'community-hub':
           return <QuantumCommunityHub />;
+        case 'colombia-hub':
+          return <ColombiaHub onNavigate={handleNavigate} />;
         case 'search':
           return <ModernSearchEngine />;
         case 'left-wing':
@@ -173,6 +176,7 @@ function App() {
       'reels': 'Cargando Reels...',
       'feeds': 'Cargando noticias...',
       'news': 'Cargando noticias...',
+      'colombia-hub': 'Cargando Colombia Hub...',
       'congress': 'Cargando actividad del Congreso...',
       'elections': 'Cargando información electoral...',
       'chat': 'Conectando al chat en vivo...',

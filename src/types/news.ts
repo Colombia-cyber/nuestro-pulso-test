@@ -7,6 +7,7 @@ export enum NewsCategory {
   HEALTH = 'Salud',
   INFRASTRUCTURE = 'Infraestructura',
   AGRICULTURE = 'Agricultura',
+  CULTURE = 'Cultura',
   BREAKING = 'Última Hora'
 }
 
