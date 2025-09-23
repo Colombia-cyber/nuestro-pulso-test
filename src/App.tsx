@@ -24,6 +24,7 @@ import LiveChat from "./components/LiveChat";
 import Debate from "./components/Debate";
 import Survey from "./components/Survey";
 import TopicTabs from "./components/TopicTabs";
+import ElTiempoOpinionFeed from "./components/ElTiempoOpinionFeed";
 import { useMultiModalNavigation } from "./services/multiModalNavigation";
 
 // Import modern styles
@@ -158,6 +159,8 @@ function App() {
           return <LeftWingPage onNavigate={handleNavigate} />;
         case 'right-wing':
           return <RightWingPage onNavigate={handleNavigate} />;
+        case 'eltiempo-opinion':
+          return <ElTiempoOpinionFeed />;
         case 'home':
         default:
           return <QuantumWorldClassHomepage onNavigate={handleNavigate} />;
