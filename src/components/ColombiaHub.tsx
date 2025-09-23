@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { FiFilter, FiRefreshCw, FiTrendingUp, FiMap, FiPlay, FiShare2, FiBookmark, FiEye } from 'react-icons/fi';
 import { colombiaHubService, EnhancedNewsItem, VideoContent, TrendingTag, SmartFilter, SMART_FILTERS } from '../services/colombiaHubService';
+import TravelCultureGuide from './TravelCultureGuide';
 
 interface ColombiaHubProps {
   onNavigate?: (view: string) => void;
@@ -429,6 +430,11 @@ const ColombiaHub: React.FC<ColombiaHubProps> = ({ onNavigate }) => {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Travel & Culture Guide Section */}
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <TravelCultureGuide />
       </div>
     </div>
   );
