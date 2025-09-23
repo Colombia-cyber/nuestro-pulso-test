@@ -21,6 +21,7 @@ import QuantumReelsHub from "./components/QuantumReelsHub";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
 import LiveChat from "./components/LiveChat";
+import LiveNewsVideos from "./components/LiveNewsVideos";
 import Debate from "./components/Debate";
 import Survey from "./components/Survey";
 import TopicTabs from "./components/TopicTabs";
@@ -141,6 +142,9 @@ function App() {
           return <ElectionHub />;
         case 'chat':
           return <LiveChat />;
+        case 'live-news':
+        case 'videos':
+          return <LiveNewsVideos onNavigate={handleNavigate} />;
         case 'debates':
           return <Debate />;
         case 'surveys':
@@ -176,6 +180,8 @@ function App() {
       'congress': 'Cargando actividad del Congreso...',
       'elections': 'Cargando información electoral...',
       'chat': 'Conectando al chat en vivo...',
+      'live-news': 'Cargando videos de noticias...',
+      'videos': 'Cargando videos de noticias...',
       'debates': 'Cargando debates...',
       'surveys': 'Cargando encuestas...',
       'encuestas': 'Cargando encuestas...',

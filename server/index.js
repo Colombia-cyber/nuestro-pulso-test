@@ -4,6 +4,7 @@ import helmet from 'helmet';
 import morgan from 'morgan';
 import dotenv from 'dotenv';
 import searchRoutes from './routes/search.js';
+import newsVideosRoutes from './routes/newsVideos.js';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Routes
 app.use('/api/search', searchRoutes);
+app.use('/api/news-videos', newsVideosRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -54,6 +56,7 @@ app.listen(PORT, () => {
   console.log(`🚀 Search API server running on port ${PORT}`);
   console.log(`📡 Health check available at http://localhost:${PORT}/api/health`);
   console.log(`🔍 Search endpoint available at http://localhost:${PORT}/api/search`);
+  console.log(`🎥 News Videos endpoint available at http://localhost:${PORT}/api/news-videos`);
 });
 
 export default app;
