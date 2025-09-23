@@ -2,6 +2,7 @@ import React, { useState, Suspense, useEffect } from "react";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import ModernHomepage from "./components/ModernHomepage";
+import WorldClassHomepage from "./components/WorldClassHomepage";
 import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import ArticleComments from "./components/ArticleComments";
@@ -20,6 +21,7 @@ import LiveChat from "./components/LiveChat";
 import Debate from "./components/Debate";
 import Survey from "./components/Survey";
 import TopicTabs from "./components/TopicTabs";
+import { useMultiModalNavigation } from "./services/multiModalNavigation";
 
 // Import modern styles
 import "./styles/modern.css";
@@ -63,6 +65,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Initialize multi-modal navigation
+  const { isListening, capabilities } = useMultiModalNavigation(handleNavigate);
+
   // Listen for custom navigation events
   useEffect(() => {
     const handleCustomNavigation = (event: CustomEvent) => {
@@ -76,7 +81,7 @@ function App() {
     };
   }, []);
 
-  const handleNavigate = (view: string) => {
+  function handleNavigate(view: string) {
     setIsLoading(true);
     setError(null);
     
@@ -85,7 +90,7 @@ function App() {
       setCurrentView(view);
       setIsLoading(false);
     }, 300);
-  };
+  }
 
   const handleTopicChange = (topicId: string) => {
     setCurrentTopic(topicId);
@@ -152,7 +157,7 @@ function App() {
           return <RightWingPage onNavigate={handleNavigate} />;
         case 'home':
         default:
-          return <ModernHomepage onNavigate={handleNavigate} />;
+          return <WorldClassHomepage onNavigate={handleNavigate} />;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
@@ -181,6 +186,18 @@ function App() {
   return (
     <div>
       <Navbar onNavigate={handleNavigate} currentView={currentView} />
+      {/* Multi-modal Status Indicator */}
+      {(isListening || capabilities.speechRecognition) && (
+        <div className="fixed top-20 right-4 z-50">
+          <div className={`px-4 py-2 rounded-full text-sm font-semibold shadow-lg transition-all ${
+            isListening 
+              ? 'bg-red-600 text-white animate-pulse' 
+              : 'bg-slate-800 text-slate-300'
+          }`}>
+            {isListening ? '🎙️ Escuchando...' : '🤖 IA Activa'}
+          </div>
+        </div>
+      )}
       <div className="pt-20">
         <Suspense fallback={<LoadingSpinner />}>
           {renderCurrentView()}
