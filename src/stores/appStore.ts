@@ -27,7 +27,7 @@ interface User {
   isAuthenticated: boolean;
 }
 
-interface Notification {
+interface AppNotification {
   id: string;
   type: 'info' | 'success' | 'warning' | 'error';
   title: string;
@@ -63,7 +63,7 @@ interface AppState {
   // Data State
   topics: Topic[];
   selectedTopics: string[];
-  notifications: Notification[];
+  notifications: AppNotification[];
   liveStats: LiveStats;
   
   // Real-time State
@@ -89,7 +89,7 @@ interface AppState {
   clearSelectedTopics: () => void;
   
   // Notification Actions
-  addNotification: (notification: Omit<Notification, 'id' | 'timestamp'>) => void;
+  addNotification: (notification: Omit<AppNotification, 'id' | 'timestamp'>) => void;
   markNotificationRead: (id: string) => void;
   clearNotifications: () => void;
   
@@ -222,4 +222,4 @@ const useAppStore = create<AppState>()(
 );
 
 export default useAppStore;
-export type { AppState, Topic, User, Notification, LiveStats };
+export type { AppState, Topic, User, AppNotification, LiveStats };

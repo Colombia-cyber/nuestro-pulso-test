@@ -9,10 +9,10 @@ import {
   FaTimesCircle
 } from 'react-icons/fa';
 import useAppStore from '../stores/appStore';
-import type { Notification } from '../stores/appStore';
+import type { AppNotification } from '../stores/appStore';
 
 interface NotificationItemProps {
-  notification: Notification;
+  notification: AppNotification;
   onClose: (id: string) => void;
   onAction?: (id: string) => void;
 }
@@ -201,7 +201,7 @@ const NotificationCenter: React.FC = () => {
 // Toast Notifications (for temporary notifications)
 const ToastNotifications: React.FC = () => {
   const { notifications } = useAppStore();
-  const [toastNotifications, setToastNotifications] = useState<Notification[]>([]);
+  const [toastNotifications, setToastNotifications] = useState<AppNotification[]>([]);
 
   useEffect(() => {
     // Show only recent unread notifications as toasts
