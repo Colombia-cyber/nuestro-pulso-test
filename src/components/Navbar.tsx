@@ -31,6 +31,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
     { id: 'home', icon: 'HOME', label: 'Inicio', shortLabel: 'INICIO' },
     { id: 'reels', icon: 'REELS', label: 'Reels', shortLabel: 'REELS' },
     { id: 'feeds', icon: 'NEWS', label: 'Noticias', shortLabel: 'NOTICIAS' },
+    { id: 'colombian-news-feed', icon: 'RSS', label: 'Feed Colombia', shortLabel: 'FEED' },
     { id: 'congress', icon: 'CONGRESS', label: 'Congreso', shortLabel: 'CONGRESO' },
     { id: 'elections', icon: 'VOTE', label: 'Elecciones', shortLabel: 'VOTOS' },
     { id: 'chat', icon: 'CHAT', label: 'Chat en Vivo', shortLabel: 'CHAT' },
