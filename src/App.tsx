@@ -20,6 +20,10 @@ import LiveChat from "./components/LiveChat";
 import Debate from "./components/Debate";
 import Survey from "./components/Survey";
 import TopicTabs from "./components/TopicTabs";
+import EnhancedTopicTabs from "./components/EnhancedTopicTabs";
+import { ToastNotifications } from "./components/NotificationCenter";
+import { QueryProvider } from "./providers/QueryProvider";
+import useAppStore from "./stores/appStore";
 
 // Import modern styles
 import "./styles/modern.css";
@@ -58,10 +62,44 @@ const ErrorFallback: React.FC<{ error?: string; onRetry?: () => void }> = ({
 );
 
 function App() {
-  const [currentView, setCurrentView] = useState('home');
-  const [currentTopic, setCurrentTopic] = useState('colombia-news');
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  // Use global state instead of local state
+  const { 
+    currentView,
+    currentTopic,
+    isLoading,
+    error,
+    darkMode,
+    setCurrentView,
+    setCurrentTopic,
+    setLoading,
+    setError,
+    updateLiveStats,
+    addNotification
+  } = useAppStore();
+
+  // Initialize live stats updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      updateLiveStats({
+        onlineUsers: Math.max(2800, Math.floor(Math.random() * 3200) + 2800),
+        activePolls: Math.max(10, Math.floor(Math.random() * 20) + 10),
+        newsUpdates: Math.floor(Math.random() * 100) + 50,
+        discussions: Math.max(150, Math.floor(Math.random() * 300) + 150)
+      });
+    }, 30000); // Update every 30 seconds
+
+    // Welcome notification
+    setTimeout(() => {
+      addNotification({
+        type: 'info',
+        title: '¡Bienvenido a Nuestro Pulso!',
+        message: 'Plataforma cívica líder con características avanzadas de IA y tiempo real',
+        read: false
+      });
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, [updateLiveStats, addNotification]);
 
   // Listen for custom navigation events
   useEffect(() => {
@@ -77,13 +115,21 @@ function App() {
   }, []);
 
   const handleNavigate = (view: string) => {
-    setIsLoading(true);
+    setLoading(true);
     setError(null);
     
     // Simulate loading delay for better UX
     setTimeout(() => {
       setCurrentView(view);
-      setIsLoading(false);
+      setLoading(false);
+      
+      // Add navigation notification
+      addNotification({
+        type: 'info',
+        title: 'Navegación',
+        message: `Navegando a ${getViewName(view)}`,
+        read: false
+      });
     }, 300);
   };
 
@@ -97,10 +143,28 @@ function App() {
 
   const handleRetry = () => {
     setError(null);
-    setIsLoading(true);
+    setLoading(true);
     setTimeout(() => {
-      setIsLoading(false);
+      setLoading(false);
     }, 300);
+  };
+
+  const getViewName = (view: string): string => {
+    const viewNames: Record<string, string> = {
+      'home': 'Inicio',
+      'reels': 'Reels',
+      'feeds': 'Noticias',
+      'news': 'Noticias',
+      'congress': 'Congreso',
+      'elections': 'Elecciones',
+      'chat': 'Chat en Vivo',
+      'debates': 'Debates',
+      'surveys': 'Encuestas',
+      'comments': 'Comentarios',
+      'community-hub': 'Hub Comunitario',
+      'search': 'Búsqueda'
+    };
+    return viewNames[view] || 'Contenido';
   };
 
   const renderCurrentView = () => {
@@ -120,9 +184,12 @@ function App() {
         case 'news':
           return (
             <div>
-              <TopicTabs 
+              <EnhancedTopicTabs 
                 onTopicChange={handleTopicChange} 
-                currentTopic={currentTopic} 
+                currentTopic={currentTopic}
+                multiSelect={false}
+                aiRecommendations={true}
+                showAnalytics={true}
               />
               <CustomNewsFeed topic={currentTopic} />
             </div>
@@ -179,14 +246,21 @@ function App() {
   };
 
   return (
-    <div>
-      <Navbar onNavigate={handleNavigate} currentView={currentView} />
-      <div className="pt-20">
-        <Suspense fallback={<LoadingSpinner />}>
-          {renderCurrentView()}
-        </Suspense>
+    <QueryProvider>
+      <div className={darkMode ? 'dark' : ''}>
+        <div className="min-h-screen bg-white dark:bg-gray-900 transition-colors duration-300">
+          <Navbar onNavigate={handleNavigate} currentView={currentView} />
+          <div className="pt-20">
+            <Suspense fallback={<LoadingSpinner />}>
+              {renderCurrentView()}
+            </Suspense>
+          </div>
+          
+          {/* Toast Notifications */}
+          <ToastNotifications />
+        </div>
       </div>
-    </div>
+    </QueryProvider>
   );
 }
 
