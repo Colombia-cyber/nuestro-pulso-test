@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaSearch, FaBars, FaTimes, FaYoutube, FaFacebook, FaTwitter, FaWhatsapp } from "react-icons/fa";
 import UniversalSearchBar from "./UniversalSearchBar";
+import { createDebouncedClickHandler } from "../utils/gestureUtils";
 
 interface NavbarProps {
   onNavigate?: (view: string) => void;
@@ -20,11 +21,24 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleNavClick = (view: string) => {
+  // Create debounced handlers to prevent rapid clicking
+  const debouncedNavigate = createDebouncedClickHandler((view: string) => {
     if (onNavigate) {
       onNavigate(view);
     }
     setShowMobileMenu(false);
+  }, 300);
+
+  const debouncedToggleSearch = createDebouncedClickHandler(() => {
+    setShowSearchModal(prev => !prev);
+  }, 200);
+
+  const debouncedToggleMobileMenu = createDebouncedClickHandler(() => {
+    setShowMobileMenu(prev => !prev);
+  }, 200);
+
+  const handleNavClick = (view: string) => {
+    debouncedNavigate(view);
   };
 
   const navItems = [
@@ -166,7 +180,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
 
               {/* Search Button for smaller screens */}
               <button 
-                onClick={() => setShowSearchModal(true)}
+                onClick={debouncedToggleSearch}
                 className="xl:hidden p-2 rounded-lg bg-colombia-blue/10 text-colombia-blue hover:bg-colombia-blue/20 transition-all duration-300"
                 title="Buscar"
               >
@@ -186,7 +200,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
             <div className="flex lg:hidden items-center gap-2">
               {/* Mobile Search Button */}
               <button 
-                onClick={() => setShowSearchModal(true)}
+                onClick={debouncedToggleSearch}
                 className="p-2 rounded-lg bg-colombia-blue/10 text-colombia-blue hover:bg-colombia-blue/20 transition-all duration-300"
                 title="Buscar"
               >
@@ -195,7 +209,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               
               {/* Mobile Menu Toggle */}
               <button
-                onClick={() => setShowMobileMenu(!showMobileMenu)}
+                onClick={debouncedToggleMobileMenu}
                 className="p-2 rounded-lg bg-colombia-blue/10 text-colombia-blue hover:bg-colombia-blue/20 transition-all duration-300"
                 aria-label="Menú de navegación"
               >
@@ -232,7 +246,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
                   </div>
                 </div>
                 <button
-                  onClick={() => setShowMobileMenu(false)}
+                  onClick={debouncedToggleMobileMenu}
                   className="p-2 rounded-lg bg-white/20 hover:bg-white/30 transition-colors"
                 >
                   <FaTimes className="w-5 h-5" />
@@ -328,7 +342,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
                 🔍 Búsqueda Universal
               </h2>
               <button 
-                onClick={() => setShowSearchModal(false)}
+                onClick={debouncedToggleSearch}
                 className="p-2 rounded-xl text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors"
                 aria-label="Cerrar búsqueda"
               >
@@ -346,7 +360,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
                   if (topic) params.set('topic', topic.id);
                   window.history.pushState(null, '', `/search?${params.toString()}`);
                   setShowSearchModal(false);
-                  handleNavClick('search');
+                  debouncedNavigate('search');
                 }}
                 onTopicSelect={(topic) => console.log('Topic selected:', topic)}
               />

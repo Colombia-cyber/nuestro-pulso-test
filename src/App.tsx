@@ -27,6 +27,7 @@ import Survey from "./components/Survey";
 import TopicTabs from "./components/TopicTabs";
 import ElTiempoOpinionFeed from "./components/ElTiempoOpinionFeed";
 import { useMultiModalNavigation } from "./services/multiModalNavigation";
+import { createDebouncedNavigationHandler } from "./utils/gestureUtils";
 
 // Import modern styles
 import "./styles/modern.css";
@@ -70,13 +71,25 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Initialize multi-modal navigation
-  const { isListening, capabilities } = useMultiModalNavigation(handleNavigate);
+  // Create debounced navigation handler to prevent rapid navigation changes
+  const debouncedNavigate = createDebouncedNavigationHandler((view: string) => {
+    setIsLoading(true);
+    setError(null);
+    
+    // Simulate loading delay for better UX
+    setTimeout(() => {
+      setCurrentView(view);
+      setIsLoading(false);
+    }, 300);
+  }, 400); // 400ms debounce to prevent accidental rapid navigation
+
+  // Initialize multi-modal navigation with debounced handler
+  const { isListening, capabilities } = useMultiModalNavigation(debouncedNavigate);
 
   // Listen for custom navigation events
   useEffect(() => {
     const handleCustomNavigation = (event: CustomEvent) => {
-      handleNavigate(event.detail);
+      debouncedNavigate(event.detail);
     };
 
     window.addEventListener('navigate' as any, handleCustomNavigation);
@@ -84,9 +97,10 @@ function App() {
     return () => {
       window.removeEventListener('navigate' as any, handleCustomNavigation);
     };
-  }, []);
+  }, [debouncedNavigate]);
 
   function handleNavigate(view: string) {
+    // Direct navigation without debouncing for manual calls
     setIsLoading(true);
     setError(null);
     

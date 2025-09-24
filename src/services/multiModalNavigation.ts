@@ -68,40 +68,50 @@ class MultiModalNavigationSystem {
     document.addEventListener('touchend', handleTouchEnd, { passive: true });
   }
 
-  // Process gesture and trigger callbacks
+  // Process gesture and trigger callbacks with improved sensitivity
   private processGesture(deltaX: number, deltaY: number, deltaTime: number, fingers: number) {
-    const minSwipeDistance = 50;
-    const maxSwipeTime = 1000;
-    const longPressTime = 500;
+    // Improved thresholds to prevent accidental gestures
+    const minSwipeDistance = 120; // Increased from 50px
+    const minSwipeVelocity = 0.3; // Minimum velocity for intentional swipe
+    const maxSwipeTime = 800; // Decreased from 1000ms
+    const longPressTime = 800; // Increased from 500ms
+    const tapMaxMovement = 15; // Increased from 10px
     
-    if (deltaTime > longPressTime && Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
-      // Long press detected
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+    const velocity = distance / deltaTime;
+    
+    if (deltaTime >= longPressTime && distance <= tapMaxMovement) {
+      // Long press detected with stricter movement tolerance
       this.triggerGestureCallback('long-press', {
         type: 'long-press',
         fingers
       });
-    } else if (deltaTime < maxSwipeTime) {
-      if (Math.abs(deltaX) > minSwipeDistance || Math.abs(deltaY) > minSwipeDistance) {
-        // Swipe detected
-        const direction = Math.abs(deltaX) > Math.abs(deltaY) 
-          ? (deltaX > 0 ? 'right' : 'left')
-          : (deltaY > 0 ? 'down' : 'up');
-        
-        const velocity = Math.sqrt(deltaX * deltaX + deltaY * deltaY) / deltaTime;
-        
+    } else if (deltaTime <= maxSwipeTime && distance >= minSwipeDistance && velocity >= minSwipeVelocity) {
+      // Swipe detected with velocity and distance requirements
+      const direction = Math.abs(deltaX) > Math.abs(deltaY) 
+        ? (deltaX > 0 ? 'right' : 'left')
+        : (deltaY > 0 ? 'down' : 'up');
+      
+      // Check for clear directional intent
+      const primaryAxisDistance = Math.abs(deltaX) > Math.abs(deltaY) ? Math.abs(deltaX) : Math.abs(deltaY);
+      const secondaryAxisDistance = Math.abs(deltaX) > Math.abs(deltaY) ? Math.abs(deltaY) : Math.abs(deltaX);
+      const directionalConfidence = primaryAxisDistance / (primaryAxisDistance + secondaryAxisDistance);
+      
+      // Only register swipes with clear directional intent (70% confidence)
+      if (directionalConfidence >= 0.7) {
         this.triggerGestureCallback('swipe', {
           type: 'swipe',
           direction,
           fingers,
           velocity
         });
-      } else {
-        // Tap detected
-        this.triggerGestureCallback('tap', {
-          type: 'tap',
-          fingers
-        });
       }
+    } else if (deltaTime < longPressTime && distance <= tapMaxMovement) {
+      // Tap detected with stricter movement tolerance
+      this.triggerGestureCallback('tap', {
+        type: 'tap',
+        fingers
+      });
     }
   }
 
