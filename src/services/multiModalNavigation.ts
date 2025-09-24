@@ -18,6 +18,10 @@ class MultiModalNavigationSystem {
   private isListening = false;
   private commandCallbacks: Map<string, () => void> = new Map();
   private gestureCallbacks: Map<string, (event: GestureEvent) => void> = new Map();
+  private lastGestureTime = 0;
+  private gestureThrottleDelay = 300; // Throttle gestures to prevent conflicts
+  private lastCommandTime = 0;
+  private commandThrottleDelay = 500; // Throttle voice commands
 
   constructor() {
     this.initializeSpeechRecognition();
@@ -70,12 +74,19 @@ class MultiModalNavigationSystem {
 
   // Process gesture and trigger callbacks
   private processGesture(deltaX: number, deltaY: number, deltaTime: number, fingers: number) {
+    // Throttle gestures to prevent excessive navigation
+    const now = Date.now();
+    if (now - this.lastGestureTime < this.gestureThrottleDelay) {
+      return;
+    }
+    
     const minSwipeDistance = 50;
     const maxSwipeTime = 1000;
     const longPressTime = 500;
     
     if (deltaTime > longPressTime && Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
       // Long press detected
+      this.lastGestureTime = now;
       this.triggerGestureCallback('long-press', {
         type: 'long-press',
         fingers
@@ -89,6 +100,7 @@ class MultiModalNavigationSystem {
         
         const velocity = Math.sqrt(deltaX * deltaX + deltaY * deltaY) / deltaTime;
         
+        this.lastGestureTime = now;
         this.triggerGestureCallback('swipe', {
           type: 'swipe',
           direction,
@@ -117,6 +129,12 @@ class MultiModalNavigationSystem {
 
   // Process voice commands and trigger actions
   private processVoiceCommand(transcript: string, confidence: number) {
+    // Throttle commands to prevent excessive navigation
+    const now = Date.now();
+    if (now - this.lastCommandTime < this.commandThrottleDelay) {
+      return;
+    }
+    
     const commands = [
       { trigger: ['inicio', 'home', 'casa'], action: 'navigate-home' },
       { trigger: ['noticias', 'news', 'información'], action: 'navigate-news' },
@@ -133,6 +151,7 @@ class MultiModalNavigationSystem {
 
     for (const command of commands) {
       if (command.trigger.some(trigger => transcript.includes(trigger))) {
+        this.lastCommandTime = now;
         this.triggerCommandCallback(command.action);
         break;
       }

@@ -273,64 +273,69 @@ const QuantumWorldClassHomepage: React.FC<QuantumWorldClassHomepageProps> = ({ o
       {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/20 via-purple-500/20 to-pink-500/20"></div>
-        <div className="relative max-w-7xl mx-auto px-4 py-20">
-          <div className="text-center mb-16">
-            <h1 className="text-6xl md:text-8xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-6">
+        <div className="relative max-w-7xl mx-auto px-4 py-12 sm:py-16 lg:py-20">
+          <div className="text-center mb-12 lg:mb-16">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl xl:text-8xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-4 lg:mb-6">
               Nuestro Pulso
-              <span className="block text-4xl md:text-5xl mt-4">Quantum Platform</span>
+              <span className="block text-3xl sm:text-4xl lg:text-5xl mt-2 lg:mt-4">Quantum Platform</span>
             </h1>
-            <p className="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl lg:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed px-4">
               La primera plataforma de participación cívica con IA cuántica, integración cross-platform 
               en tiempo real, y experiencias inmersivas que redefinen la democracia digital.
             </p>
           </div>
 
           {/* Real-Time Metrics Dashboard */}
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4 mb-16">
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 text-center border border-cyan-500/30">
-              <div className="text-2xl font-bold text-cyan-400">{realTimeMetrics.aiInteractions.toLocaleString()}</div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-3 sm:gap-4 mb-12 lg:mb-16">
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border border-cyan-500/30">
+              <div className="text-lg sm:text-2xl font-bold text-cyan-400">{realTimeMetrics.aiInteractions.toLocaleString()}</div>
               <div className="text-xs text-slate-300">IA Interacciones</div>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 text-center border border-green-500/30">
-              <div className="text-2xl font-bold text-green-400">{realTimeMetrics.activeUsers.toLocaleString()}</div>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border border-green-500/30">
+              <div className="text-lg sm:text-2xl font-bold text-green-400">{realTimeMetrics.activeUsers.toLocaleString()}</div>
               <div className="text-xs text-slate-300">Usuarios Activos</div>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 text-center border border-yellow-500/30">
-              <div className="text-2xl font-bold text-yellow-400">{realTimeMetrics.factChecksToday.toLocaleString()}</div>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border border-yellow-500/30">
+              <div className="text-lg sm:text-2xl font-bold text-yellow-400">{realTimeMetrics.factChecksToday.toLocaleString()}</div>
               <div className="text-xs text-slate-300">Fact Checks Hoy</div>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 text-center border border-blue-500/30">
-              <div className="text-2xl font-bold text-blue-400">{realTimeMetrics.crossPlatformPosts.toLocaleString()}</div>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border border-blue-500/30">
+              <div className="text-lg sm:text-2xl font-bold text-blue-400">{realTimeMetrics.crossPlatformPosts.toLocaleString()}</div>
               <div className="text-xs text-slate-300">Posts Cross-Platform</div>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 text-center border border-red-500/30">
-              <div className="text-2xl font-bold text-red-400">{realTimeMetrics.realTimeReels.toLocaleString()}</div>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border border-red-500/30">
+              <div className="text-lg sm:text-2xl font-bold text-red-400">{realTimeMetrics.realTimeReels.toLocaleString()}</div>
               <div className="text-xs text-slate-300">Reels en Tiempo Real</div>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 text-center border border-purple-500/30">
-              <div className="text-2xl font-bold text-purple-400">{realTimeMetrics.quantumComputations.toLocaleString()}</div>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border border-purple-500/30">
+              <div className="text-lg sm:text-2xl font-bold text-purple-400">{realTimeMetrics.quantumComputations.toLocaleString()}</div>
               <div className="text-xs text-slate-300">Computaciones Cuánticas</div>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 text-center border border-pink-500/30">
-              <div className="text-2xl font-bold text-pink-400">{realTimeMetrics.globalSentiment.toFixed(1)}%</div>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border border-pink-500/30">
+              <div className="text-lg sm:text-2xl font-bold text-pink-400">{realTimeMetrics.globalSentiment.toFixed(1)}%</div>
               <div className="text-xs text-slate-300">Sentimiento Global</div>
             </div>
-            <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 text-center border border-orange-500/30">
-              <div className="text-2xl font-bold text-orange-400">{realTimeMetrics.civicActions.toLocaleString()}</div>
+            <div className="bg-slate-800/50 backdrop-blur-sm rounded-lg sm:rounded-xl p-3 sm:p-4 text-center border border-orange-500/30">
+              <div className="text-lg sm:text-2xl font-bold text-orange-400">{realTimeMetrics.civicActions.toLocaleString()}</div>
               <div className="text-xs text-slate-300">Acciones Cívicas</div>
             </div>
           </div>
 
           {/* Voice Control Status */}
           {(isListening || capabilities.speechRecognition) && (
-            <div className="flex justify-center mb-8">
-              <div className={`px-6 py-3 rounded-full text-lg font-semibold shadow-xl transition-all flex items-center gap-3 ${
+            <div className="flex justify-center mb-6 lg:mb-8">
+              <div className={`px-4 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-lg font-semibold shadow-xl transition-all flex items-center gap-2 sm:gap-3 ${
                 isListening 
                   ? 'bg-gradient-to-r from-red-600 to-pink-600 text-white animate-pulse shadow-red-500/50' 
                   : 'bg-gradient-to-r from-slate-700 to-slate-600 text-slate-200'
               }`}>
-                {isListening ? <FaMicrophone className="animate-pulse" /> : <FaMicrophoneSlash />}
-                {isListening ? '🎙️ Escuchando comandos de voz...' : '🤖 IA Multi-Modal Activa'}
+                {isListening ? <FaMicrophone className="animate-pulse text-sm sm:text-base" /> : <FaMicrophoneSlash className="text-sm sm:text-base" />}
+                <span className="hidden sm:inline">
+                  {isListening ? '🎙️ Escuchando comandos de voz...' : '🤖 IA Multi-Modal Activa'}
+                </span>
+                <span className="sm:hidden">
+                  {isListening ? '🎙️ Escuchando...' : '🤖 IA Activa'}
+                </span>
               </div>
             </div>
           )}
@@ -338,13 +343,13 @@ const QuantumWorldClassHomepage: React.FC<QuantumWorldClassHomepageProps> = ({ o
       </div>
 
       {/* Feature Categories */}
-      <div className="max-w-7xl mx-auto px-4 mb-12">
-        <div className="flex flex-wrap justify-center gap-4">
+      <div className="max-w-7xl mx-auto px-4 mb-8 lg:mb-12">
+        <div className="flex flex-wrap justify-center gap-2 sm:gap-4">
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => setActiveCategory(category.id)}
-              className={`px-6 py-3 rounded-full font-semibold transition-all duration-300 ${
+              className={`px-3 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-base font-semibold transition-all duration-300 ${
                 activeCategory === category.id
                   ? 'bg-gradient-to-r from-cyan-600 to-purple-600 text-white shadow-lg transform scale-105'
                   : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-600'
@@ -357,47 +362,58 @@ const QuantumWorldClassHomepage: React.FC<QuantumWorldClassHomepageProps> = ({ o
       </div>
 
       {/* Quantum Features Grid */}
-      <div className="max-w-7xl mx-auto px-4 pb-20">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="max-w-7xl mx-auto px-4 pb-16 lg:pb-20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {filteredFeatures.map((feature) => (
             <div
               key={feature.id}
               onClick={() => handleFeatureClick(feature)}
-              className="group relative bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl border border-slate-700/50 hover:border-cyan-500/50"
+              className="group relative bg-slate-800/50 backdrop-blur-sm rounded-xl lg:rounded-2xl p-4 sm:p-6 cursor-pointer transition-all duration-300 hover:transform hover:scale-105 hover:shadow-2xl border border-slate-700/50 hover:border-cyan-500/50 min-h-[200px] flex flex-col justify-between"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  handleFeatureClick(feature);
+                }
+              }}
+              aria-label={`${feature.title}: ${feature.description}`}
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-2xl transition-opacity duration-300`}></div>
+              <div className={`absolute inset-0 bg-gradient-to-br ${feature.gradient} opacity-0 group-hover:opacity-10 rounded-xl lg:rounded-2xl transition-opacity duration-300`}></div>
               
-              <div className="relative">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="text-4xl">{feature.icon}</div>
+              <div className="relative flex-1">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="text-2xl sm:text-3xl lg:text-4xl">{feature.icon}</div>
                   {getStatusBadge(feature.status)}
                 </div>
                 
-                <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-300 transition-colors">
+                <h3 className="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3 group-hover:text-cyan-300 transition-colors">
                   {feature.title}
                 </h3>
                 
-                <p className="text-slate-300 mb-4 leading-relaxed">
+                <p className="text-sm sm:text-base text-slate-300 mb-3 sm:mb-4 leading-relaxed">
                   {feature.description}
                 </p>
+              </div>
                 
+              <div className="relative">
                 {feature.status === 'live' && (
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <FaHeart className="text-red-400" />
-                      <span className="text-sm text-slate-400">{feature.engagement}% engagement</span>
+                      <FaHeart className="text-red-400 text-sm" />
+                      <span className="text-xs sm:text-sm text-slate-400">{feature.engagement}% engagement</span>
                     </div>
-                    <FaBolt className="text-yellow-400 group-hover:animate-bounce" />
+                    <FaBolt className="text-yellow-400 group-hover:animate-bounce text-sm" />
                   </div>
                 )}
                 
                 {feature.status === 'quantum' && (
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <FaAtom className="text-cyan-400 animate-spin" />
-                      <span className="text-sm text-cyan-300">Quantum-Powered</span>
+                      <FaAtom className="text-cyan-400 animate-spin text-sm" />
+                      <span className="text-xs sm:text-sm text-cyan-300">Quantum-Powered</span>
                     </div>
-                    <FaMagic className="text-purple-400 group-hover:animate-pulse" />
+                    <FaMagic className="text-purple-400 group-hover:animate-pulse text-sm" />
                   </div>
                 )}
               </div>
@@ -407,12 +423,12 @@ const QuantumWorldClassHomepage: React.FC<QuantumWorldClassHomepageProps> = ({ o
       </div>
 
       {/* Global Trend Map Section */}
-      <div id="trend-map" className="max-w-7xl mx-auto px-4 pb-20">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-4">
+      <div id="trend-map" className="max-w-7xl mx-auto px-4 pb-16 lg:pb-20">
+        <div className="text-center mb-8 lg:mb-12">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-3 lg:mb-4">
             🌍 Tendencias Globales en Tiempo Real
           </h2>
-          <p className="text-xl text-slate-300">
+          <p className="text-base sm:text-lg lg:text-xl text-slate-300 px-4">
             Visualización interactiva de la actividad cívica y política en Colombia
           </p>
         </div>
@@ -421,20 +437,21 @@ const QuantumWorldClassHomepage: React.FC<QuantumWorldClassHomepageProps> = ({ o
 
       {/* Copilot Ultra Modal */}
       {showCopilot && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-900 rounded-2xl max-w-4xl w-full max-h-[80vh] overflow-hidden border border-cyan-500/30">
-            <div className="flex items-center justify-between p-6 border-b border-slate-700">
-              <h3 className="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-2 sm:p-4">
+          <div className="bg-slate-900 rounded-xl lg:rounded-2xl max-w-4xl w-full max-h-[90vh] sm:max-h-[80vh] overflow-hidden border border-cyan-500/30">
+            <div className="flex items-center justify-between p-4 sm:p-6 border-b border-slate-700">
+              <h3 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
                 🧠 Copilot Ultra Sentient
               </h3>
               <button
                 onClick={() => setShowCopilot(false)}
-                className="text-slate-400 hover:text-white text-2xl"
+                className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                aria-label="Cerrar Copilot"
               >
-                ×
+                ✕
               </button>
             </div>
-            <div className="h-96">
+            <div className="p-4 sm:p-6 overflow-y-auto max-h-[calc(90vh-80px)] sm:max-h-[calc(80vh-80px)]">
               <CopilotUltra />
             </div>
           </div>
