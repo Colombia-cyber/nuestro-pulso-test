@@ -1,5 +1,6 @@
 import React, { useState, Suspense, useEffect } from "react";
 import Navbar from "./components/Navbar";
+import CentralSearchBar from "./components/CentralSearchBar";
 import HeroSection from "./components/HeroSection";
 import ModernHomepage from "./components/ModernHomepage";
 import WorldClassHomepage from "./components/WorldClassHomepage";
@@ -106,6 +107,10 @@ function App() {
     }
   };
 
+  const shouldShowCentralSearch = () => {
+    return ['home', 'feeds', 'news', 'reels', 'search', 'debates', 'surveys', 'encuestas', 'tendencias', 'global-tendencias'].includes(currentView);
+  };
+
   const handleRetry = () => {
     setError(null);
     setIsLoading(true);
@@ -204,6 +209,12 @@ function App() {
   return (
     <div>
       <Navbar onNavigate={handleNavigate} currentView={currentView} />
+      
+      {/* Central Search Bar - shown on main pages */}
+      {shouldShowCentralSearch() && !isLoading && !error && (
+        <CentralSearchBar onNavigate={handleNavigate} />
+      )}
+      
       {/* Multi-modal Status Indicator */}
       {(isListening || capabilities.speechRecognition) && (
         <div className="fixed top-20 right-4 z-50">
@@ -216,7 +227,7 @@ function App() {
           </div>
         </div>
       )}
-      <div className="pt-20">
+      <div className={shouldShowCentralSearch() ? 'pt-20' : 'pt-20'}>
         <Suspense fallback={<LoadingSpinner />}>
           {renderCurrentView()}
         </Suspense>

@@ -74,24 +74,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
               </div>
             </div>
 
-            {/* Desktop Search Bar */}
-            <div className="hidden lg:flex flex-1 max-w-2xl mx-8">
-              <div className="relative w-full">
-                <UniversalSearchBar 
-                  onSearch={(query, category, topic) => {
-                    // Navigate to search with parameters
-                    const params = new URLSearchParams();
-                    params.set('q', query);
-                    params.set('category', category);
-                    if (topic) params.set('topic', topic.id);
-                    window.history.pushState(null, '', `/search?${params.toString()}`);
-                    handleNavClick('search');
-                  }}
-                  onTopicSelect={(topic) => console.log('Topic selected:', topic)}
-                  className="scale-75 origin-left"
-                />
-              </div>
-            </div>
+            {/* Spacer for better logo positioning */}
+            <div className="hidden lg:flex flex-1"></div>
             
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1 xl:gap-2">
