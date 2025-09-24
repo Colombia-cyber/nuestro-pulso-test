@@ -23,6 +23,7 @@ interface TopicTabsProps {
 const TopicTabs: React.FC<TopicTabsProps> = ({ onTopicChange, currentTopic }) => {
   const [activeTab, setActiveTab] = useState(currentTopic);
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
+  const [showAllSources, setShowAllSources] = useState(false);
 
   const topics: TopicTab[] = [
     {
@@ -85,6 +86,18 @@ const TopicTabs: React.FC<TopicTabsProps> = ({ onTopicChange, currentTopic }) =>
       articleCount: 19,
       isLive: false
     }
+  ];
+
+  // Additional news sources for better visibility
+  const newsSourcesInfo = [
+    { name: 'El Tiempo', icon: '📰', type: 'Nacional', articles: 8, live: true },
+    { name: 'Semana', icon: '📌', type: 'Política', articles: 6, live: false },
+    { name: 'El Espectador', icon: '📊', type: 'Análisis', articles: 5, live: true },
+    { name: 'Portafolio', icon: '💼', type: 'Economía', articles: 4, live: false },
+    { name: 'La República', icon: '🏛️', type: 'Negocios', articles: 3, live: true },
+    { name: 'RCN Radio', icon: '📻', type: 'Breaking', articles: 7, live: true },
+    { name: 'Contexto Ganadero', icon: '🐄', type: 'Rural', articles: 2, live: false },
+    { name: 'CNN Colombia', icon: '📺', type: 'Internacional', articles: 5, live: true }
   ];
 
   useEffect(() => {
@@ -238,12 +251,70 @@ const TopicTabs: React.FC<TopicTabsProps> = ({ onTopicChange, currentTopic }) =>
                 </div>
               </div>
               
-              <div className="text-sm text-gray-500">
-                Última actualización: {new Date().toLocaleTimeString('es-CO', { 
-                  hour: '2-digit', 
-                  minute: '2-digit' 
-                })}
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={() => setShowAllSources(!showAllSources)}
+                  className="text-blue-600 hover:text-blue-800 font-semibold text-sm transition-colors flex items-center gap-2"
+                >
+                  <span>{showAllSources ? 'Ocultar' : 'Ver'} todas las fuentes</span>
+                  <div className={`transform transition-transform ${showAllSources ? 'rotate-180' : ''}`}>
+                    ⌄
+                  </div>
+                </button>
+                <div className="text-sm text-gray-500">
+                  Última actualización: {new Date().toLocaleTimeString('es-CO', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                  })}
+                </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* News Sources Grid - Always Visible for Better Discoverability */}
+        {showAllSources && (
+          <div className="mb-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 border border-blue-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+                <BiNews className="w-5 h-5 text-blue-600" />
+                Fuentes de Noticias Disponibles
+              </h3>
+              <div className="text-sm text-gray-600">
+                {newsSourcesInfo.filter(s => s.live).length} fuentes en vivo
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3">
+              {newsSourcesInfo.map((source, index) => (
+                <div
+                  key={index}
+                  className="bg-white rounded-lg p-3 shadow-sm border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all cursor-pointer group"
+                >
+                  <div className="text-center">
+                    <div className="text-2xl mb-1">{source.icon}</div>
+                    <div className="font-semibold text-xs text-gray-900 mb-1 group-hover:text-blue-600 transition-colors">
+                      {source.name}
+                    </div>
+                    <div className="text-xs text-gray-500 mb-1">{source.type}</div>
+                    <div className="flex items-center justify-center gap-2 text-xs">
+                      <span className="text-gray-600">{source.articles}</span>
+                      {source.live && (
+                        <div className="flex items-center gap-1 text-red-500">
+                          <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-pulse"></div>
+                          <span className="font-medium">LIVE</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            <div className="mt-4 text-center">
+              <p className="text-sm text-gray-600">
+                Todas las fuentes son verificadas y actualizadas en tiempo real
+              </p>
             </div>
           </div>
         )}

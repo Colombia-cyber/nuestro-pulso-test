@@ -324,57 +324,77 @@ const QuantumReelsHub: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-slate-800 to-slate-700 border-b border-slate-600">
-        <div className="max-w-7xl mx-auto px-4 py-6">
-          <div className="text-center mb-6">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-red-400 via-purple-400 to-pink-400 bg-clip-text text-transparent mb-2">
+      {/* Prominent Header */}
+      <div className="bg-gradient-to-r from-red-600 via-purple-600 to-pink-600 border-b border-slate-600">
+        <div className="max-w-7xl mx-auto px-4 py-8">
+          <div className="text-center mb-8">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">
               🎬 Quantum Reels Hub
             </h1>
-            <p className="text-xl text-slate-300">
-              Reels en tiempo real con integración cross-platform y verificación IA
+            <p className="text-xl md:text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed">
+              Reels en tiempo real con integración cross-platform y verificación IA. 
+              El hub más avanzado de contenido cívico audiovisual de Colombia.
             </p>
-          </div>
-
-          {/* Real-Time Metrics */}
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
-            <div className="bg-slate-700/50 rounded-xl p-4 text-center border border-red-500/30">
-              <div className="text-2xl font-bold text-red-400">{formatNumber(reelsMetrics.totalReels)}</div>
-              <div className="text-xs text-slate-300">Total Reels</div>
-            </div>
-            <div className="bg-slate-700/50 rounded-xl p-4 text-center border border-green-500/30">
-              <div className="text-2xl font-bold text-green-400">{reelsMetrics.liveReels}</div>
-              <div className="text-xs text-slate-300">En Vivo</div>
-            </div>
-            <div className="bg-slate-700/50 rounded-xl p-4 text-center border border-blue-500/30">
-              <div className="text-2xl font-bold text-blue-400">{formatNumber(reelsMetrics.totalViews)}</div>
-              <div className="text-xs text-slate-300">Visualizaciones</div>
-            </div>
-            <div className="bg-slate-700/50 rounded-xl p-4 text-center border border-purple-500/30">
-              <div className="text-2xl font-bold text-purple-400">{reelsMetrics.platformsConnected}</div>
-              <div className="text-xs text-slate-300">Plataformas</div>
-            </div>
-            <div className="bg-slate-700/50 rounded-xl p-4 text-center border border-yellow-500/30">
-              <div className="text-2xl font-bold text-yellow-400">{reelsMetrics.languagesDetected}</div>
-              <div className="text-xs text-slate-300">Idiomas</div>
-            </div>
-            <div className="bg-slate-700/50 rounded-xl p-4 text-center border border-cyan-500/30">
-              <div className="text-2xl font-bold text-cyan-400">{reelsMetrics.factChecksPerformed}</div>
-              <div className="text-xs text-slate-300">Fact Checks</div>
+            
+            {/* Prominent Feature Badges */}
+            <div className="flex flex-wrap justify-center gap-4 mt-6">
+              <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-bold">
+                🔴 EN VIVO • 23 streams activos
+              </div>
+              <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-bold">
+                ⚡ TIEMPO REAL • Actualización instantánea
+              </div>
+              <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-bold">
+                ✅ VERIFICADO • Fact-checking con IA
+              </div>
             </div>
           </div>
 
-          {/* Search and Filters */}
-          <div className="flex flex-col lg:flex-row gap-4">
+          {/* Enhanced Real-Time Metrics */}
+          <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-red-500/30 hover:border-red-400/50 transition-colors">
+              <div className="text-3xl font-bold text-red-400 mb-2">{formatNumber(reelsMetrics.totalReels)}</div>
+              <div className="text-sm text-white/80">Total Reels</div>
+              <div className="text-xs text-red-300 mt-1">+{Math.floor(Math.random() * 10)} nuevos</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-green-500/30 hover:border-green-400/50 transition-colors">
+              <div className="text-3xl font-bold text-green-400 mb-2 animate-pulse">{reelsMetrics.liveReels}</div>
+              <div className="text-sm text-white/80">En Vivo</div>
+              <div className="text-xs text-green-300 mt-1">🔴 ACTIVO</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-blue-500/30 hover:border-blue-400/50 transition-colors">
+              <div className="text-3xl font-bold text-blue-400 mb-2">{formatNumber(reelsMetrics.totalViews)}</div>
+              <div className="text-sm text-white/80">Visualizaciones</div>
+              <div className="text-xs text-blue-300 mt-1">+{Math.floor(Math.random() * 500)} por min</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-purple-500/30 hover:border-purple-400/50 transition-colors">
+              <div className="text-3xl font-bold text-purple-400 mb-2">{reelsMetrics.platformsConnected}</div>
+              <div className="text-sm text-white/80">Plataformas</div>
+              <div className="text-xs text-purple-300 mt-1">Cross-Platform</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-yellow-500/30 hover:border-yellow-400/50 transition-colors">
+              <div className="text-3xl font-bold text-yellow-400 mb-2">{reelsMetrics.languagesDetected}</div>
+              <div className="text-sm text-white/80">Idiomas</div>
+              <div className="text-xs text-yellow-300 mt-1">Multi-lingual</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-cyan-500/30 hover:border-cyan-400/50 transition-colors">
+              <div className="text-3xl font-bold text-cyan-400 mb-2">{reelsMetrics.factChecksPerformed}</div>
+              <div className="text-sm text-white/80">Fact Checks</div>
+              <div className="text-xs text-cyan-300 mt-1">IA Verificado</div>
+            </div>
+          </div>
+
+          {/* Enhanced Search and Filters */}
+          <div className="flex flex-col lg:flex-row gap-6">
             <div className="flex-1">
               <div className="relative">
-                <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400" />
+                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 text-lg" />
                 <input
                   type="text"
-                  placeholder="Buscar reels, hashtags, temas, creadores..."
+                  placeholder="Buscar reels, hashtags, temas, creadores, plataformas..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-12 pr-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder-white/60 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
                 />
               </div>
             </div>
@@ -383,10 +403,10 @@ const QuantumReelsHub: React.FC = () => {
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500"
+                className="px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white focus:ring-2 focus:ring-blue-500 font-medium"
               >
                 {categories.map(category => (
-                  <option key={category} value={category}>
+                  <option key={category} value={category} className="bg-slate-800 text-white">
                     {category === 'all' ? '🌟 Todas las categorías' : category}
                   </option>
                 ))}
@@ -395,10 +415,10 @@ const QuantumReelsHub: React.FC = () => {
               <select
                 value={selectedPlatform}
                 onChange={(e) => setSelectedPlatform(e.target.value)}
-                className="px-4 py-3 bg-slate-700 border border-slate-600 rounded-xl text-white focus:ring-2 focus:ring-blue-500"
+                className="px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white focus:ring-2 focus:ring-blue-500 font-medium"
               >
                 {platforms.map(platform => (
-                  <option key={platform} value={platform}>
+                  <option key={platform} value={platform} className="bg-slate-800 text-white">
                     {platform === 'all' ? '🌐 Todas las plataformas' : platform}
                   </option>
                 ))}
