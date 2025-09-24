@@ -4,6 +4,8 @@ import { BiTrendingUp, BiNews, BiCategory } from 'react-icons/bi';
 import { MdVerified, MdUpdate, MdTimeline } from 'react-icons/md';
 import { IoMdTime } from 'react-icons/io';
 import EnhancedNewsCard from './EnhancedNewsCard';
+import ModernNewsGrid from './ModernNewsGrid';
+import ModernNewsSidebar from './ModernNewsSidebar';
 import TimelineView from './TimelineView';
 import { NewsItem, NewsFilter, CategoryCard } from '../types/news';
 import { newsService } from '../services/newsService';
@@ -22,7 +24,7 @@ interface LiveStats {
 
 const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'colombia-news' }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'feed' | 'timeline' | 'categories'>('feed');
+  const [viewMode, setViewMode] = useState<'modern' | 'feed' | 'timeline' | 'categories'>('modern');
   const [newsData, setNewsData] = useState<NewsItem[]>([]);
   const [timelineData, setTimelineData] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -228,6 +230,16 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
     }
   };
 
+  const handleVideoPlay = (newsItem: NewsItem) => {
+    console.log('Playing video for:', newsItem.title);
+    // Handle video play logic here
+  };
+
+  const handleVideoClick = (videoId: string) => {
+    console.log('Playing video with ID:', videoId);
+    // Handle video click logic here
+  };
+
   const handleFilterChange = (newFilter: Partial<NewsFilter>) => {
     setFilter(prev => ({ ...prev, ...newFilter }));
     setPage(1);
@@ -327,6 +339,17 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
 
               {/* View Mode Toggle */}
               <div className="flex bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-1">
+                <button
+                  onClick={() => setViewMode('modern')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                    viewMode === 'modern'
+                      ? 'bg-colombia-blue text-white shadow-lg'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                  }`}
+                >
+                  <FaFire className="w-3 h-3" />
+                  Moderno
+                </button>
                 <button
                   onClick={() => setViewMode('feed')}
                   className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
@@ -462,6 +485,29 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
             </div>
           ) : (
             <>
+              {viewMode === 'modern' && (
+                <div className="flex gap-6">
+                  <div className="flex-1">
+                    <ModernNewsGrid
+                      newsData={filteredNews}
+                      isLoading={false}
+                      searchQuery={searchQuery}
+                      onSearchChange={setSearchQuery}
+                      onArticleClick={handleNewsClick}
+                      onVideoPlay={handleVideoPlay}
+                    />
+                  </div>
+                  <div className="hidden lg:block w-80 flex-shrink-0">
+                    <ModernNewsSidebar
+                      recentNews={filteredNews}
+                      onArticleClick={handleNewsClick}
+                      onTopicClick={(topic) => setSearchQuery(topic)}
+                      onVideoClick={handleVideoClick}
+                    />
+                  </div>
+                </div>
+              )}
+
               {viewMode === 'feed' && (
                 <div className="space-y-6">
                   {/* Trending Section */}
