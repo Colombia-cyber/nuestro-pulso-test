@@ -26,6 +26,7 @@ import Debate from "./components/Debate";
 import Survey from "./components/Survey";
 import TopicTabs from "./components/TopicTabs";
 import ElTiempoOpinionFeed from "./components/ElTiempoOpinionFeed";
+import GlobalTendenciasRealtime from "./components/GlobalTendenciasRealtime.jsx";
 import { useMultiModalNavigation } from "./services/multiModalNavigation";
 
 // Import modern styles
@@ -165,6 +166,9 @@ function App() {
           return <RightWingPage onNavigate={handleNavigate} />;
         case 'eltiempo-opinion':
           return <ElTiempoOpinionFeed />;
+        case 'tendencias':
+        case 'global-tendencias':
+          return <GlobalTendenciasRealtime />;
         case 'home':
         default:
           return <QuantumWorldClassHomepage onNavigate={handleNavigate} />;
@@ -191,6 +195,8 @@ function App() {
       'colombia-hub': 'Cargando Colombia News Hub...',
       'colombia-news': 'Cargando Colombia News Hub...',
       'search': 'Preparando búsqueda...',
+      'tendencias': 'Cargando tendencias globales...',
+      'global-tendencias': 'Cargando tendencias globales...',
     };
     return messages[view] || 'Cargando contenido...';
   };
