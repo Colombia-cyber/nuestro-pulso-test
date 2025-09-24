@@ -4,7 +4,8 @@ import { BiTrendingUp, BiNews, BiCategory } from 'react-icons/bi';
 import { MdVerified, MdUpdate, MdTimeline } from 'react-icons/md';
 import { IoMdTime } from 'react-icons/io';
 import EnhancedNewsCard from './EnhancedNewsCard';
-import ColombianNewsTabs, { COLOMBIAN_NEWS_SOURCES, ColombianNewsSource } from './ColombianNewsTabs';
+import ColombianNewsTabs from './ColombianNewsTabs';
+import { COLOMBIAN_NEWS_SOURCES, ColombianNewsSource } from '../config/colombianNewsSources';
 import { NewsItem, NewsFilter, CategoryCard } from '../types/news';
 import { newsService } from '../services/newsService';
 
@@ -56,7 +57,7 @@ const EnhancedColombianNewsFeed: React.FC<EnhancedColombianNewsFeedProps> = ({
   // Debounced search handler
   const debouncedSearch = useCallback(
     (() => {
-      let timeoutId: NodeJS.Timeout;
+      let timeoutId: ReturnType<typeof setTimeout>;
       return (query: string) => {
         clearTimeout(timeoutId);
         timeoutId = setTimeout(() => {
