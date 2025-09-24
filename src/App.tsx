@@ -1,4 +1,5 @@
 import React, { useState, Suspense, useEffect } from "react";
+import { API_CONFIG, isTrendsApiConfigured } from "./config/api";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import ModernHomepage from "./components/ModernHomepage";
@@ -73,6 +74,14 @@ function App() {
 
   // Initialize multi-modal navigation
   const { isListening, capabilities } = useMultiModalNavigation(handleNavigate);
+
+  // Log API configuration on startup
+  useEffect(() => {
+    console.log('Nuestro Pulso - API Configuration:', {
+      trendsApiUrl: API_CONFIG.TRENDS_API,
+      trendsApiConfigured: isTrendsApiConfigured(),
+    });
+  }, []);
 
   // Listen for custom navigation events
   useEffect(() => {
