@@ -17,6 +17,28 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     line-height: 1.6;
+    /* Prevent layout jumps */
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    /* Improve touch interaction */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* Improve touch targets */
+  button, [role="button"], a {
+    min-height: 44px;
+    min-width: 44px;
+    touch-action: manipulation;
+  }
+
+  /* Prevent zoom on inputs */
+  input[type="text"], 
+  input[type="email"], 
+  input[type="password"], 
+  input[type="search"],
+  textarea {
+    font-size: 16px;
   }
 
   /* Custom scrollbar */
@@ -212,6 +234,29 @@
 
   .backface-hidden {
     backface-visibility: hidden;
+  }
+
+  /* Mobile-specific optimizations */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
+  .safe-area-inset {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Prevent content overflow */
+  .prevent-overflow {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: auto;
+  }
+
+  /* Smooth transitions for better mobile experience */
+  .smooth-transform {
+    will-change: transform;
+    transform: translateZ(0);
   }
 }
 
