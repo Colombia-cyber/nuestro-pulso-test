@@ -5,6 +5,7 @@ import ModernHomepage from "./components/ModernHomepage";
 import WorldClassHomepage from "./components/WorldClassHomepage";
 import QuantumWorldClassHomepage from "./components/QuantumWorldClassHomepage";
 import CustomNewsFeed from "./components/CustomNewsFeed";
+import ModernNewsFeed from "./components/ModernNewsFeed";
 import Comments from "./components/Comments";
 import ArticleComments from "./components/ArticleComments";
 import CommunityHub from "./pages/CommunityHub";
@@ -135,7 +136,7 @@ function App() {
                 onTopicChange={handleTopicChange} 
                 currentTopic={currentTopic} 
               />
-              <CustomNewsFeed topic={currentTopic} />
+              <ModernNewsFeed topic={currentTopic} onNavigate={handleNavigate} />
             </div>
           );
         case 'congress':

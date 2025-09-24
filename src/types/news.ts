@@ -31,6 +31,20 @@ export interface NewsItem {
   tags?: string[];
   shareUrl?: string;
   relatedArticles?: string[];
+  // New video and enhanced UI properties
+  videoUrl?: string;
+  videoThumbnail?: string;
+  videoDuration?: string;
+  viewCount?: number;
+  engagement?: {
+    likes?: number;
+    comments?: number;
+    shares?: number;
+  };
+  isVideoContent?: boolean;
+  isBreaking?: boolean;
+  importance?: 'high' | 'medium' | 'low';
+  location?: string;
 }
 
 export interface NewsArticle {
@@ -76,4 +90,38 @@ export interface NewsStats {
   conservativeCount: number;
   balancedCount: number;
   lastUpdated: Date;
+}
+
+// New types for enhanced UI features
+export interface TrendingSearch {
+  id: string;
+  query: string;
+  count: number;
+  trend: 'up' | 'down' | 'stable';
+  category?: string;
+}
+
+export interface RelatedSearch {
+  id: string;
+  query: string;
+  relevance: number;
+}
+
+export interface NewsLocation {
+  id: string;
+  name: string;
+  type: 'city' | 'region' | 'country';
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
+}
+
+export interface ModernNewsLayout {
+  mainStories: NewsItem[];
+  sidebarStories: NewsItem[];
+  trendingSearches: TrendingSearch[];
+  relatedSearches: RelatedSearch[];
+  peopleAlsoSearched: string[];
+  topicCategories: CategoryCard[];
 }
