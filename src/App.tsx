@@ -1,4 +1,4 @@
-import React, { useState, Suspense, useEffect } from "react";
+import React, { useState, Suspense, useEffect, useMemo, useCallback, lazy } from "react";
 import Navbar from "./components/Navbar";
 import HeroSection from "./components/HeroSection";
 import ModernHomepage from "./components/ModernHomepage";
@@ -7,26 +7,28 @@ import QuantumWorldClassHomepage from "./components/QuantumWorldClassHomepage";
 import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import ArticleComments from "./components/ArticleComments";
-import CommunityHub from "./pages/CommunityHub";
-import CrossPlatformCommunityHub from "./components/CrossPlatformCommunityHub";
-import QuantumCommunityHub from "./components/QuantumCommunityHub";
-import ColombiaNewsHub from "./components/ColombiaNewsHub";
-import SearchPage from "./pages/Search";
-import EnhancedSearchPage from "./pages/EnhancedSearch";
-import LeftWingPage from "./pages/LeftWing";
-import RightWingPage from "./pages/RightWing";
-import ModernSearchEngine from "./components/ModernSearchEngine";
-import PulseReels from "./components/PulseReels";
-import EnhancedPulseReels from "./components/EnhancedPulseReels";
-import QuantumReelsHub from "./components/QuantumReelsHub";
-import CongressTracker from "./components/CongressTracker";
-import ElectionHub from "./components/ElectionHub";
-import LiveChat from "./components/LiveChat";
-import Debate from "./components/Debate";
-import Survey from "./components/Survey";
 import TopicTabs from "./components/TopicTabs";
 import ElTiempoOpinionFeed from "./components/ElTiempoOpinionFeed";
 import { useMultiModalNavigation } from "./services/multiModalNavigation";
+
+// Lazy load heavy components for better performance
+const CommunityHub = lazy(() => import("./pages/CommunityHub"));
+const CrossPlatformCommunityHub = lazy(() => import("./components/CrossPlatformCommunityHub"));
+const QuantumCommunityHub = lazy(() => import("./components/QuantumCommunityHub"));
+const ColombiaNewsHub = lazy(() => import("./components/ColombiaNewsHub"));
+const SearchPage = lazy(() => import("./pages/Search"));
+const EnhancedSearchPage = lazy(() => import("./pages/EnhancedSearch"));
+const LeftWingPage = lazy(() => import("./pages/LeftWing"));
+const RightWingPage = lazy(() => import("./pages/RightWing"));
+const ModernSearchEngine = lazy(() => import("./components/ModernSearchEngine"));
+const PulseReels = lazy(() => import("./components/PulseReels"));
+const EnhancedPulseReels = lazy(() => import("./components/EnhancedPulseReels"));
+const QuantumReelsHub = lazy(() => import("./components/QuantumReelsHub"));
+const CongressTracker = lazy(() => import("./components/CongressTracker"));
+const ElectionHub = lazy(() => import("./components/ElectionHub"));
+const LiveChat = lazy(() => import("./components/LiveChat"));
+const Debate = lazy(() => import("./components/Debate"));
+const Survey = lazy(() => import("./components/Survey"));
 
 // Import modern styles
 import "./styles/modern.css";
@@ -70,6 +72,24 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const handleNavigate = useCallback((view: string) => {
+    // Prevent redundant navigation
+    if (currentView === view) return;
+    
+    setError(null);
+    setCurrentView(view);
+    
+    // Only show loading for heavy components
+    const heavyComponents = ['feeds', 'news', 'search', 'community-hub', 'reels'];
+    if (heavyComponents.includes(view)) {
+      setIsLoading(true);
+      // Use requestAnimationFrame for better performance
+      requestAnimationFrame(() => {
+        setIsLoading(false);
+      });
+    }
+  }, [currentView]);
+
   // Initialize multi-modal navigation
   const { isListening, capabilities } = useMultiModalNavigation(handleNavigate);
 
@@ -84,36 +104,26 @@ function App() {
     return () => {
       window.removeEventListener('navigate' as any, handleCustomNavigation);
     };
-  }, []);
+  }, [handleNavigate]);
 
-  function handleNavigate(view: string) {
-    setIsLoading(true);
-    setError(null);
+  const handleTopicChange = useCallback((topicId: string) => {
+    // Prevent redundant topic changes
+    if (currentTopic === topicId) return;
     
-    // Simulate loading delay for better UX
-    setTimeout(() => {
-      setCurrentView(view);
-      setIsLoading(false);
-    }, 300);
-  }
-
-  const handleTopicChange = (topicId: string) => {
     setCurrentTopic(topicId);
-    // If we're not in feeds/news view, navigate there
+    // Only navigate if we're not already in a news/feeds view
     if (!['feeds', 'news'].includes(currentView)) {
       handleNavigate('feeds');
     }
-  };
+  }, [currentTopic, currentView, handleNavigate]);
 
-  const handleRetry = () => {
-    setError(null);
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 300);
-  };
+  const handleRetry = useCallback(() => {
+    if (error) {
+      setError(null);
+    }
+  }, [error]);
 
-  const renderCurrentView = () => {
+  const renderCurrentView = useMemo(() => {
     if (isLoading) {
       return <LoadingSpinner message={getLoadingMessage(currentView)} />;
     }
@@ -173,9 +183,9 @@ function App() {
       setError(err instanceof Error ? err.message : 'Error desconocido');
       return <ErrorFallback error={error || undefined} onRetry={handleRetry} />;
     }
-  };
+  }, [currentView, currentTopic, isLoading, error, handleNavigate, handleTopicChange, handleRetry]);
 
-  const getLoadingMessage = (view: string): string => {
+  const getLoadingMessage = useCallback((view: string): string => {
     const messages: Record<string, string> = {
       'reels': 'Cargando Reels...',
       'feeds': 'Cargando noticias...',
@@ -193,7 +203,7 @@ function App() {
       'search': 'Preparando búsqueda...',
     };
     return messages[view] || 'Cargando contenido...';
-  };
+  }, []);
 
   return (
     <div>
@@ -212,7 +222,7 @@ function App() {
       )}
       <div className="pt-20">
         <Suspense fallback={<LoadingSpinner />}>
-          {renderCurrentView()}
+          {renderCurrentView}
         </Suspense>
       </div>
     </div>
