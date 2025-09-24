@@ -97,27 +97,38 @@ const TopicTabs: React.FC<TopicTabsProps> = ({ onTopicChange, currentTopic }) =>
   };
 
   return (
-    <div className="w-full bg-white shadow-lg sticky top-20 z-40 border-b border-gray-200">
+    <div className="w-full bg-gradient-to-r from-slate-50 to-blue-50 shadow-xl sticky top-20 z-40 border-b border-blue-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Mobile Horizontal Scroll */}
+        {/* Header */}
+        <div className="text-center py-4 border-b border-blue-200/50">
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+            📰 Fuentes de Noticias
+          </h2>
+          <p className="text-gray-600 text-sm mt-1">
+            Selecciona tu fuente preferida - Todas las perspectivas disponibles
+          </p>
+        </div>
+
+        {/* Mobile Horizontal Scroll - Enhanced */}
         <div className="lg:hidden">
-          <div className="flex overflow-x-auto pb-2 pt-4 gap-3 no-scrollbar">
+          <div className="flex overflow-x-auto pb-4 pt-4 gap-3 no-scrollbar">
             {topics.map((topic) => (
               <button
                 key={topic.id}
                 onClick={() => handleTabClick(topic.id)}
-                className={`flex-shrink-0 relative px-4 py-3 rounded-xl transition-all duration-300 min-w-[140px] ${
+                className={`flex-shrink-0 relative p-4 rounded-2xl transition-all duration-300 min-w-[160px] shadow-lg ${
                   activeTab === topic.id
-                    ? `bg-gradient-to-r ${topic.gradient} text-white shadow-lg transform scale-105`
-                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                    ? `bg-gradient-to-r ${topic.gradient} text-white shadow-xl transform scale-105 ring-2 ring-white`
+                    : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-xl hover:scale-102'
                 }`}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col items-center gap-2">
                   {topic.icon}
-                  <div className="text-left">
+                  <div className="text-center">
                     <div className="font-bold text-sm">{topic.title}</div>
-                    {topic.isLive && activeTab === topic.id && (
-                      <div className="flex items-center gap-1 text-xs opacity-90">
+                    <div className="text-xs opacity-80 line-clamp-2">{topic.description}</div>
+                    {topic.isLive && (
+                      <div className="flex items-center justify-center gap-1 text-xs mt-1">
                         <div className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse"></div>
                         EN VIVO
                       </div>
@@ -125,7 +136,7 @@ const TopicTabs: React.FC<TopicTabsProps> = ({ onTopicChange, currentTopic }) =>
                   </div>
                 </div>
                 {topic.articleCount && (
-                  <div className={`absolute -top-1 -right-1 px-1.5 py-0.5 text-xs font-bold rounded-full ${
+                  <div className={`absolute -top-2 -right-2 px-2 py-1 text-xs font-bold rounded-full shadow-md ${
                     activeTab === topic.id ? 'bg-white/20 text-white' : 'bg-red-500 text-white'
                   }`}>
                     {topic.articleCount}
@@ -136,16 +147,16 @@ const TopicTabs: React.FC<TopicTabsProps> = ({ onTopicChange, currentTopic }) =>
           </div>
         </div>
 
-        {/* Desktop Grid Layout */}
-        <div className="hidden lg:grid lg:grid-cols-6 gap-4 py-6">
+        {/* Desktop Grid Layout - Enhanced */}
+        <div className="hidden lg:grid lg:grid-cols-6 gap-6 py-8">
           {topics.map((topic) => (
             <button
               key={topic.id}
               onClick={() => handleTabClick(topic.id)}
               onMouseEnter={() => setHoveredTab(topic.id)}
               onMouseLeave={() => setHoveredTab(null)}
-              className={`relative group transition-all duration-500 transform hover:-translate-y-2 ${
-                activeTab === topic.id ? 'scale-105' : ''
+              className={`relative group transition-all duration-500 transform hover:-translate-y-3 hover:scale-105 ${
+                activeTab === topic.id ? 'scale-105 -translate-y-2' : ''
               }`}
             >
               <div className={`relative overflow-hidden rounded-2xl p-6 h-32 ${

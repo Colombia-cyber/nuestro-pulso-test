@@ -6,6 +6,7 @@ import {
 } from 'react-icons/fa';
 import AnimatedGlobalTrendMap from './AnimatedGlobalTrendMap';
 import CopilotUltra from './CopilotUltra';
+import UniversalSearchBar from './UniversalSearchBar';
 import { useMultiModalNavigation } from '../services/multiModalNavigation';
 import { useAIPersonalization } from '../services/aiPersonalization';
 
@@ -118,13 +119,13 @@ const QuantumWorldClassHomepage: React.FC<QuantumWorldClassHomepageProps> = ({ o
       category: 'community'
     },
 
-    // Reels & Content Features
+    // Reels & Content Features - FEATURED
     {
       id: 'real-time-reels',
       title: '🎬 Reels en Tiempo Real',
       description: 'Integración directa con APIs de YouTube, TikTok, Instagram - Solo datos reales',
       icon: <FaPlay className="text-red-400" />,
-      gradient: 'from-red-600 to-pink-600',
+      gradient: 'from-red-600 via-pink-500 to-orange-500',
       status: 'live',
       engagement: 91,
       category: 'reels'
@@ -334,6 +335,65 @@ const QuantumWorldClassHomepage: React.FC<QuantumWorldClassHomepageProps> = ({ o
               </div>
             </div>
           )}
+        </div>
+      </div>
+
+      {/* Central Search Section */}
+      <div className="max-w-7xl mx-auto px-4 mb-16">
+        <div className="bg-gradient-to-r from-slate-800/80 via-slate-700/80 to-slate-800/80 backdrop-blur-xl rounded-3xl p-8 border border-cyan-500/30 shadow-2xl">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent mb-4">
+              🔍 Búsqueda Universal Inteligente
+            </h2>
+            <p className="text-slate-300 text-lg">
+              Encuentra noticias, reels, debates y más en tiempo real con IA avanzada
+            </p>
+          </div>
+          
+          <div className="max-w-4xl mx-auto">
+            <UniversalSearchBar 
+              onSearch={(query, category, topic) => {
+                // Navigate to search with parameters
+                const params = new URLSearchParams();
+                params.set('q', query);
+                params.set('category', category);
+                if (topic) params.set('topic', topic.id);
+                window.history.pushState(null, '', `/search?${params.toString()}`);
+                onNavigate('search');
+              }}
+              onTopicSelect={(topic) => console.log('Topic selected:', topic)}
+              placeholder="Buscar noticias, reels, temas, debates en Colombia y el mundo..."
+              className="scale-110 transform"
+            />
+          </div>
+
+          {/* Quick Access Buttons */}
+          <div className="flex flex-wrap justify-center gap-4 mt-8">
+            <button 
+              onClick={() => onNavigate('reels')}
+              className="px-6 py-3 bg-gradient-to-r from-red-600 to-pink-600 text-white font-bold rounded-full hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
+            >
+              🎬 Reels Trending
+            </button>
+            <button 
+              onClick={() => onNavigate('feeds')}
+              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-cyan-600 text-white font-bold rounded-full hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
+            >
+              📰 Noticias
+            </button>
+            <button 
+              onClick={() => onNavigate('tendencias')}
+              className="px-6 py-3 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold rounded-full hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
+            >
+              🌍 Tendencias
+            </button>
+            <button 
+              onClick={() => onNavigate('debates')}
+              className="px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-full hover:scale-105 transition-all duration-300 shadow-lg flex items-center gap-2"
+            >
+              💬 Debates
+            </button>
+          </div>
         </div>
       </div>
 
