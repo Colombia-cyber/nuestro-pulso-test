@@ -31,6 +31,18 @@ export interface NewsItem {
   tags?: string[];
   shareUrl?: string;
   relatedArticles?: string[];
+  // Enhanced fields for YouTube/Google News style
+  viewCount?: number;
+  contentType?: 'article' | 'video' | 'live';
+  videoUrl?: string;
+  videoDuration?: string;
+  channelName?: string;
+  isLive?: boolean;
+  expandedSummary?: string;
+  relatedSearches?: string[];
+  relatedVideos?: string[];
+  thumbnailUrl?: string;
+  region?: 'colombia' | 'global';
 }
 
 export interface NewsArticle {

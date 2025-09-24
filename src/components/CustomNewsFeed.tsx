@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { FaFire, FaClock, FaEye, FaComment, FaShare, FaBookmark, FaFilter, FaSearch, FaTimes, FaChevronDown } from 'react-icons/fa';
+import { FaFire, FaClock, FaEye, FaComment, FaShare, FaBookmark, FaFilter, FaSearch, FaTimes, FaChevronDown, FaGlobe } from 'react-icons/fa';
 import { BiTrendingUp, BiNews, BiCategory } from 'react-icons/bi';
 import { MdVerified, MdUpdate, MdTimeline } from 'react-icons/md';
 import { IoMdTime } from 'react-icons/io';
-import EnhancedNewsCard from './EnhancedNewsCard';
+import ModernNewsCard from './ModernNewsCard';
+import VideoModal from './VideoModal';
 import TimelineView from './TimelineView';
 import { NewsItem, NewsFilter, CategoryCard } from '../types/news';
 import { newsService } from '../services/newsService';
@@ -32,6 +33,10 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  const [selectedVideoArticle, setSelectedVideoArticle] = useState<NewsItem | null>(null);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
+  const [regionFilter, setRegionFilter] = useState<'all' | 'colombia' | 'global'>('all');
+  const [contentTypeFilter, setContentTypeFilter] = useState<'all' | 'article' | 'video' | 'live'>('all');
   const [liveStats, setLiveStats] = useState<LiveStats>({
     totalArticles: 124,
     readingTime: 8,
@@ -228,8 +233,25 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
     }
   };
 
+  const handleVideoPlay = (newsItem: NewsItem) => {
+    setSelectedVideoArticle(newsItem);
+    setIsVideoModalOpen(true);
+  };
+
   const handleFilterChange = (newFilter: Partial<NewsFilter>) => {
     setFilter(prev => ({ ...prev, ...newFilter }));
+    setPage(1);
+    setHasMore(true);
+  };
+
+  const handleRegionFilterChange = (region: 'all' | 'colombia' | 'global') => {
+    setRegionFilter(region);
+    setPage(1);
+    setHasMore(true);
+  };
+
+  const handleContentTypeFilterChange = (type: 'all' | 'article' | 'video' | 'live') => {
+    setContentTypeFilter(type);
     setPage(1);
     setHasMore(true);
   };
@@ -238,6 +260,8 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
     setFilter({ timeRange: 'all', perspective: 'both' });
     setSelectedCategory(null);
     setSearchQuery('');
+    setRegionFilter('all');
+    setContentTypeFilter('all');
   };
 
   const formatTime = (date: Date) => {
@@ -255,10 +279,23 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
     return newsData.slice(0, 12);
   };
 
-  const filteredNews = newsData.filter(item => 
-    searchQuery ? item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                 item.summary.toLowerCase().includes(searchQuery.toLowerCase()) : true
-  );
+  const filteredNews = newsData.filter(item => {
+    // Search query filter
+    const matchesSearch = searchQuery ? 
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (item.tags && item.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))) ||
+      (typeof item.source === 'string' ? item.source : item.source.name).toLowerCase().includes(searchQuery.toLowerCase())
+      : true;
+    
+    // Region filter
+    const matchesRegion = regionFilter === 'all' || item.region === regionFilter;
+    
+    // Content type filter
+    const matchesContentType = contentTypeFilter === 'all' || item.contentType === contentTypeFilter;
+    
+    return matchesSearch && matchesRegion && matchesContentType;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -323,6 +360,85 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
                     </button>
                   )}
                 </div>
+              </div>
+
+              {/* Region Filter */}
+              <div className="flex bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-1">
+                <button
+                  onClick={() => handleRegionFilterChange('all')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                    regionFilter === 'all'
+                      ? 'bg-colombia-blue text-white shadow-lg'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                  }`}
+                >
+                  <FaGlobe className="w-3 h-3" />
+                  Todas
+                </button>
+                <button
+                  onClick={() => handleRegionFilterChange('colombia')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                    regionFilter === 'colombia'
+                      ? 'bg-colombia-blue text-white shadow-lg'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                  }`}
+                >
+                  🇨🇴 Colombia
+                </button>
+                <button
+                  onClick={() => handleRegionFilterChange('global')}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
+                    regionFilter === 'global'
+                      ? 'bg-colombia-blue text-white shadow-lg'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                  }`}
+                >
+                  🌍 Global
+                </button>
+              </div>
+
+              {/* Content Type Filter */}
+              <div className="flex bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-1">
+                <button
+                  onClick={() => handleContentTypeFilterChange('all')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    contentTypeFilter === 'all'
+                      ? 'bg-colombia-blue text-white shadow-lg'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                  }`}
+                >
+                  Todo
+                </button>
+                <button
+                  onClick={() => handleContentTypeFilterChange('article')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    contentTypeFilter === 'article'
+                      ? 'bg-colombia-blue text-white shadow-lg'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                  }`}
+                >
+                  📰 Artículos
+                </button>
+                <button
+                  onClick={() => handleContentTypeFilterChange('video')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    contentTypeFilter === 'video'
+                      ? 'bg-colombia-blue text-white shadow-lg'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                  }`}
+                >
+                  📹 Videos
+                </button>
+                <button
+                  onClick={() => handleContentTypeFilterChange('live')}
+                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                    contentTypeFilter === 'live'
+                      ? 'bg-colombia-blue text-white shadow-lg'
+                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
+                  }`}
+                >
+                  🔴 En Vivo
+                </button>
               </div>
 
               {/* View Mode Toggle */}
@@ -479,11 +595,12 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
                       
                       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {getTrendingNews().map((item) => (
-                          <EnhancedNewsCard
+                          <ModernNewsCard
                             key={item.id}
                             article={item}
-                            onArticleClick={() => handleNewsClick(item)}
-                            showPerspectiveBadge={true}
+                            onArticleClick={handleNewsClick}
+                            onVideoPlay={handleVideoPlay}
+                            showRelatedContent={true}
                           />
                         ))}
                       </div>
@@ -518,13 +635,15 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
                     </div>
 
                     {/* News Grid */}
-                    <div className="space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                       {filteredNews.map((item) => (
-                        <EnhancedNewsCard
+                        <ModernNewsCard
                           key={item.id}
                           article={item}
-                          onArticleClick={() => handleNewsClick(item)}
-                          showPerspectiveBadge={true}
+                          onArticleClick={handleNewsClick}
+                          onVideoPlay={handleVideoPlay}
+                          compact={false}
+                          showRelatedContent={true}
                         />
                       ))}
                     </div>
@@ -629,6 +748,16 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
           )}
         </div>
       </div>
+
+      {/* Video Modal */}
+      <VideoModal
+        article={selectedVideoArticle}
+        isOpen={isVideoModalOpen}
+        onClose={() => {
+          setIsVideoModalOpen(false);
+          setSelectedVideoArticle(null);
+        }}
+      />
     </div>
   );
 };
