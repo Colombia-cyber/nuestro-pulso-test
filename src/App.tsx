@@ -26,6 +26,7 @@ import Debate from "./components/Debate";
 import Survey from "./components/Survey";
 import TopicTabs from "./components/TopicTabs";
 import ElTiempoOpinionFeed from "./components/ElTiempoOpinionFeed";
+import EnhancedColombianNewsFeed from "./components/EnhancedColombianNewsFeed";
 import { useMultiModalNavigation } from "./services/multiModalNavigation";
 
 // Import modern styles
@@ -128,15 +129,7 @@ function App() {
           return <QuantumReelsHub />;
         case 'feeds':
         case 'news':
-          return (
-            <div>
-              <TopicTabs 
-                onTopicChange={handleTopicChange} 
-                currentTopic={currentTopic} 
-              />
-              <CustomNewsFeed topic={currentTopic} />
-            </div>
-          );
+          return <EnhancedColombianNewsFeed onNavigate={handleNavigate} />;
         case 'congress':
           return <CongressTracker />;
         case 'elections':

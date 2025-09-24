@@ -48,6 +48,44 @@
 
 /* Component styles */
 @layer components {
+  /* Colombian News Components */
+  .text-gradient-colombia {
+    @apply bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 bg-clip-text text-transparent;
+  }
+
+  .bg-colombia-blue {
+    @apply bg-blue-600;
+  }
+
+  .bg-colombia-blue-dark {
+    @apply bg-blue-700;
+  }
+
+  .text-colombia-blue {
+    @apply text-blue-600;
+  }
+
+  .text-colombia-blue-dark {
+    @apply text-blue-700;
+  }
+
+  .bg-colombia-yellow {
+    @apply bg-yellow-400;
+  }
+
+  .text-colombia-yellow {
+    @apply text-yellow-600;
+  }
+
+  /* Hide scrollbar but allow scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
   /* Glass morphism effect */
   .glass {
     @apply backdrop-blur-md bg-white/10 border border-white/20;

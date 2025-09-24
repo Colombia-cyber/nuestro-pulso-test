@@ -1,507 +1,329 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { FaNewspaper, FaExternalLinkAlt, FaCalendarAlt, FaSpinner, FaExclamationTriangle, FaSync } from 'react-icons/fa';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { FaFlag, FaGlobeAmericas, FaFire, FaClock, FaNewspaper, FaUsers } from 'react-icons/fa';
+import { MdSecurity, MdTrendingUp } from 'react-icons/md';
+import { BiNews } from 'react-icons/bi';
 
-// News source configuration
-interface NewsSource {
+// Colombian News Source Configuration
+export interface ColombianNewsSource {
   id: string;
   name: string;
-  displayName: string;
-  rssUrl: string;
-  baseUrl: string;
-  color: string;
-  icon: string;
-}
-
-// RSS Article interface
-interface RSSArticle {
-  id: string;
-  title: string;
-  link: string;
+  shortName: string;
   description: string;
-  pubDate: Date;
-  category?: string;
-  imageUrl?: string;
-  source: NewsSource;
+  icon: React.ReactNode;
+  gradient: string;
+  color: string;
+  isLive: boolean;
+  articleCount: number;
+  category: 'colombia' | 'security' | 'world' | 'trending' | 'breaking';
+  sources: string[]; // Actual news sources to filter by
 }
 
-// Colombian news sources with real RSS endpoints
-const NEWS_SOURCES: NewsSource[] = [
+// Pre-configured Colombian news sources
+export const COLOMBIAN_NEWS_SOURCES: ColombianNewsSource[] = [
   {
-    id: 'eltiempo',
-    name: 'eltiempo',
-    displayName: 'El Tiempo',
-    rssUrl: 'https://www.eltiempo.com/rss/opinion.xml',
-    baseUrl: 'https://www.eltiempo.com',
-    color: 'blue',
-    icon: '📰'
+    id: 'colombia-nacional',
+    name: 'Colombia Nacional',
+    shortName: 'Colombia',
+    description: 'Noticias nacionales y política colombiana',
+    icon: <FaFlag className="w-5 h-5" />,
+    gradient: 'from-yellow-400 via-blue-500 to-red-500',
+    color: 'colombia',
+    isLive: true,
+    articleCount: 24,
+    category: 'colombia',
+    sources: ['El Tiempo', 'Semana', 'El Espectador', 'Portafolio', 'La República']
   },
   {
-    id: 'elespectador',
-    name: 'elespectador', 
-    displayName: 'El Espectador',
-    rssUrl: 'https://www.elespectador.com/rss/actualidad.xml',
-    baseUrl: 'https://www.elespectador.com',
+    id: 'seguridad-colombia',
+    name: 'Seguridad Colombia',
+    shortName: 'Seguridad',
+    description: 'Seguridad nacional y orden público',
+    icon: <MdSecurity className="w-5 h-5" />,
+    gradient: 'from-red-600 to-red-800',
+    color: 'red',
+    isLive: true,
+    articleCount: 12,
+    category: 'security',
+    sources: ['RCN Radio', 'El Tiempo', 'El Espectador']
+  },
+  {
+    id: 'mundo-internacional',
+    name: 'Internacional',
+    shortName: 'Mundial',
+    description: 'Noticias internacionales relevantes para Colombia',
+    icon: <FaGlobeAmericas className="w-5 h-5" />,
+    gradient: 'from-blue-500 to-indigo-600',
+    color: 'blue',
+    isLive: false,
+    articleCount: 18,
+    category: 'world',
+    sources: ['BBC', 'Reuters', 'Google News Global']
+  },
+  {
+    id: 'tendencias-sociales',
+    name: 'Tendencias',
+    shortName: 'Trending',
+    description: 'Lo más comentado y viral en Colombia',
+    icon: <MdTrendingUp className="w-5 h-5" />,
+    gradient: 'from-purple-500 to-pink-600',
+    color: 'purple',
+    isLive: false,
+    articleCount: 15,
+    category: 'trending',
+    sources: ['Semana', 'El Tiempo', 'El Espectador']
+  },
+  {
+    id: 'ultima-hora',
+    name: 'Última Hora',
+    shortName: 'Breaking',
+    description: 'Noticias de última hora y desarrollos en vivo',
+    icon: <FaClock className="w-5 h-5" />,
+    gradient: 'from-orange-500 to-red-600',
+    color: 'orange',
+    isLive: true,
+    articleCount: 8,
+    category: 'breaking',
+    sources: ['Redacción', 'El Tiempo', 'RCN Radio', 'Semana']
+  },
+  {
+    id: 'economia-colombia',
+    name: 'Economía',
+    shortName: 'Economía',
+    description: 'Economía nacional, mercados y finanzas',
+    icon: <FaNewspaper className="w-5 h-5" />,
+    gradient: 'from-green-500 to-teal-600',
     color: 'green',
-    icon: '📄'
+    isLive: false,
+    articleCount: 21,
+    category: 'colombia',
+    sources: ['Portafolio', 'La República', 'DANE']
   }
 ];
 
-interface ColombianNewsTabsProps {
+export interface ColombianNewsTabsProps {
+  activeSourceId: string;
+  onSourceChange: (sourceId: string) => void;
   className?: string;
-  maxArticles?: number;
 }
 
-/**
- * ColombianNewsTabs Component
- * 
- * A tabbed news interface that fetches and displays RSS feeds from Colombian news sources.
- * Features:
- * - Tab-based navigation between news sources
- * - RSS feed parsing and display
- * - Responsive design with clean styling
- * - Error handling and loading states
- * - Article preview with external links
- * 
- * Usage:
- * ```tsx
- * import ColombianNewsTabs from './components/ColombianNewsTabs';
- * 
- * // Basic usage
- * <ColombianNewsTabs />
- * 
- * // With custom styling and article limit
- * <ColombianNewsTabs 
- *   className="my-custom-class" 
- *   maxArticles={15} 
- * />
- * ```
- * 
- * Integration in main page:
- * ```tsx
- * // In your main page component or App.tsx
- * import ColombianNewsTabs from './components/ColombianNewsTabs';
- * 
- * function NewsSection() {
- *   return (
- *     <section className="py-12">
- *       <div className="container mx-auto px-4">
- *         <h2 className="text-3xl font-bold mb-8 text-center">Noticias de Colombia</h2>
- *         <ColombianNewsTabs maxArticles={10} />
- *       </div>
- *     </section>
- *   );
- * }
- * ```
- */
-const ColombianNewsTabs: React.FC<ColombianNewsTabsProps> = ({ 
-  className = '', 
-  maxArticles = 12 
+const ColombianNewsTabs: React.FC<ColombianNewsTabsProps> = ({
+  activeSourceId,
+  onSourceChange,
+  className = ''
 }) => {
-  const [activeSource, setActiveSource] = useState<NewsSource>(NEWS_SOURCES[0]);
-  const [articles, setArticles] = useState<RSSArticle[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [hoveredTab, setHoveredTab] = useState<string | null>(null);
+  const [isChanging, setIsChanging] = useState(false);
 
-  // Fetch RSS feed for a specific source
-  const fetchRSSFeed = useCallback(async (source: NewsSource) => {
-    try {
-      setLoading(true);
-      setError(null);
-
-      // Create a proxy URL to handle CORS issues
-      // In production, you might want to use your own CORS proxy
-      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(source.rssUrl)}`;
-      
-      let xmlText: string;
-      
-      try {
-        const response = await fetch(proxyUrl, {
-          headers: {
-            'Accept': 'application/rss+xml, application/xml, text/xml'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP Error: ${response.status}`);
-        }
-
-        xmlText = await response.text();
-      } catch (fetchError) {
-        console.warn(`CORS or network error for ${source.name}, using demo data:`, fetchError);
+  // Debounced source change handler
+  const debouncedSourceChange = useCallback(
+    (() => {
+      let timeoutId: NodeJS.Timeout;
+      return (sourceId: string) => {
+        if (isChanging) return; // Prevent rapid clicking
         
-        // Provide demo data when fetch fails
-        const demoArticles = generateDemoArticles(source);
-        setArticles(demoArticles);
-        setLastUpdate(new Date());
-        return;
-      }
+        setIsChanging(true);
+        clearTimeout(timeoutId);
+        
+        timeoutId = setTimeout(() => {
+          onSourceChange(sourceId);
+          setIsChanging(false);
+        }, 150); // 150ms debounce
+      };
+    })(),
+    [onSourceChange, isChanging]
+  );
 
-      // Parse XML
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(xmlText, 'text/xml');
+  // Get active source configuration
+  const activeSource = useMemo(() => 
+    COLOMBIAN_NEWS_SOURCES.find(source => source.id === activeSourceId) || COLOMBIAN_NEWS_SOURCES[0],
+    [activeSourceId]
+  );
 
-      // Check for parsing errors
-      const parserError = xmlDoc.querySelector('parsererror');
-      if (parserError) {
-        throw new Error('Error parsing RSS XML');
-      }
-
-      // Extract articles from RSS
-      const items = xmlDoc.querySelectorAll('item');
-      const parsedArticles: RSSArticle[] = Array.from(items)
-        .slice(0, maxArticles)
-        .map((item, index) => {
-          const title = item.querySelector('title')?.textContent?.trim() || 'Sin título';
-          const link = item.querySelector('link')?.textContent?.trim() || '#';
-          const description = item.querySelector('description')?.textContent?.trim() || 'Sin descripción';
-          const category = item.querySelector('category')?.textContent?.trim() || 'General';
-          const pubDateText = item.querySelector('pubDate')?.textContent?.trim();
-          
-          // Parse publication date
-          let pubDate = new Date();
-          if (pubDateText) {
-            const parsedDate = new Date(pubDateText);
-            if (!isNaN(parsedDate.getTime())) {
-              pubDate = parsedDate;
-            }
-          }
-
-          // Extract image from various possible locations
-          let imageUrl: string | undefined;
-          
-          // Try enclosure tag first
-          const enclosure = item.querySelector('enclosure');
-          if (enclosure && enclosure.getAttribute('type')?.includes('image')) {
-            imageUrl = enclosure.getAttribute('url') || undefined;
-          }
-          
-          // Try media:content or content tags
-          if (!imageUrl) {
-            const mediaContent = item.querySelector('media\\:content, content');
-            if (mediaContent) {
-              imageUrl = mediaContent.getAttribute('url') || undefined;
-            }
-          }
-
-          // Try to extract image from description
-          if (!imageUrl && description) {
-            const imgMatch = description.match(/<img[^>]+src="([^">]+)"/);
-            if (imgMatch) {
-              imageUrl = imgMatch[1];
-            }
-          }
-
-          return {
-            id: `${source.id}-${index}`,
-            title,
-            link,
-            description: cleanDescription(description),
-            pubDate,
-            category,
-            imageUrl,
-            source
-          };
-        });
-
-      setArticles(parsedArticles);
-      setLastUpdate(new Date());
-    } catch (err) {
-      console.error(`Error fetching RSS feed for ${source.name}:`, err);
-      setError(err instanceof Error ? err.message : 'Error loading news feed');
-      
-      // Fallback to demo data on error
-      const demoArticles = generateDemoArticles(source);
-      setArticles(demoArticles);
-    } finally {
-      setLoading(false);
-    }
-  }, [maxArticles]);
-
-  // Generate demo articles for fallback
-  const generateDemoArticles = (source: NewsSource): RSSArticle[] => {
-    const demoData = {
-      eltiempo: [
-        {
-          title: "Colombia avanza en la implementación de políticas de paz territorial",
-          description: "Un análisis sobre los avances y desafíos en la construcción de paz en los territorios más afectados por el conflicto armado.",
-          category: "Política"
-        },
-        {
-          title: "La transformación digital impulsa el crecimiento económico del país",
-          description: "Cómo las nuevas tecnologías están contribuyendo al desarrollo económico y social de Colombia en el mundo post-pandemia.",
-          category: "Economía"
-        },
-        {
-          title: "Medio ambiente: Colombia lidera iniciativas de sostenibilidad en la región",
-          description: "Las estrategias ambientales que posicionan al país como referente en conservación y desarrollo sostenible.",
-          category: "Medio Ambiente"
-        }
-      ],
-      elespectador: [
-        {
-          title: "Actualidad política: Los retos del gobierno en el nuevo período legislativo",
-          description: "Una mirada profunda a las propuestas y desafíos que enfrenta el ejecutivo en el Congreso de la República.",
-          category: "Política"
-        },
-        {
-          title: "Educación superior: Universidades públicas buscan mayor financiación",
-          description: "El sector educativo solicita incremento en recursos para mejorar la calidad y cobertura de la educación superior.",
-          category: "Educación"
-        },
-        {
-          title: "Seguridad ciudadana: Nuevas estrategias para combatir la criminalidad",
-          description: "Las autoridades presentan planes innovadores para reducir los índices de inseguridad en las principales ciudades.",
-          category: "Seguridad"
-        }
-      ]
-    };
-
-    return (demoData[source.id as keyof typeof demoData] || demoData.eltiempo).map((demo, index) => ({
-      id: `demo-${source.id}-${index}`,
-      title: demo.title,
-      link: `${source.baseUrl}/demo-article-${index}`,
-      description: demo.description,
-      pubDate: new Date(Date.now() - (index + 1) * 2 * 60 * 60 * 1000), // Hours ago
-      category: demo.category,
-      imageUrl: `https://via.placeholder.com/400x250/${source.color === 'blue' ? '1e40af' : '059669'}/ffffff?text=${encodeURIComponent(source.displayName)}`,
-      source
-    }));
-  };
-
-  // Clean HTML from description
-  const cleanDescription = (html: string): string => {
-    const temp = document.createElement('div');
-    temp.innerHTML = html;
-    return temp.textContent || temp.innerText || '';
-  };
-
-  // Format date for display
-  const formatDate = (date: Date): string => {
-    const now = new Date();
-    const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
+  const handleTabClick = useCallback((sourceId: string, event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
     
-    if (diffInHours < 1) return 'Hace menos de 1h';
-    if (diffInHours < 24) return `Hace ${Math.floor(diffInHours)}h`;
-    if (diffInHours < 48) return 'Hace 1 día';
-    
-    return new Intl.DateTimeFormat('es-CO', {
-      day: 'numeric',
-      month: 'short',
-      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
-    }).format(date);
-  };
-
-  // Handle tab switch
-  const handleTabSwitch = (source: NewsSource) => {
-    if (source.id !== activeSource.id) {
-      setActiveSource(source);
+    if (sourceId !== activeSourceId && !isChanging) {
+      debouncedSourceChange(sourceId);
     }
-  };
+  }, [activeSourceId, debouncedSourceChange, isChanging]);
 
-  // Refresh current feed
-  const handleRefresh = () => {
-    fetchRSSFeed(activeSource);
-  };
-
-  // Load initial data
-  useEffect(() => {
-    fetchRSSFeed(activeSource);
-  }, [activeSource, fetchRSSFeed]);
+  const handleTabKeyDown = useCallback((sourceId: string, event: React.KeyboardEvent) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleTabClick(sourceId, event as any);
+    }
+  }, [handleTabClick]);
 
   return (
-    <div className={`max-w-6xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden ${className}`}>
-      {/* Header with tabs */}
-      <div className="bg-gray-50 border-b border-gray-200">
-        <div className="flex flex-wrap">
-          {NEWS_SOURCES.map((source) => (
+    <div className={`w-full bg-white shadow-lg sticky top-20 z-40 border-b border-gray-200 ${className}`}>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Mobile Horizontal Scroll Tabs */}
+        <div className="lg:hidden">
+          <div className="flex overflow-x-auto pb-2 pt-4 gap-3 scrollbar-hide">
+            {COLOMBIAN_NEWS_SOURCES.map((source) => (
+              <button
+                key={source.id}
+                onClick={(e) => handleTabClick(source.id, e)}
+                onKeyDown={(e) => handleTabKeyDown(source.id, e)}
+                disabled={isChanging}
+                className={`flex-shrink-0 relative px-4 py-3 rounded-xl transition-all duration-300 min-w-[140px] transform ${
+                  activeSourceId === source.id
+                    ? `bg-gradient-to-r ${source.gradient} text-white shadow-lg scale-105`
+                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100 hover:scale-102'
+                } ${isChanging ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
+                aria-pressed={activeSourceId === source.id}
+                role="tab"
+              >
+                <div className="flex items-center gap-2">
+                  <div className={`transition-transform duration-300 ${
+                    activeSourceId === source.id ? 'scale-110' : ''
+                  }`}>
+                    {source.icon}
+                  </div>
+                  <div className="text-left">
+                    <div className="font-bold text-sm">{source.shortName}</div>
+                    {source.isLive && activeSourceId === source.id && (
+                      <div className="flex items-center gap-1 text-xs opacity-90">
+                        <div className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse"></div>
+                        EN VIVO
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Article count badge */}
+                <div className={`absolute -top-1 -right-1 px-1.5 py-0.5 text-xs font-bold rounded-full transition-colors ${
+                  activeSourceId === source.id ? 'bg-white/20 text-white' : 'bg-red-500 text-white'
+                }`}>
+                  {source.articleCount}
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop Grid Layout */}
+        <div className="hidden lg:grid lg:grid-cols-6 gap-4 py-6">
+          {COLOMBIAN_NEWS_SOURCES.map((source) => (
             <button
               key={source.id}
-              onClick={() => handleTabSwitch(source)}
-              className={`flex items-center gap-2 px-6 py-4 font-medium text-sm transition-all duration-200 border-b-2 hover:bg-white ${
-                activeSource.id === source.id
-                  ? `border-${source.color}-500 text-${source.color}-600 bg-white shadow-sm`
-                  : 'border-transparent text-gray-600 hover:text-gray-800'
-              }`}
+              onClick={(e) => handleTabClick(source.id, e)}
+              onKeyDown={(e) => handleTabKeyDown(source.id, e)}
+              onMouseEnter={() => setHoveredTab(source.id)}
+              onMouseLeave={() => setHoveredTab(null)}
+              disabled={isChanging}
+              className={`relative group transition-all duration-500 transform hover:-translate-y-2 ${
+                activeSourceId === source.id ? 'scale-105' : ''
+              } ${isChanging ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
+              aria-pressed={activeSourceId === source.id}
+              role="tab"
             >
-              <span className="text-lg">{source.icon}</span>
-              <span>{source.displayName}</span>
-              {activeSource.id === source.id && (
-                <div className={`w-2 h-2 bg-${source.color}-500 rounded-full animate-pulse`}></div>
+              <div className={`relative overflow-hidden rounded-2xl p-6 h-32 transition-all duration-300 ${
+                activeSourceId === source.id
+                  ? `bg-gradient-to-br ${source.gradient} text-white shadow-2xl`
+                  : 'bg-white border-2 border-gray-100 text-gray-700 hover:border-gray-200 hover:shadow-lg'
+              }`}>
+                
+                {/* Background Pattern */}
+                <div className="absolute inset-0 opacity-10">
+                  <div className="absolute top-2 right-2 text-4xl opacity-50">
+                    {source.icon}
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="relative z-10">
+                  <div className="flex items-center gap-3 mb-2">
+                    <div className={`p-2 rounded-lg transition-colors ${
+                      activeSourceId === source.id ? 'bg-white/20' : 'bg-gray-100'
+                    }`}>
+                      {source.icon}
+                    </div>
+                    {source.isLive && (
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                        <span className="text-xs font-bold">LIVE</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <h3 className="font-bold text-sm mb-1 leading-tight">
+                    {source.name}
+                  </h3>
+                  
+                  <p className={`text-xs leading-tight ${
+                    activeSourceId === source.id ? 'text-white/80' : 'text-gray-500'
+                  }`}>
+                    {source.description}
+                  </p>
+                </div>
+
+                {/* Article Count Badge */}
+                <div className={`absolute top-3 right-3 px-2 py-1 text-xs font-bold rounded-full transition-colors ${
+                  activeSourceId === source.id ? 'bg-white/20 text-white' : 'bg-red-500 text-white'
+                }`}>
+                  {source.articleCount}
+                </div>
+
+                {/* Active Indicator */}
+                {activeSourceId === source.id && (
+                  <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-white/50 to-white/80"></div>
+                )}
+
+                {/* Hover Effect */}
+                {hoveredTab === source.id && activeSourceId !== source.id && (
+                  <div className={`absolute inset-0 bg-gradient-to-br ${source.gradient} opacity-5 transition-opacity duration-300`}></div>
+                )}
+              </div>
+
+              {/* Glow Effect for Active Tab */}
+              {activeSourceId === source.id && (
+                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${source.gradient} opacity-20 blur-xl scale-110 -z-10`}></div>
               )}
             </button>
           ))}
-          
-          {/* Refresh button */}
-          <div className="ml-auto p-4">
-            <button
-              onClick={handleRefresh}
-              disabled={loading}
-              className={`p-2 rounded-lg transition-colors ${
-                loading
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
-              }`}
-              title="Actualizar noticias"
-            >
-              <FaSync className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            </button>
-          </div>
         </div>
-      </div>
 
-      {/* Content area */}
-      <div className="p-6">
-        {/* Source header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-3">
-              <span className="text-2xl">{activeSource.icon}</span>
-              {activeSource.displayName}
-            </h2>
-            <p className="text-gray-600 mt-1">
-              Últimas noticias y análisis
-            </p>
-          </div>
-          
-          {lastUpdate && (
-            <div className="text-sm text-gray-500 flex items-center gap-1">
-              <FaCalendarAlt className="w-3 h-3" />
-              Actualizado: {lastUpdate.toLocaleTimeString('es-CO', { 
+        {/* Active Source Info Bar */}
+        <div className="hidden lg:block pb-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <h2 className="text-xl font-bold text-gray-900">
+                {activeSource.name}
+              </h2>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <BiNews className="w-4 h-4" />
+                <span>{activeSource.articleCount} artículos</span>
+                {activeSource.isLive && (
+                  <>
+                    <span>•</span>
+                    <div className="flex items-center gap-1 text-red-600">
+                      <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                      <span className="font-medium">EN VIVO</span>
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+            
+            <div className="text-sm text-gray-500">
+              Última actualización: {new Date().toLocaleTimeString('es-CO', { 
                 hour: '2-digit', 
                 minute: '2-digit' 
               })}
             </div>
-          )}
+          </div>
         </div>
-
-        {/* Loading state */}
-        {loading && (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <FaSpinner className="animate-spin text-4xl text-blue-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-700 mb-2">
-                Cargando noticias...
-              </h3>
-              <p className="text-gray-500">
-                Obteniendo las últimas noticias de {activeSource.displayName}
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Error state */}
-        {error && !loading && (
-          <div className="flex items-center justify-center py-12">
-            <div className="text-center">
-              <FaExclamationTriangle className="text-5xl text-yellow-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Error al cargar las noticias
-              </h3>
-              <p className="text-gray-600 mb-6">{error}</p>
-              <button
-                onClick={handleRefresh}
-                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-medium"
-              >
-                Reintentar
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Articles grid */}
-        {!loading && !error && articles.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {articles.map((article) => (
-              <article
-                key={article.id}
-                className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
-              >
-                {/* Article image */}
-                {article.imageUrl && (
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={article.imageUrl}
-                      alt={article.title}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        e.currentTarget.style.display = 'none';
-                      }}
-                    />
-                  </div>
-                )}
-
-                <div className="p-4">
-                  {/* Category and date */}
-                  <div className="flex items-center justify-between mb-3">
-                    {article.category && (
-                      <span className={`text-xs font-semibold px-2 py-1 rounded-full bg-${activeSource.color}-100 text-${activeSource.color}-800`}>
-                        {article.category}
-                      </span>
-                    )}
-                    <time className="text-xs text-gray-500">
-                      {formatDate(article.pubDate)}
-                    </time>
-                  </div>
-
-                  {/* Title */}
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 hover:text-blue-600 transition-colors">
-                    <a
-                      href={article.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="hover:underline"
-                    >
-                      {article.title}
-                    </a>
-                  </h3>
-
-                  {/* Description */}
-                  <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                    {article.description}
-                  </p>
-
-                  {/* Read more link */}
-                  <div className="flex items-center justify-between">
-                    <a
-                      href={article.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={`inline-flex items-center text-${activeSource.color}-600 hover:text-${activeSource.color}-800 font-medium text-sm transition-colors`}
-                    >
-                      Leer más
-                      <FaExternalLinkAlt className="ml-1 w-3 h-3" />
-                    </a>
-                    
-                    <span className="text-xs text-gray-400">
-                      {activeSource.displayName}
-                    </span>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
-
-        {/* Empty state */}
-        {!loading && !error && articles.length === 0 && (
-          <div className="text-center py-12">
-            <FaNewspaper className="text-6xl text-gray-300 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-600 mb-2">
-              No hay artículos disponibles
-            </h3>
-            <p className="text-gray-500">
-              No se encontraron artículos en el feed de {activeSource.displayName}
-            </p>
-            <button
-              onClick={handleRefresh}
-              className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              Intentar de nuevo
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* Loading overlay when changing */}
+      {isChanging && (
+        <div className="absolute inset-0 bg-white/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+        </div>
+      )}
     </div>
   );
 };
