@@ -20,6 +20,7 @@ import ModernSearchEngine from "./components/ModernSearchEngine";
 import PulseReels from "./components/PulseReels";
 import EnhancedPulseReels from "./components/EnhancedPulseReels";
 import QuantumReelsHub from "./components/QuantumReelsHub";
+import RobustReelsHub from "./components/RobustReelsHub";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
 import LiveChat from "./components/LiveChat";
@@ -145,7 +146,7 @@ function App() {
             />
           );
         case 'reels':
-          return <QuantumReelsHub />;
+          return <RobustReelsHub />;
         case 'feeds':
         case 'news':
           return (
