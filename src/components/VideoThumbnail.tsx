@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FaPlay, FaExclamationTriangle, FaRedo } from 'react-icons/fa';
-import { useVideoWithRetry } from '../hooks/useVideoWithRetry';
 
 interface VideoThumbnailProps {
   src: string;
@@ -23,34 +22,82 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({
   onVideoPlay,
   showPlayButton = true
 }) => {
-  const [clicked, setClicked] = useState(false);
-  
-  const { loadState, thumbnailSrc, actualVideoUrl, retry } = useVideoWithRetry({
-    videoUrl,
-    thumbnail: src,
-    options: { maxRetries: 3 }
-  });
+  const [hasError, setHasError] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [retryCount, setRetryCount] = useState(0);
 
-  const handleClick = () => {
-    if (loadState.hasError && loadState.canRetry) {
-      retry();
-      return;
-    }
-    
-    if (onVideoPlay && actualVideoUrl) {
-      setClicked(true);
-      onVideoPlay();
-    } else if (actualVideoUrl) {
-      // Open video in new tab if no custom handler
-      window.open(actualVideoUrl, '_blank');
-    }
+  const maxRetries = 2;
+
+  const handleImageLoad = () => {
+    setIsLoading(false);
+    setHasError(false);
   };
 
   const handleImageError = () => {
-    // Let the hook handle retries
+    setIsLoading(false);
+    if (retryCount < maxRetries) {
+      // Try fallback URLs for YouTube
+      const img = document.createElement('img');
+      const videoId = videoUrl?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/)?.[1];
+      
+      if (videoId) {
+        const fallbacks = [
+          `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`,
+          `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
+          `https://img.youtube.com/vi/${videoId}/default.jpg`
+        ];
+        
+        const currentFallback = fallbacks[retryCount];
+        if (currentFallback) {
+          img.onload = () => {
+            const mainImg = document.querySelector(`img[alt="${alt}"]`) as HTMLImageElement;
+            if (mainImg) {
+              mainImg.src = currentFallback;
+              setHasError(false);
+            }
+          };
+          img.onerror = () => {
+            setRetryCount(prev => prev + 1);
+            if (retryCount >= maxRetries - 1) {
+              setHasError(true);
+            }
+          };
+          img.src = currentFallback;
+          return;
+        }
+      }
+    }
+    setHasError(true);
   };
 
-  if (loadState.isLoading) {
+  const handleClick = () => {
+    if (hasError && retryCount < maxRetries) {
+      setRetryCount(prev => prev + 1);
+      setHasError(false);
+      setIsLoading(true);
+      return;
+    }
+    
+    if (onVideoPlay && videoUrl) {
+      onVideoPlay();
+    } else if (videoUrl) {
+      // Open video in new tab if no custom handler
+      window.open(videoUrl, '_blank');
+    }
+  };
+
+  const handleRetry = () => {
+    setRetryCount(0);
+    setHasError(false);
+    setIsLoading(true);
+    // Force reload the image
+    const img = document.querySelector(`img[alt="${alt}"]`) as HTMLImageElement;
+    if (img) {
+      img.src = src;
+    }
+  };
+
+  if (isLoading && !hasError) {
     return (
       <div className={`w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center ${className}`}>
         <div className="text-center text-white">
@@ -61,14 +108,14 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({
     );
   }
 
-  if (loadState.hasError) {
+  if (hasError) {
     return (
       <div className={`w-full h-full bg-gradient-to-br from-red-900 to-red-700 flex items-center justify-center ${className}`}>
         <div className="text-center text-white p-6">
           <FaExclamationTriangle className="w-16 h-16 mx-auto mb-4 text-yellow-400" />
           <h3 className="text-lg font-bold mb-2">Error al cargar el video</h3>
           <p className="text-sm opacity-80 mb-4">
-            {loadState.errorMessage || 'No se pudo cargar el contenido del video'}
+            No se pudo cargar el contenido del video
           </p>
           {title && (
             <h4 className="text-md font-semibold mb-2">{title}</h4>
@@ -76,15 +123,13 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({
           {description && (
             <p className="text-xs opacity-70 mb-4">{description}</p>
           )}
-          {loadState.canRetry && (
-            <button
-              onClick={retry}
-              className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg flex items-center gap-2 mx-auto transition-colors"
-            >
-              <FaRedo className="w-4 h-4" />
-              Reintentar
-            </button>
-          )}
+          <button
+            onClick={handleRetry}
+            className="bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg flex items-center gap-2 mx-auto transition-colors"
+          >
+            <FaRedo className="w-4 h-4" />
+            Reintentar
+          </button>
         </div>
       </div>
     );
@@ -93,27 +138,28 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({
   return (
     <div className={`relative w-full h-full cursor-pointer group ${className}`}>
       <img
-        src={thumbnailSrc}
+        src={src}
         alt={alt}
         className="w-full h-full object-cover"
+        onLoad={handleImageLoad}
         onError={handleImageError}
         onClick={handleClick}
       />
       
       {/* Play button overlay */}
-      {showPlayButton && actualVideoUrl && (
+      {showPlayButton && videoUrl && (
         <div 
           className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           onClick={handleClick}
         >
-          <div className={`bg-white/90 rounded-full p-4 transform hover:scale-110 transition-transform duration-200 ${clicked ? 'animate-pulse' : ''}`}>
+          <div className="bg-white/90 rounded-full p-4 transform hover:scale-110 transition-transform duration-200">
             <FaPlay className="w-6 h-6 text-gray-800 ml-1" />
           </div>
         </div>
       )}
       
       {/* Video indicator */}
-      {actualVideoUrl && (
+      {videoUrl && (
         <div className="absolute top-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-medium">
           VIDEO
         </div>
