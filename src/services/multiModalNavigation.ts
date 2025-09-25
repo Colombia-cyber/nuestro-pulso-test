@@ -40,7 +40,8 @@ class MultiModalNavigationSystem {
     }
   }
 
-  // Initialize gesture detection
+  // Initialize gesture detection - MODIFIED for Issue #224
+  // Only detect long-press for voice activation, disable swipe navigation
   private initializeGestureDetection() {
     let startX = 0, startY = 0, startTime = 0;
     let touchCount = 0;
@@ -61,7 +62,8 @@ class MultiModalNavigationSystem {
       const deltaY = endY - startY;
       const deltaTime = endTime - startTime;
       
-      this.processGesture(deltaX, deltaY, deltaTime, touchCount);
+      // Only process long-press gestures, not swipes (Issue #224 fix)
+      this.processLongPressOnly(deltaX, deltaY, deltaTime, touchCount);
     };
 
     document.addEventListener('touchstart', handleTouchStart, { passive: true });
@@ -103,6 +105,22 @@ class MultiModalNavigationSystem {
         });
       }
     }
+  }
+
+  // Process only long-press gestures (Issue #224 fix)
+  // This replaces swipe detection to prevent unwanted navigation
+  private processLongPressOnly(deltaX: number, deltaY: number, deltaTime: number, fingers: number) {
+    const longPressTime = 500;
+    
+    // Only detect long press for voice activation - ignore all swipes and taps
+    if (deltaTime > longPressTime && Math.abs(deltaX) < 10 && Math.abs(deltaY) < 10) {
+      // Long press detected - trigger voice control
+      this.triggerGestureCallback('long-press', {
+        type: 'long-press',
+        fingers
+      });
+    }
+    // Intentionally ignore swipes and taps to prevent unwanted navigation
   }
 
   // Handle speech recognition results
@@ -251,18 +269,19 @@ export const useMultiModalNavigation = (onNavigate: (view: string) => void) => {
       alert('Comandos de voz disponibles:\n- "Inicio" - Ir al inicio\n- "Noticias" - Ver noticias\n- "Encuestas" - Ver encuestas\n- "Debates" - Ver debates\n- "Congreso" - Seguimiento del congreso\n- "Chat" - Chat en vivo\n- "Buscar" - Abrir búsqueda\n- "Silencio" - Parar reconocimiento');
     });
 
-    // Register gesture commands
-    multiModalNavigation.registerGesture('swipe', (event: GestureEvent) => {
-      if (event.direction === 'left') {
-        onNavigate('news');
-      } else if (event.direction === 'right') {
-        onNavigate('home');
-      } else if (event.direction === 'up') {
-        onNavigate('search');
-      } else if (event.direction === 'down') {
-        onNavigate('chat');
-      }
-    });
+    // Register gesture commands - DISABLED to prevent unwanted navigation
+    // Issue #224: Remove swipe-based navigation to fix annoying auto-navigation
+    // multiModalNavigation.registerGesture('swipe', (event: GestureEvent) => {
+    //   if (event.direction === 'left') {
+    //     onNavigate('news');
+    //   } else if (event.direction === 'right') {
+    //     onNavigate('home');
+    //   } else if (event.direction === 'up') {
+    //     onNavigate('search');
+    //   } else if (event.direction === 'down') {
+    //     onNavigate('chat');
+    //   }
+    // });
 
     multiModalNavigation.registerGesture('long-press', () => {
       if (capabilities.speechRecognition) {
