@@ -7,6 +7,7 @@ import { getVisibleCategories } from '../config/categories';
 import { PulseReel } from '../types/pulseReel';
 import { pulseReels as samplePulseReels } from '../data/pulseReels';
 import { getAllTopics, NewsTopic } from '../config/newsTopics';
+import VideoThumbnail from './VideoThumbnail';
 
 // Safely get environment variable with fallback
 const getEnvVar = (key: string, fallback = ''): string => {
@@ -442,29 +443,13 @@ const PulseReels: React.FC = () => {
         <div className="relative w-full h-full max-w-md mx-auto bg-gradient-to-br from-purple-900 via-blue-900 to-green-900">
           {/* Video Thumbnail Background */}
           <div className="absolute inset-0">
-            <img 
-              src={currentReel.thumbnail} 
+            <VideoThumbnail 
+              src={currentReel.thumbnail}
               alt={currentReel.title}
-              className="w-full h-full object-cover"
-              onError={(e) => {
-                // Fallback to gradient background with emoji if image fails
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                const fallback = target.nextElementSibling as HTMLElement;
-                if (fallback) fallback.style.display = 'flex';
-              }}
+              videoUrl={currentReel.videoUrl}
+              title={currentReel.title}
+              description={currentReel.description}
             />
-            {/* Fallback content */}
-            <div 
-              className="w-full h-full bg-gradient-to-br from-purple-900 via-blue-900 to-green-900 flex items-center justify-center" 
-              style={{ display: 'none' }}
-            >
-              <div className="text-center">
-                <div className="text-9xl mb-4 animate-pulse">🎬</div>
-                <h3 className="text-white text-xl font-bold mb-2">{currentReel.title}</h3>
-                <p className="text-gray-300 text-sm px-4">{currentReel.description}</p>
-              </div>
-            </div>
             {/* Video overlay gradient */}
             <div className="absolute inset-0 bg-black/30"></div>
           </div>
