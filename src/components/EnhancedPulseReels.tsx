@@ -13,176 +13,107 @@ import {
   FaVolumeMute,
   FaExpand,
   FaChevronUp,
-  FaChevronDown
+  FaChevronDown,
+  FaRedo,
+  FaExclamationTriangle
 } from 'react-icons/fa';
 import { MdVerified, MdLiveTv } from 'react-icons/md';
 import { BiTrendingUp } from 'react-icons/bi';
+import { videoSourcesService } from '../services/VideoSourcesService';
+import { VideoContent, VideoSourceType, VideoFetchOptions } from '../types/videoSources';
 
-interface VideoReel {
-  id: string;
-  title: string;
-  description: string;
-  platform: 'youtube' | 'tiktok' | 'instagram' | 'google-reels' | 'local';
+interface VideoReel extends VideoContent {
   platformName: string;
-  category: string;
-  duration: string;
-  views: number;
-  likes: number;
-  comments: number;
-  shares: number;
-  thumbnail: string;
-  videoUrl?: string;
-  embedUrl?: string;
-  author: {
-    name: string;
-    avatar: string;
-    verified: boolean;
-    followers: string;
-  };
-  hashtags: string[];
-  isLive?: boolean;
-  timestamp: string;
-  trending?: boolean;
 }
 
 const EnhancedPulseReels: React.FC = () => {
   const [currentReelIndex, setCurrentReelIndex] = useState(0);
+  const [reels, setReels] = useState<VideoReel[]>([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState<string>('all');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-
-  const reels: VideoReel[] = [
-    {
-      id: '1',
-      title: 'Debate Presidencial: Momentos Clave',
-      description: 'Los mejores momentos del último debate presidencial que están marcando tendencia en Colombia. Análisis de propuestas y reacciones ciudadanas.',
-      platform: 'youtube',
-      platformName: 'YouTube',
-      category: 'Política',
-      duration: '2:45',
-      views: 45600,
-      likes: 1200,
-      comments: 89,
-      shares: 156,
-      thumbnail: 'https://via.placeholder.com/400x600/0066CC/FFFFFF?text=Debate+2024',
-      embedUrl: 'https://www.youtube.com/embed/example1',
-      author: {
-        name: 'Noticias Colombia',
-        avatar: '📺',
-        verified: true,
-        followers: '125K'
-      },
-      hashtags: ['#DebatePresidencial', '#Colombia2024', '#Política'],
-      timestamp: 'Hace 2 horas',
-      trending: true
-    },
-    {
-      id: '2',
-      title: 'Reforma Educativa Explicada',
-      description: 'Todo lo que necesitas saber sobre la nueva reforma educativa en menos de 3 minutos. Análisis balanceado.',
-      platform: 'tiktok',
-      platformName: 'TikTok',
-      category: 'Educación',
-      duration: '2:58',
-      views: 23400,
-      likes: 890,
-      comments: 45,
-      shares: 67,
-      thumbnail: 'https://via.placeholder.com/400x600/FF6B6B/FFFFFF?text=Educación',
-      author: {
-        name: 'EduCívica',
-        avatar: '👩‍🏫',
-        verified: true,
-        followers: '78K'
-      },
-      hashtags: ['#Educación', '#ReformaEducativa', '#Colombia'],
-      timestamp: 'Hace 4 horas'
-    },
-    {
-      id: '3',
-      title: 'Crisis Energética en Tiempo Real',
-      description: '🔴 EN VIVO: Seguimiento de la crisis energética colombiana y sus soluciones. Conectamos con expertos.',
-      platform: 'instagram',
-      platformName: 'Instagram',
-      category: 'Energía',
-      duration: 'LIVE',
-      views: 12800,
-      likes: 567,
-      comments: 234,
-      shares: 89,
-      thumbnail: 'https://via.placeholder.com/400x600/E74C3C/FFFFFF?text=EN+VIVO',
-      author: {
-        name: 'Energía Sostenible CO',
-        avatar: '⚡',
-        verified: false,
-        followers: '45K'
-      },
-      hashtags: ['#EnVivo', '#CrisisEnergética', '#Sostenibilidad'],
-      isLive: true,
-      timestamp: 'EN VIVO'
-    },
-    {
-      id: '4',
-      title: 'Transparencia Gubernamental',
-      description: 'Nuevas medidas de transparencia del gobierno colombiano. ¿Qué cambia para los ciudadanos?',
-      platform: 'google-reels',
-      platformName: 'Google Reels',
-      category: 'Transparencia',
-      duration: '3:12',
-      views: 34500,
-      likes: 1100,
-      comments: 67,
-      shares: 145,
-      thumbnail: 'https://via.placeholder.com/400x600/4285F4/FFFFFF?text=Google+Reels',
-      author: {
-        name: 'Transparencia Ya',
-        avatar: '🔍',
-        verified: true,
-        followers: '98K'
-      },
-      hashtags: ['#Transparencia', '#Gobierno', '#RendiciónDeCuentas'],
-      timestamp: 'Hace 6 horas'
-    },
-    {
-      id: '5',
-      title: 'Participación Ciudadana Digital',
-      description: 'Cómo las nuevas tecnologías están revolucionando la participación ciudadana en Colombia.',
-      platform: 'local',
-      platformName: 'Nuestro Pulso',
-      category: 'Participación',
-      duration: '4:20',
-      views: 18900,
-      likes: 756,
-      comments: 123,
-      shares: 89,
-      thumbnail: 'https://via.placeholder.com/400x600/9B59B6/FFFFFF?text=Participación',
-      author: {
-        name: 'Nuestro Pulso',
-        avatar: '🇨🇴',
-        verified: true,
-        followers: '156K'
-      },
-      hashtags: ['#ParticipaCiónCiudadana', '#TecnologíaCívica', '#Colombia'],
-      timestamp: 'Hace 1 día'
-    }
-  ];
 
   const platforms = [
     { id: 'all', name: 'Todas', icon: '🎬', color: 'bg-gray-500' },
-    { id: 'youtube', name: 'YouTube', icon: <FaYoutube />, color: 'bg-red-600' },
-    { id: 'tiktok', name: 'TikTok', icon: <FaTiktok />, color: 'bg-black' },
-    { id: 'instagram', name: 'Instagram', icon: <FaInstagram />, color: 'bg-pink-600' },
-    { id: 'google-reels', name: 'Google Reels', icon: '🔍', color: 'bg-blue-600' },
-    { id: 'local', name: 'Nuestro Pulso', icon: '🇨🇴', color: 'bg-yellow-500' }
+    { id: VideoSourceType.YOUTUBE, name: 'YouTube', icon: <FaYoutube />, color: 'bg-red-600' },
+    { id: VideoSourceType.GOOGLE_NEWS, name: 'Google News', icon: '📰', color: 'bg-blue-600' },
+    { id: VideoSourceType.NEWS_FEED, name: 'News Feed', icon: '📡', color: 'bg-green-600' },
+    { id: VideoSourceType.LOCAL, name: 'Local', icon: '🏠', color: 'bg-purple-600' },
+    { id: VideoSourceType.MOCK, name: 'Nuestro Pulso', icon: '🇨🇴', color: 'bg-yellow-500' }
   ];
 
   const filteredReels = selectedPlatform === 'all' 
     ? reels 
-    : reels.filter(reel => reel.platform === selectedPlatform);
+    : reels.filter(reel => reel.source.type === selectedPlatform);
 
-  const currentReel = filteredReels[currentReelIndex] || reels[0];
+  const currentReel = filteredReels[currentReelIndex];
+
+  // Load videos from VideoSourcesService
+  const loadVideos = async (forceRefresh = false, options: VideoFetchOptions = {}) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const fetchOptions: VideoFetchOptions = {
+        maxResults: 20,
+        trending: undefined,
+        category: 'política',
+        language: 'es',
+        region: 'CO',
+        ...options
+      };
+
+      console.log('🎬 Loading videos with options:', fetchOptions);
+      const videoContent = await videoSourcesService.fetchVideos(fetchOptions, forceRefresh);
+      
+      // Transform VideoContent to VideoReel format
+      const transformedReels: VideoReel[] = videoContent.map(video => ({
+        ...video,
+        platformName: getPlatformName(video.source.type)
+      }));
+
+      setReels(transformedReels);
+      setCurrentReelIndex(0);
+      
+      if (transformedReels.length === 0) {
+        setError('No se encontraron videos disponibles. Verifica tu conexión o intenta más tarde.');
+      }
+      
+      console.log(`✅ Loaded ${transformedReels.length} videos successfully`);
+    } catch (err) {
+      console.error('❌ Error loading videos:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Error desconocido al cargar videos';
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
+
+  const getPlatformName = (sourceType: VideoSourceType): string => {
+    const platform = platforms.find(p => p.id === sourceType);
+    return platform?.name || 'Desconocido';
+  };
+
+  const refreshVideos = async () => {
+    setIsRefreshing(true);
+    await loadVideos(true);
+  };
+
+  // Initial load
+  useEffect(() => {
+    loadVideos();
+  }, []);
+
+  // Handle platform filter changes
+  useEffect(() => {
+    setCurrentReelIndex(0);
+  }, [selectedPlatform]);
 
   const nextReel = () => {
     setCurrentReelIndex((prev) => (prev + 1) % filteredReels.length);
@@ -211,12 +142,12 @@ const EnhancedPulseReels: React.FC = () => {
   };
 
   const handleInteraction = (action: 'like' | 'comment' | 'share') => {
-    console.log(`${action} on reel ${currentReel.id}`);
-    // Here you would typically make an API call
+    console.log(`${action} on reel ${currentReel?.id}`);
+    // Here you would typically make an API call to handle the interaction
   };
 
-  const getPlatformIcon = (platform: string) => {
-    const platformObj = platforms.find(p => p.id === platform);
+  const getPlatformIcon = (sourceType: VideoSourceType) => {
+    const platformObj = platforms.find(p => p.id === sourceType);
     return platformObj ? platformObj.icon : '🎬';
   };
 
@@ -226,6 +157,24 @@ const EnhancedPulseReels: React.FC = () => {
     return num.toString();
   };
 
+  const formatDuration = (seconds: number): string => {
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  };
+
+  const getTimeAgo = (dateString: string): string => {
+    const now = new Date();
+    const publishDate = new Date(dateString);
+    const diffInHours = Math.floor((now.getTime() - publishDate.getTime()) / (1000 * 60 * 60));
+    
+    if (diffInHours < 1) return 'Hace menos de 1h';
+    if (diffInHours < 24) return `Hace ${diffInHours}h`;
+    const diffInDays = Math.floor(diffInHours / 24);
+    return `Hace ${diffInDays}d`;
+  };
+
+  // Keyboard navigation
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (e.code === 'ArrowUp') {
@@ -244,6 +193,75 @@ const EnhancedPulseReels: React.FC = () => {
     return () => document.removeEventListener('keydown', handleKeyPress);
   }, [currentReelIndex, filteredReels.length]);
 
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-colombia-yellow border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <h2 className="text-xl font-semibold mb-2">Cargando Reels...</h2>
+          <p className="text-gray-300">Obteniendo contenido de múltiples fuentes</p>
+          <div className="mt-4 text-sm text-gray-400">
+            Fuentes: YouTube, Google News, API Local...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error && reels.length === 0) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto p-6">
+          <FaExclamationTriangle className="w-16 h-16 text-red-500 mx-auto mb-4" />
+          <h2 className="text-xl font-semibold mb-4">Error al cargar contenido</h2>
+          <p className="text-gray-300 mb-6">{error}</p>
+          <button
+            onClick={() => loadVideos(true)}
+            className="bg-colombia-yellow text-black px-6 py-3 rounded-lg font-semibold hover:bg-yellow-400 transition-colors"
+          >
+            <FaRedo className="w-4 h-4 inline mr-2" />
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // No content state
+  if (filteredReels.length === 0) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-6xl mb-4">📺</div>
+          <h2 className="text-xl font-semibold mb-4">Sin contenido disponible</h2>
+          <p className="text-gray-300 mb-6">
+            {selectedPlatform === 'all' 
+              ? 'No hay videos disponibles en este momento'
+              : `No hay videos disponibles de ${getPlatformName(selectedPlatform as VideoSourceType)}`
+            }
+          </p>
+          <div className="space-x-4">
+            <button
+              onClick={() => setSelectedPlatform('all')}
+              className="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-500 transition-colors"
+            >
+              Ver todas las fuentes
+            </button>
+            <button
+              onClick={refreshVideos}
+              className="bg-colombia-yellow text-black px-4 py-2 rounded-lg hover:bg-yellow-400 transition-colors"
+            >
+              <FaRedo className="w-4 h-4 inline mr-2" />
+              Actualizar
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-black text-white relative overflow-hidden" ref={containerRef}>
       {/* Platform Filter Bar */}
@@ -252,10 +270,7 @@ const EnhancedPulseReels: React.FC = () => {
           {platforms.map((platform) => (
             <button
               key={platform.id}
-              onClick={() => {
-                setSelectedPlatform(platform.id);
-                setCurrentReelIndex(0);
-              }}
+              onClick={() => setSelectedPlatform(platform.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap ${
                 selectedPlatform === platform.id
                   ? `${platform.color} text-white shadow-lg transform scale-105`
@@ -266,6 +281,20 @@ const EnhancedPulseReels: React.FC = () => {
               <span>{platform.name}</span>
             </button>
           ))}
+          
+          {/* Refresh Button */}
+          <button
+            onClick={refreshVideos}
+            disabled={isRefreshing}
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 whitespace-nowrap ${
+              isRefreshing 
+                ? 'bg-gray-600 text-gray-300 cursor-not-allowed' 
+                : 'bg-white/20 backdrop-blur-sm text-white hover:bg-white/30'
+            }`}
+          >
+            <FaRedo className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            <span>{isRefreshing ? 'Actualizando...' : 'Actualizar'}</span>
+          </button>
         </div>
       </div>
 
@@ -277,7 +306,7 @@ const EnhancedPulseReels: React.FC = () => {
             {/* Video Thumbnail/Placeholder */}
             <div 
               className="w-full h-full bg-cover bg-center relative"
-              style={{ backgroundImage: `url(${currentReel.thumbnail})` }}
+              style={{ backgroundImage: `url(${currentReel?.thumbnailUrl})` }}
             >
               {/* Gradient Overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40"></div>
@@ -285,15 +314,15 @@ const EnhancedPulseReels: React.FC = () => {
               {/* Platform Badge */}
               <div className="absolute top-4 left-4">
                 <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
-                  platforms.find(p => p.id === currentReel.platform)?.color || 'bg-gray-600'
+                  platforms.find(p => p.id === currentReel?.source.type)?.color || 'bg-gray-600'
                 } text-white`}>
-                  <span className="text-base">{getPlatformIcon(currentReel.platform)}</span>
-                  <span>{currentReel.platformName}</span>
+                  <span className="text-base">{getPlatformIcon(currentReel?.source.type)}</span>
+                  <span>{currentReel?.platformName}</span>
                 </div>
               </div>
 
               {/* Live Badge */}
-              {currentReel.isLive && (
+              {currentReel?.isLive && (
                 <div className="absolute top-4 right-4">
                   <div className="flex items-center gap-2 bg-red-600 text-white px-3 py-1 rounded-full text-sm font-bold">
                     <MdLiveTv className="w-4 h-4" />
@@ -303,7 +332,7 @@ const EnhancedPulseReels: React.FC = () => {
               )}
 
               {/* Trending Badge */}
-              {currentReel.trending && !currentReel.isLive && (
+              {currentReel?.trending && !currentReel?.isLive && (
                 <div className="absolute top-4 right-4">
                   <div className="flex items-center gap-2 bg-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold">
                     <BiTrendingUp className="w-4 h-4" />
@@ -330,40 +359,40 @@ const EnhancedPulseReels: React.FC = () => {
               <div className="absolute bottom-0 left-0 right-0 p-6">
                 {/* Author Info */}
                 <div className="flex items-center gap-3 mb-4">
-                  <div className="text-3xl">{currentReel.author.avatar}</div>
+                  <div className="text-3xl">{currentReel?.author.avatar}</div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-lg">{currentReel.author.name}</span>
-                      {currentReel.author.verified && (
+                      <span className="font-bold text-lg">{currentReel?.author.name}</span>
+                      {currentReel?.author.verified && (
                         <MdVerified className="w-5 h-5 text-blue-400" />
                       )}
                     </div>
-                    <p className="text-sm text-gray-300">{currentReel.author.followers} seguidores</p>
+                    <p className="text-sm text-gray-300">{formatNumber(currentReel?.author.followers || 0)} seguidores</p>
                   </div>
                 </div>
 
                 {/* Title and Description */}
                 <div className="mb-4">
-                  <h3 className="text-xl font-bold mb-2 leading-tight">{currentReel.title}</h3>
+                  <h3 className="text-xl font-bold mb-2 leading-tight">{currentReel?.title}</h3>
                   <p className="text-sm text-gray-200 leading-relaxed line-clamp-3">
-                    {currentReel.description}
+                    {currentReel?.description}
                   </p>
                 </div>
 
                 {/* Hashtags */}
                 <div className="flex flex-wrap gap-2 mb-4">
-                  {currentReel.hashtags.map((hashtag, index) => (
+                  {currentReel?.tags.map((tag, index) => (
                     <span key={index} className="text-blue-400 text-sm font-medium">
-                      {hashtag}
+                      {tag}
                     </span>
                   ))}
                 </div>
 
                 {/* Stats */}
                 <div className="flex items-center gap-6 text-sm text-gray-300">
-                  <span>{formatNumber(currentReel.views)} views</span>
-                  <span>{currentReel.duration}</span>
-                  <span>{currentReel.timestamp}</span>
+                  <span>{formatNumber(currentReel?.views || 0)} views</span>
+                  <span>{formatDuration(currentReel?.duration || 0)}</span>
+                  <span>{getTimeAgo(currentReel?.publishedAt || '')}</span>
                 </div>
               </div>
             </div>
@@ -380,7 +409,7 @@ const EnhancedPulseReels: React.FC = () => {
             <div className="bg-white/20 backdrop-blur-sm rounded-full p-4 group-hover:bg-red-500/30 transition-all duration-300">
               <FaHeart className="w-6 h-6" />
             </div>
-            <span className="text-sm font-bold">{formatNumber(currentReel.likes)}</span>
+            <span className="text-sm font-bold">{formatNumber(currentReel?.likes || 0)}</span>
           </button>
 
           {/* Comment */}
@@ -391,7 +420,7 @@ const EnhancedPulseReels: React.FC = () => {
             <div className="bg-white/20 backdrop-blur-sm rounded-full p-4 group-hover:bg-blue-500/30 transition-all duration-300">
               <FaComment className="w-6 h-6" />
             </div>
-            <span className="text-sm font-bold">{formatNumber(currentReel.comments)}</span>
+            <span className="text-sm font-bold">{formatNumber(currentReel?.comments || 0)}</span>
           </button>
 
           {/* Share */}
@@ -402,11 +431,11 @@ const EnhancedPulseReels: React.FC = () => {
             <div className="bg-white/20 backdrop-blur-sm rounded-full p-4 group-hover:bg-green-500/30 transition-all duration-300">
               <FaShare className="w-6 h-6" />
             </div>
-            <span className="text-sm font-bold">{formatNumber(currentReel.shares)}</span>
+            <span className="text-sm font-bold">{formatNumber(currentReel?.shares || 0)}</span>
           </button>
 
           {/* External Link */}
-          {currentReel.embedUrl && (
+          {currentReel?.embedUrl && (
             <button 
               onClick={() => window.open(currentReel.embedUrl, '_blank')}
               className="flex flex-col items-center gap-2 text-white hover:text-purple-500 transition-colors group"
@@ -468,8 +497,27 @@ const EnhancedPulseReels: React.FC = () => {
         <div className="space-y-2">
           <p>↑↓ Navegar</p>
           <p>Espacio: Play/Pause</p>
+          <p className="text-xs">Múltiples fuentes activas</p>
         </div>
       </div>
+
+      {/* Error Toast */}
+      {error && reels.length > 0 && (
+        <div className="absolute top-20 left-4 right-4 z-40">
+          <div className="bg-red-600 text-white px-4 py-3 rounded-lg shadow-lg">
+            <div className="flex items-center gap-2">
+              <FaExclamationTriangle className="w-4 h-4" />
+              <span className="text-sm">{error}</span>
+              <button
+                onClick={() => setError(null)}
+                className="ml-auto text-white hover:text-gray-200"
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
