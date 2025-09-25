@@ -20,6 +20,8 @@ import ModernSearchEngine from "./components/ModernSearchEngine";
 import PulseReels from "./components/PulseReels";
 import EnhancedPulseReels from "./components/EnhancedPulseReels";
 import QuantumReelsHub from "./components/QuantumReelsHub";
+import WorldClassVideoHub from "./components/WorldClassVideoHub";
+import WorldClassVideoAdminDashboard from "./components/WorldClassVideoAdminDashboard";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
 import LiveChat from "./components/LiveChat";
@@ -112,7 +114,7 @@ function App() {
   };
 
   const shouldShowCentralSearch = () => {
-    return ['home', 'feeds', 'news', 'reels', 'search', 'debates', 'surveys', 'encuestas', 'tendencias', 'global-tendencias', 'sources'].includes(currentView);
+    return ['home', 'feeds', 'news', 'reels', 'video-hub', 'search', 'debates', 'surveys', 'encuestas', 'tendencias', 'global-tendencias', 'sources'].includes(currentView);
   };
 
   const handleRetry = () => {
@@ -144,6 +146,10 @@ function App() {
               onNavigate={handleNavigate} 
             />
           );
+        case 'video-hub':
+          return <WorldClassVideoHub />;
+        case 'video-admin':
+          return <WorldClassVideoAdminDashboard />;
         case 'reels':
           return <QuantumReelsHub />;
         case 'feeds':
@@ -201,6 +207,8 @@ function App() {
   const getLoadingMessage = (view: string): string => {
     const messages: Record<string, string> = {
       'reels': 'Cargando Reels...',
+      'video-hub': 'Cargando Video Hub...',
+      'video-admin': 'Cargando Panel de Administración...',
       'feeds': 'Cargando noticias...',
       'news': 'Cargando noticias...',
       'congress': 'Cargando actividad del Congreso...',
