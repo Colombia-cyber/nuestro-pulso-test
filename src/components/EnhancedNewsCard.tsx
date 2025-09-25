@@ -36,6 +36,27 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
     }
   };
 
+  const getImageSrc = () => {
+    // If article has a proper image URL, use it
+    if (article.imageUrl && !article.imageUrl.includes('/api/placeholder')) {
+      return article.imageUrl;
+    }
+    
+    // Generate a placeholder image based on category
+    const placeholders = {
+      'Política': 'https://images.unsplash.com/photo-1586339949916-3e9457bef6d3?w=400&h=250&fit=crop',
+      'Economía': 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?w=400&h=250&fit=crop',
+      'Educación': 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400&h=250&fit=crop',
+      'Tecnología': 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=400&h=250&fit=crop',
+      'Ambiente': 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&h=250&fit=crop',
+      'Salud': 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=250&fit=crop',
+      'default': 'https://images.unsplash.com/photo-1495020689067-958852a7765e?w=400&h=250&fit=crop'
+    };
+
+    const category = typeof article.category === 'string' ? article.category : 'default';
+    return placeholders[category as keyof typeof placeholders] || placeholders.default;
+  };
+
   const getSourceIcon = (source: string | NewsSource) => {
     const sourceName = typeof source === 'string' ? source : source.name;
     const sourceIcons: Record<string, string> = {
@@ -127,14 +148,20 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
         className="bg-white rounded-lg shadow hover:shadow-md transition-all duration-200 p-4 cursor-pointer border border-gray-100 hover:border-gray-200"
       >
         <div className="flex items-start space-x-3">
-          {!imageError && article.imageUrl && (
+          {!imageError ? (
             <div className="flex-shrink-0">
               <img 
-                src={article.imageUrl}
+                src={getImageSrc()}
                 alt={article.title}
                 className="w-16 h-16 rounded-lg object-cover"
                 onError={() => setImageError(true)}
               />
+            </div>
+          ) : (
+            <div className="flex-shrink-0">
+              <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center">
+                <span className="text-white text-lg">{getSourceIcon(article.source)}</span>
+              </div>
             </div>
           )}
           
@@ -191,40 +218,44 @@ const EnhancedNewsCard: React.FC<EnhancedNewsCardProps> = ({
       className="bg-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden cursor-pointer border border-gray-100 hover:border-gray-200 group"
     >
       {/* Image Header */}
-      {!imageError && article.imageUrl && (
-        <div className="relative h-48 overflow-hidden">
+      <div className="relative h-48 overflow-hidden">
+        {!imageError ? (
           <img 
-            src={article.imageUrl}
+            src={getImageSrc()}
             alt={article.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
             onError={() => setImageError(true)}
           />
+        ) : (
+          <div className="w-full h-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center">
+            <span className="text-white text-4xl opacity-70">{getSourceIcon(article.source)}</span>
+          </div>
+        )}
+        
+        {/* Overlay badges */}
+        <div className="absolute top-3 left-3 flex space-x-2">
+          <span className="bg-white/90 backdrop-blur-sm text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
+            {getSourceIcon(article.source)} {getSourceName(article.source)}
+          </span>
           
-          {/* Overlay badges */}
-          <div className="absolute top-3 left-3 flex space-x-2">
-            <span className="bg-white/90 backdrop-blur-sm text-gray-800 px-2 py-1 rounded-full text-xs font-medium">
-              {getSourceIcon(article.source)} {getSourceName(article.source)}
+          {article.trending && (
+            <span className="bg-red-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
+              🔥 Trending
             </span>
-            
-            {article.trending && (
-              <span className="bg-red-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
-                🔥 Trending
-              </span>
-            )}
-          </div>
-          
-          {/* Share button overlay */}
-          <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <button
-              onClick={handleShare}
-              className="bg-white/90 backdrop-blur-sm text-gray-700 hover:text-blue-600 p-2 rounded-full shadow-lg transition-colors"
-              title="Compartir"
-            >
-              📤
-            </button>
-          </div>
+          )}
         </div>
-      )}
+        
+        {/* Share button overlay */}
+        <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <button
+            onClick={handleShare}
+            className="bg-white/90 backdrop-blur-sm text-gray-700 hover:text-blue-600 p-2 rounded-full shadow-lg transition-colors"
+            title="Compartir"
+          >
+            📤
+          </button>
+        </div>
+      </div>
       
       {/* Content */}
       <div className="p-6">

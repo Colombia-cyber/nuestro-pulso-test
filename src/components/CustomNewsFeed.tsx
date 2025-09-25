@@ -9,6 +9,7 @@ import ModernNewsSidebar from './ModernNewsSidebar';
 import TimelineView from './TimelineView';
 import { NewsItem, NewsFilter, CategoryCard } from '../types/news';
 import { newsService } from '../services/newsService';
+import { videoService } from '../services/videoService';
 
 interface CustomNewsFeedProps {
   onNavigate?: (view: string, articleId?: string) => void;
