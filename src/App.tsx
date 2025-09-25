@@ -145,7 +145,7 @@ function App() {
             />
           );
         case 'reels':
-          return <QuantumReelsHub />;
+          return <EnhancedPulseReels />;
         case 'feeds':
         case 'news':
           return (
