@@ -31,6 +31,7 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
     { id: 'home', icon: 'HOME', label: 'Inicio', shortLabel: 'INICIO' },
     { id: 'colombia-hub', icon: '🌎🇨🇴', label: 'Colombia Hub', shortLabel: 'COLOMBIA' },
     { id: 'sources', icon: '📰🔗', label: 'Sources', shortLabel: 'FUENTES' },
+    { id: 'world-class-videos', icon: '🎬🤖', label: 'Videos IA', shortLabel: 'VIDEOS IA' },
     { id: 'tendencias', icon: '🌍📊', label: 'Tendencias', shortLabel: 'TENDENCIAS' },
     { id: 'reels', icon: 'REELS', label: 'Reels', shortLabel: 'REELS' },
     { id: 'feeds', icon: 'NEWS', label: 'Noticias', shortLabel: 'NOTICIAS' },
@@ -39,7 +40,8 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
     { id: 'chat', icon: 'CHAT', label: 'Chat en Vivo', shortLabel: 'CHAT' },
     { id: 'debates', icon: 'DEBATE', label: 'Debates', shortLabel: 'DEBATES' },
     { id: 'surveys', icon: 'POLL', label: 'Encuestas', shortLabel: 'ENCUESTAS' },
-    { id: 'community-hub', icon: 'HUB', label: 'Community Hub', shortLabel: 'HUB' }
+    { id: 'community-hub', icon: 'HUB', label: 'Community Hub', shortLabel: 'HUB' },
+    { id: 'admin-videos', icon: '📊👑', label: 'Admin Videos', shortLabel: 'ADMIN' }
   ];
 
   return (

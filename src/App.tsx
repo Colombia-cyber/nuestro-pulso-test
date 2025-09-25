@@ -20,6 +20,8 @@ import ModernSearchEngine from "./components/ModernSearchEngine";
 import PulseReels from "./components/PulseReels";
 import EnhancedPulseReels from "./components/EnhancedPulseReels";
 import QuantumReelsHub from "./components/QuantumReelsHub";
+import WorldClassVideoHub from "./components/WorldClassVideoHub";
+import AdminVideosDashboard from "./components/AdminVideosDashboard";
 import CongressTracker from "./components/CongressTracker";
 import ElectionHub from "./components/ElectionHub";
 import LiveChat from "./components/LiveChat";
@@ -31,6 +33,8 @@ import GlobalTendenciasRealtime from "./components/GlobalTendenciasRealtime.jsx"
 import SourcesPage from "./pages/Sources";
 import SourceDetail from "./pages/SourceDetail";
 import { useMultiModalNavigation } from "./services/multiModalNavigation";
+import { useI18n } from "./services/i18nService";
+import { useAccessibility } from "./hooks/useAccessibility";
 
 // Import modern styles
 import "./styles/modern.css";
@@ -77,6 +81,10 @@ function App() {
 
   // Initialize multi-modal navigation
   const { isListening, capabilities } = useMultiModalNavigation(handleNavigate);
+
+  // Initialize i18n and accessibility
+  const { language } = useI18n();
+  const { settings: accessibilitySettings } = useAccessibility();
 
   // Listen for custom navigation events
   useEffect(() => {
@@ -146,6 +154,11 @@ function App() {
           );
         case 'reels':
           return <QuantumReelsHub />;
+        case 'world-class-videos':
+        case 'videos':
+          return <WorldClassVideoHub language={language} userId="user-123" />;
+        case 'admin-videos':
+          return <AdminVideosDashboard language={language} />;
         case 'feeds':
         case 'news':
           return (
