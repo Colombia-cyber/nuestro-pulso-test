@@ -7,6 +7,7 @@ import {
 } from 'react-icons/fa';
 import { MdVerified, MdLiveTv, MdTrendingUp } from 'react-icons/md';
 import { BiTrendingUp, BiFullscreen } from 'react-icons/bi';
+import VideoThumbnail from './VideoThumbnail';
 
 interface QuantumReel {
   id: string;
@@ -89,7 +90,7 @@ const QuantumReelsHub: React.FC = () => {
       likes: 3400,
       comments: 892,
       shares: 567,
-      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+      thumbnail: 'https://img.youtube.com/vi/KYz2wyBy3kc/maxresdefault.jpg',
       embedUrl: 'https://www.youtube.com/embed/live-debate',
       author: {
         name: 'Canal Congreso Colombia',
@@ -126,7 +127,7 @@ const QuantumReelsHub: React.FC = () => {
       likes: 5600,
       comments: 234,
       shares: 1200,
-      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+      thumbnail: 'https://img.youtube.com/vi/Eg0jObgVDgI/maxresdefault.jpg',
       author: {
         name: 'Profesor Cívico',
         avatar: '👨‍🏫',
@@ -156,7 +157,7 @@ const QuantumReelsHub: React.FC = () => {
       likes: 1800,
       comments: 156,
       shares: 289,
-      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+      thumbnail: 'https://img.youtube.com/vi/7u1nYs6kSgQ/maxresdefault.jpg',
       author: {
         name: 'Periodista Ciudadano MDE',
         avatar: '📷',
@@ -190,7 +191,7 @@ const QuantumReelsHub: React.FC = () => {
       likes: 2100,
       comments: 445,
       shares: 123,
-      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+      thumbnail: 'https://img.youtube.com/vi/f4EwKrTgtLg/maxresdefault.jpg',
       author: {
         name: 'Archivo Histórico CO',
         avatar: '📚',
@@ -218,7 +219,7 @@ const QuantumReelsHub: React.FC = () => {
       likes: 8900,
       comments: 567,
       shares: 2300,
-      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+      thumbnail: 'https://img.youtube.com/vi/QH2-TGUlwu4/maxresdefault.jpg',
       author: {
         name: 'Registraduría Nacional',
         avatar: '🏛️',
@@ -247,7 +248,7 @@ const QuantumReelsHub: React.FC = () => {
       likes: 1500,
       comments: 234,
       shares: 167,
-      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+      thumbnail: 'https://img.youtube.com/vi/wJnBTPUQS5A/maxresdefault.jpg',
       author: {
         name: 'Colombia Reconcilia',
         avatar: '🤝',
@@ -437,14 +438,18 @@ const QuantumReelsHub: React.FC = () => {
               <div className="bg-slate-800 rounded-2xl overflow-hidden shadow-2xl border border-slate-700">
                 {/* Video Container */}
                 <div className="relative aspect-video bg-black">
-                  <img 
+                  <VideoThumbnail 
                     src={currentReel.thumbnail} 
                     alt={currentReel.title}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      // Fallback to placeholder if image fails
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/api/placeholder/640/360';
+                    videoUrl={currentReel.embedUrl}
+                    title={currentReel.title}
+                    description={currentReel.description}
+                    className="w-full h-full"
+                    onVideoPlay={() => {
+                      if (currentReel.embedUrl) {
+                        window.open(currentReel.embedUrl, '_blank');
+                      }
+                      setIsPlaying(true);
                     }}
                   />
                   <div className="absolute inset-0 bg-black/20"></div>
@@ -610,19 +615,13 @@ const QuantumReelsHub: React.FC = () => {
                     >
                       <div className="flex gap-3">
                         <div className="w-12 h-8 rounded overflow-hidden flex-shrink-0">
-                          <img 
-                            src={reel.thumbnail} 
+                          <VideoThumbnail
+                            src={reel.thumbnail}
                             alt={reel.title}
-                            className="w-full h-full object-cover"
-                            onError={(e) => {
-                              // Fallback to emoji if image fails
-                              const target = e.target as HTMLImageElement;
-                              target.style.display = 'none';
-                              const parent = target.parentElement;
-                              if (parent) {
-                                parent.innerHTML = '<div class="w-full h-full bg-slate-600 flex items-center justify-center text-xs">🎬</div>';
-                              }
-                            }}
+                            videoUrl={reel.embedUrl}
+                            title={reel.title}
+                            className="w-full h-full"
+                            showPlayButton={false}
                           />
                         </div>
                         <div className="flex-1 min-w-0">

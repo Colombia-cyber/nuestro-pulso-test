@@ -14,6 +14,7 @@ import {
 import { MdVerified, MdHd } from 'react-icons/md';
 import { BiTrendingUp } from 'react-icons/bi';
 import { NewsItem } from '../types/news';
+import VideoThumbnail from './VideoThumbnail';
 
 interface ModernNewsCardProps {
   article: NewsItem;
@@ -177,11 +178,14 @@ const ModernNewsCard: React.FC<ModernNewsCardProps> = ({
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-            <span className="text-4xl opacity-60">
-              {showVideo ? '🎬' : '📰'}
-            </span>
-          </div>
+          <VideoThumbnail
+            src=""
+            alt={article.title}
+            title={article.title}
+            description={article.summary || ''}
+            className="w-full h-full"
+            showPlayButton={false}
+          />
         )}
 
         {/* Video Play Button */}
