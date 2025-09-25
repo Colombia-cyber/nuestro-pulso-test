@@ -28,6 +28,8 @@ import Survey from "./components/Survey";
 import TopicTabs from "./components/TopicTabs";
 import ElTiempoOpinionFeed from "./components/ElTiempoOpinionFeed";
 import GlobalTendenciasRealtime from "./components/GlobalTendenciasRealtime.jsx";
+import SourcesPage from "./pages/Sources";
+import SourceDetail from "./pages/SourceDetail";
 import { useMultiModalNavigation } from "./services/multiModalNavigation";
 
 // Import modern styles
@@ -69,6 +71,7 @@ const ErrorFallback: React.FC<{ error?: string; onRetry?: () => void }> = ({
 function App() {
   const [currentView, setCurrentView] = useState('home');
   const [currentTopic, setCurrentTopic] = useState('colombia-news');
+  const [viewParams, setViewParams] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,7 +81,7 @@ function App() {
   // Listen for custom navigation events
   useEffect(() => {
     const handleCustomNavigation = (event: CustomEvent) => {
-      handleNavigate(event.detail);
+      handleNavigate(event.detail.view, event.detail.params);
     };
 
     window.addEventListener('navigate' as any, handleCustomNavigation);
@@ -88,9 +91,10 @@ function App() {
     };
   }, []);
 
-  function handleNavigate(view: string) {
+  function handleNavigate(view: string, params?: any) {
     setIsLoading(true);
     setError(null);
+    setViewParams(params);
     
     // Simulate loading delay for better UX
     setTimeout(() => {
@@ -108,7 +112,7 @@ function App() {
   };
 
   const shouldShowCentralSearch = () => {
-    return ['home', 'feeds', 'news', 'reels', 'search', 'debates', 'surveys', 'encuestas', 'tendencias', 'global-tendencias'].includes(currentView);
+    return ['home', 'feeds', 'news', 'reels', 'search', 'debates', 'surveys', 'encuestas', 'tendencias', 'global-tendencias', 'sources'].includes(currentView);
   };
 
   const handleRetry = () => {
@@ -130,6 +134,16 @@ function App() {
 
     try {
       switch (currentView) {
+        case 'sources':
+          return <SourcesPage onNavigate={handleNavigate} />;
+        case 'source-detail':
+          return (
+            <SourceDetail 
+              sourceId={viewParams?.sourceId}
+              source={viewParams?.source}
+              onNavigate={handleNavigate} 
+            />
+          );
         case 'reels':
           return <QuantumReelsHub />;
         case 'feeds':
@@ -200,6 +214,8 @@ function App() {
       'colombia-hub': 'Cargando Colombia News Hub...',
       'colombia-news': 'Cargando Colombia News Hub...',
       'search': 'Preparando búsqueda...',
+      'sources': 'Cargando fuentes de noticias...',
+      'source-detail': 'Cargando información de la fuente...',
       'tendencias': 'Cargando tendencias globales...',
       'global-tendencias': 'Cargando tendencias globales...',
     };
