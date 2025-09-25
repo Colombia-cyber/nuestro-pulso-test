@@ -7,4 +7,6 @@ export interface PulseReel {
   views: number;
   likes: number;
   videoUrl?: string;
+  thumbnail?: string;
+  embedUrl?: string;
 }

@@ -89,7 +89,7 @@ const QuantumReelsHub: React.FC = () => {
       likes: 3400,
       comments: 892,
       shares: 567,
-      thumbnail: '🎬',
+      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
       embedUrl: 'https://www.youtube.com/embed/live-debate',
       author: {
         name: 'Canal Congreso Colombia',
@@ -126,7 +126,7 @@ const QuantumReelsHub: React.FC = () => {
       likes: 5600,
       comments: 234,
       shares: 1200,
-      thumbnail: '📊',
+      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
       author: {
         name: 'Profesor Cívico',
         avatar: '👨‍🏫',
@@ -156,7 +156,7 @@ const QuantumReelsHub: React.FC = () => {
       likes: 1800,
       comments: 156,
       shares: 289,
-      thumbnail: '📱',
+      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
       author: {
         name: 'Periodista Ciudadano MDE',
         avatar: '📷',
@@ -190,7 +190,7 @@ const QuantumReelsHub: React.FC = () => {
       likes: 2100,
       comments: 445,
       shares: 123,
-      thumbnail: '📰',
+      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
       author: {
         name: 'Archivo Histórico CO',
         avatar: '📚',
@@ -218,7 +218,7 @@ const QuantumReelsHub: React.FC = () => {
       likes: 8900,
       comments: 567,
       shares: 2300,
-      thumbnail: '🗳️',
+      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
       author: {
         name: 'Registraduría Nacional',
         avatar: '🏛️',
@@ -247,7 +247,7 @@ const QuantumReelsHub: React.FC = () => {
       likes: 1500,
       comments: 234,
       shares: 167,
-      thumbnail: '🕊️',
+      thumbnail: 'https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
       author: {
         name: 'Colombia Reconcilia',
         avatar: '🤝',
@@ -437,9 +437,17 @@ const QuantumReelsHub: React.FC = () => {
               <div className="bg-slate-800 rounded-2xl overflow-hidden shadow-2xl border border-slate-700">
                 {/* Video Container */}
                 <div className="relative aspect-video bg-black">
-                  <div className="absolute inset-0 flex items-center justify-center text-6xl">
-                    {currentReel.thumbnail}
-                  </div>
+                  <img 
+                    src={currentReel.thumbnail} 
+                    alt={currentReel.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback to placeholder if image fails
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/api/placeholder/640/360';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-black/20"></div>
                   
                   {/* Video Controls Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
@@ -601,7 +609,22 @@ const QuantumReelsHub: React.FC = () => {
                       }`}
                     >
                       <div className="flex gap-3">
-                        <div className="text-2xl">{reel.thumbnail}</div>
+                        <div className="w-12 h-8 rounded overflow-hidden flex-shrink-0">
+                          <img 
+                            src={reel.thumbnail} 
+                            alt={reel.title}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              // Fallback to emoji if image fails
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              const parent = target.parentElement;
+                              if (parent) {
+                                parent.innerHTML = '<div class="w-full h-full bg-slate-600 flex items-center justify-center text-xs">🎬</div>';
+                              }
+                            }}
+                          />
+                        </div>
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold text-white text-sm truncate">{reel.title}</h4>
                           <div className="flex items-center gap-2 text-xs text-slate-400 mt-1">
@@ -635,9 +658,17 @@ const QuantumReelsHub: React.FC = () => {
                 className="bg-slate-800 rounded-2xl overflow-hidden shadow-lg cursor-pointer hover:transform hover:scale-105 transition-all border border-slate-700"
               >
                 <div className="relative aspect-video bg-black">
-                  <div className="absolute inset-0 flex items-center justify-center text-4xl">
-                    {reel.thumbnail}
-                  </div>
+                  <img 
+                    src={reel.thumbnail} 
+                    alt={reel.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback to placeholder if image fails
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/api/placeholder/320/180';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-black/20"></div>
                   {reel.isLive && (
                     <div className="absolute top-2 left-2">
                       <span className="px-2 py-1 bg-red-600 text-white rounded-full text-xs font-semibold animate-pulse">

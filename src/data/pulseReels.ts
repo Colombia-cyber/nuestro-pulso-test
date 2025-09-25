@@ -1,64 +1,101 @@
 import { PulseReel } from '../types/pulseReel';
 
+// Enhanced mock reels with better video content and proper thumbnails
 export const pulseReels: PulseReel[] = [
   {
-    duration: "2:30",
+    duration: "2:45",
     topic: "Politics",
-    organization: "National Registry",
-    title: "How to participate in the Colombian electoral process",
-    summary: "Quick Guide to Your Voting Rights and Eligibility",
-    views: 15420,
-    likes: 892,
-    videoUrl: "https://example.com/video1"
+    organization: "Registraduría Nacional",
+    title: "🗳️ Elecciones 2024: Guía completa para votar",
+    summary: "Todo lo que necesitas saber sobre el proceso electoral colombiano: documentos, lugares de votación y derechos ciudadanos.",
+    views: 67420,
+    likes: 3892,
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
   },
   {
-    duration: "3:15",
+    duration: "4:15",
     topic: "Participation",
-    organization: "Corona Foundation",
-    title: "The power of citizen participation in your municipality",
-    summary: "Learn how you can influence local decisions in your community",
-    views: 23100,
-    likes: 1547,
-    videoUrl: "https://example.com/video2"
+    organization: "Colombia Participa",
+    title: "🤝 Participación Ciudadana: Tu voz cuenta",
+    summary: "Descubre cómo influir en las decisiones de tu municipio y hacer que tu comunidad sea escuchada.",
+    views: 89100,
+    likes: 5547,
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
   },
   {
-    duration: "4:20",
-    topic: "Participation",
-    organization: "Transparency Colombia",
-    title: "Participatory Budgeting: Your Voice in Public Finance",
-    summary: "Learn how citizens can decide where the budget is spent",
-    views: 8950,
-    likes: 673,
-    videoUrl: "https://example.com/video3"
-  },
-  {
-    duration: "5:10",
+    duration: "3:30",
     topic: "Environment",
     organization: "WWF Colombia",
-    title: "Climate change and citizen action in Colombia",
-    summary: "Local initiatives that are making an environmental difference",
-    views: 31200,
-    likes: 2156,
-    videoUrl: "https://example.com/video4"
+    title: "🌍 Cambio Climático: Acciones locales en Colombia",
+    summary: "Iniciativas ciudadanas que están marcando la diferencia en la lucha contra el cambio climático.",
+    views: 156200,
+    likes: 8156,
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+  },
+  {
+    duration: "5:20",
+    topic: "Politics",
+    organization: "Transparencia Colombia",
+    title: "⚖️ Control Ciudadano: Combatiendo la corrupción",
+    summary: "Herramientas y mecanismos para denunciar la corrupción y exigir transparencia gubernamental.",
+    views: 234800,
+    likes: 12342,
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
   },
   {
     duration: "3:45",
     topic: "Education",
-    organization: "Ministry of Education",
-    title: "Digital Education: Bridging the Technology Gap",
-    summary: "Government programs to improve access to digital education",
-    views: 12340,
-    likes: 789,
-    videoUrl: "https://example.com/video5"
+    organization: "Ministerio de Educación",
+    title: "💻 Educación Digital: Cerrando la brecha tecnológica",
+    summary: "Programas gubernamentales para mejorar el acceso a la educación digital en Colombia.",
+    views: 98340,
+    likes: 4789,
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
   },
   {
-    duration: "4:00",
+    duration: "4:10",
+    topic: "Social",
+    organization: "Red Cívica Colombia",
+    title: "🏥 Salud Pública: Derechos y acceso universal",
+    summary: "Cómo ejercer tus derechos en salud y acceder a servicios públicos de calidad.",
+    views: 145600,
+    likes: 7234,
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+  },
+  {
+    duration: "2:50",
+    topic: "Technology",
+    organization: "Gov.co Digital",
+    title: "📱 Trámites Digitales: Gobierno en línea",
+    summary: "Aprende a usar las plataformas digitales del gobierno para realizar trámites desde casa.",
+    views: 78920,
+    likes: 3456,
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+  },
+  {
+    duration: "6:15",
     topic: "Politics",
-    organization: "Citizen Oversight",
-    title: "Citizen control of corruption",
-    summary: "Tools and mechanisms for reporting corruption",
-    views: 19800,
-    likes: 1342,
-    videoUrl: "https://example.com/video6"
+    organization: "Canal Congreso",
+    title: "🏛️ Proceso de Paz: Avances y desafíos 2024",
+    summary: "Análisis del estado actual de la implementación del Acuerdo de Paz en Colombia.",
+    views: 189700,
+    likes: 9876,
+    videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    thumbnail: "https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg",
+    embedUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ"
   }
 ];

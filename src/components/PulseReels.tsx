@@ -72,7 +72,7 @@ const convertToVerticalReel = (pulseReel: PulseReel, index: number): VerticalRee
     likes: pulseReel.likes,
     comments: Math.floor(pulseReel.likes * 0.1),
     shares: Math.floor(pulseReel.likes * 0.05),
-    thumbnail: topicToEmojiMap[pulseReel.topic] || '📺',
+    thumbnail: pulseReel.thumbnail || `/api/placeholder/480/360`,
     author: {
       name: pulseReel.organization,
       avatar: topicToEmojiMap[pulseReel.topic] || '📺',
@@ -440,13 +440,39 @@ const PulseReels: React.FC = () => {
       {/* Video Background */}
       <div className="absolute inset-0 flex items-center justify-center">
         <div className="relative w-full h-full max-w-md mx-auto bg-gradient-to-br from-purple-900 via-blue-900 to-green-900">
-          {/* Video Placeholder with Thumbnail */}
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center">
-              <div className="text-9xl mb-4 animate-pulse">{currentReel.thumbnail}</div>
-              <h3 className="text-white text-xl font-bold mb-2">{currentReel.title}</h3>
-              <p className="text-gray-300 text-sm px-4">{currentReel.description}</p>
+          {/* Video Thumbnail Background */}
+          <div className="absolute inset-0">
+            <img 
+              src={currentReel.thumbnail} 
+              alt={currentReel.title}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                // Fallback to gradient background with emoji if image fails
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const fallback = target.nextElementSibling as HTMLElement;
+                if (fallback) fallback.style.display = 'flex';
+              }}
+            />
+            {/* Fallback content */}
+            <div 
+              className="w-full h-full bg-gradient-to-br from-purple-900 via-blue-900 to-green-900 flex items-center justify-center" 
+              style={{ display: 'none' }}
+            >
+              <div className="text-center">
+                <div className="text-9xl mb-4 animate-pulse">🎬</div>
+                <h3 className="text-white text-xl font-bold mb-2">{currentReel.title}</h3>
+                <p className="text-gray-300 text-sm px-4">{currentReel.description}</p>
+              </div>
             </div>
+            {/* Video overlay gradient */}
+            <div className="absolute inset-0 bg-black/30"></div>
+          </div>
+
+          {/* Video Info Overlay */}
+          <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/80 to-transparent">
+            <h3 className="text-white text-xl font-bold mb-2">{currentReel.title}</h3>
+            <p className="text-gray-300 text-sm">{currentReel.description}</p>
           </div>
 
           {/* Play/Pause Overlay */}
