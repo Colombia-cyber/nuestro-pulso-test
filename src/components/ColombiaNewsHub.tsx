@@ -230,70 +230,107 @@ const ColombiaNewsHub: React.FC<ColombiaNewsHubProps> = ({ onNavigate }) => {
     </div>
   );
 
-  const VideoCard: React.FC<{ video: ColombiaVideo }> = ({ video }) => (
-    <div className="video-card group hover:shadow-xl transition-all duration-300 border border-gray-200/50 hover:border-colombia-blue/30 overflow-hidden">
-      <div className="relative">
-        <img
-          src={video.thumbnail}
-          alt={video.title}
-          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-          onError={(e) => {
-            e.currentTarget.src = '/api/placeholder/400/300';
-          }}
-        />
-        
-        {/* Play button overlay */}
-        <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
-          <div className="w-16 h-16 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform">
-            <FaPlay className="w-6 h-6 ml-1" />
-          </div>
-        </div>
-        
-        {/* Duration badge */}
-        <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
-          {video.duration}
-        </div>
-      </div>
-      
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-colombia-blue transition-colors">
-          {video.title}
-        </h3>
-        
-        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-          {video.description}
-        </p>
-        
-        <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
-          <span className="font-medium">{video.channelTitle}</span>
-          <span>{formatTimeAgo(video.publishedAt)}</span>
-        </div>
-        
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4 text-xs text-gray-500">
-            <div className="flex items-center gap-1">
-              <FaEye className="w-3 h-3" />
-              {formatViewCount(video.viewCount)}
+  const VideoCard: React.FC<{ video: ColombiaVideo }> = ({ video }) => {
+    const [imageError, setImageError] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+
+    return (
+      <div className="video-card group hover:shadow-xl transition-all duration-300 border border-gray-200/50 hover:border-colombia-blue/30 overflow-hidden">
+        <div className="relative">
+          {!imageError ? (
+            <img
+              src={video.thumbnail}
+              alt={video.title}
+              className={`w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 ${isLoading ? 'opacity-0' : 'opacity-100'}`}
+              onLoad={() => setIsLoading(false)}
+              onError={() => {
+                setImageError(true);
+                setIsLoading(false);
+              }}
+            />
+          ) : (
+            // Error state with fallback
+            <div className="w-full h-48 bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+              <div className="text-center text-gray-600">
+                <div className="text-4xl mb-2">🎬</div>
+                <p className="text-sm">Video no disponible</p>
+                <button 
+                  onClick={() => {
+                    setImageError(false);
+                    setIsLoading(true);
+                  }}
+                  className="mt-2 text-xs bg-colombia-blue text-white px-3 py-1 rounded hover:bg-colombia-blue-dark transition-colors"
+                >
+                  Reintentar
+                </button>
+              </div>
             </div>
-            <div className="flex items-center gap-1">
-              <FaThumbsUp className="w-3 h-3" />
-              {formatViewCount(video.likeCount)}
+          )}
+          
+          {/* Loading state */}
+          {isLoading && !imageError && (
+            <div className="absolute inset-0 bg-gray-200 animate-pulse flex items-center justify-center">
+              <div className="text-gray-400">Cargando...</div>
             </div>
+          )}
+          
+          {/* Play button overlay */}
+          {!imageError && (
+            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+              <div className="w-16 h-16 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center text-white shadow-lg transform group-hover:scale-110 transition-transform">
+                <FaPlay className="w-6 h-6 ml-1" />
+              </div>
+            </div>
+          )}
+          
+          {/* Duration badge */}
+          {!imageError && (
+            <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
+              {video.duration}
+            </div>
+          )}
+        </div>
+        
+        <div className="p-4">
+          <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-colombia-blue transition-colors">
+            {video.title}
+          </h3>
+          
+          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+            {video.description}
+          </p>
+          
+          <div className="flex items-center justify-between text-sm text-gray-500 mb-3">
+            <span className="font-medium">{video.channelTitle}</span>
+            <span>{formatTimeAgo(video.publishedAt)}</span>
           </div>
           
-          <a
-            href={video.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1 text-red-600 hover:text-red-700 text-sm font-medium transition-colors"
-          >
-            Ver video
-            <HiOutlinePlay className="w-4 h-4" />
-          </a>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4 text-xs text-gray-500">
+              <div className="flex items-center gap-1">
+                <FaEye className="w-3 h-3" />
+                {formatViewCount(video.viewCount)}
+              </div>
+              <div className="flex items-center gap-1">
+                <FaThumbsUp className="w-3 h-3" />
+                {formatViewCount(video.likeCount)}
+              </div>
+            </div>
+            
+            <a
+              href={video.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-red-600 hover:text-red-700 text-sm font-medium transition-colors"
+            >
+              Ver video
+              <HiOutlinePlay className="w-4 h-4" />
+            </a>
+          </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
