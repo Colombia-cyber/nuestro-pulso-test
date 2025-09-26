@@ -12,6 +12,7 @@ import CommunityHub from "./pages/CommunityHub";
 import CrossPlatformCommunityHub from "./components/CrossPlatformCommunityHub";
 import QuantumCommunityHub from "./components/QuantumCommunityHub";
 import ColombiaNewsHub from "./components/ColombiaNewsHub";
+import LocalSearchPage from "./pages/LocalSearchPage";
 import SearchPage from "./pages/Search";
 import EnhancedSearchPage from "./pages/EnhancedSearch";
 import LeftWingPage from "./pages/LeftWing";
@@ -114,7 +115,7 @@ function App() {
   };
 
   const shouldShowCentralSearch = () => {
-    return ['home', 'feeds', 'news', 'reels', 'video-hub', 'search', 'debates', 'surveys', 'encuestas', 'tendencias', 'global-tendencias', 'sources'].includes(currentView);
+    return ['home', 'local', 'feeds', 'news', 'reels', 'video-hub', 'search', 'debates', 'surveys', 'encuestas', 'tendencias', 'global-tendencias', 'sources'].includes(currentView);
   };
 
   const handleRetry = () => {
@@ -136,6 +137,8 @@ function App() {
 
     try {
       switch (currentView) {
+        case 'local':
+          return <LocalSearchPage onNavigate={handleNavigate} />;
         case 'sources':
           return <SourcesPage onNavigate={handleNavigate} />;
         case 'source-detail':
@@ -206,6 +209,7 @@ function App() {
 
   const getLoadingMessage = (view: string): string => {
     const messages: Record<string, string> = {
+      'local': 'Cargando búsqueda local...',
       'reels': 'Cargando Reels...',
       'video-hub': 'Cargando Video Hub...',
       'video-admin': 'Cargando Panel de Administración...',
