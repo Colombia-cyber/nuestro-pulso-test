@@ -28,20 +28,12 @@ const Navbar: React.FC<NavbarProps> = ({ onNavigate, currentView = 'home' }) => 
   };
 
   const navItems = [
-    { id: 'home', icon: 'HOME', label: 'Inicio', shortLabel: 'INICIO' },
-    { id: 'colombia-hub', icon: '🌎🇨🇴', label: 'Colombia Hub', shortLabel: 'COLOMBIA' },
-    { id: 'sources', icon: '📰🔗', label: 'Sources', shortLabel: 'FUENTES' },
-    { id: 'video-hub', icon: '🎬📺', label: 'Video Hub', shortLabel: 'VIDEOS' },
-    { id: 'video-admin', icon: '📊🎯', label: 'Video Admin', shortLabel: 'ADMIN' },
-    { id: 'tendencias', icon: '🌍📊', label: 'Tendencias', shortLabel: 'TENDENCIAS' },
-    { id: 'reels', icon: 'REELS', label: 'Reels', shortLabel: 'REELS' },
-    { id: 'feeds', icon: 'NEWS', label: 'Noticias', shortLabel: 'NOTICIAS' },
-    { id: 'congress', icon: 'CONGRESS', label: 'Congreso', shortLabel: 'CONGRESO' },
-    { id: 'elections', icon: 'VOTE', label: 'Elecciones', shortLabel: 'VOTOS' },
-    { id: 'chat', icon: 'CHAT', label: 'Chat en Vivo', shortLabel: 'CHAT' },
-    { id: 'debates', icon: 'DEBATE', label: 'Debates', shortLabel: 'DEBATES' },
-    { id: 'surveys', icon: 'POLL', label: 'Encuestas', shortLabel: 'ENCUESTAS' },
-    { id: 'community-hub', icon: 'HUB', label: 'Community Hub', shortLabel: 'HUB' }
+    { id: 'home', icon: '🏠', label: 'Inicio', shortLabel: 'INICIO' },
+    { id: 'reels', icon: '🎬', label: 'Reels en Vivo', shortLabel: 'REELS' },
+    { id: 'feeds', icon: '📰', label: 'Noticias', shortLabel: 'NOTICIAS' },
+    { id: 'debates', icon: '💬', label: 'Debates', shortLabel: 'DEBATES' },
+    { id: 'surveys', icon: '📊', label: 'Encuestas', shortLabel: 'ENCUESTAS' },
+    { id: 'tendencias', icon: '🔥', label: 'Tendencias', shortLabel: 'TENDENCIAS' }
   ];
 
   return (

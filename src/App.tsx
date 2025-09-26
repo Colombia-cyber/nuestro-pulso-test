@@ -5,6 +5,10 @@ import HeroSection from "./components/HeroSection";
 import ModernHomepage from "./components/ModernHomepage";
 import WorldClassHomepage from "./components/WorldClassHomepage";
 import QuantumWorldClassHomepage from "./components/QuantumWorldClassHomepage";
+import NewHomepage from "./components/NewHomepage";
+import CongressoPage from "./components/CongressoPage";
+import SeguridadNacionalPage from "./components/SeguridadNacionalPage";
+import PetroPage from "./components/PetroPage";
 import CustomNewsFeed from "./components/CustomNewsFeed";
 import Comments from "./components/Comments";
 import ArticleComments from "./components/ArticleComments";
@@ -114,7 +118,7 @@ function App() {
   };
 
   const shouldShowCentralSearch = () => {
-    return ['home', 'feeds', 'news', 'reels', 'video-hub', 'search', 'debates', 'surveys', 'encuestas', 'tendencias', 'global-tendencias', 'sources'].includes(currentView);
+    return false; // Disable old central search bar
   };
 
   const handleRetry = () => {
@@ -136,6 +140,12 @@ function App() {
 
     try {
       switch (currentView) {
+        case 'congress':
+          return <CongressoPage onNavigate={handleNavigate} />;
+        case 'security':
+          return <SeguridadNacionalPage onNavigate={handleNavigate} />;
+        case 'petro':
+          return <PetroPage onNavigate={handleNavigate} />;
         case 'sources':
           return <SourcesPage onNavigate={handleNavigate} />;
         case 'source-detail':
@@ -163,8 +173,6 @@ function App() {
               <CustomNewsFeed topic={currentTopic} />
             </div>
           );
-        case 'congress':
-          return <CongressTracker />;
         case 'elections':
           return <ElectionHub />;
         case 'chat':
@@ -196,7 +204,7 @@ function App() {
           return <GlobalTendenciasRealtime />;
         case 'home':
         default:
-          return <QuantumWorldClassHomepage onNavigate={handleNavigate} />;
+          return <NewHomepage onNavigate={handleNavigate} />;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
