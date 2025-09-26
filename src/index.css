@@ -19,6 +19,13 @@
     line-height: 1.6;
   }
 
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    html {
+      color-scheme: dark;
+    }
+  }
+
   /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
@@ -43,6 +50,15 @@
 
   ::-moz-selection {
     @apply bg-colombia-yellow text-colombia-blue;
+  }
+
+  /* Dark mode text selection */
+  .dark ::selection {
+    @apply bg-colombia-blue text-colombia-yellow;
+  }
+
+  .dark ::-moz-selection {
+    @apply bg-colombia-blue text-colombia-yellow;
   }
 }
 
