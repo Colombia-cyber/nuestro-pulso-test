@@ -19,6 +19,10 @@ import { BiTrendingUp, BiCategory, BiNews } from 'react-icons/bi';
 import { MdOutlineVerified, MdUpdate } from 'react-icons/md';
 import { HiOutlinePlay } from 'react-icons/hi';
 import { colombiaHubService } from '../services/colombiaHubService';
+import { realNewsService, RealNewsArticle } from '../services/realNewsService';
+import ArticleModal from './ArticleModal';
+import LoadingSkeleton, { NewsGridSkeleton } from './LoadingSkeleton';
+import RealNewsCard from './RealNewsCard';
 import {
   ColombiaNewsArticle,
   ColombiaVideo,
@@ -45,9 +49,15 @@ const ColombiaNewsHub: React.FC<ColombiaNewsHubProps> = ({ onNavigate }) => {
   
   // Data state
   const [combinedData, setCombinedData] = useState<CombinedHubResponse | null>(null);
+  const [realNews, setRealNews] = useState<RealNewsArticle[]>([]);
   const [sources, setSources] = useState<ColombiaNewsSource[]>([]);
   const [categories, setCategories] = useState<ContentCategory[]>([]);
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
+  
+  // Article modal state
+  const [selectedArticle, setSelectedArticle] = useState<RealNewsArticle | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [currentArticleIndex, setCurrentArticleIndex] = useState(0);
 
   // Load initial data
   useEffect(() => {
@@ -68,6 +78,15 @@ const ColombiaNewsHub: React.FC<ColombiaNewsHubProps> = ({ onNavigate }) => {
     setError(null);
     
     try {
+      // Load real Colombian news
+      const realNewsData = await realNewsService.getColombianNews({
+        category: 'general',
+        query: 'Colombia',
+        limit: 20
+      });
+      setRealNews(realNewsData);
+
+      // Load existing service data
       const newsFilter: NewsHubFilter = { limit: 20 };
       const videoFilter: VideoHubFilter = { limit: 12 };
       
@@ -108,6 +127,15 @@ const ColombiaNewsHub: React.FC<ColombiaNewsHubProps> = ({ onNavigate }) => {
     setError(null);
 
     try {
+      // Load real news with filters
+      const realNewsData = await realNewsService.getColombianNews({
+        category: selectedCategory !== 'all' ? selectedCategory : undefined,
+        query: searchQuery || 'Colombia',
+        limit: 20
+      });
+      setRealNews(realNewsData);
+
+      // Load existing service data
       const newsFilter: NewsHubFilter = {
         limit: 20,
         search: searchQuery || undefined,
@@ -135,10 +163,45 @@ const ColombiaNewsHub: React.FC<ColombiaNewsHubProps> = ({ onNavigate }) => {
     try {
       await colombiaHubService.refreshContent();
       await loadInitialData();
+      // Also refresh real news
+      const realNewsData = await realNewsService.getColombianNews({
+        category: selectedCategory === 'all' ? undefined : selectedCategory,
+        query: searchQuery || 'Colombia',
+        limit: 20
+      });
+      setRealNews(realNewsData);
     } catch (err) {
       setError('Failed to refresh content');
     } finally {
       setIsRefreshing(false);
+    }
+  };
+
+  // Article modal handlers
+  const handleArticleClick = (article: RealNewsArticle, index: number) => {
+    setSelectedArticle(article);
+    setCurrentArticleIndex(index);
+    setIsModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setSelectedArticle(null);
+  };
+
+  const handleNextArticle = () => {
+    if (currentArticleIndex < realNews.length - 1) {
+      const nextIndex = currentArticleIndex + 1;
+      setCurrentArticleIndex(nextIndex);
+      setSelectedArticle(realNews[nextIndex]);
+    }
+  };
+
+  const handlePreviousArticle = () => {
+    if (currentArticleIndex > 0) {
+      const prevIndex = currentArticleIndex - 1;
+      setCurrentArticleIndex(prevIndex);
+      setSelectedArticle(realNews[prevIndex]);
     }
   };
 
@@ -587,6 +650,33 @@ const ColombiaNewsHub: React.FC<ColombiaNewsHubProps> = ({ onNavigate }) => {
                 </div>
               )}
 
+              {/* Real Colombian News Section */}
+              {realNews.length > 0 && (activeTab === 'combined' || activeTab === 'news') && (
+                <div className="mb-8">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                      <MdOutlineVerified className="w-6 h-6 text-green-600" />
+                      Noticias Verificadas de Colombia
+                    </h2>
+                    <div className="text-sm text-gray-600">
+                      {realNews.length} artículos en tiempo real
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {realNews.map((article, index) => (
+                      <RealNewsCard 
+                        key={article.id} 
+                        article={article} 
+                        onClick={() => handleArticleClick(article, index)}
+                        variant="default"
+                        showActions={true}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Main content based on active tab */}
               {(activeTab === 'combined' || activeTab === 'news') && combinedData?.news && (
                 <div className="mb-8">
@@ -641,6 +731,17 @@ const ColombiaNewsHub: React.FC<ColombiaNewsHubProps> = ({ onNavigate }) => {
           )}
         </div>
       </div>
+
+      {/* Article Modal */}
+      <ArticleModal
+        article={selectedArticle}
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        onNext={handleNextArticle}
+        onPrevious={handlePreviousArticle}
+        hasNext={currentArticleIndex < realNews.length - 1}
+        hasPrevious={currentArticleIndex > 0}
+      />
     </div>
   );
 };
