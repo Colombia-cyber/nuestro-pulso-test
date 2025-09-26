@@ -34,6 +34,7 @@ import Survey from "./components/Survey";
 import TopicTabs from "./components/TopicTabs";
 import ElTiempoOpinionFeed from "./components/ElTiempoOpinionFeed";
 import GlobalTendenciasRealtime from "./components/GlobalTendenciasRealtime.jsx";
+import TerrorNewsHub from "./components/TerrorNewsHub";
 import SourcesPage from "./pages/Sources";
 import SourceDetail from "./pages/SourceDetail";
 import { useMultiModalNavigation } from "./services/multiModalNavigation";
@@ -202,6 +203,8 @@ function App() {
         case 'tendencias':
         case 'global-tendencias':
           return <GlobalTendenciasRealtime />;
+        case 'terror-news':
+          return <TerrorNewsHub onNavigate={handleNavigate} />;
         case 'home':
         default:
           return <NewHomepage onNavigate={handleNavigate} />;
