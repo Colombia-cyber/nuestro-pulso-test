@@ -29,6 +29,87 @@ import {
   ThankYouFeedback 
 } from '../types/search';
 
+// Feature Card Component
+interface FeatureCardProps {
+  icon: string;
+  title: string;
+  description: string;
+  gradient: string;
+  onClick: () => void;
+  darkMode: boolean;
+  badge?: string;
+  isHighPriority?: boolean;
+}
+
+const FeatureCard: React.FC<FeatureCardProps> = ({ 
+  icon, 
+  title, 
+  description, 
+  gradient, 
+  onClick, 
+  darkMode, 
+  badge,
+  isHighPriority = false 
+}) => {
+  return (
+    <div
+      onClick={onClick}
+      className={`group cursor-pointer rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:scale-105 hover:-translate-y-2 ${
+        darkMode ? 'bg-gray-800 border border-gray-700' : 'bg-white border border-gray-200'
+      } ${isHighPriority ? 'ring-2 ring-red-500 ring-opacity-50' : ''}`}
+    >
+      {/* Card Header with Gradient */}
+      <div className={`bg-gradient-to-br ${gradient} h-32 relative overflow-hidden`}>
+        {/* Animated Background */}
+        <div className="absolute inset-0 bg-black/10 group-hover:bg-black/5 transition-colors duration-300"></div>
+        <div className="absolute -top-10 -right-10 w-20 h-20 bg-white/20 rounded-full group-hover:scale-110 transition-transform duration-300"></div>
+        <div className="absolute -bottom-5 -left-5 w-16 h-16 bg-white/10 rounded-full group-hover:scale-110 transition-transform duration-300"></div>
+        
+        {/* Icon */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="text-5xl transform group-hover:scale-110 transition-transform duration-300 filter drop-shadow-lg">
+            {icon}
+          </div>
+        </div>
+
+        {/* Badge */}
+        {badge && (
+          <div className={`absolute top-3 right-3 px-2 py-1 rounded-full text-xs font-bold ${
+            isHighPriority 
+              ? 'bg-red-500 text-white animate-pulse' 
+              : 'bg-white/20 text-white backdrop-blur-sm'
+          }`}>
+            {badge}
+          </div>
+        )}
+      </div>
+
+      {/* Card Content */}
+      <div className="p-6">
+        <h3 className={`text-xl font-bold mb-3 group-hover:text-blue-600 transition-colors duration-300 ${
+          darkMode ? 'text-white' : 'text-gray-900'
+        }`}>
+          {title}
+        </h3>
+        <p className={`text-sm leading-relaxed mb-4 ${
+          darkMode ? 'text-gray-300' : 'text-gray-600'
+        }`}>
+          {description}
+        </p>
+
+        {/* Action Button */}
+        <div className="flex items-center text-blue-600 font-semibold text-sm group-hover:text-blue-700 transition-colors duration-300">
+          <span>Explore Now</span>
+          <BsArrowRight className="ml-2 transform group-hover:translate-x-1 transition-transform duration-300" />
+        </div>
+      </div>
+
+      {/* Hover Effect Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+    </div>
+  );
+};
+
 
 
 const ModernSearchEngine: React.FC = () => {
@@ -731,124 +812,243 @@ const ModernSearchEngine: React.FC = () => {
                 </button>
               </div>
             ) : (
-              <div className="text-center py-16">
-                <div className="text-6xl mb-4">{activeTab === 'local' ? '🇨🇴' : '🌟'}</div>
-                <h3 className={`text-2xl font-bold mb-4 ${darkMode ? 'text-white' : 'text-gray-900'}`}>
-                  {activeTab === 'local' 
-                    ? 'Bienvenido a Nuestro Pulso Colombia'
-                    : 'Welcome to Copilot Search AI'}
-                </h3>
-                <p className={`mb-8 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                  {activeTab === 'local' 
-                    ? 'La red cívica más avanzada de Colombia para búsquedas locales'
-                    : 'The most advanced global search experience powered by AI'}
-                </p>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-                  {activeTab === 'local' ? (
-                    // Local Colombia Features
-                    <>
-                      <div className={`rounded-lg p-6 shadow-sm border ${
-                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+              <div className="relative overflow-hidden">
+                {/* Stunning Welcome Block */}
+                <div className={`relative py-20 mb-12 rounded-3xl overflow-hidden ${
+                  activeTab === 'local' 
+                    ? 'bg-gradient-to-br from-yellow-50 via-blue-50 to-red-50' 
+                    : 'bg-gradient-to-br from-purple-50 via-blue-50 to-indigo-100'
+                } ${darkMode ? 'from-gray-800 via-gray-700 to-gray-600' : ''}`}>
+                  
+                  {/* Animated Background Elements */}
+                  <div className="absolute inset-0 overflow-hidden">
+                    <div className={`absolute -top-40 -right-40 w-80 h-80 rounded-full opacity-20 animate-pulse ${
+                      activeTab === 'local' ? 'bg-yellow-400' : 'bg-purple-400'
+                    }`}></div>
+                    <div className={`absolute -bottom-40 -left-40 w-96 h-96 rounded-full opacity-20 animate-pulse ${
+                      activeTab === 'local' ? 'bg-blue-400' : 'bg-blue-400'
+                    }`}></div>
+                    {activeTab === 'world' && (
+                      <>
+                        <div className="absolute top-20 left-20 w-32 h-32 rounded-full bg-gradient-to-r from-purple-400 to-pink-400 opacity-10 animate-bounce"></div>
+                        <div className="absolute bottom-20 right-20 w-24 h-24 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 opacity-10 animate-bounce" style={{animationDelay: '1s'}}></div>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Content */}
+                  <div className="relative z-10 text-center">
+                    <div className={`text-8xl mb-6 animate-bounce ${
+                      activeTab === 'local' ? '' : 'filter drop-shadow-lg'
+                    }`}>
+                      {activeTab === 'local' ? '🇨🇴' : '✨'}
+                    </div>
+                    
+                    <h1 className={`text-5xl md:text-7xl font-black mb-6 leading-tight ${
+                      darkMode ? 'text-white' : activeTab === 'local' 
+                        ? 'bg-gradient-to-r from-yellow-600 via-blue-600 to-red-600 bg-clip-text text-transparent'
+                        : 'bg-gradient-to-r from-purple-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent'
+                    }`}>
+                      {activeTab === 'local' 
+                        ? 'Bienvenido a Nuestro Pulso Colombia'
+                        : 'Welcome to Copilot Search AI'}
+                    </h1>
+                    
+                    <p className={`text-xl md:text-2xl mb-8 max-w-4xl mx-auto leading-relaxed font-medium ${
+                      darkMode ? 'text-gray-200' : activeTab === 'local'
+                        ? 'text-gray-700'
+                        : 'text-gray-600'
+                    }`}>
+                      {activeTab === 'local' 
+                        ? 'La red cívica más avanzada de Colombia para búsquedas locales inteligentes y participación ciudadana'
+                        : 'The most advanced global search experience powered by AI. Discover knowledge panels, real-time content, and intelligent insights.'}
+                    </p>
+
+                    {/* Live Stats */}
+                    <div className="flex flex-wrap justify-center gap-6 mb-8">
+                      <div className={`px-6 py-3 rounded-full backdrop-blur-sm ${
+                        darkMode 
+                          ? 'bg-white/10 text-white' 
+                          : 'bg-white/80 text-gray-700'
                       }`}>
-                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
-                          darkMode ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          🏢 Congreso de Colombia
-                        </h4>
-                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                          Actividad legislativa, votaciones y sesiones del Congreso Nacional
-                        </p>
+                        <span className="font-bold">47,583</span> <span className="text-sm">searches today</span>
                       </div>
-                      <div className={`rounded-lg p-6 shadow-sm border ${
-                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                      <div className={`px-6 py-3 rounded-full backdrop-blur-sm ${
+                        darkMode 
+                          ? 'bg-white/10 text-white' 
+                          : 'bg-white/80 text-gray-700'
                       }`}>
-                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
-                          darkMode ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          🚔 Seguridad Nacional
-                        </h4>
-                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                          Noticias sobre narcotráfico, crimen y seguridad en Colombia
-                        </p>
+                        <span className="font-bold">12,891</span> <span className="text-sm">active users</span>
                       </div>
-                      <div className={`rounded-lg p-6 shadow-sm border ${
-                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
+                      <div className={`px-6 py-3 rounded-full backdrop-blur-sm ${
+                        darkMode 
+                          ? 'bg-white/10 text-white' 
+                          : 'bg-white/80 text-gray-700'
                       }`}>
-                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
-                          darkMode ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          🇨🇴 Gustavo Petro
-                        </h4>
-                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                          Últimas noticias y decisiones del Presidente de Colombia
-                        </p>
+                        <span className="font-bold">99.7%</span> <span className="text-sm">accuracy</span>
                       </div>
-                      <div className={`rounded-lg p-6 shadow-sm border ${
-                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                      }`}>
-                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
-                          darkMode ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          🗳️ Perspectivas Políticas
-                        </h4>
-                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                          Análisis de izquierda y derecha desde el contexto colombiano
-                        </p>
-                      </div>
-                    </>
-                  ) : (
-                    // Mundo Global Features
-                    <>
-                      <div className={`rounded-lg p-6 shadow-sm border ${
-                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                      }`}>
-                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
-                          darkMode ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          🧠 AI Knowledge Panels
-                        </h4>
-                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                          Facts, images, timelines, and company info powered by AI
-                        </p>
-                      </div>
-                      <div className={`rounded-lg p-6 shadow-sm border ${
-                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                      }`}>
-                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
-                          darkMode ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          🇺🇸 Donald Trump
-                        </h4>
-                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                          Global coverage of US politics and international affairs
-                        </p>
-                      </div>
-                      <div className={`rounded-lg p-6 shadow-sm border ${
-                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                      }`}>
-                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
-                          darkMode ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          🌍 Global Sources
-                        </h4>
-                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                          BBC, CNN, Reuters, AP, The Guardian and international media
-                        </p>
-                      </div>
-                      <div className={`rounded-lg p-6 shadow-sm border ${
-                        darkMode ? 'bg-gray-800 border-gray-700' : 'bg-white border-gray-200'
-                      }`}>
-                        <h4 className={`font-bold text-lg mb-2 flex items-center gap-2 ${
-                          darkMode ? 'text-white' : 'text-gray-900'
-                        }`}>
-                          📊 Sentiment Analysis
-                        </h4>
-                        <p className={`text-sm ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>
-                          Entity detection and sentiment analysis for global topics
-                        </p>
-                      </div>
-                    </>
-                  )}
+                    </div>
+
+                    {/* CTA Button */}
+                    <button
+                      onClick={() => searchInputRef.current?.focus()}
+                      className={`px-12 py-4 rounded-full font-bold text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-2xl ${
+                        activeTab === 'local'
+                          ? 'bg-gradient-to-r from-yellow-500 via-blue-500 to-red-500 text-white hover:from-yellow-600 hover:via-blue-600 hover:to-red-600'
+                          : 'bg-gradient-to-r from-purple-500 via-blue-500 to-indigo-500 text-white hover:from-purple-600 hover:via-blue-600 hover:to-indigo-600'
+                      }`}
+                    >
+                      Start Searching Now ✨
+                    </button>
+                  </div>
+                </div>
+
+                {/* Feature Cards Grid */}
+                <div className="mb-12">
+                  <h2 className={`text-3xl font-bold text-center mb-12 ${
+                    darkMode ? 'text-white' : 'text-gray-900'
+                  }`}>
+                    {activeTab === 'local' 
+                      ? '🇨🇴 Explora Colombia'
+                      : '🌟 Discover AI-Powered Features'}
+                  </h2>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+                    {activeTab === 'local' ? (
+                      // Local Colombia Feature Cards
+                      <>
+                        <FeatureCard
+                          icon="🏢"
+                          title="Congreso de Colombia"
+                          description="Actividad legislativa, votaciones y sesiones del Congreso Nacional en tiempo real"
+                          gradient="from-blue-500 to-indigo-600"
+                          onClick={() => performSearch('congreso colombia actividad legislativa', 'local', filters)}
+                          darkMode={darkMode}
+                          badge="EN VIVO"
+                        />
+                        <FeatureCard
+                          icon="🚔"
+                          title="Seguridad Nacional"
+                          description="Noticias sobre narcotráfico, crimen y seguridad en Colombia"
+                          gradient="from-red-500 to-pink-600"
+                          onClick={() => performSearch('seguridad nacional colombia narcotráfico', 'local', filters)}
+                          darkMode={darkMode}
+                          badge="ACTUALIZADO"
+                        />
+                        <FeatureCard
+                          icon="🇨🇴"
+                          title="Gustavo Petro"
+                          description="Últimas noticias y decisiones del Presidente de Colombia"
+                          gradient="from-green-500 to-emerald-600"
+                          onClick={() => performSearch('gustavo petro presidente colombia', 'local', filters)}
+                          darkMode={darkMode}
+                          badge="TRENDING"
+                        />
+                        <FeatureCard
+                          icon="🗳️"
+                          title="Perspectivas Políticas"
+                          description="Análisis de izquierda y derecha desde el contexto colombiano"
+                          gradient="from-purple-500 to-violet-600"
+                          onClick={() => performSearch('política colombia izquierda derecha análisis', 'local', filters)}
+                          darkMode={darkMode}
+                        />
+                        <FeatureCard
+                          icon="📊"
+                          title="Encuestas y Opinión"
+                          description="Encuestas políticas, opinión pública y análisis de tendencias"
+                          gradient="from-orange-500 to-red-600"
+                          onClick={() => performSearch('encuestas políticas colombia opinión pública', 'local', filters)}
+                          darkMode={darkMode}
+                        />
+                        <FeatureCard
+                          icon="🌍"
+                          title="Colombia Internacional"
+                          description="Relaciones internacionales y presencia de Colombia en el mundo"
+                          gradient="from-teal-500 to-cyan-600"
+                          onClick={() => performSearch('colombia relaciones internacionales', 'local', filters)}
+                          darkMode={darkMode}
+                        />
+                      </>
+                    ) : (
+                      // Mundo Global Feature Cards
+                      <>
+                        <FeatureCard
+                          icon="🧠"
+                          title="AI Knowledge Panels"
+                          description="Interactive facts, images, timelines, and company information powered by advanced AI"
+                          gradient="from-purple-500 to-indigo-600"
+                          onClick={() => {
+                            // Show Knowledge Panel demo
+                            performSearch('artificial intelligence knowledge panel', 'world', filters);
+                          }}
+                          darkMode={darkMode}
+                          badge="AI POWERED"
+                        />
+                        <FeatureCard
+                          icon="🇺🇸"
+                          title="Donald Trump"
+                          description="Comprehensive global coverage of US politics, campaigns, and international affairs"
+                          gradient="from-red-500 to-orange-600"
+                          onClick={() => {
+                            // Load Trump content feed
+                            performSearch('donald trump politics news latest', 'world', filters);
+                          }}
+                          darkMode={darkMode}
+                          badge="TRENDING"
+                        />
+                        <FeatureCard
+                          icon="🌍"
+                          title="Global Sources"
+                          description="Access to BBC, CNN, Reuters, AP, The Guardian and premium international media"
+                          gradient="from-blue-500 to-cyan-600"
+                          onClick={() => {
+                            // Navigate to sources page
+                            window.dispatchEvent(new CustomEvent('navigate', { 
+                              detail: { view: 'sources' }
+                            }));
+                          }}
+                          darkMode={darkMode}
+                          badge="VERIFIED"
+                        />
+                        <FeatureCard
+                          icon="📊"
+                          title="Sentiment Analysis"
+                          description="Real-time entity detection and sentiment analysis for global topics and trends"
+                          gradient="from-green-500 to-emerald-600"
+                          onClick={() => {
+                            // Show sentiment analysis demo
+                            performSearch('sentiment analysis global trends example', 'world', filters);
+                          }}
+                          darkMode={darkMode}
+                          badge="REAL-TIME"
+                        />
+                        <FeatureCard
+                          icon="⚠️"
+                          title="Terror News"
+                          description="Critical security updates, terrorism coverage, and international threat analysis"
+                          gradient="from-gray-600 to-gray-800"
+                          onClick={() => {
+                            // Navigate to Terror News Hub instead of search
+                            window.dispatchEvent(new CustomEvent('navigate', { 
+                              detail: { view: 'terror-news' }
+                            }));
+                          }}
+                          darkMode={darkMode}
+                          badge="BREAKING"
+                          isHighPriority={true}
+                        />
+                        <FeatureCard
+                          icon="🔬"
+                          title="Deep Analysis"
+                          description="AI-powered deep dives into complex global issues with multi-source verification"
+                          gradient="from-violet-500 to-purple-600"
+                          onClick={() => performSearch('deep analysis global issues AI', 'world', filters)}
+                          darkMode={darkMode}
+                          badge="PREMIUM"
+                        />
+                      </>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
