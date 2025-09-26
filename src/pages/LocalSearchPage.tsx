@@ -235,7 +235,7 @@ const LocalSearchPage: React.FC<LocalSearchPageProps> = ({ onNavigate }) => {
                         <FaExternalLinkAlt className="w-3 h-3" />
                       </div>
                     </div>
-                    <div className="w-24 h-18 bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs">
+                    <div className="w-24 h-[4.5rem] bg-gray-200 rounded flex items-center justify-center text-gray-400 text-xs">
                       {news.source}
                     </div>
                   </div>
