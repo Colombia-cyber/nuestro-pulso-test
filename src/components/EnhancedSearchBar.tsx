@@ -12,6 +12,24 @@ interface EnhancedSearchBarProps {
   autoFocus?: boolean;
 }
 
+interface SpeechRecognitionResultList {
+  length: number;
+  item(index: number): SpeechRecognitionResult;
+  [index: number]: SpeechRecognitionResult;
+}
+
+interface SpeechRecognitionResult {
+  length: number;
+  item(index: number): SpeechRecognitionAlternative;
+  [index: number]: SpeechRecognitionAlternative;
+  isFinal: boolean;
+}
+
+interface SpeechRecognitionAlternative {
+  transcript: string;
+  confidence: number;
+}
+
 interface SpeechRecognitionEvent extends Event {
   results: SpeechRecognitionResultList;
   resultIndex: number;
@@ -68,8 +86,8 @@ const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   const searchInputRef = useRef<HTMLInputElement>(null);
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
-  const debounceRef = useRef<NodeJS.Timeout>();
+  const recognitionRef = useRef<any>(null);
+  const debounceRef = useRef<number>();
 
   // Available platforms for filtering
   const availablePlatforms = [
@@ -140,7 +158,7 @@ const EnhancedSearchBar: React.FC<EnhancedSearchBarProps> = ({
       clearTimeout(debounceRef.current);
     }
 
-    debounceRef.current = setTimeout(() => {
+    debounceRef.current = window.setTimeout(() => {
       if (searchQuery.length > 2) {
         getSuggestions(searchQuery);
       } else {
