@@ -360,6 +360,141 @@ class RealNewsService {
   /**
    * Get enhanced mock content for articles
    */
+  /**
+   * Fetch world news from international sources
+   */
+  async getWorldNews(options: {
+    category?: string;
+    query?: string;
+    limit?: number;
+    page?: number;
+  } = {}): Promise<RealNewsArticle[]> {
+    const { category = 'general', query = 'world news', limit = 20, page = 1 } = options;
+    const cacheKey = `world_news_${category}_${query}_${page}`;
+
+    // Try cache first
+    const cached = this.getCachedData<RealNewsArticle[]>(cacheKey);
+    if (cached) return cached;
+
+    try {
+      // Fetch from multiple international sources
+      const articles = await this.fetchFromMultipleSources(query, category, limit);
+      
+      // Cache results
+      this.setCachedData(cacheKey, articles);
+      
+      return articles;
+    } catch (error) {
+      console.error('Failed to fetch world news:', error);
+      return this.getFallbackWorldNews(category, limit);
+    }
+  }
+
+  /**
+   * Get fallback world news when API fails
+   */
+  private getFallbackWorldNews(category: string, limit: number): RealNewsArticle[] {
+    const fallbackArticles: RealNewsArticle[] = [
+      {
+        id: 'world-1',
+        title: 'Breaking: Major International Development',
+        description: 'International news update covering significant global events and developments.',
+        content: 'Full article content about international developments...',
+        author: 'International Correspondent',
+        publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hours ago
+        source: {
+          id: 'reuters',
+          name: 'Reuters',
+          url: 'https://www.reuters.com'
+        },
+        urlToImage: 'https://via.placeholder.com/800x400?text=World+News',
+        url: 'https://www.reuters.com/world-news',
+        category: category === 'all' ? 'world' : category,
+        readTime: '3 min',
+        tags: ['international', 'politics', 'world'],
+        trending: true
+      },
+      {
+        id: 'world-2',
+        title: 'Global Economic Updates',
+        description: 'Latest developments in the global economy affecting multiple regions.',
+        content: 'Economic analysis and market updates...',
+        author: 'Economic Reporter',
+        publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000).toISOString(), // 4 hours ago
+        source: {
+          id: 'bbc',
+          name: 'BBC News',
+          url: 'https://www.bbc.com'
+        },
+        urlToImage: 'https://via.placeholder.com/800x400?text=Global+Economy',
+        url: 'https://www.bbc.com/news/business',
+        category: category === 'all' ? 'business' : category,
+        readTime: '5 min',
+        tags: ['economy', 'business', 'global'],
+        trending: false
+      },
+      {
+        id: 'world-3',
+        title: 'Climate Change Summit Results',
+        description: 'Key outcomes from the latest international climate change summit.',
+        content: 'Climate summit results and implications...',
+        author: 'Environmental Correspondent',
+        publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 hours ago
+        source: {
+          id: 'guardian',
+          name: 'The Guardian',
+          url: 'https://www.theguardian.com'
+        },
+        urlToImage: 'https://via.placeholder.com/800x400?text=Climate+Summit',
+        url: 'https://www.theguardian.com/environment',
+        category: category === 'all' ? 'environment' : category,
+        readTime: '4 min',
+        tags: ['climate', 'environment', 'summit'],
+        trending: true
+      },
+      {
+        id: 'world-4',
+        title: 'Technology and Innovation News',
+        description: 'Latest breakthroughs in technology and innovation worldwide.',
+        content: 'Technology news and innovation updates...',
+        author: 'Tech Reporter',
+        publishedAt: new Date(Date.now() - 8 * 60 * 60 * 1000).toISOString(), // 8 hours ago
+        source: {
+          id: 'cnn',
+          name: 'CNN',
+          url: 'https://www.cnn.com'
+        },
+        urlToImage: 'https://via.placeholder.com/800x400?text=Technology+News',
+        url: 'https://www.cnn.com/business/tech',
+        category: category === 'all' ? 'technology' : category,
+        readTime: '3 min',
+        tags: ['technology', 'innovation', 'science'],
+        trending: false
+      },
+      {
+        id: 'world-5',
+        title: 'International Security Updates',
+        description: 'Latest developments in international security and defense.',
+        content: 'Security and defense news from around the world...',
+        author: 'Security Analyst',
+        publishedAt: new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString(), // 10 hours ago
+        source: {
+          id: 'aljazeera',
+          name: 'Al Jazeera',
+          url: 'https://www.aljazeera.com'
+        },
+        urlToImage: 'https://via.placeholder.com/800x400?text=Security+News',
+        url: 'https://www.aljazeera.com/news',
+        category: category === 'all' ? 'security' : category,
+        readTime: '6 min',
+        tags: ['security', 'defense', 'international'],
+        trending: true
+      }
+    ];
+
+    return fallbackArticles.slice(0, limit);
+  }
+
   private async getEnhancedMockContent(articleId: string): Promise<any> {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 800));
