@@ -18,6 +18,7 @@ import QuantumCommunityHub from "./components/QuantumCommunityHub";
 import ColombiaNewsHub from "./components/ColombiaNewsHub";
 import SearchPage from "./pages/Search";
 import EnhancedSearchPage from "./pages/EnhancedSearch";
+import UniversalSearch from "./pages/UniversalSearch";
 import LeftWingPage from "./pages/LeftWing";
 import RightWingPage from "./pages/RightWing";
 import ModernSearchEngine from "./components/ModernSearchEngine";
@@ -193,7 +194,7 @@ function App() {
         case 'colombia-news':
           return <ColombiaNewsHub onNavigate={handleNavigate} />;
         case 'search':
-          return <ModernSearchEngine />;
+          return <UniversalSearch onNavigate={handleNavigate} />;
         case 'left-wing':
           return <LeftWingPage onNavigate={handleNavigate} />;
         case 'right-wing':
