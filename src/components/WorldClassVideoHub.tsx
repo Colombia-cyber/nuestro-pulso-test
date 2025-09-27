@@ -8,6 +8,9 @@ import {
 import { MdVerified, MdLiveTv, MdTrendingUp, MdLanguage } from 'react-icons/md';
 import { BiTrendingUp, BiFullscreen } from 'react-icons/bi';
 import VideoThumbnail from './VideoThumbnail';
+import ModernFilterSystem from './ModernFilterSystem';
+import RelatedContent from './RelatedContent';
+import { VideoSkeleton } from './SkeletonLoader';
 import { i18nService, Language } from '../services/i18nService';
 import { useAccessibility, screenReader, aria } from '../utils/accessibility';
 import { useRealtimeVideoService } from '../services/realtimeVideoService';
@@ -53,13 +56,15 @@ interface WorldClassVideo {
 }
 
 interface FilterState {
-  platforms: string[];
-  categories: string[];
-  languages: string[];
-  showLiveOnly: boolean;
-  showTrendingOnly: boolean;
-  showVerifiedOnly: boolean;
-  dateRange: 'today' | 'week' | 'month' | 'all';
+  timeRange: string;
+  perspective: string;
+  category?: string;
+  source?: string;
+  platform?: string;
+  language?: string;
+  isLive?: boolean;
+  isTrending?: boolean;
+  isVerified?: boolean;
 }
 
 const WorldClassVideoHub: React.FC = () => {
@@ -67,7 +72,7 @@ const WorldClassVideoHub: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<'feed' | 'grid' | 'theater'>('feed');
+  const [viewMode, setViewMode] = useState<'moderno' | 'feed' | 'timeline' | 'categorias'>('moderno');
   const [showFilters, setShowFilters] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState<Language>('es');
   const containerRef = useRef<HTMLDivElement>(null);
@@ -79,15 +84,17 @@ const WorldClassVideoHub: React.FC = () => {
   // Accessibility
   const { FocusManager, KeyboardNavigator } = useAccessibility();
 
-  // Filters state
+  // Filters state - Updated to use new structure
   const [filters, setFilters] = useState<FilterState>({
-    platforms: [],
-    categories: [],
-    languages: [],
-    showLiveOnly: false,
-    showTrendingOnly: false,
-    showVerifiedOnly: false,
-    dateRange: 'all'
+    timeRange: 'all',
+    perspective: 'both',
+    category: 'all',
+    source: '',
+    platform: 'all',
+    language: '',
+    isLive: false,
+    isTrending: false,
+    isVerified: false
   });
 
   // Mock video data (fallback when no API configured)
@@ -218,12 +225,12 @@ const WorldClassVideoHub: React.FC = () => {
                          video.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          video.hashtags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     
-    const matchesPlatform = filters.platforms.length === 0 || filters.platforms.includes(video.platform);
-    const matchesCategory = filters.categories.length === 0 || filters.categories.includes(video.category);
-    const matchesLanguage = filters.languages.length === 0 || filters.languages.includes(video.language);
-    const matchesLive = !filters.showLiveOnly || video.isLive;
-    const matchesTrending = !filters.showTrendingOnly || video.trending;
-    const matchesVerified = !filters.showVerifiedOnly || video.author.verified;
+    const matchesPlatform = filters.platform === 'all' || video.platform === filters.platform;
+    const matchesCategory = filters.category === 'all' || video.category === filters.category;
+    const matchesLanguage = !filters.language || video.language === filters.language;
+    const matchesLive = !filters.isLive || video.isLive;
+    const matchesTrending = !filters.isTrending || video.trending;
+    const matchesVerified = !filters.isVerified || video.author.verified;
 
     return matchesSearch && matchesPlatform && matchesCategory && matchesLanguage && 
            matchesLive && matchesTrending && matchesVerified;
@@ -254,7 +261,7 @@ const WorldClassVideoHub: React.FC = () => {
     }
   };
 
-  const handleFilterChange = (filterType: keyof FilterState, value: any) => {
+  const handleFilterChange = (filterType: string, value: any) => {
     setFilters(prev => ({
       ...prev,
       [filterType]: value
@@ -262,14 +269,24 @@ const WorldClassVideoHub: React.FC = () => {
     screenReader.announceFilterChanged(filterType, value.toString());
   };
 
+  const handleClearFilters = () => {
+    setFilters({
+      timeRange: 'all',
+      perspective: 'both',
+      category: 'all',
+      source: '',
+      platform: 'all',
+      language: '',
+      isLive: false,
+      isTrending: false,
+      isVerified: false
+    });
+  };
+
   const handleLanguageChange = (language: Language) => {
     i18nService.setLanguage(language);
     screenReader.announce(`Language changed to ${language}`, 'polite');
   };
-
-  const availablePlatforms = ['youtube', 'tiktok', 'instagram', 'facebook', 'x-twitter'];
-  const availableCategories = ['Política', 'Educación Cívica', 'Actualidad', 'Elecciones', 'Debates'];
-  const availableLanguages = ['es', 'en', 'pt'];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800" ref={containerRef}>
@@ -281,244 +298,19 @@ const WorldClassVideoHub: React.FC = () => {
         {i18nService.t('Skip to main content', 'Skip to main content')}
       </a>
 
-      {/* Header */}
-      <div className="bg-gradient-to-r from-red-600 via-purple-600 to-pink-600 border-b border-slate-600">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="text-center mb-8">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">
-              🎬 {i18nService.t('video.hub.title', 'World-Class Video Hub')}
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed">
-              {i18nService.t('video.hub.subtitle', 'Advanced video aggregation with AI verification and real-time updates')}
-            </p>
-            
-            {/* Language Selector */}
-            <div className="flex justify-center mt-6">
-              <div className="flex gap-2">
-                {i18nService.getLanguageOptions().map(lang => (
-                  <button
-                    key={lang.value}
-                    onClick={() => handleLanguageChange(lang.value)}
-                    className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
-                      currentLanguage === lang.value
-                        ? 'bg-white text-purple-600'
-                        : 'bg-white/20 text-white hover:bg-white/30'
-                    }`}
-                    aria-pressed={currentLanguage === lang.value}
-                  >
-                    <MdLanguage className="inline mr-1" />
-                    {lang.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* API Status Indicator */}
-            <div className="flex justify-center gap-4 mt-6">
-              <div className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                hasApiConfig 
-                  ? 'bg-green-600/20 text-green-300 border border-green-500/30' 
-                  : 'bg-yellow-600/20 text-yellow-300 border border-yellow-500/30'
-              }`}>
-                {hasApiConfig ? '🌐 API Configurada' : '🎭 Modo Demo'}
-              </div>
-              <div className={`px-4 py-2 rounded-full text-sm font-semibold ${
-                isConnected 
-                  ? 'bg-green-600/20 text-green-300 border border-green-500/30 animate-pulse' 
-                  : 'bg-red-600/20 text-red-300 border border-red-500/30'
-              }`}>
-                {isConnected ? i18nService.t('realtime.connected', 'Connected - Real-time updates') : i18nService.t('realtime.disconnected', 'Disconnected - Retrying connection')}
-              </div>
-            </div>
-
-            {/* Real-Time Metrics */}
-            <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-red-500/30">
-                <div className="text-2xl font-bold text-red-400">{formatNumber(metrics.totalVideos)}</div>
-                <div className="text-sm text-white/80">{i18nService.t('Total Videos', 'Total Videos')}</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-green-500/30">
-                <div className="text-2xl font-bold text-green-400 animate-pulse">{metrics.liveVideos}</div>
-                <div className="text-sm text-white/80">{i18nService.t('video.live', 'Live')}</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-blue-500/30">
-                <div className="text-2xl font-bold text-blue-400">{formatNumber(metrics.totalViews)}</div>
-                <div className="text-sm text-white/80">{i18nService.t('video.views', 'Views')}</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-purple-500/30">
-                <div className="text-2xl font-bold text-purple-400">{metrics.platformsActive}</div>
-                <div className="text-sm text-white/80">{i18nService.t('Platforms', 'Platforms')}</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-yellow-500/30">
-                <div className="text-2xl font-bold text-yellow-400">{metrics.languagesDetected}</div>
-                <div className="text-sm text-white/80">{i18nService.t('video.language', 'Languages')}</div>
-              </div>
-              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center border border-cyan-500/30">
-                <div className="text-2xl font-bold text-cyan-400">{metrics.factChecksPerformed}</div>
-                <div className="text-sm text-white/80">{i18nService.t('Fact Checks', 'Fact Checks')}</div>
-              </div>
-            </div>
-
-            {/* Search and Filters */}
-            <div className="flex flex-col lg:flex-row gap-6 mt-8">
-              <div className="flex-1">
-                <div className="relative">
-                  <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 text-lg" />
-                  <input
-                    type="text"
-                    placeholder={i18nService.t('search.placeholder', 'Search videos, hashtags, creators...')}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-12 pr-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder-white/60 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
-                    aria-label={i18nService.t('search.placeholder', 'Search videos, hashtags, creators...')}
-                  />
-                </div>
-              </div>
-              
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white hover:bg-white/20 transition-colors flex items-center gap-2"
-                aria-expanded={showFilters}
-                aria-controls="filter-panel"
-              >
-                <FaFilter />
-                {i18nService.t('Filters', 'Filters')}
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Advanced Filters Panel */}
-      {showFilters && (
-        <div
-          id="filter-panel"
-          className="bg-slate-800 border-b border-slate-700 p-6"
-          role="region"
-          aria-label={i18nService.t('Advanced filters', 'Advanced filters')}
-        >
-          <div className="max-w-7xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Platform Filter */}
-              <div>
-                <label className="block text-white font-semibold mb-2">
-                  {i18nService.t('filter.by_platform', 'Filter by platform')}
-                </label>
-                <div className="space-y-2">
-                  {availablePlatforms.map(platform => (
-                    <label key={platform} className="flex items-center text-white">
-                      <input
-                        type="checkbox"
-                        checked={filters.platforms.includes(platform)}
-                        onChange={(e) => {
-                          const newPlatforms = e.target.checked
-                            ? [...filters.platforms, platform]
-                            : filters.platforms.filter(p => p !== platform);
-                          handleFilterChange('platforms', newPlatforms);
-                        }}
-                        className="mr-2"
-                      />
-                      <span className="flex items-center gap-2">
-                        {getPlatformIcon(platform)}
-                        {platform.charAt(0).toUpperCase() + platform.slice(1)}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Category Filter */}
-              <div>
-                <label className="block text-white font-semibold mb-2">
-                  {i18nService.t('filter.by_category', 'Filter by category')}
-                </label>
-                <div className="space-y-2">
-                  {availableCategories.map(category => (
-                    <label key={category} className="flex items-center text-white">
-                      <input
-                        type="checkbox"
-                        checked={filters.categories.includes(category)}
-                        onChange={(e) => {
-                          const newCategories = e.target.checked
-                            ? [...filters.categories, category]
-                            : filters.categories.filter(c => c !== category);
-                          handleFilterChange('categories', newCategories);
-                        }}
-                        className="mr-2"
-                      />
-                      {category}
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Special Filters */}
-              <div>
-                <label className="block text-white font-semibold mb-2">Filtros Especiales</label>
-                <div className="space-y-2">
-                  <label className="flex items-center text-white">
-                    <input
-                      type="checkbox"
-                      checked={filters.showLiveOnly}
-                      onChange={(e) => handleFilterChange('showLiveOnly', e.target.checked)}
-                      className="mr-2"
-                    />
-                    {i18nService.t('filter.only_live', 'Live only')}
-                  </label>
-                  <label className="flex items-center text-white">
-                    <input
-                      type="checkbox"
-                      checked={filters.showTrendingOnly}
-                      onChange={(e) => handleFilterChange('showTrendingOnly', e.target.checked)}
-                      className="mr-2"
-                    />
-                    {i18nService.t('filter.only_trending', 'Trending only')}
-                  </label>
-                  <label className="flex items-center text-white">
-                    <input
-                      type="checkbox"
-                      checked={filters.showVerifiedOnly}
-                      onChange={(e) => handleFilterChange('showVerifiedOnly', e.target.checked)}
-                      className="mr-2"
-                    />
-                    {i18nService.t('filter.only_verified', 'Verified only')}
-                  </label>
-                </div>
-              </div>
-
-              {/* Date Range */}
-              <div>
-                <label className="block text-white font-semibold mb-2">
-                  {i18nService.t('filter.by_date', 'Filter by date')}
-                </label>
-                <select
-                  value={filters.dateRange}
-                  onChange={(e) => handleFilterChange('dateRange', e.target.value)}
-                  className="w-full p-2 bg-slate-700 text-white rounded-lg border border-slate-600"
-                >
-                  <option value="all">{i18nService.t('All time', 'All time')}</option>
-                  <option value="today">{i18nService.t('Today', 'Today')}</option>
-                  <option value="week">{i18nService.t('This week', 'This week')}</option>
-                  <option value="month">{i18nService.t('This month', 'This month')}</option>
-                </select>
-              </div>
-            </div>
-
-            <div className="flex justify-between items-center mt-6">
-              <span className="text-white">
-                {i18nService.t('Mostrando', 'Showing')} {filteredVideos.length} {i18nService.t('videos', 'videos')}
-              </span>
-              <button
-                onClick={() => setShowFilters(false)}
-                className="text-white hover:text-gray-300"
-                aria-label={i18nService.t('Close filters', 'Close filters')}
-              >
-                <FaTimes />
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Modern Filter System */}
+      <ModernFilterSystem
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        showFilters={showFilters}
+        onShowFiltersChange={setShowFilters}
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onClearFilters={handleClearFilters}
+        type="video"
+      />
 
       {/* Main Content */}
       <main id="main-content" className="max-w-7xl mx-auto px-4 py-8">
@@ -532,127 +324,198 @@ const WorldClassVideoHub: React.FC = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Main Video Player */}
             <div className="lg:col-span-2">
-              <div className="bg-slate-800 rounded-2xl overflow-hidden shadow-2xl border border-slate-700">
-                <div className="relative aspect-video bg-black">
-                  <VideoThumbnail 
-                    src={currentVideo.thumbnail} 
-                    alt={currentVideo.title}
-                    videoUrl={currentVideo.embedUrl}
-                    title={currentVideo.title}
-                    description={currentVideo.description}
-                    className="w-full h-full"
-                    onVideoPlay={() => {
-                      screenReader.announceVideoStarted(currentVideo.title);
-                      if (currentVideo.embedUrl) {
-                        window.open(currentVideo.embedUrl, '_blank');
-                      }
-                      setIsPlaying(true);
-                    }}
-                  />
-                  
-                  {/* Video Controls */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          <button
-                            onClick={() => setIsPlaying(!isPlaying)}
-                            className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"
-                            aria-label={isPlaying ? i18nService.t('Pause video', 'Pause video') : i18nService.t('Play video', 'Play video')}
-                          >
-                            {isPlaying ? <FaPause className="text-white" /> : <FaPlay className="text-white ml-1" />}
-                          </button>
-                          
-                          <button
-                            onClick={() => setIsMuted(!isMuted)}
-                            className="w-10 h-10 bg-slate-800/50 rounded-full flex items-center justify-center hover:bg-slate-700/50 transition-colors"
-                            aria-label={isMuted ? i18nService.t('Unmute', 'Unmute') : i18nService.t('Mute', 'Mute')}
-                          >
-                            {isMuted ? <FaVolumeMute className="text-white" /> : <FaVolumeUp className="text-white" />}
-                          </button>
-                        </div>
-                        
-                        <div className="flex items-center gap-2">
-                          {currentVideo.isLive && (
-                            <span className="px-3 py-1 bg-red-600 text-white rounded-full text-sm font-semibold animate-pulse">
-                              🔴 {i18nService.t('video.live', 'LIVE')}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+              {/* Featured Video Section */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-600 text-white px-4 py-2 rounded-full">
+                    <FaFire className="w-4 h-4" />
+                    <span className="font-bold">Destacadas</span>
+                  </div>
+                  <div className="text-sm text-white">
+                    Video principal
                   </div>
                 </div>
 
-                {/* Video Info */}
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h2 className="text-2xl font-bold text-white mb-2">{currentVideo.title}</h2>
-                      <p className="text-slate-300 leading-relaxed">{currentVideo.description}</p>
-                    </div>
-                    <div className="ml-4">
-                      {getPlatformIcon(currentVideo.platform)}
-                    </div>
-                  </div>
-
-                  {/* Author Info */}
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="text-3xl">{currentVideo.author.avatar}</div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-white">{currentVideo.author.name}</h3>
-                        {currentVideo.author.verified && <MdVerified className="text-blue-400" />}
-                        {currentVideo.factChecked && (
-                          <span className="px-2 py-1 bg-green-600 text-white rounded-full text-xs">
-                            ✅ {i18nService.t('video.verified', 'Verified')}
-                          </span>
-                        )}
+                <div className="bg-slate-800 rounded-2xl overflow-hidden shadow-2xl border border-slate-700">
+                  <div className="relative aspect-video bg-black">
+                    <VideoThumbnail 
+                      src={currentVideo.thumbnail} 
+                      alt={currentVideo.title}
+                      videoUrl={currentVideo.embedUrl}
+                      title={currentVideo.title}
+                      description={currentVideo.description}
+                      className="w-full h-full"
+                      onVideoPlay={() => {
+                        screenReader.announceVideoStarted(currentVideo.title);
+                        if (currentVideo.embedUrl) {
+                          window.open(currentVideo.embedUrl, '_blank');
+                        }
+                        setIsPlaying(true);
+                      }}
+                    />
+                    
+                    {/* Video Controls */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <button
+                              onClick={() => setIsPlaying(!isPlaying)}
+                              className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"
+                              aria-label={isPlaying ? i18nService.t('Pause video', 'Pause video') : i18nService.t('Play video', 'Play video')}
+                            >
+                              {isPlaying ? <FaPause className="text-white" /> : <FaPlay className="text-white ml-1" />}
+                            </button>
+                            
+                            <button
+                              onClick={() => setIsMuted(!isMuted)}
+                              className="w-10 h-10 bg-slate-800/50 rounded-full flex items-center justify-center hover:bg-slate-700/50 transition-colors"
+                              aria-label={isMuted ? i18nService.t('Unmute', 'Unmute') : i18nService.t('Mute', 'Mute')}
+                            >
+                              {isMuted ? <FaVolumeMute className="text-white" /> : <FaVolumeUp className="text-white" />}
+                            </button>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            {currentVideo.isLive && (
+                              <span className="px-3 py-1 bg-red-600 text-white rounded-full text-sm font-semibold animate-pulse">
+                                🔴 {i18nService.t('video.live', 'LIVE')}
+                              </span>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-4 text-sm text-slate-400">
-                        <span>{currentVideo.author.followers} {i18nService.t('followers', 'followers')}</span>
-                        <span>{currentVideo.author.engagement}% engagement</span>
-                        <span>{currentVideo.timestamp}</span>
+                    </div>
+                  </div>
+
+                  {/* Video Info */}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h2 className="text-2xl font-bold text-white mb-2">{currentVideo.title}</h2>
+                        <p className="text-slate-300 leading-relaxed">{currentVideo.description}</p>
+                      </div>
+                      <div className="ml-4">
+                        {getPlatformIcon(currentVideo.platform)}
                       </div>
                     </div>
-                  </div>
 
-                  {/* AI Summary */}
-                  {currentVideo.aiSummary && (
-                    <div className="bg-slate-700/50 rounded-xl p-4 mb-4">
-                      <h4 className="font-semibold text-cyan-400 mb-2">🤖 {i18nService.t('AI Summary', 'AI Summary')}</h4>
-                      <p className="text-slate-300 text-sm">{currentVideo.aiSummary}</p>
+                    {/* Author Info */}
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="text-3xl">{currentVideo.author.avatar}</div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-white">{currentVideo.author.name}</h3>
+                          {currentVideo.author.verified && <MdVerified className="text-blue-400" />}
+                          {currentVideo.factChecked && (
+                            <span className="px-2 py-1 bg-green-600 text-white rounded-full text-xs">
+                              ✅ {i18nService.t('video.verified', 'Verified')}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-slate-400">
+                          <span>{currentVideo.author.followers} {i18nService.t('followers', 'followers')}</span>
+                          <span>{currentVideo.author.engagement}% engagement</span>
+                          <span>{currentVideo.timestamp}</span>
+                        </div>
+                      </div>
                     </div>
-                  )}
 
-                  {/* Stats */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                    <div className="text-center">
-                      <div className="text-xl font-bold text-red-400">{formatNumber(currentVideo.views)}</div>
-                      <div className="text-xs text-slate-400">{i18nService.t('video.views', 'Views')}</div>
+                    {/* AI Summary */}
+                    {currentVideo.aiSummary && (
+                      <div className="bg-slate-700/50 rounded-xl p-4 mb-4">
+                        <h4 className="font-semibold text-cyan-400 mb-2">🤖 {i18nService.t('AI Summary', 'AI Summary')}</h4>
+                        <p className="text-slate-300 text-sm">{currentVideo.aiSummary}</p>
+                      </div>
+                    )}
+
+                    {/* Stats */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-red-400">{formatNumber(currentVideo.views)}</div>
+                        <div className="text-xs text-slate-400">{i18nService.t('video.views', 'Views')}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-pink-400">{formatNumber(currentVideo.likes)}</div>
+                        <div className="text-xs text-slate-400">{i18nService.t('video.likes', 'Likes')}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-blue-400">{formatNumber(currentVideo.comments)}</div>
+                        <div className="text-xs text-slate-400">{i18nService.t('video.comments', 'Comments')}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-green-400">{formatNumber(currentVideo.shares)}</div>
+                        <div className="text-xs text-slate-400">{i18nService.t('video.shares', 'Shares')}</div>
+                      </div>
                     </div>
-                    <div className="text-center">
-                      <div className="text-xl font-bold text-pink-400">{formatNumber(currentVideo.likes)}</div>
-                      <div className="text-xs text-slate-400">{i18nService.t('video.likes', 'Likes')}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xl font-bold text-blue-400">{formatNumber(currentVideo.comments)}</div>
-                      <div className="text-xs text-slate-400">{i18nService.t('video.comments', 'Comments')}</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xl font-bold text-green-400">{formatNumber(currentVideo.shares)}</div>
-                      <div className="text-xs text-slate-400">{i18nService.t('video.shares', 'Shares')}</div>
+
+                    {/* Related Content */}
+                    <RelatedContent
+                      itemId={currentVideo.id}
+                      itemType="video"
+                      count={2}
+                      className="mb-4"
+                    />
+
+                    {/* Hashtags */}
+                    <div className="flex flex-wrap gap-2">
+                      {currentVideo.hashtags.map((hashtag, index) => (
+                        <span key={index} className="text-blue-400 text-sm hover:text-blue-300 cursor-pointer">
+                          {hashtag}
+                        </span>
+                      ))}
                     </div>
                   </div>
+                </div>
+              </div>
 
-                  {/* Hashtags */}
-                  <div className="flex flex-wrap gap-2">
-                    {currentVideo.hashtags.map((hashtag, index) => (
-                      <span key={index} className="text-blue-400 text-sm hover:text-blue-300 cursor-pointer">
-                        {hashtag}
-                      </span>
-                    ))}
+              {/* Trending Section */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full">
+                    <BiTrendingUp className="w-4 h-4" />
+                    <span className="font-bold">Trending</span>
                   </div>
+                  <div className="text-sm text-white">
+                    Lo más popular ahora
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {filteredVideos.filter(v => v.trending).slice(1, 3).map((video) => (
+                    <div key={video.id} className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-slate-600 transition-colors">
+                      <div className="aspect-video bg-black">
+                        <VideoThumbnail
+                          src={video.thumbnail}
+                          alt={video.title}
+                          videoUrl={video.embedUrl}
+                          title={video.title}
+                          className="w-full h-full"
+                          onVideoPlay={() => {
+                            if (video.embedUrl) {
+                              window.open(video.embedUrl, '_blank');
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-semibold text-white text-sm mb-2 line-clamp-2">{video.title}</h3>
+                        <div className="flex items-center gap-2 text-xs text-slate-400">
+                          {getPlatformIcon(video.platform)}
+                          <span>{video.author.name}</span>
+                          {video.author.verified && <MdVerified className="text-blue-400" />}
+                          <span>•</span>
+                          <span>{formatNumber(video.views)} vistas</span>
+                        </div>
+                        <RelatedContent
+                          itemId={video.id}
+                          itemType="video"
+                          count={1}
+                          className="mt-3"
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -713,6 +576,31 @@ const WorldClassVideoHub: React.FC = () => {
                   ))}
                 </div>
               </div>
+
+              {/* EN VIVO Section */}
+              {filteredVideos.filter(v => v.isLive).length > 0 && (
+                <div className="mt-6 bg-slate-800 rounded-2xl p-6 border border-slate-700">
+                  <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+                    🔴 {i18nService.t('Live Now', 'EN VIVO')}
+                    <span className="text-sm font-normal text-red-400 animate-pulse">
+                      ({filteredVideos.filter(v => v.isLive).length} activos)
+                    </span>
+                  </h3>
+                  <div className="space-y-3">
+                    {filteredVideos.filter(v => v.isLive).slice(0, 3).map((video) => (
+                      <div key={video.id} className="flex items-center gap-3 p-3 bg-red-600/10 rounded-lg border border-red-500/20">
+                        <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="font-medium text-white text-sm truncate">{video.title}</h4>
+                          <div className="text-xs text-slate-400">
+                            {video.author.name} • {video.realTimeStats?.currentViewers && formatNumber(video.realTimeStats.currentViewers)} viendo
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Real-time Updates Panel */}
               {updates.length > 0 && (

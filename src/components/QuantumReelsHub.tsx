@@ -8,6 +8,9 @@ import {
 import { MdVerified, MdLiveTv, MdTrendingUp } from 'react-icons/md';
 import { BiTrendingUp, BiFullscreen } from 'react-icons/bi';
 import VideoThumbnail from './VideoThumbnail';
+import ModernFilterSystem from './ModernFilterSystem';
+import RelatedContent from './RelatedContent';
+import { ReelSkeleton } from './SkeletonLoader';
 
 interface QuantumReel {
   id: string;
@@ -62,11 +65,23 @@ const QuantumReelsHub: React.FC = () => {
   const [currentReelIndex, setCurrentReelIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(true);
-  const [selectedPlatform, setSelectedPlatform] = useState<string>('all');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
-  const [viewMode, setViewMode] = useState<'feed' | 'grid' | 'theater'>('feed');
+  const [viewMode, setViewMode] = useState<'moderno' | 'feed' | 'timeline' | 'categorias'>('moderno');
+  const [showFilters, setShowFilters] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // Updated filters structure
+  const [filters, setFilters] = useState({
+    timeRange: 'all',
+    perspective: 'both',
+    category: 'all',
+    source: '',
+    platform: 'all',
+    language: '',
+    isLive: false,
+    isTrending: false,
+    isVerified: false
+  });
 
   const [reelsMetrics, setReelsMetrics] = useState<ReelsMetrics>({
     totalReels: 2847,
@@ -287,10 +302,15 @@ const QuantumReelsHub: React.FC = () => {
                          reel.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          reel.hashtags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()));
     
-    const matchesPlatform = selectedPlatform === 'all' || reel.platform === selectedPlatform;
-    const matchesCategory = selectedCategory === 'all' || reel.category === selectedCategory;
+    const matchesPlatform = filters.platform === 'all' || reel.platform === filters.platform;
+    const matchesCategory = filters.category === 'all' || reel.category === filters.category;
+    const matchesLanguage = !filters.language || reel.language === filters.language;
+    const matchesLive = !filters.isLive || reel.isLive;
+    const matchesTrending = !filters.isTrending || reel.trending;
+    const matchesVerified = !filters.isVerified || reel.factChecked;
 
-    return matchesSearch && matchesPlatform && matchesCategory;
+    return matchesSearch && matchesPlatform && matchesCategory && matchesLanguage && 
+           matchesLive && matchesTrending && matchesVerified;
   });
 
   const currentReel = filteredReels[currentReelIndex] || quantumReels[0];
@@ -320,280 +340,282 @@ const QuantumReelsHub: React.FC = () => {
     }
   };
 
+  const handleFilterChange = (filterType: string, value: any) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: value
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      timeRange: 'all',
+      perspective: 'both',
+      category: 'all',
+      source: '',
+      platform: 'all',
+      language: '',
+      isLive: false,
+      isTrending: false,
+      isVerified: false
+    });
+  };
+
   const categories = ['all', 'Política', 'Educación Cívica', 'Actualidad', 'Terror Reels', 'Elecciones'];
   const platforms = ['all', 'youtube', 'tiktok', 'instagram', 'facebook', 'x-twitter'];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 to-slate-800">
-      {/* Prominent Header */}
-      <div className="bg-gradient-to-r from-red-600 via-purple-600 to-pink-600 border-b border-slate-600">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="text-center mb-8">
-            <h1 className="text-5xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">
-              🎬 Quantum Reels Hub
-            </h1>
-            <p className="text-xl md:text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed">
-              Reels en tiempo real con integración cross-platform y verificación IA. 
-              El hub más avanzado de contenido cívico audiovisual de Colombia.
-            </p>
-            
-            {/* Prominent Feature Badges */}
-            <div className="flex flex-wrap justify-center gap-4 mt-6">
-              <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-bold">
-                🔴 EN VIVO • 23 streams activos
-              </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-bold">
-                ⚡ TIEMPO REAL • Actualización instantánea
-              </div>
-              <div className="bg-white/20 backdrop-blur-sm rounded-full px-6 py-3 text-white font-bold">
-                ✅ VERIFICADO • Fact-checking con IA
-              </div>
-            </div>
-          </div>
-
-          {/* Enhanced Real-Time Metrics */}
-          <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-red-500/30 hover:border-red-400/50 transition-colors">
-              <div className="text-3xl font-bold text-red-400 mb-2">{formatNumber(reelsMetrics.totalReels)}</div>
-              <div className="text-sm text-white/80">Total Reels</div>
-              <div className="text-xs text-red-300 mt-1">+{Math.floor(Math.random() * 10)} nuevos</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-green-500/30 hover:border-green-400/50 transition-colors">
-              <div className="text-3xl font-bold text-green-400 mb-2 animate-pulse">{reelsMetrics.liveReels}</div>
-              <div className="text-sm text-white/80">En Vivo</div>
-              <div className="text-xs text-green-300 mt-1">🔴 ACTIVO</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-blue-500/30 hover:border-blue-400/50 transition-colors">
-              <div className="text-3xl font-bold text-blue-400 mb-2">{formatNumber(reelsMetrics.totalViews)}</div>
-              <div className="text-sm text-white/80">Visualizaciones</div>
-              <div className="text-xs text-blue-300 mt-1">+{Math.floor(Math.random() * 500)} por min</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-purple-500/30 hover:border-purple-400/50 transition-colors">
-              <div className="text-3xl font-bold text-purple-400 mb-2">{reelsMetrics.platformsConnected}</div>
-              <div className="text-sm text-white/80">Plataformas</div>
-              <div className="text-xs text-purple-300 mt-1">Cross-Platform</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-yellow-500/30 hover:border-yellow-400/50 transition-colors">
-              <div className="text-3xl font-bold text-yellow-400 mb-2">{reelsMetrics.languagesDetected}</div>
-              <div className="text-sm text-white/80">Idiomas</div>
-              <div className="text-xs text-yellow-300 mt-1">Multi-lingual</div>
-            </div>
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center border border-cyan-500/30 hover:border-cyan-400/50 transition-colors">
-              <div className="text-3xl font-bold text-cyan-400 mb-2">{reelsMetrics.factChecksPerformed}</div>
-              <div className="text-sm text-white/80">Fact Checks</div>
-              <div className="text-xs text-cyan-300 mt-1">IA Verificado</div>
-            </div>
-          </div>
-
-          {/* Enhanced Search and Filters */}
-          <div className="flex flex-col lg:flex-row gap-6">
-            <div className="flex-1">
-              <div className="relative">
-                <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/60 text-lg" />
-                <input
-                  type="text"
-                  placeholder="Buscar reels, hashtags, temas, creadores, plataformas..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder-white/60 focus:ring-2 focus:ring-blue-500 focus:border-transparent text-lg"
-                />
-              </div>
-            </div>
-            
-            <div className="flex gap-4">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white focus:ring-2 focus:ring-blue-500 font-medium"
-              >
-                {categories.map(category => (
-                  <option key={category} value={category} className="bg-slate-800 text-white">
-                    {category === 'all' ? '🌟 Todas las categorías' : category}
-                  </option>
-                ))}
-              </select>
-              
-              <select
-                value={selectedPlatform}
-                onChange={(e) => setSelectedPlatform(e.target.value)}
-                className="px-6 py-4 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl text-white focus:ring-2 focus:ring-blue-500 font-medium"
-              >
-                {platforms.map(platform => (
-                  <option key={platform} value={platform} className="bg-slate-800 text-white">
-                    {platform === 'all' ? '🌐 Todas las plataformas' : platform}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Modern Filter System */}
+      <ModernFilterSystem
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        showFilters={showFilters}
+        onShowFiltersChange={setShowFilters}
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onClearFilters={handleClearFilters}
+        type="reel"
+      />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-8">
-        {viewMode === 'feed' ? (
+        {viewMode === 'feed' || viewMode === 'moderno' ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Main Video Player */}
+            {/* Main Reel Player */}
             <div className="lg:col-span-2">
-              <div className="bg-slate-800 rounded-2xl overflow-hidden shadow-2xl border border-slate-700">
-                {/* Video Container */}
-                <div className="relative aspect-video bg-black">
-                  <VideoThumbnail 
-                    src={currentReel.thumbnail} 
-                    alt={currentReel.title}
-                    videoUrl={currentReel.embedUrl}
-                    title={currentReel.title}
-                    description={currentReel.description}
-                    className="w-full h-full"
-                    onVideoPlay={() => {
-                      if (currentReel.embedUrl) {
-                        window.open(currentReel.embedUrl, '_blank');
-                      }
-                      setIsPlaying(true);
-                    }}
-                  />
-                  <div className="absolute inset-0 bg-black/20"></div>
-                  
-                  {/* Video Controls Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                          {!isPlaying ? (
-                            <button
-                              onClick={() => setIsPlaying(true)}
-                              className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"
-                            >
-                              <FaPlay className="text-white ml-1" />
-                            </button>
-                          ) : (
-                            <button
-                              onClick={() => setIsPlaying(false)}
-                              className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"
-                            >
-                              <FaPause className="text-white" />
-                            </button>
-                          )}
-                          
-                          <button
-                            onClick={() => setIsMuted(!isMuted)}
-                            className="w-10 h-10 bg-slate-800/50 rounded-full flex items-center justify-center hover:bg-slate-700/50 transition-colors"
-                          >
-                            {isMuted ? <FaVolumeMute className="text-white" /> : <FaVolumeUp className="text-white" />}
-                          </button>
-                        </div>
-                        
-                        <div className="flex items-center gap-2">
-                          {currentReel.isLive && (
-                            <span className="px-3 py-1 bg-red-600 text-white rounded-full text-sm font-semibold animate-pulse">
-                              🔴 EN VIVO
-                            </span>
-                          )}
-                          <button className="w-10 h-10 bg-slate-800/50 rounded-full flex items-center justify-center hover:bg-slate-700/50 transition-colors">
-                            <BiFullscreen className="text-white" />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
+              {/* Destacadas Section */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-600 text-white px-4 py-2 rounded-full">
+                    <FaFire className="w-4 h-4" />
+                    <span className="font-bold">Destacadas</span>
+                  </div>
+                  <div className="text-sm text-white">
+                    Reel principal
                   </div>
                 </div>
 
-                {/* Video Info */}
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h2 className="text-2xl font-bold text-white mb-2">{currentReel.title}</h2>
-                      <p className="text-slate-300 leading-relaxed">{currentReel.description}</p>
-                    </div>
-                    <div className="ml-4">
-                      {getPlatformIcon(currentReel.platform)}
-                    </div>
-                  </div>
-
-                  {/* Author Info */}
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="text-3xl">{currentReel.author.avatar}</div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-white">{currentReel.author.name}</h3>
-                        {currentReel.author.verified && <MdVerified className="text-blue-400" />}
-                        {currentReel.factChecked && (
-                          <span className="px-2 py-1 bg-green-600 text-white rounded-full text-xs">✅ Verificado</span>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-slate-400">
-                        <span>{currentReel.author.followers} seguidores</span>
-                        <span>{currentReel.author.engagement}% engagement</span>
-                        <span>{currentReel.timestamp}</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* AI Summary */}
-                  {currentReel.aiSummary && (
-                    <div className="bg-slate-700/50 rounded-xl p-4 mb-4">
-                      <h4 className="font-semibold text-cyan-400 mb-2">🤖 Resumen IA</h4>
-                      <p className="text-slate-300 text-sm">{currentReel.aiSummary}</p>
-                    </div>
-                  )}
-
-                  {/* Stats and Actions */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
-                    <div className="text-center">
-                      <div className="text-xl font-bold text-red-400">{formatNumber(currentReel.views)}</div>
-                      <div className="text-xs text-slate-400">Visualizaciones</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xl font-bold text-pink-400">{formatNumber(currentReel.likes)}</div>
-                      <div className="text-xs text-slate-400">Me gusta</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xl font-bold text-blue-400">{formatNumber(currentReel.comments)}</div>
-                      <div className="text-xs text-slate-400">Comentarios</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-xl font-bold text-green-400">{formatNumber(currentReel.shares)}</div>
-                      <div className="text-xs text-slate-400">Compartidos</div>
-                    </div>
-                  </div>
-
-                  {/* Live Stats */}
-                  {currentReel.isLive && currentReel.realTimeStats && (
-                    <div className="bg-red-600/20 rounded-xl p-4 mb-4 border border-red-500/30">
-                      <h4 className="font-semibold text-red-400 mb-2">📊 Estadísticas en Vivo</h4>
-                      <div className="grid grid-cols-3 gap-4 text-sm">
-                        <div>
-                          <div className="text-red-300">Viendo ahora</div>
-                          <div className="text-white font-semibold">{formatNumber(currentReel.realTimeStats.currentViewers || 0)}</div>
-                        </div>
-                        <div>
-                          <div className="text-red-300">Pico de audiencia</div>
-                          <div className="text-white font-semibold">{formatNumber(currentReel.realTimeStats.peakViewers || 0)}</div>
-                        </div>
-                        <div>
-                          <div className="text-red-300">Duración</div>
-                          <div className="text-white font-semibold">{currentReel.realTimeStats.liveDuration}</div>
+                <div className="bg-slate-800 rounded-2xl overflow-hidden shadow-2xl border border-slate-700">
+                  {/* Video Container */}
+                  <div className="relative aspect-video bg-black">
+                    <VideoThumbnail 
+                      src={currentReel.thumbnail} 
+                      alt={currentReel.title}
+                      videoUrl={currentReel.embedUrl}
+                      title={currentReel.title}
+                      description={currentReel.description}
+                      className="w-full h-full"
+                      onVideoPlay={() => {
+                        if (currentReel.embedUrl) {
+                          window.open(currentReel.embedUrl, '_blank');
+                        }
+                        setIsPlaying(true);
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-black/20"></div>
+                    
+                    {/* Video Controls Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent">
+                      <div className="absolute bottom-4 left-4 right-4">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            {!isPlaying ? (
+                              <button
+                                onClick={() => setIsPlaying(true)}
+                                className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"
+                              >
+                                <FaPlay className="text-white ml-1" />
+                              </button>
+                            ) : (
+                              <button
+                                onClick={() => setIsPlaying(false)}
+                                className="w-12 h-12 bg-red-600 rounded-full flex items-center justify-center hover:bg-red-700 transition-colors"
+                              >
+                                <FaPause className="text-white" />
+                              </button>
+                            )}
+                            
+                            <button
+                              onClick={() => setIsMuted(!isMuted)}
+                              className="w-10 h-10 bg-slate-800/50 rounded-full flex items-center justify-center hover:bg-slate-700/50 transition-colors"
+                            >
+                              {isMuted ? <FaVolumeMute className="text-white" /> : <FaVolumeUp className="text-white" />}
+                            </button>
+                          </div>
+                          
+                          <div className="flex items-center gap-2">
+                            {currentReel.isLive && (
+                              <span className="px-3 py-1 bg-red-600 text-white rounded-full text-sm font-semibold animate-pulse">
+                                🔴 EN VIVO
+                              </span>
+                            )}
+                            <button className="w-10 h-10 bg-slate-800/50 rounded-full flex items-center justify-center hover:bg-slate-700/50 transition-colors">
+                              <BiFullscreen className="text-white" />
+                            </button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                  )}
-
-                  {/* Topics and Hashtags */}
-                  <div className="flex flex-wrap gap-2 mb-4">
-                    {currentReel.topics.map((topic, index) => (
-                      <span key={index} className="px-3 py-1 bg-purple-600/30 text-purple-300 rounded-full text-sm">
-                        {topic}
-                      </span>
-                    ))}
                   </div>
 
-                  <div className="flex flex-wrap gap-2">
-                    {currentReel.hashtags.map((hashtag, index) => (
-                      <span key={index} className="text-blue-400 text-sm hover:text-blue-300 cursor-pointer">
-                        {hashtag}
-                      </span>
-                    ))}
+                  {/* Video Info */}
+                  <div className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div className="flex-1">
+                        <h2 className="text-2xl font-bold text-white mb-2">{currentReel.title}</h2>
+                        <p className="text-slate-300 leading-relaxed">{currentReel.description}</p>
+                      </div>
+                      <div className="ml-4">
+                        {getPlatformIcon(currentReel.platform)}
+                      </div>
+                    </div>
+
+                    {/* Author Info */}
+                    <div className="flex items-center gap-4 mb-4">
+                      <div className="text-3xl">{currentReel.author.avatar}</div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-semibold text-white">{currentReel.author.name}</h3>
+                          {currentReel.author.verified && <MdVerified className="text-blue-400" />}
+                          {currentReel.factChecked && (
+                            <span className="px-2 py-1 bg-green-600 text-white rounded-full text-xs">✅ Verificado</span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-4 text-sm text-slate-400">
+                          <span>{currentReel.author.followers} seguidores</span>
+                          <span>{currentReel.author.engagement}% engagement</span>
+                          <span>{currentReel.timestamp}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* AI Summary */}
+                    {currentReel.aiSummary && (
+                      <div className="bg-slate-700/50 rounded-xl p-4 mb-4">
+                        <h4 className="font-semibold text-cyan-400 mb-2">🤖 Resumen IA</h4>
+                        <p className="text-slate-300 text-sm">{currentReel.aiSummary}</p>
+                      </div>
+                    )}
+
+                    {/* Stats and Actions */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-red-400">{formatNumber(currentReel.views)}</div>
+                        <div className="text-xs text-slate-400">Visualizaciones</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-pink-400">{formatNumber(currentReel.likes)}</div>
+                        <div className="text-xs text-slate-400">Me gusta</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-blue-400">{formatNumber(currentReel.comments)}</div>
+                        <div className="text-xs text-slate-400">Comentarios</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xl font-bold text-green-400">{formatNumber(currentReel.shares)}</div>
+                        <div className="text-xs text-slate-400">Compartidos</div>
+                      </div>
+                    </div>
+
+                    {/* Live Stats */}
+                    {currentReel.isLive && currentReel.realTimeStats && (
+                      <div className="bg-red-600/20 rounded-xl p-4 mb-4 border border-red-500/30">
+                        <h4 className="font-semibold text-red-400 mb-2">📊 Estadísticas en Vivo</h4>
+                        <div className="grid grid-cols-3 gap-4 text-sm">
+                          <div>
+                            <div className="text-red-300">Viendo ahora</div>
+                            <div className="text-white font-semibold">{formatNumber(currentReel.realTimeStats.currentViewers || 0)}</div>
+                          </div>
+                          <div>
+                            <div className="text-red-300">Pico de audiencia</div>
+                            <div className="text-white font-semibold">{formatNumber(currentReel.realTimeStats.peakViewers || 0)}</div>
+                          </div>
+                          <div>
+                            <div className="text-red-300">Duración</div>
+                            <div className="text-white font-semibold">{currentReel.realTimeStats.liveDuration}</div>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Topics and Hashtags */}
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {currentReel.topics.map((topic, index) => (
+                        <span key={index} className="px-3 py-1 bg-purple-600/30 text-purple-300 rounded-full text-sm">
+                          {topic}
+                        </span>
+                      ))}
+                    </div>
+
+                    {/* Related Content */}
+                    <RelatedContent
+                      itemId={currentReel.id}
+                      itemType="reel"
+                      count={2}
+                      className="mb-4"
+                    />
+
+                    <div className="flex flex-wrap gap-2">
+                      {currentReel.hashtags.map((hashtag, index) => (
+                        <span key={index} className="text-blue-400 text-sm hover:text-blue-300 cursor-pointer">
+                          {hashtag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
+                </div>
+              </div>
+
+              {/* Trending Section */}
+              <div className="mb-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="flex items-center gap-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-full">
+                    <BiTrendingUp className="w-4 h-4" />
+                    <span className="font-bold">Trending</span>
+                  </div>
+                  <div className="text-sm text-white">
+                    Lo más popular ahora
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {filteredReels.filter(r => r.trending).slice(1, 3).map((reel) => (
+                    <div key={reel.id} className="bg-slate-800 rounded-xl overflow-hidden border border-slate-700 hover:border-slate-600 transition-colors">
+                      <div className="aspect-video bg-black">
+                        <VideoThumbnail
+                          src={reel.thumbnail}
+                          alt={reel.title}
+                          videoUrl={reel.embedUrl}
+                          title={reel.title}
+                          className="w-full h-full"
+                          onVideoPlay={() => {
+                            if (reel.embedUrl) {
+                              window.open(reel.embedUrl, '_blank');
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="font-semibold text-white text-sm mb-2 line-clamp-2">{reel.title}</h3>
+                        <div className="flex items-center gap-2 text-xs text-slate-400">
+                          {getPlatformIcon(reel.platform)}
+                          <span>{reel.author.name}</span>
+                          {reel.author.verified && <MdVerified className="text-blue-400" />}
+                          <span>•</span>
+                          <span>{formatNumber(reel.views)} vistas</span>
+                        </div>
+                        <RelatedContent
+                          itemId={reel.id}
+                          itemType="reel"
+                          count={1}
+                          className="mt-3"
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -702,7 +724,7 @@ const QuantumReelsHub: React.FC = () => {
         {/* View Toggle */}
         <div className="fixed bottom-6 right-6">
           <button
-            onClick={() => setViewMode(viewMode === 'feed' ? 'grid' : 'feed')}
+            onClick={() => setViewMode(viewMode === 'feed' ? 'categorias' : 'feed')}
             className="w-14 h-14 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center shadow-lg transition-colors"
           >
             {viewMode === 'feed' ? (
