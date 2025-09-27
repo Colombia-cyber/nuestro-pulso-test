@@ -36,6 +36,7 @@ import TopicTabs from "./components/TopicTabs";
 import ElTiempoOpinionFeed from "./components/ElTiempoOpinionFeed";
 import GlobalTendenciasRealtime from "./components/GlobalTendenciasRealtime.jsx";
 import TerrorNewsHub from "./components/TerrorNewsHub";
+import MundoLocalNewsInterface from "./components/MundoLocalNewsInterface";
 import SourcesPage from "./pages/Sources";
 import SourceDetail from "./pages/SourceDetail";
 import { useMultiModalNavigation } from "./services/multiModalNavigation";
@@ -206,6 +207,9 @@ function App() {
           return <GlobalTendenciasRealtime />;
         case 'terror-news':
           return <TerrorNewsHub onNavigate={handleNavigate} />;
+        case 'mundo-local-news':
+        case 'news-interface':
+          return <MundoLocalNewsInterface onNavigate={handleNavigate} />;
         case 'home':
         default:
           return <NewHomepage onNavigate={handleNavigate} />;
@@ -238,6 +242,8 @@ function App() {
       'source-detail': 'Cargando información de la fuente...',
       'tendencias': 'Cargando tendencias globales...',
       'global-tendencias': 'Cargando tendencias globales...',
+      'mundo-local-news': 'Cargando interfaz de noticias...',
+      'news-interface': 'Cargando interfaz de noticias...',
     };
     return messages[view] || 'Cargando contenido...';
   };
