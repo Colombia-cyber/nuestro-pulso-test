@@ -11,31 +11,30 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
+// Fail fast if required env variables are missing
+if (!process.env.FRONTEND_URL) {
+  throw new Error('Missing FRONTEND_URL in environment!');
+}
+if (!process.env.YOUTUBE_API_KEY) {
+  console.warn('Warning: YOUTUBE_API_KEY is missing. YouTube features will be disabled.');
+}
+
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: process.env.FRONTEND_URL,
   credentials: true
 }));
 app.use(morgan('combined'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
 app.use('/api/search', searchRoutes);
 app.use('/api/colombia-hub', colombiaHubRoutes);
 
-// Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.json({ 
-    status: 'OK',
-    timestamp: new Date().toISOString(),
-    service: 'nuestro-pulso-search-api',
-    version: '1.0.0'
-  });
+  res.json({ status: 'OK', timestamp: new Date().toISOString(), service: 'nuestro-pulso-search-api', version: '1.0.0' });
 });
 
-// Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
   res.status(500).json({
@@ -44,7 +43,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 404 handler
 app.use((req, res) => {
   res.status(404).json({
     error: 'Not found',
