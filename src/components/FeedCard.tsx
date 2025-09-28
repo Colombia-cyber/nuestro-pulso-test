@@ -9,12 +9,14 @@ export function FeedCard({ item }) {
   };
 
   return (
-    <div className="feed-card"
+    <div
+      className="feed-card"
       onClick={handleOpen}
       tabIndex={0}
       role="button"
       aria-label={item.title}
-      onKeyDown={e => e.key === 'Enter' && handleOpen()}>
+      onKeyDown={e => e.key === 'Enter' && handleOpen()}
+    >
       <div className="feed-title">{item.title}</div>
       <div className="feed-meta">{item.source} • {item.timeAgo}</div>
       {item.image && <img src={item.image} alt={item.title} />}
