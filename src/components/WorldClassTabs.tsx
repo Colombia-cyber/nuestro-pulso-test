@@ -16,6 +16,11 @@ const TABS = [
 export function WorldClassTabs() {
   const [activeTab, setActiveTab] = useState('all');
 
+  const handleTabClick = (tab) => {
+    window.open(`https://www.google.com/search?q=${encodeURIComponent(tab.label)}`, '_blank');
+    setActiveTab(tab.id);
+  };
+
   return (
     <div>
       <div className="tabs-row sticky top-0 bg-white z-10 shadow-sm flex gap-2 px-2 py-1">
@@ -23,8 +28,10 @@ export function WorldClassTabs() {
           <button
             key={tab.id}
             className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => handleTabClick(tab)}
             aria-label={tab.label}
+            tabIndex={0}
+            onKeyDown={e => e.key === 'Enter' && handleTabClick(tab)}
           >
             <span className="tab-icon">{tab.icon}</span>
             {tab.label}
