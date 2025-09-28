@@ -1,11 +1,7 @@
 export function FeedCard({ item }) {
-  // Always open Google search for any topic
+  // Always open Google search for the card's title (for ALL news)
   const handleOpen = () => {
-    if (item.topic) {
-      window.open(`https://www.google.com/search?q=${encodeURIComponent(item.topic)}`, '_blank');
-    } else if (item.url) {
-      window.open(item.url, '_blank');
-    }
+    window.open(`https://www.google.com/search?q=${encodeURIComponent(item.title)}`, '_blank');
   };
 
   return (
