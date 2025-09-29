@@ -140,7 +140,7 @@ class RealNewsService {
    * Fetch from NewsAPI (requires API key)
    */
   private async fetchFromNewsAPI(query: string, limit: number): Promise<RealNewsArticle[]> {
-    const apiKey = import.meta.env.REACT_APP_NEWS_API_KEY;
+    const apiKey = import.meta.env.VITE_NEWSAPI_KEY;
     if (!apiKey) throw new Error('NewsAPI key not available');
 
     const response = await axios.get(`${this.googleNewsEndpoint}/everything`, {

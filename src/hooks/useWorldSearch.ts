@@ -10,8 +10,8 @@ export function useWorldSearch({ onlyFeeds, personalized, trending }) {
       onlyFeeds,
       personalized,
       trending,
-      apiKey: import.meta.env.VITE_YOUTUBE_API_KEY || process.env.REACT_APP_YOUTUBE_API_KEY,
-      endpoint: import.meta.env.VITE_API_URL || process.env.REACT_APP_API_URL
+      apiKey: import.meta.env.VITE_YOUTUBE_API_KEY,
+      endpoint: import.meta.env.VITE_API_URL
     })
       .then(data => {
         setResults(data);

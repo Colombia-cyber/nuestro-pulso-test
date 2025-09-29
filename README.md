@@ -108,11 +108,105 @@ This platform establishes new benchmarks for:
    npm install
    ```
 
-2. **Configure Firebase** (Optional):
+2. **Configure Environment Variables**:
    ```bash
    cp .env.example .env
-   # Edit .env with your Firebase credentials
+   # Edit .env with your API credentials (see Environment Variables section below)
    ```
+
+## 🔐 Environment Variables Configuration
+
+### Required Variables
+
+**Frontend (VITE_ prefix for browser access):**
+```bash
+# Firebase Configuration (Required for authentication)
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com  
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+
+# API Endpoints
+VITE_API_URL=http://localhost:3001
+VITE_SEARCH_PROXY_URL=http://localhost:3001/api/search
+```
+
+**Backend (NODE.js process.env):**
+```bash
+# Server Configuration
+FRONTEND_URL=http://localhost:5173
+PORT=3001
+NODE_ENV=development
+```
+
+### Optional API Keys
+
+Add these for enhanced functionality:
+
+```bash
+# YouTube Integration (for video content)
+VITE_YOUTUBE_API_KEY=your_youtube_api_key
+YOUTUBE_API_KEY=your_youtube_api_key
+
+# Google Custom Search (for web search feature)
+VITE_GOOGLE_API_KEY=your_google_api_key
+VITE_GOOGLE_CX=your_custom_search_engine_id
+
+# News APIs (for news aggregation)
+VITE_NEWSAPI_KEY=your_newsapi_key
+VITE_GUARDIAN_KEY=your_guardian_api_key
+VITE_SERPAPI_KEY=your_serpapi_key
+
+# Analytics
+VITE_GOOGLE_ANALYTICS_ID=your_analytics_id
+```
+
+### Configuration Options
+
+```bash
+# Search & Performance Settings
+VITE_SEARCH_RESULTS_PER_PAGE=12
+VITE_SEARCH_DEBOUNCE_MS=300
+VITE_SEARCH_TIMEOUT_MS=10000
+VITE_PAGING_CAP=2000
+
+# Feature Toggles
+VITE_NEWS_PROVIDER_ENABLED=true
+VITE_SOCIAL_PROVIDER_ENABLED=true
+VITE_HIDE_TECHNOLOGY_CATEGORY=false
+VITE_SHOW_ADVANCED_CATEGORIES=false
+
+# PulseReels Configuration
+VITE_REELS_INFINITE_SCROLL=true
+VITE_REELS_LOAD_BATCH_SIZE=6
+
+# Colombia News Hub Settings (Backend)
+COLOMBIA_HUB_CACHE_TIMEOUT_MINUTES=15
+COLOMBIA_HUB_MAX_NEWS_ITEMS=50
+COLOMBIA_HUB_RATE_LIMIT=1000
+```
+
+### Security Notes
+
+⚠️ **Important Security Guidelines:**
+- Never commit real API keys to source control
+- Use `.env.local` for local development with real keys
+- The `.env` file contains example/demo keys safe for public repos
+- Frontend `VITE_` variables are publicly visible in built code
+- Backend variables remain private on the server
+
+### Getting API Keys
+
+1. **Firebase**: [Firebase Console](https://console.firebase.google.com/)
+2. **YouTube API**: [Google Cloud Console](https://console.cloud.google.com/)
+3. **Google Custom Search**: [Programmable Search Engine](https://programmablesearchengine.google.com/)
+4. **NewsAPI**: [NewsAPI.org](https://newsapi.org/)
+5. **Guardian API**: [The Guardian Open Platform](https://open-platform.theguardian.com/)
+
+2. **Configure Firebase** (Optional):
 
 3. **Start Development**:
    ```bash
