@@ -8,8 +8,8 @@ dist/
 build/
 
 # Environment variables
-.env
-.env.local
+# .env                    # Allow committed .env with safe placeholder values
+.env.local                # Never commit local environment with real secrets
 .env.development.local
 .env.test.local
 .env.production.local
