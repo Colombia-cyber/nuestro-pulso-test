@@ -108,11 +108,139 @@ This platform establishes new benchmarks for:
    npm install
    ```
 
-2. **Configure Firebase** (Optional):
+2. **Configure Environment Variables**:
    ```bash
    cp .env.example .env
-   # Edit .env with your Firebase credentials
+   # Edit .env with your API credentials (see Environment Variables section below)
    ```
+
+## 🔐 Environment Variables Configuration
+
+### Required Variables
+
+**Frontend (VITE_ prefix for browser access):**
+```bash
+# Firebase Configuration (Required for authentication)
+VITE_FIREBASE_API_KEY=your_firebase_api_key
+VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com  
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+VITE_FIREBASE_APP_ID=your_app_id
+VITE_FIREBASE_MEASUREMENT_ID=your_measurement_id
+
+# API Endpoints
+VITE_API_URL=http://localhost:3001
+VITE_SEARCH_PROXY_URL=http://localhost:3001/api/search
+```
+
+**Backend (NODE.js process.env):**
+```bash
+# Server Configuration
+FRONTEND_URL=http://localhost:5173
+PORT=3001
+NODE_ENV=development
+```
+
+### Optional API Keys
+
+Add these for enhanced functionality:
+
+```bash
+# YouTube Integration (for video content)
+VITE_YOUTUBE_API_KEY=your_youtube_api_key
+YOUTUBE_API_KEY=your_youtube_api_key
+
+# Google Custom Search (for web search feature)
+VITE_GOOGLE_API_KEY=your_google_api_key
+VITE_GOOGLE_CX=your_custom_search_engine_id
+
+# News APIs (for news aggregation)
+VITE_NEWSAPI_KEY=your_newsapi_key
+VITE_GUARDIAN_KEY=your_guardian_api_key
+VITE_SERPAPI_KEY=your_serpapi_key
+
+# Social Media Integration APIs (for cross-platform features)
+VITE_TIKTOK_CLIENT_KEY=your_tiktok_client_key
+VITE_TIKTOK_CLIENT_SECRET=your_tiktok_client_secret
+VITE_INSTAGRAM_ACCESS_TOKEN=your_instagram_access_token
+VITE_INSTAGRAM_APP_ID=your_instagram_app_id
+VITE_FACEBOOK_ACCESS_TOKEN=your_facebook_access_token
+VITE_FACEBOOK_APP_ID=your_facebook_app_id
+VITE_TWITTER_BEARER_TOKEN=your_twitter_bearer_token
+VITE_TWITTER_API_KEY=your_twitter_api_key
+VITE_TWITTER_API_SECRET=your_twitter_api_secret
+
+# Analytics
+VITE_GOOGLE_ANALYTICS_ID=your_analytics_id
+```
+
+### Configuration Options
+
+```bash
+# Search & Performance Settings
+VITE_SEARCH_RESULTS_PER_PAGE=12
+VITE_SEARCH_DEBOUNCE_MS=300
+VITE_SEARCH_TIMEOUT_MS=10000
+VITE_PAGING_CAP=2000
+
+# Feature Toggles
+VITE_NEWS_PROVIDER_ENABLED=true
+VITE_SOCIAL_PROVIDER_ENABLED=true
+VITE_HIDE_TECHNOLOGY_CATEGORY=false
+VITE_SHOW_ADVANCED_CATEGORIES=false
+
+# PulseReels Configuration
+VITE_REELS_INFINITE_SCROLL=true
+VITE_REELS_LOAD_BATCH_SIZE=6
+
+# Colombia News Hub Settings (Backend)
+COLOMBIA_HUB_CACHE_TIMEOUT_MINUTES=15
+COLOMBIA_HUB_MAX_NEWS_ITEMS=50
+COLOMBIA_HUB_RATE_LIMIT=1000
+```
+
+### Security Notes
+
+⚠️ **Important Security Guidelines:**
+
+**For Development:**
+1. Copy `.env.example` to `.env.local` and add your real API keys there
+2. Never commit `.env.local` to version control (it's in `.gitignore`)
+3. The committed `.env` file only contains safe placeholder values
+
+**For Production:**
+1. Set environment variables directly in your hosting platform (Vercel, Netlify, etc.)
+2. Never expose real API keys in client-side code
+3. Use server-side endpoints for sensitive API calls when possible
+
+**Key Security Rules:**
+- Frontend `VITE_` variables are publicly visible in built code
+- Backend variables remain private on the server
+- Use placeholder values (like `your_api_key_here`) for public repos
+- Real API keys should only exist in secure deployment environments
+
+**Environment Variable Files:**
+```
+.env                 # Safe placeholder values (committed to repo)
+.env.local          # Your real API keys (never commit this!)  
+.env.example        # Documentation template (committed to repo)
+.env.production     # Production values (deploy via CI/CD only)
+```
+
+### Getting API Keys
+
+1. **Firebase**: [Firebase Console](https://console.firebase.google.com/)
+2. **YouTube API**: [Google Cloud Console](https://console.cloud.google.com/)
+3. **Google Custom Search**: [Programmable Search Engine](https://programmablesearchengine.google.com/)
+4. **NewsAPI**: [NewsAPI.org](https://newsapi.org/)
+5. **Guardian API**: [The Guardian Open Platform](https://open-platform.theguardian.com/)
+6. **TikTok API**: [TikTok for Developers](https://developers.tiktok.com/)
+7. **Instagram API**: [Meta for Developers](https://developers.facebook.com/docs/instagram)
+8. **Facebook API**: [Meta for Developers](https://developers.facebook.com/)
+9. **Twitter/X API**: [Twitter Developer Platform](https://developer.twitter.com/)
+
+2. **Configure Firebase** (Optional):
 
 3. **Start Development**:
    ```bash

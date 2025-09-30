@@ -11,13 +11,57 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Fail fast if required env variables are missing
-if (!process.env.FRONTEND_URL) {
-  throw new Error('Missing FRONTEND_URL in environment!');
+// Enhanced environment validation with better error messages
+const requiredEnvVars = {
+  FRONTEND_URL: process.env.FRONTEND_URL,
+};
+
+const optionalEnvVars = {
+  YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
+  VITE_NEWSAPI_KEY: process.env.VITE_NEWSAPI_KEY,
+  VITE_GUARDIAN_KEY: process.env.VITE_GUARDIAN_KEY,
+  NODE_ENV: process.env.NODE_ENV || 'development'
+};
+
+// Validate required environment variables
+const missingRequiredVars = Object.entries(requiredEnvVars)
+  .filter(([key, value]) => !value)
+  .map(([key]) => key);
+
+if (missingRequiredVars.length > 0) {
+  console.error(`
+❌ Server Configuration Error:
+Missing required environment variables: ${missingRequiredVars.join(', ')}
+
+Please check your .env file and ensure these variables are set:
+${missingRequiredVars.map(key => `- ${key}`).join('\n')}
+  `);
+  throw new Error('Missing required environment variables');
 }
-if (!process.env.YOUTUBE_API_KEY) {
-  console.warn('Warning: YOUTUBE_API_KEY is missing. YouTube features will be disabled.');
+
+// Warn about missing optional variables
+const missingOptionalVars = Object.entries(optionalEnvVars)
+  .filter(([key, value]) => !value && key !== 'NODE_ENV')
+  .map(([key]) => key);
+
+if (missingOptionalVars.length > 0) {
+  console.warn(`
+⚠️  Server Configuration Warning:
+Missing optional environment variables: ${missingOptionalVars.join(', ')}
+
+Some features may be limited without these variables:
+${missingOptionalVars.map(key => `- ${key}: Required for API integrations`).join('\n')}
+  `);
 }
+
+console.log(`
+🚀 Server Configuration:
+- Environment: ${optionalEnvVars.NODE_ENV}
+- Frontend URL: ${requiredEnvVars.FRONTEND_URL}
+- YouTube API: ${optionalEnvVars.YOUTUBE_API_KEY ? '✅ Configured' : '❌ Missing'}
+- News API: ${optionalEnvVars.VITE_NEWSAPI_KEY ? '✅ Configured' : '❌ Missing'}
+- Guardian API: ${optionalEnvVars.VITE_GUARDIAN_KEY ? '✅ Configured' : '❌ Missing'}
+`);
 
 app.use(helmet());
 app.use(cors({

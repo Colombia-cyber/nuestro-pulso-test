@@ -1,7 +1,7 @@
 import React from 'react';
 
 const LocalReelCard = () => {
-    const reelApi = process.env.REACT_APP_REEL_API; // Use the REEL_API environment variable
+    const reelApi = import.meta.env.VITE_REEL_API; // Use the REEL_API environment variable
 
     const handleSearch = (query: string) => {
         window.open(`https://www.google.com/search?q=${query}`, '_blank');

@@ -12,7 +12,7 @@ export function WorldClassFeed({ onlyFeeds, personalized, trending }: {
       {loading && <div className="loader">Loading...</div>}
       <div className="feed-grid">
         {results.map(item => (
-          <FeedCard key={item.id} item={item} onOpen={() => window.open(item.url, '_blank')} />
+          <FeedCard key={item.id} item={item} />
         ))}
       </div>
     </div>
