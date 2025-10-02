@@ -1,10 +1,6 @@
 import React from "react";
 import GlobalMundoSection from "../components/GlobalMundoSection";
-// Import additional components as you build them:
-// import ReelsSection from "../components/ReelsSection";
-// import PollsSection from "../components/PollsSection";
-// import SearchTabs from "../components/SearchTabs";
-// import CommunityHubLink from "../components/CommunityHubLink";
+import ReelsSection from "../components/ReelsSection";
 
 const Home: React.FC = () => {
   return (
@@ -27,22 +23,15 @@ const Home: React.FC = () => {
         </p>
       </header>
 
-      {/* Search Tabs (global/local/help) */}
-      {/* <SearchTabs /> */}
-
-      {/* Trending Reels */}
-      {/* <ReelsSection /> */}
-
-      {/* Polls */}
-      {/* <PollsSection /> */}
+      {/* Reels Section */}
+      <section style={{ margin: "3rem auto", maxWidth: "1200px" }}>
+        <ReelsSection />
+      </section>
 
       {/* World News Section */}
       <section style={{ margin: "3rem auto", maxWidth: "1200px" }}>
         <GlobalMundoSection />
       </section>
-
-      {/* Community Hub Link */}
-      {/* <CommunityHubLink /> */}
 
       {/* Footer */}
       <footer
