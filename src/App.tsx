@@ -39,6 +39,7 @@ import TerrorNewsHub from "./components/TerrorNewsHub";
 import MundoLocalNewsInterface from "./components/MundoLocalNewsInterface";
 import SourcesPage from "./pages/Sources";
 import SourceDetail from "./pages/SourceDetail";
+import GoogleStyleMundoSearch from "./components/GoogleStyleMundoSearch";
 import { useMultiModalNavigation } from "./services/multiModalNavigation";
 
 // Import modern styles
@@ -159,6 +160,14 @@ function App() {
               onNavigate={handleNavigate} 
             />
           );
+        case 'mundo-search':
+          return (
+            <GoogleStyleMundoSearch
+              initialQuery={viewParams?.query || ''}
+              onNavigateBack={() => handleNavigate('home')}
+              darkMode={false}
+            />
+          );
         case 'video-hub':
           return <WorldClassVideoHub />;
         case 'video-admin':
@@ -240,6 +249,7 @@ function App() {
       'search': 'Preparando búsqueda...',
       'sources': 'Cargando fuentes de noticias...',
       'source-detail': 'Cargando información de la fuente...',
+      'mundo-search': 'Cargando búsqueda mundial...',
       'tendencias': 'Cargando tendencias globales...',
       'global-tendencias': 'Cargando tendencias globales...',
       'mundo-local-news': 'Cargando interfaz de noticias...',

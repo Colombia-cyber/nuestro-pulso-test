@@ -84,6 +84,29 @@ const UniversalSearchBar: React.FC<UniversalSearchBarProps> = ({
   const performSearch = (searchQuery: string, topic?: NewsTopic) => {
     const finalTopic = topic || selectedTopic;
     
+    // GOOGLE-STYLE MUNDO SEARCH: If searching in 'world' category, navigate to Google-style search
+    if (selectedCategory === 'world' && searchQuery.trim()) {
+      // Navigate to Google-style Mundo search page
+      const params = new URLSearchParams();
+      params.set('q', searchQuery);
+      params.set('category', 'mundo');
+      if (finalTopic) params.set('topic', finalTopic.id);
+      
+      window.history.pushState(null, '', `/mundo-search?${params.toString()}`);
+      window.dispatchEvent(new CustomEvent('navigate', { 
+        detail: { view: 'mundo-search', params: { query: searchQuery, topic: finalTopic } }
+      }));
+      
+      // Save to recent searches
+      const newRecent = [searchQuery, ...recentSearches.filter(s => s !== searchQuery)].slice(0, 5);
+      setRecentSearches(newRecent);
+      localStorage.setItem('recentSearches', JSON.stringify(newRecent));
+      
+      setShowSuggestions(false);
+      setShowTopics(false);
+      return;
+    }
+    
     // INSTANT SEARCH: If instant search callback is provided, use it for immediate results
     if (onInstantSearch) {
       onInstantSearch(searchQuery, selectedCategory, finalTopic || undefined);
