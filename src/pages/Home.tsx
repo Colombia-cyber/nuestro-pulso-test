@@ -1,5 +1,5 @@
 import React from "react";
-import GlobalMundoSection from "../components/GlobalMundoSection";
+// import GlobalMundoSection from "../components/GlobalMundoSection";
 import ReelsSection from "../components/ReelsSection";
 
 const Home: React.FC = () => {
@@ -29,9 +29,9 @@ const Home: React.FC = () => {
       </section>
 
       {/* World News Section */}
-      <section style={{ margin: "3rem auto", maxWidth: "1200px" }}>
+      {/* <section style={{ margin: "3rem auto", maxWidth: "1200px" }}>
         <GlobalMundoSection />
-      </section>
+      </section> */}
 
       {/* Footer */}
       <footer
