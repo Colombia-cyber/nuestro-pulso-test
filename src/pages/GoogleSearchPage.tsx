@@ -10,7 +10,7 @@ const GoogleSearchPage = () => {
     const handleSearch = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/search?q=${query}`);
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/search?q=${query}`);
             const data = await response.json();
             setResults(data.results);
             setDidYouMean(data.didYouMean);
