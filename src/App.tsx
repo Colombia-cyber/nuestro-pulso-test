@@ -39,6 +39,7 @@ import TerrorNewsHub from "./components/TerrorNewsHub";
 import MundoLocalNewsInterface from "./components/MundoLocalNewsInterface";
 import SourcesPage from "./pages/Sources";
 import SourceDetail from "./pages/SourceDetail";
+import LiveDashboard from "./components/LiveDashboard";
 import { useMultiModalNavigation } from "./services/multiModalNavigation";
 
 // Import modern styles
@@ -165,6 +166,9 @@ function App() {
           return <WorldClassVideoAdminDashboard />;
         case 'reels':
           return <QuantumReelsHub />;
+        case 'dashboard':
+        case 'live-dashboard':
+          return <LiveDashboard onNavigate={handleNavigate} />;
         case 'feeds':
         case 'news':
           return (
@@ -223,6 +227,8 @@ function App() {
   const getLoadingMessage = (view: string): string => {
     const messages: Record<string, string> = {
       'reels': 'Cargando Reels...',
+      'dashboard': 'Cargando Dashboard en Vivo...',
+      'live-dashboard': 'Cargando Dashboard en Vivo...',
       'video-hub': 'Cargando Video Hub...',
       'video-admin': 'Cargando Panel de Administración...',
       'feeds': 'Cargando noticias...',
