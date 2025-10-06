@@ -99,10 +99,27 @@ const VideoThumbnail: React.FC<VideoThumbnailProps> = ({
 
   if (isLoading && !hasError) {
     return (
-      <div className={`w-full h-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center ${className}`}>
-        <div className="text-center text-white">
-          <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin mb-4"></div>
-          <p className="text-sm opacity-80">Cargando video...</p>
+      <div className={`w-full h-full bg-gradient-to-br from-slate-700 to-slate-900 rounded-lg overflow-hidden ${className}`}>
+        <div className="animate-pulse w-full h-full">
+          {/* Video skeleton */}
+          <div className="relative w-full h-full bg-slate-700">
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-800/60 to-transparent">
+              <div className="absolute bottom-4 left-4 right-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center">
+                      <div className="w-4 h-4 bg-slate-500 rounded-full animate-pulse"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-16 h-16 bg-slate-600/50 rounded-full flex items-center justify-center">
+                <div className="w-6 h-6 bg-slate-500 rounded-full animate-pulse"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     );

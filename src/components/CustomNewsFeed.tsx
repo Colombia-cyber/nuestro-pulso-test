@@ -7,6 +7,9 @@ import EnhancedNewsCard from './EnhancedNewsCard';
 import ModernNewsGrid from './ModernNewsGrid';
 import ModernNewsSidebar from './ModernNewsSidebar';
 import TimelineView from './TimelineView';
+import ModernFilterSystem from './ModernFilterSystem';
+import RelatedContent from './RelatedContent';
+import { NewsSkeleton } from './SkeletonLoader';
 import { NewsItem, NewsFilter, CategoryCard } from '../types/news';
 import { newsService } from '../services/newsService';
 
@@ -24,7 +27,7 @@ interface LiveStats {
 
 const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'colombia-news' }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<'modern' | 'feed' | 'timeline' | 'categories'>('modern');
+  const [viewMode, setViewMode] = useState<'moderno' | 'feed' | 'timeline' | 'categorias'>('moderno');
   const [newsData, setNewsData] = useState<NewsItem[]>([]);
   const [timelineData, setTimelineData] = useState<any>({});
   const [isLoading, setIsLoading] = useState(true);
@@ -41,10 +44,39 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
     lastUpdate: new Date()
   });
   
-  const [filter, setFilter] = useState<NewsFilter>({
+  // Updated filters structure to match ModernFilterSystem
+  const [filters, setFilters] = useState({
     timeRange: 'all',
-    perspective: 'both'
+    perspective: 'both',
+    category: 'all',
+    source: '',
+    platform: 'all',
+    language: '',
+    isLive: false,
+    isTrending: false,
+    isVerified: false
   });
+
+  const handleFilterChange = (filterType: string, value: any) => {
+    setFilters(prev => ({
+      ...prev,
+      [filterType]: value
+    }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      timeRange: 'all',
+      perspective: 'both',
+      category: 'all',
+      source: '',
+      platform: 'all',
+      language: '',
+      isLive: false,
+      isTrending: false,
+      isVerified: false
+    });
+  };
 
   const observerRef = useRef<HTMLDivElement>(null);
   const intersectionObserverRef = useRef<IntersectionObserver>();
@@ -124,7 +156,12 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
     try {
       // For demo purposes, simulate loading more data
       await new Promise(resolve => setTimeout(resolve, 1000));
-      const allNews = newsService.getFilteredNews(filter);
+      const allNews = newsService.getFilteredNews({
+        timeRange: filters.timeRange as any,
+        perspective: filters.perspective as any,
+        category: filters.category,
+        source: filters.source
+      });
       const currentLength = newsData.length;
       const newData = allNews.slice(currentLength, currentLength + 10);
       
@@ -139,7 +176,7 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
     } finally {
       setIsLoadingMore(false);
     }
-  }, [filter, newsData.length, isLoadingMore, hasMore]);
+  }, [filters, newsData.length, isLoadingMore, hasMore]);
 
   // Intersection observer for infinite scroll
   useEffect(() => {
@@ -175,7 +212,12 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
         // Simulate loading delay for better UX
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        const news = newsService.getFilteredNews(filter);
+        const news = newsService.getFilteredNews({
+          timeRange: filters.timeRange as any,
+          perspective: filters.perspective as any,
+          category: filters.category,
+          source: filters.source
+        });
         const timeline = newsService.generateTimelineData();
         
         setNewsData(news.slice(0, 10)); // Start with first 10 items
@@ -187,7 +229,12 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
       } catch (error) {
         console.error('Error loading data:', error);
         // Use fallback data
-        const fallbackNews = newsService.getFilteredNews(filter);
+        const fallbackNews = newsService.getFilteredNews({
+          timeRange: filters.timeRange as any,
+          perspective: filters.perspective as any,
+          category: filters.category,
+          source: filters.source
+        });
         setNewsData(fallbackNews.slice(0, 10));
         setTimelineData(newsService.generateTimelineData());
       } finally {
@@ -216,11 +263,11 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
       newsService.removeUpdateListener(updateListener);
       newsService.stopLiveUpdates();
     };
-  }, [filter.timeRange, filter.perspective, filter.category]);
+  }, [filters.timeRange, filters.perspective, filters.category]);
 
   const handleCategoryClick = (categoryId: string) => {
     setSelectedCategory(categoryId);
-    setFilter(prev => ({ ...prev, category: categoryId }));
+    setFilters(prev => ({ ...prev, category: categoryId }));
     setViewMode('feed');
   };
 
@@ -240,14 +287,24 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
     // Handle video click logic here
   };
 
-  const handleFilterChange = (newFilter: Partial<NewsFilter>) => {
-    setFilter(prev => ({ ...prev, ...newFilter }));
-    setPage(1);
-    setHasMore(true);
+  const handleFilterChange_old = (newFilter: Partial<NewsFilter>) => {
+    // Legacy function for compatibility
+    console.log('Legacy filter change:', newFilter);
   };
 
-  const clearFilters = () => {
-    setFilter({ timeRange: 'all', perspective: 'both' });
+  const clearFilters_old = () => {
+    // Legacy function for compatibility  
+    setFilters({
+      timeRange: 'all',
+      perspective: 'both',
+      category: 'all',
+      source: '',
+      platform: 'all',
+      language: '',
+      isLive: false,
+      isTrending: false,
+      isVerified: false
+    });
     setSelectedCategory(null);
     setSearchQuery('');
   };
@@ -274,218 +331,32 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Sticky Header */}
-      <div className="sticky top-16 z-40 bg-white/95 backdrop-blur-lg border-b border-gray-200/50 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="max-w-7xl mx-auto">
-            {/* Main Header */}
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h1 className="text-3xl font-bold text-gradient-colombia flex items-center gap-3">
-                  <BiNews className="w-8 h-8" />
-                  Noticias & Feeds
-                </h1>
-                <p className="text-gray-600 mt-1">
-                  Información actualizada con perspectivas balanceadas
-                </p>
-              </div>
-
-              {/* Live Stats */}
-              <div className="hidden lg:flex items-center gap-4">
-                <div className="glass rounded-lg px-4 py-2 border border-white/20">
-                  <div className="flex items-center gap-2 text-sm">
-                    <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                    <span className="font-medium text-red-600">EN VIVO</span>
-                  </div>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <FaEye className="w-3 h-3" />
-                    <span>{liveStats.activeReaders.toLocaleString()} lectores</span>
-                  </div>
-                </div>
-                <div className="text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <IoMdTime className="w-3 h-3" />
-                    <span>Actualizado {formatTime(lastUpdated)}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Search and Filters */}
-            <div className="flex flex-col lg:flex-row gap-4">
-              {/* Search Bar */}
-              <div className="flex-1 relative">
-                <div className="relative">
-                  <FaSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <input
-                    type="text"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Buscar noticias, temas, fuentes..."
-                    className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-colombia-blue focus:border-transparent placeholder-gray-500 transition-all"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                    >
-                      <FaTimes className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
-
-              {/* View Mode Toggle */}
-              <div className="flex bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200 p-1">
-                <button
-                  onClick={() => setViewMode('modern')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
-                    viewMode === 'modern'
-                      ? 'bg-colombia-blue text-white shadow-lg'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
-                  }`}
-                >
-                  <FaFire className="w-3 h-3" />
-                  Moderno
-                </button>
-                <button
-                  onClick={() => setViewMode('feed')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
-                    viewMode === 'feed'
-                      ? 'bg-colombia-blue text-white shadow-lg'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
-                  }`}
-                >
-                  <FaFire className="w-3 h-3" />
-                  Feed
-                </button>
-                <button
-                  onClick={() => setViewMode('timeline')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
-                    viewMode === 'timeline'
-                      ? 'bg-colombia-blue text-white shadow-lg'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
-                  }`}
-                >
-                  <MdTimeline className="w-3 h-3" />
-                  Timeline
-                </button>
-                <button
-                  onClick={() => setViewMode('categories')}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2 ${
-                    viewMode === 'categories'
-                      ? 'bg-colombia-blue text-white shadow-lg'
-                      : 'text-gray-600 hover:text-gray-800 hover:bg-white/50'
-                  }`}
-                >
-                  <BiCategory className="w-3 h-3" />
-                  Categorías
-                </button>
-              </div>
-
-              {/* Filters Button */}
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className={`px-4 py-2 rounded-xl border transition-all flex items-center gap-2 ${
-                  showFilters
-                    ? 'bg-colombia-blue text-white border-colombia-blue'
-                    : 'bg-white/80 text-gray-600 border-gray-200 hover:bg-white'
-                }`}
-              >
-                <FaFilter className="w-3 h-3" />
-                Filtros
-                <FaChevronDown className={`w-3 h-3 transition-transform ${showFilters ? 'rotate-180' : ''}`} />
-              </button>
-            </div>
-
-            {/* Expandable Filters */}
-            {showFilters && (
-              <div className="mt-4 p-4 bg-white/90 backdrop-blur-sm rounded-xl border border-gray-200">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Período</label>
-                    <select
-                      value={filter.timeRange}
-                      onChange={(e) => handleFilterChange({ timeRange: e.target.value as any })}
-                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-colombia-blue focus:border-transparent"
-                    >
-                      <option value="all">Todos los períodos</option>
-                      <option value="today">Hoy</option>
-                      <option value="week">Esta semana</option>
-                      <option value="month">Este mes</option>
-                      <option value="year">Este año</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Perspectiva</label>
-                    <select
-                      value={filter.perspective}
-                      onChange={(e) => handleFilterChange({ perspective: e.target.value as any })}
-                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-colombia-blue focus:border-transparent"
-                    >
-                      <option value="both">Todas las perspectivas</option>
-                      <option value="progressive">Solo progresistas</option>
-                      <option value="conservative">Solo conservadoras</option>
-                      <option value="balanced">Solo balanceadas</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Fuente</label>
-                    <select
-                      value={filter.source || ''}
-                      onChange={(e) => handleFilterChange({ source: e.target.value || undefined })}
-                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-colombia-blue focus:border-transparent"
-                    >
-                      <option value="">Todas las fuentes</option>
-                      <option value="el-tiempo">El Tiempo</option>
-                      <option value="semana">Semana</option>
-                      <option value="el-espectador">El Espectador</option>
-                      <option value="portafolio">Portafolio</option>
-                    </select>
-                  </div>
-                </div>
-                <div className="mt-4 flex justify-end">
-                  <button
-                    onClick={clearFilters}
-                    className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 transition-colors"
-                  >
-                    Limpiar filtros
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
+      {/* Modern Filter System */}
+      <ModernFilterSystem
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        showFilters={showFilters}
+        onShowFiltersChange={setShowFilters}
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        onClearFilters={handleClearFilters}
+        type="news"
+      />
       {/* Main Content */}
       <div className="container mx-auto px-4 py-6">
         <div className="max-w-7xl mx-auto">
           {isLoading ? (
-            // Loading skeletons
+            // Modern Loading skeletons
             <div className="space-y-6">
               {[...Array(6)].map((_, i) => (
-                <div key={i} className="news-card p-6 animate-pulse">
-                  <div className="flex gap-4">
-                    <div className="w-32 h-24 bg-gray-300 rounded-lg"></div>
-                    <div className="flex-1 space-y-3">
-                      <div className="h-4 bg-gray-300 rounded w-3/4"></div>
-                      <div className="h-3 bg-gray-300 rounded w-full"></div>
-                      <div className="h-3 bg-gray-300 rounded w-2/3"></div>
-                      <div className="flex gap-4">
-                        <div className="h-3 bg-gray-300 rounded w-20"></div>
-                        <div className="h-3 bg-gray-300 rounded w-16"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <NewsSkeleton key={i} />
               ))}
             </div>
           ) : (
             <>
-              {viewMode === 'modern' && (
+              {viewMode === 'moderno' && (
                 <div className="flex gap-6">
                   <div className="flex-1">
                     <ModernNewsGrid
@@ -553,7 +424,7 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
                         <button
                           onClick={() => {
                             setSelectedCategory(null);
-                            handleFilterChange({ category: undefined });
+                            handleClearFilters();
                           }}
                           className="text-sm text-colombia-blue hover:text-colombia-blue-dark transition-colors flex items-center gap-1"
                         >
@@ -566,12 +437,19 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
                     {/* News Grid */}
                     <div className="space-y-4">
                       {filteredNews.map((item) => (
-                        <EnhancedNewsCard
-                          key={item.id}
-                          article={item}
-                          onArticleClick={() => handleNewsClick(item)}
-                          showPerspectiveBadge={true}
-                        />
+                        <div key={item.id} className="space-y-4">
+                          <EnhancedNewsCard
+                            article={item}
+                            onArticleClick={() => handleNewsClick(item)}
+                            showPerspectiveBadge={true}
+                          />
+                          <RelatedContent
+                            itemId={item.id}
+                            itemType="article"
+                            count={2}
+                            className="ml-4"
+                          />
+                        </div>
                       ))}
                     </div>
 
@@ -607,7 +485,7 @@ const CustomNewsFeed: React.FC<CustomNewsFeedProps> = ({ onNavigate, topic = 'co
                 />
               )}
 
-              {viewMode === 'categories' && (
+              {viewMode === 'categorias' && (
                 <div className="space-y-6">
                   <div className="text-center mb-8">
                     <h2 className="text-3xl font-bold text-gray-900 mb-4">
