@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { FaSearch, FaUsers, FaChartLine, FaArrowRight, FaHistory } from 'react-icons/fa';
+import { FaSearch, FaUsers, FaChartLine, FaArrowRight, FaHistory, FaGlobe, FaMapMarkerAlt } from 'react-icons/fa';
 import { BiPoll, BiTrendingUp } from 'react-icons/bi';
-import { MdLiveTv, MdTopic } from 'react-icons/md';
+import { MdLiveTv, MdTopic, MdAutoAwesome } from 'react-icons/md';
 import { IoMdStats } from 'react-icons/io';
 import UniversalSearchBar from '../components/UniversalSearchBar';
 import FeaturedTopics from '../components/FeaturedTopics';
+import LookForSection from '../components/LookForSection';
 import { NewsTopic } from '../config/newsTopics';
 import { TopicNewsResponse } from '../services/topicNewsService';
 
@@ -21,6 +22,18 @@ interface QuickAction {
   action: string;
   count?: string;
   trend?: 'up' | 'down' | 'stable';
+}
+
+interface LookForItem {
+  id: string;
+  title: string;
+  description: string;
+  searchQuery: string;
+  icon: string;
+  color: string;
+  category: 'politics' | 'security' | 'travel' | 'global';
+  trending?: boolean;
+  urgency?: 'high' | 'medium' | 'normal';
 }
 
 
@@ -161,6 +174,16 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
     console.log('Topic selected:', topic);
   };
 
+  const handleLookForItemClick = (item: LookForItem, searchQuery: string) => {
+    // Navigate to search with the specific search query
+    const params = new URLSearchParams();
+    params.set('q', searchQuery);
+    params.set('category', 'world'); // Look for items are all world-focused
+    params.set('instant', 'true');
+    window.history.pushState(null, '', `/search?${params.toString()}`);
+    onNavigate('feeds'); // Navigate to the feeds view to show search results
+  };
+
   const handlePriorityTopicSelect = (topic: NewsTopic, category: 'local' | 'world') => {
     // Navigate to search with the specific topic and category
     const params = new URLSearchParams();
@@ -270,7 +293,7 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
                 onSearch={handleSearch}
                 onInstantSearch={handleInstantSearch}
                 onTopicSelect={handleTopicSelect}
-                placeholder="Buscar en Colombia y el mundo..."
+                placeholder="Search in Colombia and around the world..."
                 autoFocus={false}
                 className="shadow-2xl"
               />
@@ -364,39 +387,81 @@ const ModernHomepage: React.FC<ModernHomepageProps> = ({ onNavigate }) => {
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Category Selector - TEXT-ONLY */}
-          <div className="flex justify-center mb-8">
-            <div className="flex items-center bg-white rounded-2xl p-3 shadow-lg border border-gray-200">
+          {/* Category Selector - Enhanced */}
+          <div className="flex justify-center mb-12">
+            <div className="flex items-center bg-white rounded-3xl p-4 shadow-2xl border border-gray-200">
               <button
                 onClick={() => setSelectedNewsCategory('local')}
-                className={`flex items-center gap-3 px-8 py-4 rounded-xl font-black transition-all duration-300 ${
+                className={`flex items-center gap-4 px-10 py-5 rounded-2xl font-black transition-all duration-300 ${
                   selectedNewsCategory === 'local'
-                    ? 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white shadow-xl scale-105'
+                    ? 'bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 text-white shadow-2xl scale-105'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span className="text-lg font-extrabold tracking-wide">COLOMBIA</span>
+                <FaMapMarkerAlt className="w-6 h-6" />
+                <span className="text-xl font-extrabold tracking-wide">COLOMBIA</span>
               </button>
               <button
                 onClick={() => setSelectedNewsCategory('world')}
-                className={`flex items-center gap-3 px-8 py-4 rounded-xl font-black transition-all duration-300 ${
+                className={`flex items-center gap-4 px-10 py-5 rounded-2xl font-black transition-all duration-300 ${
                   selectedNewsCategory === 'world'
-                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-xl scale-105'
+                    ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-2xl scale-105'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
-                <span className="text-lg font-extrabold tracking-wide">MUNDO</span>
+                <FaGlobe className="w-6 h-6" />
+                <span className="text-xl font-extrabold tracking-wide">MUNDO</span>
               </button>
             </div>
           </div>
 
-          <FeaturedTopics
-            onTopicSelect={handlePriorityTopicSelect}
-            selectedCategory={selectedNewsCategory}
-            className="mb-12"
-            onNewsUpdate={handleNewsUpdate}
-            onInstantLoad={handleInstantTopicLoad}
-          />
+          {/* Local Section with Look For */}
+          {selectedNewsCategory === 'local' && (
+            <div className="space-y-16">
+              {/* Look For Section */}
+              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 border border-blue-200 shadow-xl">
+                <LookForSection
+                  onItemClick={handleLookForItemClick}
+                  className="mb-8"
+                />
+              </div>
+              
+              {/* Enhanced Search Bar for Local */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 border border-gray-200 shadow-lg">
+                <div className="text-center mb-8">
+                  <div className="flex items-center justify-center gap-3 mb-4">
+                    <FaMapMarkerAlt className="text-4xl text-yellow-500" />
+                    <div>
+                      <h3 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-blue-500 to-red-500 bg-clip-text text-transparent">
+                        Local Colombia Search
+                      </h3>
+                      <p className="text-gray-600 text-lg">Search for news and topics specific to Colombia</p>
+                    </div>
+                  </div>
+                </div>
+                
+                <UniversalSearchBar
+                  onSearch={handleSearch}
+                  onInstantSearch={handleInstantSearch}
+                  onTopicSelect={handleTopicSelect}
+                  placeholder="Search in Colombia and around the world..."
+                  autoFocus={false}
+                  className="shadow-xl"
+                />
+              </div>
+            </div>
+          )}
+
+          {/* World Section with Featured Topics */}
+          {selectedNewsCategory === 'world' && (
+            <FeaturedTopics
+              onTopicSelect={handlePriorityTopicSelect}
+              selectedCategory={selectedNewsCategory}
+              className="mb-12"
+              onNewsUpdate={handleNewsUpdate}
+              onInstantLoad={handleInstantTopicLoad}
+            />
+          )}
 
           {/* Topic News Preview */}
           {currentTopicNews && (
