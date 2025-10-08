@@ -30,12 +30,12 @@ const SOCIAL_PLATFORMS = [
   { id: "facebook", name: "Facebook" },
 ];
 
-const fetchLocalReels = async () => {
+const fetchLocalReels = async (): Promise<Reel[]> => {
   // Replace with real API calls for production.
   return [
     ...LOCAL_SOURCES.map(src => ({
       id: src.id,
-      type: "news",
+      type: "news" as const,
       src: "",
       title: `Latest from ${src.name}`,
       description: `Recent reel/news from ${src.name}`,
@@ -45,7 +45,7 @@ const fetchLocalReels = async () => {
     })),
     ...SOCIAL_PLATFORMS.map(platform => ({
       id: platform.id,
-      type: "video",
+      type: "video" as const,
       src: `https://www.${platform.id}.com/embed/exampleColombia`,
       title: `Trending ${platform.name} Reel in Colombia`,
       description: `Colombian civic reel on ${platform.name}`,
