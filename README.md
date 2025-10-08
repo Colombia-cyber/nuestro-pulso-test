@@ -1,8 +1,52 @@
-# 🌟 Nuestro Pulso - Quantum World-Class Community Platform
+# 🌟 Nuestro Pulso - Google-Style Civic Platform
 
-**The ultimate civic engagement platform combining 1000x World-Class Homepage with Quantum-Class Community Hub & Reels System - Setting the new global standard for digital democracy.**
+**The ultimate civic engagement platform with Google-style homepage, Colombia/World toggle, always-visible local news, universal search, and ready-to-integrate API endpoints - Setting the new global standard for digital democracy.**
 
-![Nuestro Pulso Quantum Platform](https://github.com/user-attachments/assets/d22b06b6-3e8f-438f-bb25-5fd9b21e4129)
+![Nuestro Pulso Platform](https://github.com/user-attachments/assets/d22b06b6-3e8f-438f-bb25-5fd9b21e4129)
+
+## 🚀 New Features - Google-Style Homepage
+
+### 🎯 Key Highlights
+
+- **Google-Style Universal Search**: Powerful search bar with Colombia/World scope filtering
+- **Colombia/World Toggle**: Seamlessly switch between local Colombian news and global content
+- **Always-Visible Local News**: Real-time news feed always accessible on the homepage
+- **Modular Architecture**: Ready for future expansion (debates, voting, YouTube integration, etc.)
+- **API-Ready**: All endpoints documented and ready for real API integration
+
+### 🌐 Homepage Features
+
+#### Universal Search Bar
+- Intelligent search across all content types (news, debates, reels, polls)
+- Automatic scope filtering based on Colombia/World toggle
+- Voice search ready for future integration
+- Keyboard shortcuts and accessibility features
+
+#### Colombia/World Toggle
+- **Colombia Mode**: Local news, government data, Colombian social media trends
+- **World Mode**: International news, global politics, worldwide social movements
+- Smooth transition animations between modes
+- Persistent user preference (localStorage ready)
+
+#### Always-Visible News Feed
+- 6 latest news items displayed prominently
+- Auto-refresh capability (configurable interval)
+- Category badges for quick identification
+- Source attribution and timestamps
+- Click to read full article in new tab
+
+#### Quick Access Buttons
+- Reels: Video content and short-form media
+- Noticias: Comprehensive news feeds
+- Debates: Community discussions
+- Encuestas: Polls and surveys
+- Tendencias: Trending topics
+
+#### Special Colombia Sections
+- **Congreso**: Legislative activity and live sessions
+- **Seguridad**: National security and crime news
+- **Presidente**: News about President Gustavo Petro
+- **Izquierda/Derecha**: Political perspectives from left and right
 
 ## 🚀 Click and Deploy - Launch in Minutes
 
@@ -115,6 +159,25 @@ This platform establishes new benchmarks for:
    ```
 
 ## 🔐 Environment Variables Configuration
+
+### New Google-Style Homepage API Keys
+
+**Homepage Data Sources:**
+```bash
+# Colombia News Sources
+VITE_ELTIEMPO_API_KEY=your_eltiempo_api_key
+VITE_SEMANA_API_KEY=your_semana_api_key
+VITE_RCN_API_KEY=your_rcn_api_key
+
+# Universal Search
+VITE_GOOGLE_SEARCH_API_KEY=your_google_search_api_key
+VITE_GOOGLE_SEARCH_CX=your_custom_search_engine_id
+
+# World News Sources
+VITE_BBC_API_KEY=your_bbc_api_key
+VITE_CNN_API_KEY=your_cnn_api_key
+VITE_REUTERS_API_KEY=your_reuters_api_key
+```
 
 ### Required Variables
 

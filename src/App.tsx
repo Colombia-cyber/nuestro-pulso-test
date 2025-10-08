@@ -6,6 +6,7 @@ import ModernHomepage from "./components/ModernHomepage";
 import WorldClassHomepage from "./components/WorldClassHomepage";
 import QuantumWorldClassHomepage from "./components/QuantumWorldClassHomepage";
 import NewHomepage from "./components/NewHomepage";
+import GoogleStyleHomepage from "./components/GoogleStyleHomepage";
 import CongressoPage from "./components/CongressoPage";
 import SeguridadNacionalPage from "./components/SeguridadNacionalPage";
 import PetroPage from "./components/PetroPage";
@@ -216,7 +217,7 @@ function App() {
           return <MundoLocalNewsInterface onNavigate={handleNavigate} />;
         case 'home':
         default:
-          return <NewHomepage onNavigate={handleNavigate} />;
+          return <GoogleStyleHomepage onNavigate={handleNavigate} />;
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error desconocido');
