@@ -1,7 +1,21 @@
 import React from 'react';
 
+/**
+ * Local Reel Card Component
+ * 
+ * IMPORTANT: This is frontend code, uses import.meta.env.VITE_*
+ * 
+ * Environment Variables Used:
+ * - VITE_REEL_API: Backend API endpoint for PulseReels
+ */
+
 const LocalReelCard = () => {
-    const reelApi = import.meta.env.VITE_REEL_API; // Use the REEL_API environment variable
+    // Get REEL_API environment variable (VITE_ prefix for frontend)
+    const reelApi = import.meta.env.VITE_REEL_API || 'http://localhost:3001/api/reels';
+    
+    if (!import.meta.env.VITE_REEL_API) {
+        console.warn('⚠️ VITE_REEL_API not configured. Using default:', reelApi);
+    }
 
     const handleSearch = (query: string) => {
         window.open(`https://www.google.com/search?q=${query}`, '_blank');

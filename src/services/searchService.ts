@@ -34,14 +34,39 @@ export interface SearchOptions {
   includeAdvanced?: boolean;
 }
 
-// Safely get environment variable with fallback
+/**
+ * Safely get environment variable with fallback
+ * 
+ * IMPORTANT: This is frontend code, so it uses import.meta.env.VITE_*
+ * 
+ * @param key Environment variable key (should start with VITE_)
+ * @param fallback Default value if variable is not set
+ * @returns Environment variable value or fallback
+ */
 const getEnvVar = (key: string, fallback = ''): string => {
   if (typeof window !== 'undefined') {
-    // In browser, use import.meta.env for Vite
+    // In browser, use import.meta.env for Vite (frontend)
     return (import.meta.env as any)[key] || fallback;
   }
   return fallback;
 };
+
+/**
+ * Search Service - Unified Search Interface
+ * 
+ * IMPORTANT: This is frontend code, so it uses import.meta.env.VITE_*
+ * 
+ * This service provides a unified search interface that:
+ * 1. First tries the backend API (/api/search)
+ * 2. Falls back to proxy search if API fails
+ * 3. Finally uses local mock data as last resort
+ * 
+ * Environment Variables Used:
+ * - VITE_SEARCH_PROXY_URL: Backend search API endpoint
+ * - VITE_PAGING_CAP: Maximum number of results to page through
+ * - VITE_SEARCH_RESULTS_PER_PAGE: Results per page
+ * - VITE_SEARCH_DEBOUNCE_MS: Debounce delay for search input
+ */
 
 class SearchService {
   private readonly proxyUrl: string;

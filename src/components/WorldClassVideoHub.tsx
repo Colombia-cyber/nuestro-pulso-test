@@ -191,9 +191,15 @@ const WorldClassVideoHub: React.FC = () => {
   ];
 
   // Check for API configuration
+  // IMPORTANT: Uses VITE_ prefix for frontend environment variables
   useEffect(() => {
     const apiKey = (import.meta.env?.VITE_FIREBASE_API_KEY as string) || 
                    (import.meta.env?.VITE_VIDEO_API_KEY as string);
+    
+    if (!apiKey) {
+      console.warn('⚠️ No API key configured for WorldClassVideoHub. Set VITE_FIREBASE_API_KEY or VITE_VIDEO_API_KEY in .env');
+    }
+    
     setHasApiConfig(!!apiKey);
   }, []);
 

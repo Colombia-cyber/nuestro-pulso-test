@@ -1,11 +1,25 @@
 // YouTube API Service
 import { YouTubeVideo } from '../types/dashboard';
 
+/**
+ * YouTube Service for Frontend
+ * 
+ * IMPORTANT: This is frontend code, so it uses import.meta.env.VITE_*
+ * 
+ * Environment Variables Used:
+ * - VITE_YOUTUBE_API_KEY: Primary YouTube API key for frontend
+ * - YOUTUBE_API_KEY: Fallback for backward compatibility (deprecated)
+ * 
+ * Note: For server-side YouTube operations, see /server/services/YouTubeIntegrationService.js
+ * which uses process.env.YOUTUBE_API_KEY (without VITE_ prefix)
+ */
+
 class YouTubeService {
   private apiKey: string | null = null;
   private baseUrl = 'https://www.googleapis.com/youtube/v3';
 
   constructor() {
+    // Frontend uses VITE_ prefix for environment variables
     // Support both VITE_YOUTUBE_API_KEY and YOUTUBE_API_KEY for flexibility
     this.apiKey = import.meta.env.VITE_YOUTUBE_API_KEY || 
                   import.meta.env.YOUTUBE_API_KEY || 
@@ -13,6 +27,7 @@ class YouTubeService {
     
     if (!this.apiKey) {
       console.warn('⚠️ YouTube API key not configured. Using demo data.');
+      console.info('💡 Set VITE_YOUTUBE_API_KEY in your .env file to enable real YouTube data.');
     }
   }
 

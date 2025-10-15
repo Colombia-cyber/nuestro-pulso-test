@@ -9,6 +9,29 @@ import {
   HubStats
 } from '../types/colombia-hub';
 
+/**
+ * Colombia Hub Service - News & Video Aggregation
+ * 
+ * IMPORTANT: This is frontend code connecting to backend API
+ * 
+ * This service fetches aggregated Colombia-focused content from the backend:
+ * - News articles from multiple Colombian sources
+ * - YouTube videos about Colombia
+ * - Combined feeds for comprehensive coverage
+ * 
+ * Backend API Endpoints:
+ * - GET /api/colombia-hub/news - Get latest news
+ * - GET /api/colombia-hub/videos - Get Colombia videos
+ * - GET /api/colombia-hub/combined - Get both news and videos
+ * - GET /api/colombia-hub/sources - Get available news sources
+ * - GET /api/colombia-hub/categories - Get content categories
+ * - POST /api/colombia-hub/refresh - Force refresh cache
+ * - GET /api/colombia-hub/stats - Get hub statistics
+ * 
+ * Note: This service communicates with backend at localhost:3001
+ * The backend handles all API keys and aggregation logic
+ */
+
 class ColombiaHubService {
   private baseUrl = 'http://localhost:3001/api/colombia-hub';
   private cache = new Map();

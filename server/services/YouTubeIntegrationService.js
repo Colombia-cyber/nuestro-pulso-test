@@ -1,11 +1,29 @@
 import axios from 'axios';
 
+/**
+ * YouTube Integration Service for Backend
+ * 
+ * IMPORTANT: This is backend/server code, so it uses process.env.* (NO VITE_ prefix)
+ * 
+ * Environment Variables Used:
+ * - YOUTUBE_API_KEY: YouTube API key for server-side operations
+ * 
+ * Note: For frontend YouTube operations, see /src/services/youtubeService.ts
+ * which uses import.meta.env.VITE_YOUTUBE_API_KEY
+ */
+
 class YouTubeIntegrationService {
   constructor() {
+    // Backend code uses process.env without VITE_ prefix
     this.apiKey = process.env.YOUTUBE_API_KEY || null;
     this.baseUrl = 'https://www.googleapis.com/youtube/v3';
     this.cache = new Map();
     this.cacheTimeout = 30 * 60 * 1000; // 30 minutes
+    
+    if (!this.apiKey) {
+      console.warn('⚠️ Backend YouTube API key not configured. Using mock data.');
+      console.info('💡 Set YOUTUBE_API_KEY (no VITE_ prefix) in your .env file for server-side YouTube access.');
+    }
     
     // Search categories for Colombia content
     this.searchCategories = {
