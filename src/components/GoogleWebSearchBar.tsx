@@ -1,8 +1,25 @@
 import React, { useState } from 'react';
 
+/**
+ * Google Web Search Bar Component
+ * 
+ * IMPORTANT: This is frontend code, uses import.meta.env.VITE_*
+ * 
+ * Environment Variables Required:
+ * - VITE_GOOGLE_API_KEY: Google API key for Custom Search
+ * - VITE_GOOGLE_CX: Google Custom Search Engine ID
+ * 
+ * If API keys are not configured, falls back to mock search results.
+ */
+
 // Get environment variables with proper error handling
 const GOOGLE_API_KEY = import.meta.env.VITE_GOOGLE_API_KEY;
 const GOOGLE_CX = import.meta.env.VITE_GOOGLE_CX;
+
+// Warn if API keys are missing
+if (!GOOGLE_API_KEY || !GOOGLE_CX) {
+  console.warn('⚠️ Google Custom Search not configured. Set VITE_GOOGLE_API_KEY and VITE_GOOGLE_CX in .env file.');
+}
 
 async function searchGoogleAPI(query: string) {
   // Check if API keys are configured

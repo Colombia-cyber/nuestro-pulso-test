@@ -9,7 +9,16 @@ import { pulseReels as samplePulseReels } from '../data/pulseReels';
 import { getAllTopics, NewsTopic } from '../config/newsTopics';
 import VideoThumbnail from './VideoThumbnail';
 
-// Safely get environment variable with fallback
+/**
+ * Safely get environment variable with fallback
+ * 
+ * IMPORTANT: This is frontend code, uses import.meta.env.VITE_*
+ * All environment variables for frontend must have VITE_ prefix
+ * 
+ * @param key Environment variable key (should start with VITE_)
+ * @param fallback Default value if variable is not set
+ * @returns Environment variable value or fallback
+ */
 const getEnvVar = (key: string, fallback = ''): string => {
   if (typeof window !== 'undefined') {
     return (import.meta.env as any)[key] || fallback;
