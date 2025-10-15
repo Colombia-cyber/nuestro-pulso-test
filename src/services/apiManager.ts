@@ -8,6 +8,33 @@ import {
   VoiceSearchResult 
 } from '../types/api';
 
+/**
+ * API Manager - Centralized API Integration Service
+ * 
+ * IMPORTANT: This is frontend code, so it uses import.meta.env.VITE_*
+ * 
+ * This service manages all external API integrations for the frontend:
+ * - YouTube API (videos)
+ * - Google Custom Search (web search)
+ * - Social Media APIs (TikTok, Instagram, Facebook, Twitter)
+ * - News APIs (NewsAPI)
+ * 
+ * Environment Variables Used (all with VITE_ prefix):
+ * - VITE_YOUTUBE_API_KEY
+ * - VITE_GOOGLE_API_KEY, VITE_GOOGLE_CSE_ID
+ * - VITE_TIKTOK_CLIENT_KEY, VITE_TIKTOK_CLIENT_SECRET
+ * - VITE_INSTAGRAM_ACCESS_TOKEN, VITE_INSTAGRAM_APP_ID
+ * - VITE_FACEBOOK_ACCESS_TOKEN, VITE_FACEBOOK_APP_ID
+ * - VITE_TWITTER_BEARER_TOKEN, VITE_TWITTER_API_KEY, VITE_TWITTER_API_SECRET
+ * - VITE_NEWSAPI_KEY
+ * 
+ * Features:
+ * - Automatic fallback to demo data if API keys are missing
+ * - Caching to reduce API calls
+ * - Rate limiting to prevent quota exhaustion
+ * - Health monitoring for all providers
+ */
+
 class APIManager {
   private providers: Map<string, APIProvider> = new Map();
   private config: APIConfig;

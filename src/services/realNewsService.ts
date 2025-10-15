@@ -138,10 +138,17 @@ class RealNewsService {
 
   /**
    * Fetch from NewsAPI (requires API key)
+   * 
+   * IMPORTANT: Uses VITE_NEWSAPI_KEY environment variable
+   * Set this in your .env file to enable real news from NewsAPI
    */
   private async fetchFromNewsAPI(query: string, limit: number): Promise<RealNewsArticle[]> {
     const apiKey = import.meta.env.VITE_NEWSAPI_KEY;
-    if (!apiKey) throw new Error('NewsAPI key not available');
+    
+    if (!apiKey) {
+      console.warn('⚠️ VITE_NEWSAPI_KEY not configured. Cannot fetch from NewsAPI.');
+      throw new Error('NewsAPI key not available');
+    }
 
     const response = await axios.get(`${this.googleNewsEndpoint}/everything`, {
       params: {

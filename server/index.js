@@ -6,6 +6,25 @@ import dotenv from 'dotenv';
 import searchRoutes from './routes/search.js';
 import colombiaHubRoutes from './routes/colombia-hub.js';
 
+/**
+ * Backend Server - Nuestro Pulso API
+ * 
+ * IMPORTANT: Environment Variable Usage
+ * - Backend code uses process.env.* (NO VITE_ prefix)
+ * - VITE_ prefix is only for frontend (Vite/React) code
+ * - This file loads variables from .env using dotenv
+ * 
+ * Required Environment Variables:
+ * - FRONTEND_URL: URL of the frontend application for CORS
+ * - PORT: Server port (default: 3001)
+ * 
+ * Optional Environment Variables:
+ * - YOUTUBE_API_KEY: YouTube API for server-side video fetching
+ * - NEWSAPI_KEY: News API for server-side news aggregation
+ * - GUARDIAN_KEY: Guardian API for additional news sources
+ * - NODE_ENV: Environment (development/production)
+ */
+
 dotenv.config();
 
 const app = express();
@@ -16,10 +35,11 @@ const requiredEnvVars = {
   FRONTEND_URL: process.env.FRONTEND_URL,
 };
 
+// Backend-specific environment variables (no VITE_ prefix needed in Node.js)
 const optionalEnvVars = {
   YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
-  VITE_NEWSAPI_KEY: process.env.VITE_NEWSAPI_KEY,
-  VITE_GUARDIAN_KEY: process.env.VITE_GUARDIAN_KEY,
+  NEWSAPI_KEY: process.env.NEWSAPI_KEY || process.env.VITE_NEWSAPI_KEY, // Support both for backward compatibility
+  GUARDIAN_KEY: process.env.GUARDIAN_KEY || process.env.VITE_GUARDIAN_KEY, // Support both for backward compatibility
   NODE_ENV: process.env.NODE_ENV || 'development'
 };
 
@@ -59,8 +79,8 @@ console.log(`
 - Environment: ${optionalEnvVars.NODE_ENV}
 - Frontend URL: ${requiredEnvVars.FRONTEND_URL}
 - YouTube API: ${optionalEnvVars.YOUTUBE_API_KEY ? '✅ Configured' : '❌ Missing'}
-- News API: ${optionalEnvVars.VITE_NEWSAPI_KEY ? '✅ Configured' : '❌ Missing'}
-- Guardian API: ${optionalEnvVars.VITE_GUARDIAN_KEY ? '✅ Configured' : '❌ Missing'}
+- News API: ${optionalEnvVars.NEWSAPI_KEY ? '✅ Configured' : '❌ Missing'}
+- Guardian API: ${optionalEnvVars.GUARDIAN_KEY ? '✅ Configured' : '❌ Missing'}
 `);
 
 app.use(helmet());

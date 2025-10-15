@@ -3,6 +3,27 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
+/**
+ * Firebase Configuration Module
+ * 
+ * This module initializes Firebase services for the frontend application.
+ * 
+ * IMPORTANT: Environment Variable Usage
+ * - Frontend code (Vite/React) uses: import.meta.env.VITE_*
+ * - All Firebase config variables MUST have VITE_ prefix
+ * - These are loaded from .env file at build time
+ * - Never commit .env file to version control
+ * 
+ * Required Environment Variables:
+ * - VITE_FIREBASE_API_KEY
+ * - VITE_FIREBASE_AUTH_DOMAIN
+ * - VITE_FIREBASE_PROJECT_ID
+ * - VITE_FIREBASE_STORAGE_BUCKET
+ * - VITE_FIREBASE_MESSAGING_SENDER_ID
+ * - VITE_FIREBASE_APP_ID
+ * - VITE_FIREBASE_MEASUREMENT_ID (optional, for analytics)
+ */
+
 // Helper to safely get environment variables with error handling
 const getFirebaseEnv = (key, fallback = null) => {
   const value = import.meta.env[key];

@@ -1,15 +1,28 @@
 // News API Service
 import { NewsArticle } from '../types/dashboard';
 
+/**
+ * News API Service for Frontend
+ * 
+ * IMPORTANT: This is frontend code, so it uses import.meta.env.VITE_*
+ * 
+ * Environment Variables Used:
+ * - VITE_NEWSAPI_KEY: News API key for fetching news articles
+ * 
+ * Note: For server-side news operations, backend code uses process.env.NEWSAPI_KEY
+ */
+
 class NewsAPIService {
   private apiKey: string | null = null;
   private baseUrl = 'https://newsapi.org/v2';
 
   constructor() {
+    // Frontend code uses VITE_ prefix for environment variables
     this.apiKey = import.meta.env.VITE_NEWSAPI_KEY || null;
     
     if (!this.apiKey) {
       console.warn('⚠️ News API key not configured. Using demo data.');
+      console.info('💡 Set VITE_NEWSAPI_KEY in your .env file to enable real news data.');
     }
   }
 
