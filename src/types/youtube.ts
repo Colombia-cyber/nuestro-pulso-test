@@ -8,7 +8,7 @@ export interface YouTubeSearchResult {
     playlistId?: string;
   };
   snippet: {
-    publishedAt: string; // ISO date string
+    publishedAt: string;
     channelId: string;
     title: string;
     description: string;
