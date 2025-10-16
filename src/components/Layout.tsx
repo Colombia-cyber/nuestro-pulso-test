@@ -1,3 +1,4 @@
+import React from "react";
 import { ThemeToggle } from "./ThemeToggle";
 
 export function Layout({ title, children }: { title: string; children: React.ReactNode }) {

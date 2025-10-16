@@ -4,8 +4,25 @@ import ModernNewsGrid from "../components/ModernNewsGrid";
 import { ReelsSection } from "../components/ReelsSection";
 import FeaturedTopics from "../components/FeaturedTopics";
 import ThankYouSection from "../components/ThankYouSection";
+import { NewsTopic } from "../config/newsTopics";
 
 export default function Homepage() {
+  const handleSearch = (query: string, category: 'local' | 'world', topic?: NewsTopic) => {
+    console.log("Search:", query, category, topic);
+  };
+
+  const handleTopicSelect = (topic: NewsTopic, category?: 'local' | 'world') => {
+    console.log("Topic selected:", topic, category);
+  };
+
+  const handleFeedbackClose = () => {
+    console.log("Feedback closed");
+  };
+
+  const handleSubmitFeedback = (feedback: string) => {
+    console.log("Feedback submitted:", feedback);
+  };
+
   return (
     <div style={{ background: "#f3f4f6", minHeight: "100vh" }}>
       <header style={{
@@ -17,6 +34,8 @@ export default function Homepage() {
         </h1>
         <UniversalSearchBar
           placeholder="Busca noticias, debates, personas, lugares, videos..."
+          onSearch={handleSearch}
+          onTopicSelect={handleTopicSelect}
         />
       </header>
       <main style={{ maxWidth: 960, margin: "2.5rem auto", padding: "0 1rem" }}>
@@ -31,10 +50,10 @@ export default function Homepage() {
           <ReelsSection context="local" />
         </section>
         <section style={{ margin: "2rem 0" }}>
-          <FeaturedTopics />
+          <FeaturedTopics onTopicSelect={handleTopicSelect} selectedCategory="local" />
         </section>
         <section style={{ margin: "2rem 0" }}>
-          <ThankYouSection />
+          <ThankYouSection isOpen={false} onClose={handleFeedbackClose} onSubmitFeedback={handleSubmitFeedback} />
         </section>
       </main>
     </div>
