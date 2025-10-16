@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Status } from "./Status";
-import { SkeletonLoader } from "./SkeletonLoader";
+import { SkeletonList } from "./SkeletonList";
 
 interface FeedItem {
   title: string;
@@ -59,7 +59,7 @@ export function RSSFeed({ url }: RSSFeedProps) {
     }
   }, [url]);
 
-  if (loading) return <SkeletonLoader count={3} />;
+  if (loading) return <SkeletonList count={3} />;
   if (error) return <Status error={error} />;
   if (items.length === 0) return <p>No feed items available.</p>;
 
@@ -73,7 +73,7 @@ export function RSSFeed({ url }: RSSFeedProps) {
             </a>
           </h3>
           {item.description && (
-            <p dangerouslySetInnerHTML={{ __html: item.description.substring(0, 200) + "..." }} />
+            <p>{item.description.replace(/<[^>]*>/g, '').substring(0, 200)}...</p>
           )}
           <small>{new Date(item.pubDate).toLocaleDateString()}</small>
         </article>

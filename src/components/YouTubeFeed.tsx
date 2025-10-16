@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Status } from "./Status";
-import { SkeletonLoader } from "./SkeletonLoader";
+import { SkeletonList } from "./SkeletonList";
 
 interface Video {
   id: string;
@@ -64,7 +64,7 @@ export function YouTubeFeed({ apiKey, channelId, search }: YouTubeFeedProps) {
     fetchVideos();
   }, [apiKey, channelId, search]);
 
-  if (loading) return <SkeletonLoader count={3} />;
+  if (loading) return <SkeletonList count={3} />;
   if (error) return <Status error={error} />;
   if (videos.length === 0) return <p>No videos found.</p>;
 
@@ -89,7 +89,7 @@ export function YouTubeFeed({ apiKey, channelId, search }: YouTubeFeedProps) {
                 {video.title}
               </a>
             </h3>
-            <p>{video.description.substring(0, 150)}...</p>
+            <p>{video.description ? video.description.substring(0, 150) : "No description available"}...</p>
             <small>{new Date(video.publishedAt).toLocaleDateString()}</small>
           </div>
         </div>
