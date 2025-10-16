@@ -1,6 +1,6 @@
 import React from "react";
 // import GlobalMundoSection from "../components/GlobalMundoSection";
-import ReelsSection from "../components/ReelsSection";
+import { ReelsSection } from "../components/ReelsSection";
 
 const Home: React.FC = () => {
   return (
@@ -25,7 +25,7 @@ const Home: React.FC = () => {
 
       {/* Reels Section */}
       <section style={{ margin: "3rem auto", maxWidth: "1200px" }}>
-        <ReelsSection />
+        <ReelsSection context="local" />
       </section>
 
       {/* World News Section */}
