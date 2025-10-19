@@ -35,6 +35,9 @@ const newsSources = [
 
 // Generate sample news data
 const generateSampleNews = (category: string): NewsArticle[] => {
+  // Use data URI for placeholder images
+  const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="400"%3E%3Crect width="600" height="400" fill="%23003087"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-family="sans-serif" font-size="24"%3ENoticia%3C/text%3E%3C/svg%3E';
+  
   return Array.from({ length: 12 }, (_, i) => ({
     id: `news-${category}-${i}`,
     title: `Noticia ${category === 'general' ? 'Colombia' : category} #${i + 1}: Desarrollo importante en el país`,
@@ -43,7 +46,7 @@ const generateSampleNews = (category: string): NewsArticle[] => {
     author: `Redacción ${newsSources[i % newsSources.length]}`,
     publishedAt: new Date(Date.now() - Math.random() * 24 * 60 * 60 * 1000).toISOString(),
     url: '#',
-    imageUrl: `https://picsum.photos/seed/news${category}${i}/600/400`,
+    imageUrl: placeholderImage,
     category: category,
     trending: Math.random() > 0.7,
   }));

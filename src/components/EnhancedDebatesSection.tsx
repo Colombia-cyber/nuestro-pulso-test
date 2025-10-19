@@ -29,6 +29,9 @@ const debateTopics = [
 ];
 
 const generateDebates = (topic: string): Debate[] => {
+  // Use data URIs for placeholder images to avoid external dependencies
+  const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="250"%3E%3Crect width="400" height="250" fill="%23ddd"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="%23999" font-family="sans-serif" font-size="24"%3EDebate Image%3C/text%3E%3C/svg%3E';
+  
   return Array.from({ length: 9 }, (_, i) => ({
     id: `debate-${topic}-${i}`,
     title: `¿${topic === 'all' ? 'Qué opinas sobre' : 'Debatamos'} el futuro de ${topic} en Colombia? #${i + 1}`,
@@ -41,7 +44,7 @@ const generateDebates = (topic: string): Debate[] => {
     upvotes: Math.floor(Math.random() * 300) + 20,
     downvotes: Math.floor(Math.random() * 50) + 5,
     trending: Math.random() > 0.7,
-    imageUrl: `https://picsum.photos/seed/debate${topic}${i}/400/250`,
+    imageUrl: placeholderImage,
   }));
 };
 

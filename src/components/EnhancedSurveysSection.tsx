@@ -47,11 +47,20 @@ const generateSurveys = (category: string): Survey[] => {
       };
     });
 
-    // Calculate percentages
+    // Calculate percentages - ensure they sum to 100%
     const totalOptionVotes = options.reduce((sum, opt) => sum + opt.votes, 0);
-    options.forEach(opt => {
-      opt.percentage = totalOptionVotes > 0 ? (opt.votes / totalOptionVotes) * 100 : 0;
-    });
+    if (totalOptionVotes > 0) {
+      let remainingPercentage = 100;
+      options.forEach((opt, idx) => {
+        if (idx === options.length - 1) {
+          // Last option gets remaining percentage to ensure sum is 100%
+          opt.percentage = remainingPercentage;
+        } else {
+          opt.percentage = Math.round((opt.votes / totalOptionVotes) * 100);
+          remainingPercentage -= opt.percentage;
+        }
+      });
+    }
 
     return {
       id: `survey-${category}-${i}`,

@@ -37,11 +37,14 @@ const generateSampleReels = (category: string): Reel[] => {
   const platforms: Array<'youtube' | 'tiktok' | 'instagram' | 'facebook'> = ['youtube', 'tiktok', 'instagram', 'facebook'];
   const sources = ['El Tiempo', 'Caracol TV', 'RCN', 'Semana', 'W Radio', 'Blu Radio'];
   
+  // Use data URI for placeholder images
+  const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="300"%3E%3Crect width="400" height="300" fill="%23667eea"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-family="sans-serif" font-size="20"%3EReel%3C/text%3E%3C/svg%3E';
+  
   return Array.from({ length: 12 }, (_, i) => ({
     id: `reel-${category}-${i}`,
     title: `Reel ${category === 'all' ? 'Colombia' : category} #${i + 1}`,
     description: `Contenido importante sobre ${category} en Colombia. Mantente informado con las últimas tendencias.`,
-    thumbnail: `https://picsum.photos/seed/${category}${i}/400/300`,
+    thumbnail: placeholderImage,
     platform: platforms[i % platforms.length],
     source: sources[i % sources.length],
     views: Math.floor(Math.random() * 100000) + 1000,

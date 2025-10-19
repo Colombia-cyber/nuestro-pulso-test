@@ -33,15 +33,18 @@ const generateTendencies = (category: string): Tendency[] => {
     'TecnologíaCO', 'CulturaViva', 'DeporteColombia'
   ];
 
+  // Use data URI for placeholder images
+  const placeholderImage = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="300" height="200"%3E%3Crect width="300" height="200" fill="%23ff6b35"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" dy=".3em" fill="white" font-family="sans-serif" font-size="18"%3ETendencia%3C/text%3E%3C/svg%3E';
+
   return Array.from({ length: 12 }, (_, i) => ({
     id: `tendency-${category}-${i}`,
-    hashtag: `#${hashtags[i % hashtags.length]}${i > 0 ? i : ''}`,
+    hashtag: `#${hashtags[i % hashtags.length]}${category !== 'all' ? category.substring(0, 2) : ''}${i}`,
     title: `Tendencia ${category} ${i + 1}: Tema importante en Colombia`,
     description: `Miles de colombianos están hablando sobre este tema crucial para el futuro del país.`,
     mentions: Math.floor(Math.random() * 100000) + 5000,
     growth: Math.floor(Math.random() * 200) + 10,
     category: category,
-    imageUrl: `https://picsum.photos/seed/tendency${category}${i}/300/200`,
+    imageUrl: placeholderImage,
     topPost: `Este es el post más compartido sobre ${hashtags[i % hashtags.length]}...`,
   }));
 };
@@ -52,9 +55,11 @@ export const EnhancedTendenciesSection: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Sort by mentions
-    const sorted = [...tendencies].sort((a, b) => b.mentions - a.mentions);
-    setTendencies(sorted);
+    // Initial sort by mentions only runs once
+    if (tendencies.length > 0 && tendencies[0].mentions === tendencies[tendencies.length - 1].mentions) {
+      const sorted = [...tendencies].sort((a, b) => b.mentions - a.mentions);
+      setTendencies(sorted);
+    }
   }, []);
 
   const handleCategoryChange = (categoryId: string) => {
