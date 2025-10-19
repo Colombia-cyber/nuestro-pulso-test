@@ -7,15 +7,18 @@ import {
   signOut,
   onAuthStateChanged,
   GoogleAuthProvider,
-  signInWithPopup
+  signInWithPopup,
+  signInAnonymously
 } from 'firebase/auth';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  isAnonymous: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string) => Promise<void>;
   loginWithGoogle: () => Promise<void>;
+  loginAsGuest: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -28,9 +31,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        // Auto-login as anonymous/guest for seamless experience
+        try {
+          await signInAnonymously(auth);
+        } catch (error) {
+          console.warn('Auto guest login failed:', error);
+          setUser(null);
+          setLoading(false);
+        }
+      } else {
+        setUser(user);
+        setLoading(false);
+      }
     });
 
     return unsubscribe;
@@ -49,6 +63,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await signInWithPopup(auth, provider);
   };
 
+  const loginAsGuest = async () => {
+    await signInAnonymously(auth);
+  };
+
   const logout = async () => {
     await signOut(auth);
   };
@@ -56,9 +74,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const value: AuthContextType = {
     user,
     loading,
+    isAnonymous: user?.isAnonymous || false,
     login,
     register,
     loginWithGoogle,
+    loginAsGuest,
     logout,
   };
 
