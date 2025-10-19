@@ -288,7 +288,11 @@ export const EnhancedNewsHub: React.FC = () => {
               <p className="text-gray-600 max-w-md mx-auto leading-relaxed">
                 No se encontraron noticias para esta categoría. Intenta con otra categoría o vuelve más tarde.
               </p>
-              <button className="mt-6 px-6 py-3 bg-gradient-to-r from-colombia-red to-red-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+              <button 
+                onClick={() => handleCategoryChange('general')}
+                className="mt-6 px-6 py-3 bg-gradient-to-r from-colombia-red to-red-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                aria-label="Ver todas las categorías de noticias"
+              >
                 Ver Todas las Categorías
               </button>
             </div>

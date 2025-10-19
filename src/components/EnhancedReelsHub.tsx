@@ -250,7 +250,11 @@ export const EnhancedReelsHub: React.FC = () => {
               <p className="text-gray-600 max-w-md mx-auto leading-relaxed">
                 No se encontraron reels para esta categoría. Intenta con otra categoría o vuelve más tarde.
               </p>
-              <button className="mt-6 px-6 py-3 bg-gradient-to-r from-colombia-blue to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300">
+              <button 
+                onClick={() => setSelectedCategory('all')}
+                className="mt-6 px-6 py-3 bg-gradient-to-r from-colombia-blue to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                aria-label="Ver todas las categorías de reels"
+              >
                 Ver Todas las Categorías
               </button>
             </div>
