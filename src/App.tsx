@@ -1,44 +1,60 @@
 import { useState } from "react";
-import { Layout } from "./components/Layout";
-import { YouTubeFeed } from "./components/YouTubeFeed";
-import { RSSFeed } from "./components/RSSFeed";
-import { FeedSelector } from "./components/FeedSelector";
-import { SearchBar } from "./components/SearchBar";
-import { RefreshButton } from "./components/RefreshButton";
+import { ColombianLayout } from "./components/ColombianLayout";
+import { ColombianHome } from "./components/ColombianHome";
+import { EnhancedReelsHub } from "./components/EnhancedReelsHub";
+import { EnhancedNewsHub } from "./components/EnhancedNewsHub";
+import { EnhancedDebatesSection } from "./components/EnhancedDebatesSection";
+import { EnhancedSurveysSection } from "./components/EnhancedSurveysSection";
+import { EnhancedTendenciesSection } from "./components/EnhancedTendenciesSection";
+import { ColombianLoader } from "./components/ColombianLoader";
 import "./index.css";
 
-const YOUTUBE_API_KEY = import.meta.env.VITE_YOUTUBE_API_KEY || "";
-const DEFAULT_CHANNEL_ID = "UC_x5XG1OV2P6uZZ5FSM9Ttw";
+type Section = 'home' | 'reels' | 'news' | 'debates' | 'surveys' | 'tendencies';
 
 export default function App() {
-  const [rssUrl, setRssUrl] = useState("https://news.google.com/rss");
-  const [search, setSearch] = useState("");
-  const [refreshKey, setRefreshKey] = useState(0);
+  const [activeSection, setActiveSection] = useState<Section>('home');
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
-  const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1);
+  const handleNavigate = (section: string) => {
+    if (section === activeSection) return;
+    
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setActiveSection(section as Section);
+      setIsTransitioning(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 200);
+  };
+
+  const renderSection = () => {
+    if (isTransitioning) {
+      return <ColombianLoader text="Cargando..." fullScreen={false} />;
+    }
+
+    switch (activeSection) {
+      case 'home':
+        return <ColombianHome onNavigate={handleNavigate} />;
+      case 'reels':
+        return <EnhancedReelsHub />;
+      case 'news':
+        return <EnhancedNewsHub />;
+      case 'debates':
+        return <EnhancedDebatesSection />;
+      case 'surveys':
+        return <EnhancedSurveysSection />;
+      case 'tendencies':
+        return <EnhancedTendenciesSection />;
+      default:
+        return <ColombianHome onNavigate={handleNavigate} />;
+    }
   };
 
   return (
-    <Layout title="Nuestro Pulso - Modern News Dashboard">
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-        <h2 style={{ margin: 0 }}>Stay Informed</h2>
-        <RefreshButton onRefresh={handleRefresh} />
-      </div>
-      
-      <section>
-        <h3>YouTube Videos</h3>
-        <SearchBar onSearch={setSearch} />
-        <YouTubeFeed key={`youtube-${refreshKey}`} apiKey={YOUTUBE_API_KEY} channelId={DEFAULT_CHANNEL_ID} search={search} />
-      </section>
-      
-      <hr />
-      
-      <section>
-        <h3>News Feed</h3>
-        <FeedSelector onSelect={setRssUrl} />
-        <RSSFeed key={`rss-${refreshKey}`} url={rssUrl} />
-      </section>
-    </Layout>
+    <ColombianLayout 
+      activeSection={activeSection} 
+      onNavigate={handleNavigate}
+    >
+      {renderSection()}
+    </ColombianLayout>
   );
 }
