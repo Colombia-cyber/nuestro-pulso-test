@@ -56,8 +56,8 @@ const generateSampleReels = (category: string): Reel[] => {
 
 export const EnhancedReelsHub: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [reels, setReels] = useState<Reel[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [reels, setReels] = useState<Reel[]>(() => generateSampleReels('all'));
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -65,20 +65,22 @@ export const EnhancedReelsHub: React.FC = () => {
   }, [selectedCategory]);
 
   const loadReels = async (category: string) => {
+    // Show content immediately, then refresh in background
+    setReels(generateSampleReels(category));
     setLoading(true);
     setError(null);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Simulate API call with minimal delay
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Load reels data
+      // Load reels data (in real app, this would be actual API call)
       const data = generateSampleReels(category);
       setReels(data);
     } catch (err) {
-      setError('No se pudieron cargar los reels. Por favor intenta de nuevo.');
-      // Set fallback content
-      setReels(generateSampleReels(category).slice(0, 3));
+      setError('No se pudieron cargar los reels. Mostrando contenido alternativo.');
+      // Keep fallback content visible
+      setReels(generateSampleReels(category).slice(0, 6));
     } finally {
       setLoading(false);
     }

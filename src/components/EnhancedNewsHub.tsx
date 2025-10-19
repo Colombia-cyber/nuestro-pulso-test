@@ -54,8 +54,8 @@ const generateSampleNews = (category: string): NewsArticle[] => {
 
 export const EnhancedNewsHub: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('general');
-  const [news, setNews] = useState<NewsArticle[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [news, setNews] = useState<NewsArticle[]>(() => generateSampleNews('general'));
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -63,20 +63,22 @@ export const EnhancedNewsHub: React.FC = () => {
   }, [selectedCategory]);
 
   const loadNews = async (category: string) => {
+    // Show content immediately for instant navigation
+    setNews(generateSampleNews(category));
     setLoading(true);
     setError(null);
 
     try {
-      // Simulate instant loading with cached data
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // Simulate minimal API delay
+      await new Promise(resolve => setTimeout(resolve, 50));
       
-      // Load news data
+      // Load news data (in real app, this would be actual API call)
       const data = generateSampleNews(category);
       setNews(data);
     } catch (err) {
       setError('No se pudieron cargar las noticias. Mostrando contenido alternativo.');
-      // Provide fallback content
-      setNews(generateSampleNews(category).slice(0, 4));
+      // Keep fallback content visible
+      setNews(generateSampleNews(category).slice(0, 6));
     } finally {
       setLoading(false);
     }
