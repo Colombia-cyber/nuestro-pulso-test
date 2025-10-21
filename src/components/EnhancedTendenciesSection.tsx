@@ -51,26 +51,26 @@ const generateTendencies = (category: string): Tendency[] => {
 
 export const EnhancedTendenciesSection: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [tendencies, setTendencies] = useState<Tendency[]>(generateTendencies('all'));
+  const [tendencies, setTendencies] = useState<Tendency[]>(() => {
+    const initial = generateTendencies('all');
+    return initial.sort((a, b) => b.mentions - a.mentions);
+  });
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // Initial sort by mentions only runs once
-    if (tendencies.length > 0 && tendencies[0].mentions === tendencies[tendencies.length - 1].mentions) {
-      const sorted = [...tendencies].sort((a, b) => b.mentions - a.mentions);
-      setTendencies(sorted);
-    }
-  }, []);
-
   const handleCategoryChange = (categoryId: string) => {
-    setLoading(true);
     setSelectedCategory(categoryId);
     
+    // Show content immediately for instant switching
+    const newTendencies = generateTendencies(categoryId);
+    setTendencies(newTendencies.sort((a, b) => b.mentions - a.mentions));
+    
+    // Simulate background refresh with minimal delay
+    setLoading(true);
     setTimeout(() => {
-      const newTendencies = generateTendencies(categoryId);
-      setTendencies(newTendencies.sort((a, b) => b.mentions - a.mentions));
+      const refreshedTendencies = generateTendencies(categoryId);
+      setTendencies(refreshedTendencies.sort((a, b) => b.mentions - a.mentions));
       setLoading(false);
-    }, 300);
+    }, 50);
   };
 
   const formatNumber = (num: number): string => {

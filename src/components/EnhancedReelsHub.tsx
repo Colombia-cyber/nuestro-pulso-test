@@ -56,8 +56,8 @@ const generateSampleReels = (category: string): Reel[] => {
 
 export const EnhancedReelsHub: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [reels, setReels] = useState<Reel[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [reels, setReels] = useState<Reel[]>(() => generateSampleReels('all'));
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -65,20 +65,22 @@ export const EnhancedReelsHub: React.FC = () => {
   }, [selectedCategory]);
 
   const loadReels = async (category: string) => {
+    // Show content immediately, then refresh in background
+    setReels(generateSampleReels(category));
     setLoading(true);
     setError(null);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 800));
+      // Simulate API call with minimal delay
+      await new Promise(resolve => setTimeout(resolve, 100));
       
-      // Load reels data
+      // Load reels data (in real app, this would be actual API call)
       const data = generateSampleReels(category);
       setReels(data);
     } catch (err) {
-      setError('No se pudieron cargar los reels. Por favor intenta de nuevo.');
-      // Set fallback content
-      setReels(generateSampleReels(category).slice(0, 3));
+      setError('No se pudieron cargar los reels. Mostrando contenido alternativo.');
+      // Keep fallback content visible
+      setReels(generateSampleReels(category).slice(0, 6));
     } finally {
       setLoading(false);
     }
@@ -134,11 +136,19 @@ export const EnhancedReelsHub: React.FC = () => {
           </div>
         </div>
 
-        {/* Error Message */}
+        {/* Error Message - Vibrant Colombian Style */}
         {error && (
-          <div className="mb-8 glass-card p-4 border-l-4 border-colombia-red animate-fade-in">
-            <p className="text-colombia-red font-semibold">⚠️ {error}</p>
-            <p className="text-sm text-gray-600 mt-1">Mostrando contenido alternativo...</p>
+          <div className="mb-8 glass-card p-6 border-l-4 border-colombia-red animate-fade-in-down overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-colombia-red/10 rounded-full blur-3xl"></div>
+            <div className="relative flex items-start gap-4">
+              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-colombia-red to-red-600 flex items-center justify-center shadow-lg">
+                <span className="text-2xl">⚠️</span>
+              </div>
+              <div>
+                <p className="text-colombia-red font-bold text-lg mb-1">{error}</p>
+                <p className="text-sm text-gray-600">Mostrando contenido alternativo de demostración...</p>
+              </div>
+            </div>
           </div>
         )}
 
@@ -226,16 +236,28 @@ export const EnhancedReelsHub: React.FC = () => {
           </div>
         )}
 
-        {/* Empty State */}
+        {/* Empty State - Vibrant Colombian Style */}
         {!loading && reels.length === 0 && (
-          <div className="text-center py-16 glass-card">
-            <FaVideo className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-xl font-semibold text-gray-700 mb-2">
-              No hay reels disponibles
-            </h3>
-            <p className="text-gray-600">
-              No se encontraron reels para esta categoría. Intenta con otra categoría.
-            </p>
+          <div className="text-center py-16 glass-card relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-colombia-yellow/5 via-colombia-blue/5 to-colombia-red/5"></div>
+            <div className="relative">
+              <div className="inline-block p-6 rounded-full bg-gradient-to-br from-colombia-yellow to-colombia-blue shadow-colombia mb-6 animate-float">
+                <FaVideo className="w-16 h-16 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-colombia-gradient mb-3">
+                No hay reels disponibles
+              </h3>
+              <p className="text-gray-600 max-w-md mx-auto leading-relaxed">
+                No se encontraron reels para esta categoría. Intenta con otra categoría o vuelve más tarde.
+              </p>
+              <button 
+                onClick={() => setSelectedCategory('all')}
+                className="mt-6 px-6 py-3 bg-gradient-to-r from-colombia-blue to-blue-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                aria-label="Ver todas las categorías de reels"
+              >
+                Ver Todas las Categorías
+              </button>
+            </div>
           </div>
         )}
       </div>

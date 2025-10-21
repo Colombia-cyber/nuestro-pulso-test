@@ -13,24 +13,19 @@ type Section = 'home' | 'reels' | 'news' | 'debates' | 'surveys' | 'tendencies';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState<Section>('home');
-  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const handleNavigate = (section: string) => {
     if (section === activeSection) return;
     
-    setIsTransitioning(true);
-    setTimeout(() => {
-      setActiveSection(section as Section);
-      setIsTransitioning(false);
+    // Instant navigation - no transition delay
+    setActiveSection(section as Section);
+    // Smooth scroll to top without blocking render
+    requestAnimationFrame(() => {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-    }, 200);
+    });
   };
 
   const renderSection = () => {
-    if (isTransitioning) {
-      return <ColombianLoader text="Cargando..." fullScreen={false} />;
-    }
-
     switch (activeSection) {
       case 'home':
         return <ColombianHome onNavigate={handleNavigate} />;

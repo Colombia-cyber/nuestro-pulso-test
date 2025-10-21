@@ -55,24 +55,42 @@ interface SectionLoaderProps {
 export const SectionLoader: React.FC<SectionLoaderProps> = ({ title, count = 3 }) => {
   return (
     <div className="space-y-6 animate-fade-in">
-      <h2 className="text-2xl font-bold text-colombia-gradient">{title}</h2>
+      <h2 className="text-2xl font-bold text-colombia-gradient flex items-center gap-3">
+        <div className="spinner-colombia w-8 h-8"></div>
+        {title}
+      </h2>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {Array.from({ length: count }).map((_, idx) => (
-          <div key={idx} className="glass-card p-6 space-y-4 animate-pulse">
-            {/* Image skeleton */}
-            <div className="w-full h-48 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded-lg animate-shimmer"></div>
+          <div key={idx} className="glass-card p-6 space-y-4 overflow-hidden relative">
+            {/* Animated Colombian gradient background */}
+            <div className="absolute inset-0 bg-gradient-to-r from-colombia-yellow/5 via-colombia-blue/5 to-colombia-red/5 animate-pulse"></div>
+            
+            {/* Image skeleton with Colombian colors */}
+            <div className="relative w-full h-48 bg-gradient-to-r from-colombia-yellow/20 via-colombia-blue/20 to-colombia-red/20 rounded-lg overflow-hidden">
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-shimmer"></div>
+            </div>
             
             {/* Title skeleton */}
-            <div className="space-y-2">
-              <div className="h-6 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded animate-shimmer w-3/4"></div>
-              <div className="h-4 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded animate-shimmer w-1/2"></div>
+            <div className="relative space-y-2">
+              <div className="h-6 bg-gradient-to-r from-colombia-blue/20 via-colombia-blue/30 to-colombia-blue/20 rounded overflow-hidden w-3/4">
+                <div className="h-full bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"></div>
+              </div>
+              <div className="h-4 bg-gradient-to-r from-colombia-yellow/20 via-colombia-yellow/30 to-colombia-yellow/20 rounded overflow-hidden w-1/2">
+                <div className="h-full bg-gradient-to-r from-transparent via-white/40 to-transparent animate-shimmer"></div>
+              </div>
             </div>
             
             {/* Text skeleton */}
-            <div className="space-y-2">
-              <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded animate-shimmer"></div>
-              <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded animate-shimmer w-5/6"></div>
-              <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded animate-shimmer w-4/6"></div>
+            <div className="relative space-y-2">
+              <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded overflow-hidden">
+                <div className="h-full bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer"></div>
+              </div>
+              <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded overflow-hidden w-5/6">
+                <div className="h-full bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer"></div>
+              </div>
+              <div className="h-3 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 rounded overflow-hidden w-4/6">
+                <div className="h-full bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer"></div>
+              </div>
             </div>
           </div>
         ))}

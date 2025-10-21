@@ -54,13 +54,17 @@ export const EnhancedDebatesSection: React.FC = () => {
   const [loading, setLoading] = useState(false);
 
   const handleTopicChange = (topicId: string) => {
-    setLoading(true);
     setSelectedTopic(topicId);
     
+    // Show content immediately for instant switching
+    setDebates(generateDebates(topicId));
+    
+    // Simulate background refresh with minimal delay
+    setLoading(true);
     setTimeout(() => {
       setDebates(generateDebates(topicId));
       setLoading(false);
-    }, 300);
+    }, 50);
   };
 
   const getTimeAgo = (dateString: string): string => {

@@ -83,13 +83,17 @@ export const EnhancedSurveysSection: React.FC = () => {
   const [votedSurveys, setVotedSurveys] = useState<Set<string>>(new Set());
 
   const handleCategoryChange = (categoryId: string) => {
-    setLoading(true);
     setSelectedCategory(categoryId);
     
+    // Show content immediately for instant switching
+    setSurveys(generateSurveys(categoryId));
+    
+    // Simulate background refresh with minimal delay
+    setLoading(true);
     setTimeout(() => {
       setSurveys(generateSurveys(categoryId));
       setLoading(false);
-    }, 300);
+    }, 50);
   };
 
   const handleVote = (surveyId: string, optionId: string) => {
