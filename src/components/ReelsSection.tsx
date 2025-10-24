@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ErrorFallback from "./ErrorFallback";
 
 interface Reel {
   id: string;
@@ -12,142 +13,288 @@ interface Reel {
   country?: string;
 }
 
+// Colombian news sources
 const LOCAL_SOURCES = [
-  { id: "semana", name: "Semana" },
-  { id: "portafolio", name: "Portafolio" },
-  { id: "eltiempo", name: "El Tiempo" },
-  { id: "elespectador", name: "El Espectador" },
-  { id: "caracol", name: "Caracol" },
-  { id: "rcn", name: "RCN" },
-  { id: "colombia-reports", name: "Colombia Reports" },
-  { id: "gov", name: "Government Portals" },
+  { id: "semana", name: "Semana", url: "https://www.semana.com" },
+  { id: "portafolio", name: "Portafolio", url: "https://www.portafolio.co" },
+  { id: "eltiempo", name: "El Tiempo", url: "https://www.eltiempo.com" },
+  { id: "elespectador", name: "El Espectador", url: "https://www.elespectador.com" },
+  { id: "caracol", name: "Caracol", url: "https://www.caracoltv.com" },
+  { id: "rcn", name: "RCN", url: "https://www.canalrcn.com" },
 ];
 
+// Global news sources
+const GLOBAL_SOURCES = [
+  { id: "bbc", name: "BBC News", url: "https://www.bbc.com/news" },
+  { id: "cnn", name: "CNN", url: "https://www.cnn.com" },
+  { id: "reuters", name: "Reuters", url: "https://www.reuters.com" },
+  { id: "ap", name: "Associated Press", url: "https://apnews.com" },
+];
+
+// Social media platforms
 const SOCIAL_PLATFORMS = [
-  { id: "youtube", name: "YouTube" },
-  { id: "tiktok", name: "TikTok" },
-  { id: "instagram", name: "Instagram" },
-  { id: "facebook", name: "Facebook" },
+  { id: "youtube", name: "YouTube", url: "https://www.youtube.com" },
+  { id: "tiktok", name: "TikTok", url: "https://www.tiktok.com" },
 ];
 
+/**
+ * Fetch local (Colombia) reels from various sources
+ * In production, this would call actual APIs
+ */
 const fetchLocalReels = async (): Promise<Reel[]> => {
-  // Replace with real API calls for production.
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
   return [
-    ...LOCAL_SOURCES.map(src => ({
-      id: src.id,
+    ...LOCAL_SOURCES.map((src, idx) => ({
+      id: `local-news-${src.id}`,
       type: "news" as const,
       src: "",
-      title: `Latest from ${src.name}`,
-      description: `Recent reel/news from ${src.name}`,
-      link: `https://${src.id}.com/`,
+      title: `Últimas noticias - ${src.name}`,
+      description: `Contenido destacado de ${src.name}`,
+      link: src.url,
       source: src.name,
       country: "Colombia",
     })),
-    ...SOCIAL_PLATFORMS.map(platform => ({
-      id: platform.id,
+    ...SOCIAL_PLATFORMS.map((platform, idx) => ({
+      id: `local-social-${platform.id}`,
       type: "video" as const,
-      src: `https://www.${platform.id}.com/embed/exampleColombia`,
-      title: `Trending ${platform.name} Reel in Colombia`,
-      description: `Colombian civic reel on ${platform.name}`,
-      link: `https://www.${platform.id}.com/results?search_query=Colombia`,
+      src: `https://www.${platform.id}.com/embed/colombia-trending`,
+      title: `Tendencias ${platform.name} - Colombia`,
+      description: `Videos populares sobre Colombia en ${platform.name}`,
+      link: `${platform.url}/results?search_query=Colombia+noticias`,
       platform: platform.name,
       country: "Colombia",
     })),
   ];
 };
 
-export const ReelsSection: React.FC<{ context: "local" | "world" }> = ({ context }) => {
+/**
+ * Fetch global/world reels
+ * In production, this would call actual APIs
+ */
+const fetchWorldReels = async (): Promise<Reel[]> => {
+  // Simulate API delay
+  await new Promise(resolve => setTimeout(resolve, 500));
+  
+  return [
+    ...GLOBAL_SOURCES.map((src, idx) => ({
+      id: `world-news-${src.id}`,
+      type: "news" as const,
+      src: "",
+      title: `Latest from ${src.name}`,
+      description: `Global news coverage from ${src.name}`,
+      link: src.url,
+      source: src.name,
+      country: "Global",
+    })),
+    ...SOCIAL_PLATFORMS.map((platform, idx) => ({
+      id: `world-social-${platform.id}`,
+      type: "video" as const,
+      src: `https://www.${platform.id}.com/embed/world-trending`,
+      title: `Trending ${platform.name} - World`,
+      description: `Popular global videos on ${platform.name}`,
+      link: `${platform.url}/results?search_query=world+news`,
+      platform: platform.name,
+      country: "Global",
+    })),
+  ];
+};
+
+interface ReelsSectionProps {
+  context: "local" | "world";
+}
+
+/**
+ * ReelsSection - Robust video/news reels component
+ * 
+ * Features:
+ * - Supports local (Colombia) and world contexts
+ * - Graceful API fallbacks with demo data
+ * - Loading and error states
+ * - External link handling
+ * - Accessible UI with ARIA labels
+ * - Optimistic rendering (shows demo data immediately)
+ */
+export const ReelsSection: React.FC<ReelsSectionProps> = ({ context }) => {
   const [reels, setReels] = useState<Reel[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
+  // Initialize with demo data immediately for optimistic UI
   useEffect(() => {
-    setLoading(true);
-    if (context === "local") {
-      fetchLocalReels().then(localReels => {
-        setReels(localReels);
-        setLoading(false);
-      });
-    } else {
-      // For "world", fetch global reels (global sources only)
-      setReels([
-        {
-          id: "bbc",
-          type: "news",
-          src: "",
-          title: "Latest from BBC",
-          description: "Global news reel",
-          link: "https://bbc.com/",
-          source: "BBC",
-          country: "Global",
-        },
-        {
-          id: "youtube-world",
-          type: "video",
-          src: "https://www.youtube.com/embed/exampleGlobal",
-          title: "Trending YouTube Reel Worldwide",
-          description: "Global trending reel on YouTube",
-          link: "https://www.youtube.com/results?search_query=world+news",
-          platform: "YouTube",
-          country: "Global",
-        },
-      ]);
-      setLoading(false);
-    }
+    // Set demo data instantly
+    const demoReels: Reel[] = context === "local" 
+      ? [
+          {
+            id: "demo-local-1",
+            type: "news",
+            src: "",
+            title: "Cargando contenido local...",
+            description: "Obteniendo las últimas noticias de Colombia",
+            link: "#",
+            source: "Demo",
+            country: "Colombia",
+          }
+        ]
+      : [
+          {
+            id: "demo-world-1",
+            type: "news",
+            src: "",
+            title: "Loading world content...",
+            description: "Fetching global news",
+            link: "#",
+            source: "Demo",
+            country: "Global",
+          }
+        ];
+    
+    setReels(demoReels);
   }, [context]);
 
-  if (loading) {
-    return <div>Loading reels...</div>;
+  // Fetch actual data in background
+  useEffect(() => {
+    let isMounted = true;
+    
+    const loadReels = async () => {
+      setLoading(true);
+      setError(null);
+      
+      try {
+        const fetchedReels = context === "local" 
+          ? await fetchLocalReels()
+          : await fetchWorldReels();
+        
+        if (isMounted) {
+          setReels(fetchedReels);
+          setLoading(false);
+        }
+      } catch (err) {
+        if (isMounted) {
+          setError(err instanceof Error ? err.message : "Error al cargar reels");
+          setLoading(false);
+        }
+      }
+    };
+
+    loadReels();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [context]);
+
+  const handleReelClick = (reel: Reel) => {
+    if (reel.link && reel.link !== "#") {
+      window.open(reel.link, "_blank", "noopener,noreferrer");
+    }
+  };
+
+  if (error) {
+    return (
+      <ErrorFallback
+        error={error}
+        resetError={() => {
+          setError(null);
+          setLoading(true);
+        }}
+        title="Error al cargar Reels"
+      />
+    );
   }
 
   return (
-    <section aria-labelledby="reels-title" style={{ margin: "2.5rem 0" }}>
-      <h2 id="reels-title" style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "1rem" }}>
-        Reels — {context === "local" ? "Colombia" : "World"}
-      </h2>
-      <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", justifyContent: "center" }}>
+    <section 
+      aria-labelledby="reels-title" 
+      className="my-10"
+      id="content-panel"
+      role="tabpanel"
+    >
+      <div className="flex items-center justify-between mb-6">
+        <h2 
+          id="reels-title" 
+          className="text-3xl font-bold text-gray-800"
+        >
+          {context === "local" ? "🇨🇴 Reels Colombia" : "🌍 Reels Mundo"}
+        </h2>
+        {loading && (
+          <div 
+            className="text-blue-600 font-medium animate-pulse"
+            aria-live="polite"
+            aria-busy="true"
+          >
+            Actualizando...
+          </div>
+        )}
+      </div>
+      
+      <div 
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        role="list"
+        aria-label={`Lista de reels de ${context === "local" ? "Colombia" : "mundo"}`}
+      >
         {reels.map((reel) => (
           <div
             key={reel.id}
-            style={{
-              background: "#fff",
-              borderRadius: "1.1rem",
-              boxShadow: "0 2px 10px rgba(0,0,0,0.08)",
-              padding: "1.2rem",
-              margin: "1rem",
-              maxWidth: "340px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              transition: "box-shadow 0.2s",
-              cursor: "pointer"
-            }}
-            onClick={() => {
-              // On click, start Google-style topic search for this source/platform
-              window.open(`https://www.google.com/search?q=${reel.source || reel.platform} ${context === "local" ? "Colombia" : ""}`, "_blank", "noopener,noreferrer");
+            role="listitem"
+            className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow duration-300 overflow-hidden cursor-pointer group"
+            onClick={() => handleReelClick(reel)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleReelClick(reel);
+              }
             }}
             tabIndex={0}
-            aria-label={`View topics for ${reel.source || reel.platform}`}
+            aria-label={`${reel.title} - ${reel.description || 'Ver más'}`}
           >
-            {reel.type === "video" && (
-              <iframe
-                src={reel.src}
-                title={reel.title}
-                width="300"
-                height="180"
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                style={{ borderRadius: "0.8rem", marginBottom: "1rem" }}
-              />
+            {reel.type === "video" && reel.src && reel.src.includes("embed") ? (
+              <div className="aspect-video bg-gray-200">
+                <iframe
+                  src={reel.src}
+                  title={reel.title}
+                  className="w-full h-full"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  loading="lazy"
+                />
+              </div>
+            ) : (
+              <div className="aspect-video bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+                <span className="text-6xl" aria-hidden="true">
+                  {reel.type === "video" ? "📹" : "📰"}
+                </span>
+              </div>
             )}
-            <h3>{reel.title}</h3>
-            <p>{reel.description}</p>
-            <a href={reel.link} target="_blank" rel="noopener noreferrer">
-              Visit Source
-            </a>
+            
+            <div className="p-4">
+              <h3 className="text-lg font-bold text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                {reel.title}
+              </h3>
+              <p className="text-sm text-gray-600 mb-3">
+                {reel.description}
+              </p>
+              <div className="flex items-center justify-between text-xs text-gray-500">
+                <span className="font-medium">
+                  {reel.source || reel.platform}
+                </span>
+                <span className="px-2 py-1 bg-gray-100 rounded">
+                  {reel.country}
+                </span>
+              </div>
+            </div>
           </div>
         ))}
       </div>
+
+      {reels.length === 0 && !loading && (
+        <div className="text-center py-12 text-gray-500">
+          <p className="text-xl">No hay reels disponibles en este momento.</p>
+          <p className="mt-2">Intenta cambiar de pestaña o recarga la página.</p>
+        </div>
+      )}
     </section>
   );
 };
