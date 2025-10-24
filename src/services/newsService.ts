@@ -40,7 +40,7 @@ function viteEnv(): Record<string, any> {
   return import.meta.env as Record<string, any>;
 }
 
-async function safeFetchJson(url: string, opts?: RequestInit, timeoutMs = 7000): Promise<any> {
+async function safeFetchJson(url: string, opts?: Record<string, any>, timeoutMs = 7000): Promise<any> {
   const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
   try {
@@ -82,7 +82,6 @@ export async function getNews(region: 'local' | 'world'): Promise<Article[]> {
     }
   } catch (e) {
     // fallback to next option
-    // eslint-disable-next-line no-console
     console.warn('[newsService] backend fetch failed:', String(e));
   }
 
@@ -107,10 +106,26 @@ export async function getNews(region: 'local' | 'world'): Promise<Article[]> {
       }
     }
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.warn('[newsService] NewsAPI fallback failed:', String(e));
   }
 
   // 3) demo fallback
   return DEMO_ARTICLES;
 }
+
+/**
+ * Service object for backward compatibility
+ * Provides methods expected by existing components
+ */
+export const newsService = {
+  getNews,
+  
+  // Placeholder methods for components that need them
+  // These can be enhanced later as needed
+  getFilteredNews: (options?: any) => DEMO_ARTICLES,
+  generateTimelineData: () => ({}),
+  startLiveUpdates: () => {},
+  stopLiveUpdates: () => {},
+  addUpdateListener: (listener: any) => {},
+  removeUpdateListener: (listener: any) => {},
+};

@@ -237,6 +237,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For support, please open an issue in the GitHub repository or contact the development team.
 
+## 🔒 Security Notice
+
+**I did not include or push any real API keys. Never push keys to the repo.**
+
+This project uses environment variables to manage API keys and sensitive configuration. Please follow these security best practices:
+
+- **Never commit real API keys** to version control
+- Use `.env.local` for local development (already in `.gitignore`)
+- Store production keys in your hosting platform's secret manager
+- If a key is accidentally committed, revoke it immediately and scrub git history
+
+For detailed security guidelines, see [NOTICE.md](NOTICE.md).
+
 ---
 
 **Made with ❤️ in Colombia** 🇨🇴
