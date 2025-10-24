@@ -233,6 +233,18 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Styled with [Tailwind CSS](https://tailwindcss.com/)
 - Icons from [React Icons](https://react-icons.github.io/react-icons/)
 
+## 🔒 Security Notice
+
+**I did not include or push any real API keys. Never push keys to the repo.**
+
+For comprehensive security guidelines on managing API keys, secrets, and credentials, please see [NOTICE.md](NOTICE.md).
+
+Key points:
+- Use `.env.example` with placeholders only
+- Store real keys in `.env.local` (not committed)
+- Use platform secret managers for production (Vercel, Netlify, GitHub Actions)
+- If a key is accidentally committed, revoke it immediately and scrub git history
+
 ## 📞 Support
 
 For support, please open an issue in the GitHub repository or contact the development team.

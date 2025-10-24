@@ -1,89 +1,324 @@
-import React, { useEffect, useState } from 'react';
 /**
- * Replacement: src/components/ReelsSection.tsx
- *
- * Backend-first reels loader with demo-first UI to avoid blank screens.
- * Tries GET {VITE_API_URL}/reels?region=... then falls back to demo reels.
+ * Real News Service - Robust TypeScript Implementation
+ * 
+ * Provides real-time news fetching with fallback mechanisms and error handling.
+ * Supports multiple news sources and graceful degradation.
  */
 
-type Reel = {
+export interface NewsArticle {
   id: string;
   title: string;
-  thumbnail?: string | null;
+  description?: string;
+  url: string;
+  urlToImage?: string;
+  publishedAt: string;
+  source: {
+    id?: string;
+    name: string;
+  };
   author?: string;
-  url?: string;
-};
+  content?: string;
+  category?: string;
+  tags?: string[];
+  readTime?: string;
+  trending?: boolean;
+}
 
-const DEMO_REELS: Reel[] = [
-  { id: 'r1', title: 'Reel: Cultura local - Feria', thumbnail: null, author: 'Usuario1', url: '#' },
-  { id: 'r2', title: 'Reel: Paisaje colombiano', thumbnail: null, author: 'Usuario2', url: '#' },
+// Type alias for backward compatibility
+export type RealNewsArticle = NewsArticle;
+
+export interface NewsResponse {
+  status: 'ok' | 'error';
+  totalResults?: number;
+  articles: NewsArticle[];
+  error?: string;
+}
+
+// Demo/fallback articles for when API is unavailable
+const DEMO_ARTICLES: NewsArticle[] = [
+  {
+    id: 'demo-1',
+    title: 'Colombia Economic Growth Continues',
+    description: 'Latest economic indicators show positive trends...',
+    url: '#',
+    urlToImage: null,
+    publishedAt: new Date().toISOString(),
+    source: { name: 'Demo News' },
+    author: 'Demo Author',
+    category: 'business',
+    tags: ['economy', 'colombia'],
+    readTime: '5 min',
+    trending: false,
+  },
+  {
+    id: 'demo-2',
+    title: 'Technology Advances in Latin America',
+    description: 'Regional tech sector sees significant investment...',
+    url: '#',
+    urlToImage: null,
+    publishedAt: new Date().toISOString(),
+    source: { name: 'Demo Tech' },
+    author: 'Demo Author',
+    category: 'technology',
+    tags: ['tech', 'latinamerica'],
+    readTime: '3 min',
+    trending: true,
+  },
 ];
 
-function viteApiUrl(): string {
-  const env = import.meta.env as Record<string, any>;
-  return env.VITE_API_URL || (typeof window !== 'undefined' ? `${window.location.origin}/api` : '/api');
+/**
+ * Get API configuration from environment variables
+ */
+function getApiConfig(): { apiKey: string; baseUrl: string } {
+  const env = import.meta.env as Record<string, string>;
+  return {
+    apiKey: env.VITE_NEWSAPI_KEY || '',
+    baseUrl: 'https://newsapi.org/v2',
+  };
 }
 
-async function fetchReels(region: 'local' | 'world'): Promise<Reel[]> {
-  const api = viteApiUrl().replace(/\/$/, '');
-  try {
-    const res = await fetch(`${api}/reels?region=${region}`, { cache: 'no-store' });
-    if (res.ok) {
-      const json = await res.json();
-      const arr = Array.isArray(json) ? json : json?.reels;
-      if (Array.isArray(arr) && arr.length) {
-        return arr.map((r: any, i: number) => ({
-          id: r.id || `s-${i}`,
-          title: r.title || r.name || 'Untitled reel',
-          thumbnail: r.thumbnail || r.image || null,
-          author: r.author || r.user || '',
-          url: r.url || '#',
-        }));
-      }
-    }
-  } catch (e) {
-    // ignore and fallback
-    // eslint-disable-next-line no-console
-    console.warn('[ReelsSection] backend reels fetch failed:', String(e));
-  }
-  return DEMO_REELS;
-}
+/**
+ * Fetch news articles from NewsAPI
+ * @param category - News category (business, technology, etc.)
+ * @param country - Country code (us, co, etc.)
+ * @param pageSize - Number of articles to fetch
+ * @returns Promise with news articles
+ */
+export async function fetchNews(
+  category: string = 'general',
+  country: string = 'us',
+  pageSize: number = 10
+): Promise<NewsResponse> {
+  const { apiKey, baseUrl } = getApiConfig();
 
-export default function ReelsSection({ region }: { region: 'local' | 'world' }) {
-  const [reels, setReels] = useState<Reel[]>(() => DEMO_REELS);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    let mounted = true;
-    async function load() {
-      setLoading(true);
-      const data = await fetchReels(region);
-      if (!mounted) return;
-      setReels(data);
-      setLoading(false);
-    }
-    // keep demo content visible while fetching fresh data in background
-    load();
-    return () => {
-      mounted = false;
+  // If no API key, return demo data
+  if (!apiKey || apiKey === 'your_newsapi_key_here') {
+    console.warn('[RealNewsService] No valid API key found, using demo data');
+    return {
+      status: 'ok',
+      totalResults: DEMO_ARTICLES.length,
+      articles: DEMO_ARTICLES,
     };
-  }, [region]);
+  }
 
-  return (
-    <section aria-labelledby="reels-heading" style={{ marginTop: 18 }}>
-      <h2 id="reels-heading">🎞️ Reels</h2>
-      {loading && <div style={{ opacity: 0.9 }}>Refreshing reels…</div>}
-      <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8 }}>
-        {reels.map((r) => (
-          <div key={r.id} style={{ minWidth: 220, border: '1px solid #eee', borderRadius: 8, padding: 8, background: '#fff' }}>
-            <div style={{ height: 140, background: '#f0f0f0', marginBottom: 8 }}>
-              {r.thumbnail ? <img src={r.thumbnail} alt="" style={{ width: '100%', height: 140, objectFit: 'cover', borderRadius: 6 }} /> : <div style={{ width: '100%', height: 140 }} />}
-            </div>
-            <strong>{r.title}</strong>
-            <div style={{ color: '#666', fontSize: 12 }}>{r.author}</div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
+  try {
+    const url = `${baseUrl}/top-headlines?country=${country}&category=${category}&pageSize=${pageSize}&apiKey=${apiKey}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // Handle NewsAPI error responses
+    if (data.status === 'error') {
+      console.error('[RealNewsService] API returned error:', data.message);
+      return {
+        status: 'error',
+        articles: DEMO_ARTICLES,
+        error: data.message,
+      };
+    }
+
+    // Transform and validate articles
+    const articles: NewsArticle[] = (data.articles || []).map((article: any, index: number) => ({
+      id: article.url || `article-${index}`,
+      title: article.title || 'Untitled',
+      description: article.description || '',
+      url: article.url || '#',
+      urlToImage: article.urlToImage || null,
+      publishedAt: article.publishedAt || new Date().toISOString(),
+      source: {
+        id: article.source?.id,
+        name: article.source?.name || 'Unknown Source',
+      },
+      author: article.author || '',
+      content: article.content || '',
+      category: category,
+      tags: [],
+      readTime: '5 min',
+      trending: false,
+    }));
+
+    return {
+      status: 'ok',
+      totalResults: data.totalResults || articles.length,
+      articles,
+    };
+  } catch (error) {
+    console.error('[RealNewsService] Failed to fetch news:', error);
+    return {
+      status: 'error',
+      articles: DEMO_ARTICLES,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
 }
+
+/**
+ * Search news articles by query
+ * @param query - Search query
+ * @param pageSize - Number of articles to fetch
+ * @returns Promise with news articles
+ */
+export async function searchNews(
+  query: string,
+  pageSize: number = 10
+): Promise<NewsResponse> {
+  const { apiKey, baseUrl } = getApiConfig();
+
+  // If no API key, return demo data
+  if (!apiKey || apiKey === 'your_newsapi_key_here') {
+    console.warn('[RealNewsService] No valid API key found, using demo data');
+    return {
+      status: 'ok',
+      totalResults: DEMO_ARTICLES.length,
+      articles: DEMO_ARTICLES,
+    };
+  }
+
+  try {
+    const url = `${baseUrl}/everything?q=${encodeURIComponent(query)}&pageSize=${pageSize}&apiKey=${apiKey}`;
+    
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    if (data.status === 'error') {
+      console.error('[RealNewsService] API returned error:', data.message);
+      return {
+        status: 'error',
+        articles: DEMO_ARTICLES,
+        error: data.message,
+      };
+    }
+
+    const articles: NewsArticle[] = (data.articles || []).map((article: any, index: number) => ({
+      id: article.url || `article-${index}`,
+      title: article.title || 'Untitled',
+      description: article.description || '',
+      url: article.url || '#',
+      urlToImage: article.urlToImage || null,
+      publishedAt: article.publishedAt || new Date().toISOString(),
+      source: {
+        id: article.source?.id,
+        name: article.source?.name || 'Unknown Source',
+      },
+      author: article.author || '',
+      content: article.content || '',
+      category: 'general',
+      tags: [],
+      readTime: '5 min',
+      trending: false,
+    }));
+
+    return {
+      status: 'ok',
+      totalResults: data.totalResults || articles.length,
+      articles,
+    };
+  } catch (error) {
+    console.error('[RealNewsService] Failed to search news:', error);
+    return {
+      status: 'error',
+      articles: DEMO_ARTICLES,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    };
+  }
+}
+
+/**
+ * Get Colombian news
+ * @param options - Fetch options
+ * @returns Promise with Colombian news articles
+ */
+export async function getColombianNews(options: {
+  category?: string;
+  pageSize?: number;
+  limit?: number;
+  query?: string;
+} = {}): Promise<NewsArticle[]> {
+  const { category = 'general', pageSize, limit, query } = options;
+  const size = limit || pageSize || 10;
+  
+  if (query) {
+    const response = await searchNews(query, size);
+    return response.articles;
+  }
+  
+  const response = await fetchNews(category, 'co', size);
+  return response.articles;
+}
+
+/**
+ * Get world news
+ * @param options - Fetch options
+ * @returns Promise with world news articles
+ */
+export async function getWorldNews(options: {
+  category?: string;
+  pageSize?: number;
+  limit?: number;
+  query?: string;
+} = {}): Promise<NewsArticle[]> {
+  const { category = 'general', pageSize, limit, query } = options;
+  const size = limit || pageSize || 10;
+  
+  if (query) {
+    const response = await searchNews(query, size);
+    return response.articles;
+  }
+  
+  const response = await fetchNews(category, 'us', size);
+  return response.articles;
+}
+
+/**
+ * Get article content (for backward compatibility)
+ * @param id - Article ID
+ * @param url - Article URL
+ * @returns Promise with article content string
+ */
+export async function getArticleContent(id: string, url: string): Promise<string> {
+  // This is a placeholder implementation
+  // In a real implementation, you might fetch the full article content
+  // Return a simple string for compatibility with the component
+  return `Full content for article ${id} at ${url}`;
+}
+
+/**
+ * Get demo/fallback articles
+ * @returns Demo articles
+ */
+export function getDemoArticles(): NewsArticle[] {
+  return DEMO_ARTICLES;
+}
+
+// Service object for backward compatibility
+export const realNewsService = {
+  fetchNews,
+  searchNews,
+  getDemoArticles,
+  getArticleContent,
+  getColombianNews,
+  getWorldNews,
+};
+
+// Default export for backward compatibility
+export default realNewsService;
