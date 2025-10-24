@@ -5,7 +5,7 @@ import { MdVerified } from 'react-icons/md';
 
 interface ColombianLayoutProps {
   children: React.ReactNode;
-  activeSection?: 'home' | 'reels' | 'news' | 'debates' | 'surveys' | 'tendencies';
+  activeSection?: 'home' | 'reels' | 'news' | 'debates' | 'surveys' | 'tendencies' | 'community';
   onNavigate?: (section: string) => void;
 }
 
