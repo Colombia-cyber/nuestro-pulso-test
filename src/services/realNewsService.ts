@@ -18,13 +18,14 @@ export interface RealNewsArticle {
   id: string;
   title: string;
   description?: string;
-  content?: string;
-  source: { name?: string; id?: string };
-  author?: string;
+  content: string; // Made required for ArticleContent compatibility
+  source: { name: string; id?: string; url: string }; // Made required for ArticleContent compatibility
+  author: string; // Made required for ArticleContent compatibility
   publishedAt: string;
   url: string;
   imageUrl?: string | null;
   urlToImage?: string | null; // Backward compatibility
+  images: string[]; // Made required for ArticleContent compatibility
   category?: string;
   region?: 'local' | 'world';
   tags?: string[];
@@ -63,7 +64,9 @@ const DEMO_NEWS: NewsArticle[] = [
     id: 'demo-1',
     title: 'Colombia avanza en políticas de sostenibilidad ambiental',
     description: 'El gobierno colombiano presenta nuevas iniciativas para la protección del medio ambiente y el desarrollo sostenible.',
-    source: { name: 'El Tiempo Demo' },
+    content: 'El gobierno colombiano presenta nuevas iniciativas para la protección del medio ambiente y el desarrollo sostenible.',
+    source: { name: 'El Tiempo Demo', url: '#' },
+    author: 'Redacción',
     publishedAt: new Date().toISOString(),
     url: '#',
     region: 'local',
@@ -73,12 +76,15 @@ const DEMO_NEWS: NewsArticle[] = [
     readTime: 5,
     imageUrl: null,
     urlToImage: null,
+    images: [],
   },
   {
     id: 'demo-2',
     title: 'Innovación tecnológica impulsa el crecimiento económico',
     description: 'Empresas colombianas lideran la transformación digital en América Latina.',
-    source: { name: 'El Espectador Demo' },
+    content: 'Empresas colombianas lideran la transformación digital en América Latina.',
+    source: { name: 'El Espectador Demo', url: '#' },
+    author: 'Redacción',
     publishedAt: new Date().toISOString(),
     url: '#',
     region: 'local',
@@ -88,12 +94,15 @@ const DEMO_NEWS: NewsArticle[] = [
     readTime: 4,
     imageUrl: null,
     urlToImage: null,
+    images: [],
   },
   {
     id: 'demo-3',
     title: 'Global climate summit reaches historic agreement',
     description: 'World leaders commit to ambitious carbon reduction targets.',
-    source: { name: 'World News Demo' },
+    content: 'World leaders commit to ambitious carbon reduction targets.',
+    source: { name: 'World News Demo', url: '#' },
+    author: 'Reuters',
     publishedAt: new Date().toISOString(),
     url: '#',
     region: 'world',
@@ -103,6 +112,7 @@ const DEMO_NEWS: NewsArticle[] = [
     readTime: 6,
     imageUrl: null,
     urlToImage: null,
+    images: [],
   },
 ];
 
@@ -201,18 +211,22 @@ async function fetchFromBackend(
       const sourceName = typeof article.source === 'string' 
         ? article.source 
         : (article.source?.name || 'Fuente Desconocida');
+      const sourceUrl = typeof article.source === 'object' 
+        ? (article.source?.url || article.url || '#')
+        : (article.url || '#');
       
       return {
         id: article.id || `backend-${region}-${index}`,
         title: article.title || article.headline || 'Sin título',
         description: article.description || article.summary || '',
-        content: article.content || '',
-        source: { name: sourceName },
-        author: article.author || '',
+        content: article.content || article.description || article.summary || '',
+        source: { name: sourceName, url: sourceUrl },
+        author: article.author || 'Desconocido',
         publishedAt: article.publishedAt || article.published_at || new Date().toISOString(),
         url: article.url || article.link || '#',
         imageUrl: article.image || article.urlToImage || article.imageUrl || null,
         urlToImage: article.urlToImage || article.image || article.imageUrl || null,
+        images: article.images || (article.urlToImage ? [article.urlToImage] : []),
         category: article.category || '',
         region,
         tags: article.tags || [],
@@ -263,13 +277,14 @@ async function fetchFromNewsAPI(
         id: `newsapi-${region}-${index}-${Date.now()}`,
         title: article.title || 'Sin título',
         description: article.description || '',
-        content: article.content || '',
-        source: { name: sourceName },
-        author: article.author || '',
+        content: article.content || article.description || '',
+        source: { name: sourceName, url: article.source?.url || article.url || '#' },
+        author: article.author || 'Desconocido',
         publishedAt: article.publishedAt || new Date().toISOString(),
         url: article.url || '#',
         imageUrl: article.urlToImage || null,
         urlToImage: article.urlToImage || null,
+        images: article.urlToImage ? [article.urlToImage] : [],
         category: '',
         region,
         tags: [],
@@ -394,7 +409,7 @@ export const realNewsService = {
   /**
    * Get article content (placeholder for detailed article fetching)
    */
-  async getArticleContent(articleId: string): Promise<RealNewsArticle | null> {
+  async getArticleContent(articleId: string, articleUrl?: string): Promise<RealNewsArticle | null> {
     // This is a placeholder - in a real implementation, this would
     // fetch full article content from the backend
     return null;

@@ -9,12 +9,16 @@
 export type Article = {
   id: string;
   title: string;
-  summary?: string;
-  source?: string;
-  publishedAt?: string;
+  summary: string; // Made required for NewsItem compatibility
+  source: string; // Made required for NewsItem compatibility
+  publishedAt: string; // Made required for NewsItem compatibility
   url?: string;
   image?: string | null;
-  category?: string;
+  category: string; // Made required for NewsItem compatibility
+  // NewsItem compatibility properties - made required
+  hasBalancedCoverage: boolean;
+  trending: boolean;
+  perspective: 'progressive' | 'conservative' | 'both';
 };
 
 const DEMO_ARTICLES: Article[] = [
@@ -25,6 +29,10 @@ const DEMO_ARTICLES: Article[] = [
     source: 'El Tiempo',
     publishedAt: new Date().toISOString(),
     url: '#',
+    category: 'política',
+    hasBalancedCoverage: true,
+    trending: false,
+    perspective: 'both',
   },
   {
     id: 'demo-2',
@@ -33,6 +41,10 @@ const DEMO_ARTICLES: Article[] = [
     source: 'El Espectador',
     publishedAt: new Date().toISOString(),
     url: '#',
+    category: 'local',
+    hasBalancedCoverage: true,
+    trending: false,
+    perspective: 'both',
   },
 ];
 
@@ -75,9 +87,13 @@ export async function getNews(region: 'local' | 'world'): Promise<Article[]> {
         title: a.title || a.headline || 'Untitled',
         summary: a.summary || a.description || '',
         source: a.source || a.source?.name || '',
-        publishedAt: a.publishedAt || a.published_at || '',
+        publishedAt: a.publishedAt || a.published_at || new Date().toISOString(),
         url: a.url || a.link || '#',
         image: a.image || a.urlToImage || null,
+        category: a.category || 'general',
+        hasBalancedCoverage: a.hasBalancedCoverage || false,
+        trending: a.trending || false,
+        perspective: a.perspective || 'both' as const,
       }));
     }
   } catch (e) {
@@ -97,11 +113,15 @@ export async function getNews(region: 'local' | 'world'): Promise<Article[]> {
         return arr.map((a: any, i: number) => ({
           id: `na-${i}-${a.publishedAt || ''}`,
           title: a.title,
-          summary: a.description,
-          source: a.source?.name,
-          publishedAt: a.publishedAt,
+          summary: a.description || '',
+          source: a.source?.name || '',
+          publishedAt: a.publishedAt || new Date().toISOString(),
           url: a.url,
           image: a.urlToImage || null,
+          category: 'general',
+          hasBalancedCoverage: false,
+          trending: false,
+          perspective: 'both' as const,
         }));
       }
     }
