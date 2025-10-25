@@ -11,7 +11,7 @@ import ModernFilterSystem from './ModernFilterSystem';
 import RelatedContent from './RelatedContent';
 import { NewsSkeleton } from './SkeletonLoader';
 import { NewsItem, NewsFilter, CategoryCard } from '../types/news';
-import { newsService } from '../services/newsService';
+import newsService from '../services/newsService';
 
 interface CustomNewsFeedProps {
   onNavigate?: (view: string, articleId?: string) => void;

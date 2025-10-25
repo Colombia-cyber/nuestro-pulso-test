@@ -40,7 +40,7 @@ function viteEnv(): Record<string, any> {
   return import.meta.env as Record<string, any>;
 }
 
-async function safeFetchJson(url: string, opts?: RequestInit, timeoutMs = 7000): Promise<any> {
+async function safeFetchJson(url: string, opts?: any, timeoutMs = 7000): Promise<any> {
   const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
   const timer = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
   try {
@@ -82,7 +82,6 @@ export async function getNews(region: 'local' | 'world'): Promise<Article[]> {
     }
   } catch (e) {
     // fallback to next option
-    // eslint-disable-next-line no-console
     console.warn('[newsService] backend fetch failed:', String(e));
   }
 
@@ -107,10 +106,72 @@ export async function getNews(region: 'local' | 'world'): Promise<Article[]> {
       }
     }
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.warn('[newsService] NewsAPI fallback failed:', String(e));
   }
 
   // 3) demo fallback
   return DEMO_ARTICLES;
 }
+
+// Stub implementations for methods used by CustomNewsFeed
+const updateListeners: Array<() => void> = [];
+let updateInterval: any = null;
+
+function getFilteredNews(filters: any): any[] {
+  // Return empty array as stub - CustomNewsFeed has its own mock data
+  return [];
+}
+
+function generateTimelineData(): any {
+  // Return empty object as stub
+  return {};
+}
+
+function startLiveUpdates(): void {
+  // Stub implementation
+  if (!updateInterval) {
+    updateInterval = setInterval(() => {
+      updateListeners.forEach(listener => listener());
+    }, 30000); // Every 30 seconds
+  }
+}
+
+function stopLiveUpdates(): void {
+  // Stub implementation
+  if (updateInterval) {
+    clearInterval(updateInterval);
+    updateInterval = null;
+  }
+}
+
+function addUpdateListener(listener: () => void): void {
+  updateListeners.push(listener);
+}
+
+function removeUpdateListener(listener: () => void): void {
+  const index = updateListeners.indexOf(listener);
+  if (index > -1) {
+    updateListeners.splice(index, 1);
+  }
+}
+
+// Default export for components that expect newsService object
+const newsService = {
+  getNews: (options?: { limit?: number }) => {
+    // Default to 'local' region, respect limit if provided
+    return getNews('local').then(articles => {
+      if (options?.limit) {
+        return articles.slice(0, options.limit);
+      }
+      return articles;
+    });
+  },
+  getFilteredNews,
+  generateTimelineData,
+  startLiveUpdates,
+  stopLiveUpdates,
+  addUpdateListener,
+  removeUpdateListener
+};
+
+export default newsService;
