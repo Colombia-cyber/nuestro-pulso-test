@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-interface Reel {
+export interface Reel {
   id: string;
   type: "video" | "image" | "news";
   src: string;
@@ -31,9 +31,8 @@ const SOCIAL_PLATFORMS = [
 ];
 
 const fetchLocalReels = async (): Promise<Reel[]> => {
-  // Replace with real API calls for production.
   return [
-    ...LOCAL_SOURCES.map(src => ({
+    ...LOCAL_SOURCES.map((src) => ({
       id: src.id,
       type: "news" as const,
       src: "",
@@ -43,7 +42,7 @@ const fetchLocalReels = async (): Promise<Reel[]> => {
       source: src.name,
       country: "Colombia",
     })),
-    ...SOCIAL_PLATFORMS.map(platform => ({
+    ...SOCIAL_PLATFORMS.map((platform) => ({
       id: platform.id,
       type: "video" as const,
       src: `https://www.${platform.id}.com/embed/exampleColombia`,
@@ -56,43 +55,58 @@ const fetchLocalReels = async (): Promise<Reel[]> => {
   ];
 };
 
-export const ReelsSection: React.FC<{ context: "local" | "world" }> = ({ context }) => {
+type Props = {
+  context?: "local" | "world";
+};
+
+export const ReelsSection: React.FC<Props> = ({ context = "local" }) => {
   const [reels, setReels] = useState<Reel[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    setLoading(true);
-    if (context === "local") {
-      fetchLocalReels().then(localReels => {
-        setReels(localReels);
-        setLoading(false);
-      });
-    } else {
-      // For "world", fetch global reels (global sources only)
-      setReels([
-        {
-          id: "bbc",
-          type: "news",
-          src: "",
-          title: "Latest from BBC",
-          description: "Global news reel",
-          link: "https://bbc.com/",
-          source: "BBC",
-          country: "Global",
-        },
-        {
-          id: "youtube-world",
-          type: "video",
-          src: "https://www.youtube.com/embed/exampleGlobal",
-          title: "Trending YouTube Reel Worldwide",
-          description: "Global trending reel on YouTube",
-          link: "https://www.youtube.com/results?search_query=world+news",
-          platform: "YouTube",
-          country: "Global",
-        },
-      ]);
-      setLoading(false);
+    let cancelled = false;
+    async function load() {
+      setLoading(true);
+      try {
+        if (context === "local") {
+          const local = await fetchLocalReels();
+          if (!cancelled) setReels(local);
+        } else {
+          const world: Reel[] = [
+            {
+              id: "bbc",
+              type: "news",
+              src: "",
+              title: "Latest from BBC",
+              description: "Global news reel",
+              link: "https://bbc.com/",
+              source: "BBC",
+              country: "Global",
+            },
+            {
+              id: "youtube-world",
+              type: "video",
+              src: "https://www.youtube.com/embed/exampleGlobal",
+              title: "Trending YouTube Reel Worldwide",
+              description: "Global trending reel on YouTube",
+              link: "https://www.youtube.com/results?search_query=world+news",
+              platform: "YouTube",
+              country: "Global",
+            },
+          ];
+          if (!cancelled) setReels(world);
+        }
+      } catch (err) {
+        console.warn("ReelsSection: failed to load reels", err);
+        if (!cancelled) setReels([]);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     }
+    load();
+    return () => {
+      cancelled = true;
+    };
   }, [context]);
 
   if (loading) {
@@ -101,12 +115,22 @@ export const ReelsSection: React.FC<{ context: "local" | "world" }> = ({ context
 
   return (
     <section aria-labelledby="reels-title" style={{ margin: "2.5rem 0" }}>
-      <h2 id="reels-title" style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "1rem" }}>
+      <h2
+        id="reels-title"
+        style={{ fontSize: "2rem", fontWeight: 700, marginBottom: "1rem" }}
+      >
         Reels — {context === "local" ? "Colombia" : "World"}
       </h2>
-      <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", justifyContent: "center" }}>
+      <div
+        style={{
+          display: "flex",
+          gap: "2rem",
+          flexWrap: "wrap",
+          justifyContent: "center",
+        }}
+      >
         {reels.map((reel) => (
-          <div
+          <article
             key={reel.id}
             style={{
               background: "#fff",
@@ -119,16 +143,21 @@ export const ReelsSection: React.FC<{ context: "local" | "world" }> = ({ context
               flexDirection: "column",
               alignItems: "center",
               transition: "box-shadow 0.2s",
-              cursor: "pointer"
+              cursor: "pointer",
             }}
             onClick={() => {
-              // On click, start Google-style topic search for this source/platform
-              window.open(`https://www.google.com/search?q=${reel.source || reel.platform} ${context === "local" ? "Colombia" : ""}`, "_blank", "noopener,noreferrer");
+              window.open(
+                `https://www.google.com/search?q=${encodeURIComponent(
+                  `${reel.source || reel.platform} ${context === "local" ? "Colombia" : ""}`
+                )}`,
+                "_blank",
+                "noopener,noreferrer"
+              );
             }}
             tabIndex={0}
             aria-label={`View topics for ${reel.source || reel.platform}`}
           >
-            {reel.type === "video" && (
+            {reel.type === "video" && reel.src ? (
               <iframe
                 src={reel.src}
                 title={reel.title}
@@ -139,15 +168,21 @@ export const ReelsSection: React.FC<{ context: "local" | "world" }> = ({ context
                 allowFullScreen
                 style={{ borderRadius: "0.8rem", marginBottom: "1rem" }}
               />
-            )}
-            <h3>{reel.title}</h3>
-            <p>{reel.description}</p>
-            <a href={reel.link} target="_blank" rel="noopener noreferrer">
-              Visit Source
-            </a>
-          </div>
+            ) : null}
+            <h3 style={{ margin: "0.5rem 0" }}>{reel.title}</h3>
+            <p style={{ margin: "0.25rem 0 0.75rem 0", textAlign: "center" }}>
+              {reel.description}
+            </p>
+            {reel.link ? (
+              <a href={reel.link} target="_blank" rel="noopener noreferrer">
+                Visit Source
+              </a>
+            ) : null}
+          </article>
         ))}
       </div>
     </section>
   );
 };
+
+export default ReelsSection;
