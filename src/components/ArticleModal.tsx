@@ -64,7 +64,18 @@ const ArticleModal: React.FC<ArticleModalProps> = ({
     try {
       const content = await realNewsService.getArticleContent(article.id, article.url);
       if (content) {
-        setFullContent(content);
+        // Wrap string content in ArticleContent object
+        setFullContent({
+          title: article.title,
+          content: content,
+          author: article.author,
+          publishedAt: article.publishedAt,
+          images: article.urlToImage ? [article.urlToImage] : [],
+          source: {
+            name: article.source.name,
+            url: article.url
+          }
+        });
       } else {
         // Fallback to article data if full content not available
         setFullContent({
