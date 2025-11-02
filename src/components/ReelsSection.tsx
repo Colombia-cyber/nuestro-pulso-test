@@ -61,7 +61,7 @@ type Props = {
 
 export const ReelsSection: React.FC<Props> = ({ context = "local" }) => {
   const [reels, setReels] = useState<Reel[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -184,5 +184,3 @@ export const ReelsSection: React.FC<Props> = ({ context = "local" }) => {
     </section>
   );
 };
-
-export default ReelsSection;
